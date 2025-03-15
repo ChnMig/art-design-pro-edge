@@ -117,8 +117,6 @@
     "rememberPwd": "Remember password",
     "forgetPwd": "Forgot password",
     "btnText": "Login",
-    "noAccount": "No account yet?",
-    "register": "Register",
     "success": {
       "title": "Login successful",
       "message": "Welcome back"
@@ -130,27 +128,6 @@
     "placeholder": "Please enter your email",
     "submitBtnText": "Submit",
     "backBtnText": "Back"
-  },
-  "register": {
-    "title": "Create account",
-    "subTitle": "Welcome to join us, please fill in the following information to complete the registration",
-    "placeholder": [
-      "Please enter your account",
-      "Please enter your password",
-      "Please enter your password again"
-    ],
-    "rule": [
-      "Please enter your password again",
-      "The two passwords are inconsistent!",
-      "The length is 3 to 20 characters",
-      "The password length cannot be less than 6 digits",
-      "Please agree to the privacy policy"
-    ],
-    "agreeText": "I agree",
-    "privacyPolicy": "Privacy policy",
-    "submitBtnText": "Register",
-    "hasAccount": "Already have an account?",
-    "toLogin": "To login"
   },
   "lockScreen": {
     "pwdError": "Password error",

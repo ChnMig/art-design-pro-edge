@@ -106,8 +106,6 @@
     "rememberPwd": "记住密码",
     "forgetPwd": "忘记密码",
     "btnText": "登录",
-    "noAccount": "还没有账号？",
-    "register": "注册",
     "success": {
       "title": "登录成功",
       "message": "欢迎回来"
@@ -119,23 +117,6 @@
     "placeholder": "请输入您的电子邮件",
     "submitBtnText": "提交",
     "backBtnText": "返回"
-  },
-  "register": {
-    "title": "创建账号",
-    "subTitle": "欢迎加入我们，请填写以下信息完成注册",
-    "placeholder": ["请输入账号", "请输入密码", "请再次输入密码"],
-    "rule": [
-      "请再次输入密码",
-      "两次输入密码不一致!",
-      "长度在 3 到 20 个字符",
-      "密码长度不能小于6位",
-      "请同意隐私协议"
-    ],
-    "agreeText": "我同意",
-    "privacyPolicy": "《隐私政策》",
-    "submitBtnText": "注册",
-    "hasAccount": "已有账号？",
-    "toLogin": "去登录"
   },
   "lockScreen": {
     "pwdError": "密码错误",

@@ -103,13 +103,6 @@
                 {{ $t('login.btnText') }}
               </el-button>
             </div>
-
-            <div class="footer">
-              <p>
-                {{ $t('login.noAccount') }}
-                <router-link to="/register">{{ $t('login.register') }}</router-link>
-              </p>
-            </div>
           </el-form>
         </div>
       </div>
