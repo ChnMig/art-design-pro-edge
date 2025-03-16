@@ -133,6 +133,7 @@
 
       .form {
         box-sizing: border-box;
+        display: block;
         height: 100%;
         padding: 40px 0;
         widows: 100%;
@@ -169,7 +170,6 @@
 
         .captcha-image {
           width: 100%;
-          cursor: pointer;
         }
 
         .forget-password {

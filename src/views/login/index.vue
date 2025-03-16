@@ -64,7 +64,7 @@
               />
             </el-form-item>
             <el-form-item prop="captcha">
-              <el-row :gutter="10">
+              <el-row gutter="5">
                 <el-col :span="16">
                   <el-input
                     :placeholder="$t('login.placeholder[2]')"
@@ -72,7 +72,7 @@
                     v-model.trim="formData.captcha"
                   />
                 </el-col>
-                <el-col :span="8">
+                <el-col :push="1" :span="8">
                   <img :src="captchaImageUrl" @click="refreshCaptcha" class="captcha-image" />
                 </el-col>
               </el-row>
@@ -250,7 +250,7 @@
 
   const refreshCaptcha = async () => {
     try {
-      const captchaData = await getCaptcha(50, 100)
+      const captchaData = await getCaptcha(80, 240)
       captchaImageUrl.value = captchaData.data.img
     } catch (error) {
       console.error('Error refreshing captcha:', error)
