@@ -100,7 +100,7 @@
     },
     "title": "欢迎回来",
     "subTitle": "输入您的账号和密码登录",
-    "placeholder": ["请输入账号", "请输入密码", "请拖动滑块完成验证"],
+    "placeholder": ["请输入账号", "请输入密码", "请输入验证码"],
     "sliderText": "按住滑块拖动",
     "sliderSuccessText": "验证成功",
     "rememberPwd": "记住密码",

@@ -167,37 +167,9 @@
           height: 46px;
         }
 
-        .drag-verify {
-          position: relative;
-          padding-bottom: 20px;
-          margin-top: 25px;
-
-          .drag-verify-content {
-            position: relative;
-            z-index: 2;
-            box-sizing: border-box;
-            user-select: none;
-            border-radius: 8px;
-            transition: all 0.3s;
-
-            &.error {
-              border-color: #f56c6c;
-            }
-          }
-
-          .error-text {
-            position: absolute;
-            top: 0;
-            z-index: 1;
-            margin-top: 10px;
-            font-size: 13px;
-            color: #f56c6c;
-            transition: all 0.3s;
-
-            &.show-error-text {
-              transform: translateY(40px);
-            }
-          }
+        .captcha-image {
+          width: 100%;
+          cursor: pointer;
         }
 
         .forget-password {

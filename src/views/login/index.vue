@@ -63,27 +63,20 @@
                 autocomplete="off"
               />
             </el-form-item>
-            <div class="drag-verify">
-              <div class="drag-verify-content" :class="{ error: !isPassing && isClickPass }">
-                <!-- :background="isDark ? '#181818' : '#eee'" -->
-                <DragVerify
-                  ref="dragVerify"
-                  v-model:value="isPassing"
-                  :width="width < 500 ? 328 : 438"
-                  :text="$t('login.sliderText')"
-                  textColor="var(--art-gray-800)"
-                  :successText="$t('login.sliderSuccessText')"
-                  :progressBarBg="getCssVariable('--el-color-primary')"
-                  background="var(--art-gray-200)"
-                  handlerBg="var(--art-main-bg-color)"
-                  @pass="onPass"
-                />
-              </div>
-              <p class="error-text" :class="{ 'show-error-text': !isPassing && isClickPass }">{{
-                $t('login.placeholder[2]')
-              }}</p>
-            </div>
-
+            <el-form-item prop="captcha">
+              <el-row :gutter="10">
+                <el-col :span="16">
+                  <el-input
+                    :placeholder="$t('login.placeholder[2]')"
+                    size="large"
+                    v-model.trim="formData.captcha"
+                  />
+                </el-col>
+                <el-col :span="8">
+                  <img :src="captchaImageUrl" @click="refreshCaptcha" class="captcha-image" />
+                </el-col>
+              </el-row>
+            </el-form-item>
             <div class="forget-password">
               <el-checkbox v-model="formData.rememberPassword">{{
                 $t('login.rememberPwd')
@@ -117,12 +110,13 @@
   import { useUserStore } from '@/store/modules/user'
   import { HOME_PAGE } from '@/router'
   import { ApiStatus } from '@/utils/http/status'
-  import { getCssVariable } from '@/utils/utils'
   import { LanguageEnum, SystemThemeEnum } from '@/enums/appEnum'
   import { useI18n } from 'vue-i18n'
   const { t } = useI18n()
   import { useSettingStore } from '@/store/modules/setting'
   import type { FormInstance, FormRules } from 'element-plus'
+  import { onMounted, ref, reactive, computed } from 'vue'
+  import { getCaptcha } from '@/api/login/api'
 
   const userStore = useUserStore()
   const router = useRouter()
@@ -134,21 +128,20 @@
   const formData = reactive({
     username: SystemInfo.login.username,
     password: SystemInfo.login.password,
-    rememberPassword: true
+    rememberPassword: true,
+    captcha: ''
   })
 
   const rules = computed<FormRules>(() => ({
     username: [{ required: true, message: t('login.placeholder[0]'), trigger: 'blur' }],
-    password: [{ required: true, message: t('login.placeholder[1]'), trigger: 'blur' }]
+    password: [{ required: true, message: t('login.placeholder[1]'), trigger: 'blur' }],
+    captcha: [{ required: true, message: t('login.placeholder[2]'), trigger: 'blur' }]
   }))
 
   const loading = ref(false)
-  const { width } = useWindowSize()
 
   const store = useSettingStore()
   const isDark = computed(() => store.isDark)
-
-  const onPass = () => {}
 
   const handleSubmit = async () => {
     if (!formRef.value) return
@@ -166,7 +159,7 @@
         const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
         try {
-          const res = await UserService.login({
+          const res = await getCaptcha({
             body: JSON.stringify({
               username: formData.username,
               password: formData.password
@@ -178,7 +171,7 @@
             userStore.setToken(res.data.accessToken)
 
             // 获取用户信息
-            const userRes = await UserService.getUserInfo()
+            const userRes = await getCaptcha()
             if (userRes.code === ApiStatus.success) {
               userStore.setUserInfo(userRes.data)
             }
@@ -216,6 +209,20 @@
     }, 300)
   }
 
+  // 错误提示
+  const showErrorNotice = (title: string, message: string) => {
+    setTimeout(() => {
+      ElNotification({
+        title: title,
+        message: message,
+        type: 'error',
+        showClose: false,
+        duration: 2500,
+        zIndex: 10000
+      })
+    }, 300)
+  }
+
   // 切换语言
   const { locale } = useI18n()
 
@@ -227,7 +234,6 @@
 
   // 切换主题
   import { useTheme } from '@/composables/useTheme'
-  import { UserService } from '@/api/usersApi'
 
   const toggleTheme = () => {
     let { LIGHT, DARK } = SystemThemeEnum
@@ -239,6 +245,21 @@
     { value: LanguageEnum.ZH, label: '简体中文' },
     { value: LanguageEnum.EN, label: 'English' }
   ]
+
+  const captchaImageUrl = ref('') // 验证码图片的URL
+
+  const refreshCaptcha = async () => {
+    try {
+      const captchaData = await getCaptcha(50, 100)
+      captchaImageUrl.value = captchaData.data.img
+    } catch (error) {
+      console.error('Error refreshing captcha:', error)
+      showErrorNotice(t('请求失败'), t('验证码获取失败'))
+    }
+  }
+  onMounted(() => {
+    refreshCaptcha() // 页面加载时获取验证码
+  })
 </script>
 
 <style lang="scss" scoped>
