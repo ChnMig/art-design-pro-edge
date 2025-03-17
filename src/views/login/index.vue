@@ -143,6 +143,9 @@
   const store = useSettingStore()
   const isDark = computed(() => store.isDark)
 
+  const captchaImageUrl = ref('') // 验证码图片的URL
+  const captchaImageID = ref('') // 验证码图片的ID
+
   const handleSubmit = async () => {
     if (!formRef.value) return
 
@@ -246,17 +249,17 @@
     { value: LanguageEnum.EN, label: 'English' }
   ]
 
-  const captchaImageUrl = ref('') // 验证码图片的URL
-
   const refreshCaptcha = async () => {
     try {
       const captchaData = await getCaptcha(80, 240)
-      captchaImageUrl.value = captchaData.data.img
+      captchaImageUrl.value = captchaData.data.image
+      captchaImageID.value = captchaData.data.id
     } catch (error) {
       console.error('Error refreshing captcha:', error)
       showErrorNotice(t('请求失败'), t('验证码获取失败'))
     }
   }
+
   onMounted(() => {
     refreshCaptcha() // 页面加载时获取验证码
   })

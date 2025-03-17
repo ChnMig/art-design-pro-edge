@@ -133,7 +133,7 @@
 
       .form {
         box-sizing: border-box;
-        display: block;
+        display: block; // 修复子组件 el-row 宽度不够的问题
         height: 100%;
         padding: 40px 0;
         widows: 100%;
