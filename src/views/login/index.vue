@@ -64,7 +64,7 @@
               />
             </el-form-item>
             <el-form-item prop="captcha">
-              <el-row gutter="5">
+              <el-row :gutter="5">
                 <el-col :span="16">
                   <el-input
                     :placeholder="$t('login.placeholder[2]')"
@@ -116,12 +116,10 @@
   import { useSettingStore } from '@/store/modules/setting'
   import type { FormInstance, FormRules } from 'element-plus'
   import { onMounted, ref, reactive, computed } from 'vue'
-  import { getCaptcha } from '@/api/login/api'
+  import { getCaptcha, login } from '@/api/login/api'
 
   const userStore = useUserStore()
   const router = useRouter()
-  const isPassing = ref(false)
-  const isClickPass = ref(false)
 
   const systemName = SystemInfo.name
   const formRef = ref<FormInstance>()
@@ -151,22 +149,17 @@
 
     await formRef.value.validate(async (valid) => {
       if (valid) {
-        if (!isPassing.value) {
-          isClickPass.value = true
-          return
-        }
-
         loading.value = true
 
         // 延时辅助函数
         const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
         try {
-          const res = await getCaptcha({
-            body: JSON.stringify({
-              username: formData.username,
-              password: formData.password
-            })
+          const res = await login({
+            username: formData.username,
+            password: formData.password,
+            captcha: formData.captcha,
+            captcha_id: captchaImageID.value
           })
 
           if (res.code === ApiStatus.success && res.data) {
@@ -189,6 +182,7 @@
             router.push(HOME_PAGE)
           } else {
             ElMessage.error(res.message)
+            refreshCaptcha()
           }
         } finally {
           await delay(1000)
@@ -211,21 +205,6 @@
       })
     }, 300)
   }
-
-  // 错误提示
-  const showErrorNotice = (title: string, message: string) => {
-    setTimeout(() => {
-      ElNotification({
-        title: title,
-        message: message,
-        type: 'error',
-        showClose: false,
-        duration: 2500,
-        zIndex: 10000
-      })
-    }, 300)
-  }
-
   // 切换语言
   const { locale } = useI18n()
 
@@ -256,7 +235,7 @@
       captchaImageID.value = captchaData.data.id
     } catch (error) {
       console.error('Error refreshing captcha:', error)
-      showErrorNotice(t('请求失败'), t('验证码获取失败'))
+      ElMessage.error('验证码获取失败')
     }
   }
 
