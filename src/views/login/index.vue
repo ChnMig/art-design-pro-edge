@@ -116,7 +116,7 @@
   import { useSettingStore } from '@/store/modules/setting'
   import type { FormInstance, FormRules } from 'element-plus'
   import { onMounted, ref, reactive, computed } from 'vue'
-  import { getCaptcha, login } from '@/api/login/api'
+  import { getCaptcha, userLogin, getUserInfo } from '@/api/system/api'
 
   const userStore = useUserStore()
   const router = useRouter()
@@ -150,28 +150,26 @@
     await formRef.value.validate(async (valid) => {
       if (valid) {
         loading.value = true
-
         // 延时辅助函数
         const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-
         try {
-          const res = await login({
+          const res = await userLogin({
             username: formData.username,
             password: formData.password,
             captcha: formData.captcha,
             captcha_id: captchaImageID.value
           })
-
           if (res.code === ApiStatus.success && res.data) {
             // 设置 token
-            userStore.setToken(res.data.accessToken)
-
+            userStore.setToken(res.data.access_token)
             // 获取用户信息
-            const userRes = await getCaptcha()
+            const userRes = await getUserInfo()
             if (userRes.code === ApiStatus.success) {
               userStore.setUserInfo(userRes.data)
+            } else {
+              ElMessage.error(userRes.message)
+              console.error('获取用户信息失败:', userRes.message)
             }
-
             // 设置登录状态
             userStore.setLoginStatus(true)
             // 延时辅助函数

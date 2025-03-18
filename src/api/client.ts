@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { useUserStore } from '@/store/modules/user'
 
 const API_URL = 'http://127.0.0.1:8080/api/v1/admin' // Replace with your actual API URL
 
@@ -9,6 +10,16 @@ const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json'
   }
+})
+
+// 添加请求拦截器，用于动态设置请求头
+apiClient.interceptors.request.use((config) => {
+  // 如果有存储的token，可以在这里添加到header中
+  const token = useUserStore().getToken
+  if (token) {
+    config.headers['Access-Token'] = token
+  }
+  return config
 })
 
 // 发送 GET 请求的示例函数

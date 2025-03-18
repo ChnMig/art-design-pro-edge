@@ -37,6 +37,9 @@ export const useUserStore = defineStore({
     getSettingState() {
       return useSettingStore().$state
     },
+    getToken(): string {
+      return this.accessToken
+    },
     getWorktabState() {
       return useWorktabStore().$state
     }
