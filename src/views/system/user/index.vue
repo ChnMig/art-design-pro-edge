@@ -38,13 +38,13 @@
         </div>
 
         <!-- <el-carousel class="gallery" height="160px"
-          :interval="5000"
-          indicator-position="none"
-        >
-          <el-carousel-item class="item" v-for="item in galleryList" :key="item">
-            <img :src="item"/>
-          </el-carousel-item>
-        </el-carousel> -->
+            :interval="5000"
+            indicator-position="none"
+          >
+            <el-carousel-item class="item" v-for="item in galleryList" :key="item">
+              <img :src="item"/>
+            </el-carousel-item>
+          </el-carousel> -->
       </div>
       <div class="right-wrap">
         <div class="info box-style">

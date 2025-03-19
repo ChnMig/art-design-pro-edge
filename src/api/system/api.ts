@@ -20,3 +20,7 @@ export const getUserInfo = () => {
 export const getUserMenu = () => {
   return getMethod('/system/user/menu')
 }
+
+export const getAllMenu = () => {
+  return getMethod('/system/menu')
+}
