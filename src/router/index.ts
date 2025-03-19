@@ -51,18 +51,6 @@ const staticRoutes: AppRouteRecordRaw[] = [
         name: 'Console',
         component: () => import('@views/dashboard/console/index.vue'),
         meta: { title: 'menus.dashboard.console', keepAlive: false }
-      },
-      {
-        path: RoutesAlias.Analysis,
-        name: 'Analysis',
-        component: () => import('@views/dashboard/analysis/index.vue'),
-        meta: { title: 'menus.dashboard.analysis', keepAlive: false }
-      },
-      {
-        path: RoutesAlias.Ecommerce,
-        name: 'Ecommerce',
-        component: () => import('@views/dashboard/ecommerce/index.vue'),
-        meta: { title: 'menus.dashboard.ecommerce', keepAlive: false }
       }
     ]
   },
@@ -194,6 +182,7 @@ async function getMenuData(): Promise<void> {
 
     // 如果菜单列表为空，执行登出操作并跳转到登录页
     if (!Array.isArray(menuList) || menuList.length === 0) {
+      console.log('菜单列表为空，执行登出操作...')
       closeLoading()
       useUserStore().logOut()
       throw new Error('获取菜单列表失败，请重新登录！')

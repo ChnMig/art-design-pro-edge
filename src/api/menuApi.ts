@@ -17,6 +17,7 @@ export const menuService = {
     } else {
       ElMessage.error(asyncRoutesData.message)
       console.error('获取用户菜单失败:', asyncRoutesData.message)
+      asyncRoutesData.data = []
     }
     // 获取到的菜单数据
     const menuList = asyncRoutesData.data
