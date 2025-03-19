@@ -16,3 +16,7 @@ export const userLogin = (data: {
 export const getUserInfo = () => {
   return getMethod('/system/user/info')
 }
+
+export const getUserMenu = () => {
+  return getMethod('/system/user/menu')
+}

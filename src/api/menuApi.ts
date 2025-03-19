@@ -1,20 +1,29 @@
 import { fourDotsSpinnerSvg } from '@/assets/svg/loading'
-import { asyncRoutes } from '@/router/modules/asyncRoutes'
+import { getUserMenu } from './system/api'
 import { MenuListType } from '@/types/menu'
 import { processRoute } from '@/utils/menu'
-import { ElLoading } from 'element-plus'
+import { ElLoading, ElMessage } from 'element-plus'
+import { ApiStatus } from '@/utils/http/status'
 
 // 菜单接口
 export const menuService = {
   // 获取菜单列表，模拟网络请求
-  getMenuList(
+  async getMenuList(
     delay: number = 300
   ): Promise<{ menuList: MenuListType[]; closeLoading: () => void }> {
+    const asyncRoutesData = await getUserMenu()
+    if (asyncRoutesData.code === ApiStatus.success) {
+      console.log('获取用户菜单成功:', asyncRoutesData.data)
+    } else {
+      ElMessage.error(asyncRoutesData.message)
+      console.error('获取用户菜单失败:', asyncRoutesData.message)
+    }
     // 获取到的菜单数据
-    const menuList = asyncRoutes
+    const menuList = asyncRoutesData.data
     // 处理后的菜单数据
-    const processedMenuList: MenuListType[] = menuList.map((route) => processRoute(route))
-
+    const processedMenuList: MenuListType[] = menuList.map((route: MenuListType) =>
+      processRoute(route)
+    )
     const loading = ElLoading.service({
       lock: true,
       background: 'rgba(0, 0, 0, 0)',

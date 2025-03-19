@@ -116,7 +116,7 @@
   import { useSettingStore } from '@/store/modules/setting'
   import type { FormInstance, FormRules } from 'element-plus'
   import { onMounted, ref, reactive, computed } from 'vue'
-  import { getCaptcha, userLogin, getUserInfo } from '@/api/system/api'
+  import { getCaptcha, userLogin, getUserInfo, getUserMenu } from '@/api/system/api'
 
   const userStore = useUserStore()
   const router = useRouter()
@@ -165,6 +165,10 @@
             // 获取用户信息
             const userRes = await getUserInfo()
             if (userRes.code === ApiStatus.success) {
+              console.log('获取用户信息成功:', userRes.data)
+              if (userRes.data.avatar === '') {
+                userRes.data.avatar = '/src/assets/img/user/avatar.png'
+              }
               userStore.setUserInfo(userRes.data)
             } else {
               ElMessage.error(userRes.message)
@@ -176,7 +180,16 @@
             await delay(1000)
             // 登录成功提示
             showLoginSuccessNotice()
+            // 获取用户的菜单
+            const menuRes = await getUserMenu()
+            if (menuRes.code === ApiStatus.success) {
+              console.log('获取用户菜单成功:', menuRes.data)
+            } else {
+              ElMessage.error(menuRes.message)
+              console.error('获取用户菜单失败:', menuRes.message)
+            }
             // 跳转首页
+            console.log('登录成功，跳转首页')
             router.push(HOME_PAGE)
           } else {
             ElMessage.error(res.message)

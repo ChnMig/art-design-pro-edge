@@ -157,6 +157,7 @@ router.beforeEach(async (to, from, next) => {
   // 如果用户已登录且动态路由未注册，则注册动态路由
   if (!isRouteRegistered.value && userStore.isLogin) {
     try {
+      console.log('动态注册路由...')
       await getMenuData()
       if (to.name === 'Exception404') {
         return next({ path: to.path, query: to.query, replace: true })
@@ -186,6 +187,7 @@ router.beforeEach(async (to, from, next) => {
  * @throws 若菜单列表为空或获取失败则抛出错误
  */
 async function getMenuData(): Promise<void> {
+  console.log('获取菜单列表...')
   try {
     // 获取菜单列表
     const { menuList, closeLoading } = await menuService.getMenuList()

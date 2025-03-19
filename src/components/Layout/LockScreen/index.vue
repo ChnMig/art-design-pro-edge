@@ -148,9 +148,6 @@
   })
 
   onMounted(() => {
-    if (userInfo.value.avatar === '') {
-      userInfo.value.avatar = '@/assets/images/avatar.png'
-    }
     mittBus.on('openLockScreen', openLockScreen)
     document.addEventListener('keydown', handleKeydown)
 
