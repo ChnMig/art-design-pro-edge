@@ -11,7 +11,7 @@
       </el-col>
     </el-row>
 
-    <art-table :data="tableData" :table-id="'role-table'">
+    <art-table :data="tableData">
       <template #default>
         <el-table-column label="角色名称" prop="name" />
         <el-table-column label="描述" prop="des" />

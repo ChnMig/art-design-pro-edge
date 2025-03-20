@@ -124,7 +124,7 @@ importers:
         specifier: ^5.12.0
         version: 5.14.0(rollup@4.34.9)
       sass:
-        specifier: ^1.81.0
+        specifier: ^1.85.1
         version: 1.85.1
       stylelint:
         specifier: ^16.8.2
@@ -160,7 +160,7 @@ importers:
         specifier: ^0.27.4
         version: 0.27.5(@babel/parser@7.26.9)(rollup@4.34.9)(vue@3.5.13(typescript@5.6.3))
       vite:
-        specifier: ^6.1.0
+        specifier: ^6.2.0
         version: 6.2.0(@types/node@22.13.9)(jiti@2.4.2)(sass@1.85.1)(terser@5.39.0)(yaml@2.7.0)
       vite-plugin-compression:
         specifier: ^0.5.1
@@ -1437,6 +1437,9 @@ packages:
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
     engines: {node: '>= 8'}
+
+  crypto-js@4.2.0:
+    resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
 
   css-functions-list@3.2.3:
     resolution: {integrity: sha512-IQOkD3hbR5KrN93MtcYuad6YPuTSUhntLHDuLEbFWE+ff2/XSZNdZG+LcbbIW5AXKg/WFIfYItIzVoHngHXZzA==}
@@ -4012,6 +4015,11 @@ packages:
     peerDependencies:
       typescript: '>=5.0.0'
 
+  vue3-count-to@1.1.2:
+    resolution: {integrity: sha512-C5AvlcGfyM4XvFqPDkni94rqGd5K/+RB+B4xv/1NQx3RrdC+GvXPFzeXW5hWL/jh8ehWLm4LITyK0eMKf4iJbg==}
+    peerDependencies:
+      vue: '>= 3 < 4'
+
   vue@3.5.13:
     resolution: {integrity: sha512-wmeiSMxkZCSc+PM2w2VRsOYAZC8GdipNFRTsLSfodVqI9mbejKeXEGr8SckuLnrQPGe3oJN5c3K0vpoU9q/wCQ==}
     peerDependencies:
@@ -5406,6 +5414,8 @@ snapshots:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
+
+  crypto-js@4.2.0: {}
 
   css-functions-list@3.2.3: {}
 
@@ -7841,6 +7851,8 @@ snapshots:
   ts-api-utils@2.0.1(typescript@5.6.3):
     dependencies:
       typescript: 5.6.3
+
+  tslib@2.3.0: {}
 
   tslib@2.8.1: {}
 
