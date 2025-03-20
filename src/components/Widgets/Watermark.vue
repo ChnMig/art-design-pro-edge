@@ -2,7 +2,7 @@
 <template>
   <div v-if="visible" class="watermark-container" :style="{ zIndex: zIndex }">
     <el-watermark
-      :content="content"
+      :content="effectiveContent"
       :font="{ fontSize: fontSize, color: fontColor }"
       :rotate="rotate"
       :gap="[gapX, gapY]"
@@ -14,7 +14,10 @@
 </template>
 
 <script setup lang="ts">
-  import { SystemInfo } from '@/config/setting'
+  import { useUserStore } from '@/store/modules/user'
+  import { computed } from 'vue'
+
+  const userStore = useUserStore()
 
   interface WatermarkProps {
     content?: string
@@ -29,9 +32,9 @@
     zIndex?: number
   }
 
-  // 定义组件属性，设置默认值
-  withDefaults(defineProps<WatermarkProps>(), {
-    content: SystemInfo.name,
+  // 修改这里，移除对 userStore 的引用
+  const props = withDefaults(defineProps<WatermarkProps>(), {
+    content: undefined, // 设置为 undefined
     visible: false,
     fontSize: 16,
     fontColor: 'rgba(128, 128, 128, 0.2)',
@@ -42,6 +45,11 @@
     offsetY: 50,
     zIndex: 3100
   })
+
+  // 添加计算属性处理默认值
+  const effectiveContent = computed(
+    () => props.content ?? userStore.getUserInfo.id + ' | ' + userStore.getUserInfo.name
+  )
 </script>
 
 <style lang="scss" scoped>

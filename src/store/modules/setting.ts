@@ -54,7 +54,7 @@ export const useSettingStore = defineStore('settingStore', {
     pageTransition: 'slide-right',
     menuOpen: true,
     refresh: false,
-    watermarkVisible: false,
+    watermarkVisible: true,
     customRadius: defaultCustomRadius,
     dualMenuShowText: false,
     containerWidth: ContainerWidthEnum.FULL

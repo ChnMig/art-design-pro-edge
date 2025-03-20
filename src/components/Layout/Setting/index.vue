@@ -271,10 +271,6 @@
             <span>自动关闭设置中心</span>
             <el-switch v-model="autoClose" @change="setAutoClose" />
           </div>
-          <div class="item">
-            <span>全局水印</span>
-            <el-switch v-model="watermarkVisible" @change="setWatermarkVisible" />
-          </div>
           <div class="item" style="display: flex">
             <span>菜单宽度</span>
             <el-input-number
@@ -390,7 +386,6 @@
   const isTopMenu = computed(() => store.menuType === MenuTypeEnum.TOP)
   const isTopLeftMenu = computed(() => store.menuType === MenuTypeEnum.TOP_LEFT)
   const isDualMenu = computed(() => store.menuType === MenuTypeEnum.DUAL_MENU)
-  const watermarkVisible = computed(() => store.watermarkVisible)
   const menuOpenWidth = ref(store.menuOpenWidth)
   const uniqueOpened = ref(true)
   const showMenuButton = ref(true)
@@ -645,11 +640,6 @@
       setSystemTheme(SystemThemeEnum.LIGHT)
     }
     store.setColorWeak()
-    isAutoClose()
-  }
-
-  const setWatermarkVisible = () => {
-    store.setWatermarkVisible(!watermarkVisible.value)
     isAutoClose()
   }
 
