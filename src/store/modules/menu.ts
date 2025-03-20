@@ -6,8 +6,7 @@ interface MenuState {
   menuWidth: string
 }
 
-export const useMenuStore = defineStore({
-  id: 'menuStore',
+export const useMenuStore = defineStore('menuStore', {
   state: (): MenuState => ({
     menuList: [],
     menuWidth: ''

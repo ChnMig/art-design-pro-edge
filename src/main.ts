@@ -15,10 +15,9 @@ import '@icons/system/iconfont.css'                 // 系统图标
 import '@styles/el-light.scss'                      // Element 自定义主题（亮色）
 import '@styles/el-dark.scss'                       // Element 自定义主题（暗色）
 import '@styles/dark.scss'                          // 系统主题
-import '@utils/console.ts'                          // 控制台输出内容
+
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import { setupGlobDirectives } from './directives'
-import language from './language'
 
 const app = createApp(App)
 initStore(app)
@@ -26,7 +25,8 @@ initRouter(app)
 registerGlobComp(app)
 setupGlobDirectives(app)
 
-app.use(language)
+// 导入路由权限控制模块
+import '@/router/modules/permission'
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)

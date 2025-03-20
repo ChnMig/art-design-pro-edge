@@ -12,8 +12,8 @@ export const SystemInfo = {
   name: 'Art Design Pro',
   // 登录默认帐号、密码
   login: {
-    username: '',
-    password: ''
+    username: 'admin',
+    password: '123456'
   }
 }
 

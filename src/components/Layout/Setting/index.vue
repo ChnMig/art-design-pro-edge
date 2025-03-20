@@ -16,7 +16,7 @@
         </div>
 
         <!-- 主题风格 -->
-        <p class="title">{{ $t('setting.theme.title') }}</p>
+        <p class="title">主题风格</p>
         <div class="theme-wrap">
           <div
             class="item"
@@ -44,14 +44,14 @@
                 ></div>
               </div>
             </div>
-            <p class="name">{{ $t(`setting.theme.list[${index}]`) }}</p>
+            <p class="name">{{ index === 0 ? '浅色' : index === 1 ? '深色' : '浅色' }}</p>
             <div class="active" v-show="item.theme === systemThemeMode"></div>
           </div>
         </div>
 
         <!-- 菜单布局 -->
         <div v-if="width > 1000">
-          <p class="title" style="margin-top: 30px">{{ $t('setting.menuType.title') }}</p>
+          <p class="title" style="margin-top: 30px">菜单布局</p>
           <div class="menu-type">
             <div class="menu-type-wrap">
               <!-- 左侧菜单 -->
@@ -72,7 +72,7 @@
                     <div class="row2"></div>
                   </div>
                 </div>
-                <span class="name">{{ $t('setting.menuType.list[0]') }}</span>
+                <span class="name">垂直</span>
               </div>
               <!-- 顶部菜单 -->
               <div class="item">
@@ -91,7 +91,7 @@
                     <div class="row2"></div>
                   </div>
                 </div>
-                <span class="name">{{ $t('setting.menuType.list[1]') }}</span>
+                <span class="name">水平</span>
               </div>
               <!-- 混合菜单 -->
               <div class="item">
@@ -115,7 +115,7 @@
                     </div>
                   </div>
                 </div>
-                <span class="name">{{ $t('setting.menuType.list[2]') }}</span>
+                <span class="name">混合</span>
               </div>
               <!-- 双列菜单 -->
               <div class="item" style="padding-right: 7px">
@@ -140,14 +140,14 @@
                     </div>
                   </div>
                 </div>
-                <span class="name">{{ $t('setting.menuType.list[3]') }}</span>
+                <span class="name">双列</span>
               </div>
             </div>
           </div>
         </div>
 
         <!-- 菜单风格 -->
-        <p class="title" style="margin-top: 20px">{{ $t('setting.menu.title') }}</p>
+        <p class="title" style="margin-top: 20px">菜单管理</p>
         <div class="menu-theme-wrap">
           <div>
             <div
@@ -190,7 +190,7 @@
         </div>
 
         <!-- 系统主题色 -->
-        <p class="title" style="margin-top: 30px">{{ $t('setting.color.title') }}</p>
+        <p class="title" style="margin-top: 30px">系统主题色</p>
         <div class="main-color-wrap">
           <div class="offset">
             <div
@@ -205,7 +205,7 @@
         </div>
 
         <!-- 盒子样式 -->
-        <p class="title" style="margin-top: 40px">{{ $t('setting.box.title') }}</p>
+        <p class="title" style="margin-top: 40px">盒子样式</p>
         <div class="box-style">
           <div v-if="false">{{ boxBorderMode }}</div>
           <div
@@ -213,19 +213,19 @@
             :class="{ 'is-active': boxBorderMode }"
             @click="switchBoxMode(false, 'border-mode')"
           >
-            {{ $t('setting.box.list[0]') }}
+            边框
           </div>
           <div
             class="button"
             :class="{ 'is-active': !boxBorderMode }"
             @click="switchBoxMode(false, 'shadow-mode')"
           >
-            {{ $t('setting.box.list[1]') }}
+            阴影
           </div>
         </div>
 
         <!-- 容器宽度 -->
-        <p class="title" style="margin-top: 50px">{{ $t('setting.container.title') }}</p>
+        <p class="title" style="margin-top: 50px">容器宽度</p>
         <div class="container-width">
           <div
             class="item"
@@ -235,56 +235,48 @@
             @click="setContainerWidth(item.value)"
           >
             <i class="iconfont-sys" v-html="item.icon"></i>
-            <span>{{ $t(item.label) }}</span>
+            <span>{{ item.label }}</span>
           </div>
         </div>
 
         <!-- 基础配置 -->
-        <p class="title" style="margin-top: 40px">{{ $t('setting.basics.title') }}</p>
+        <p class="title" style="margin-top: 40px">基础配置</p>
         <div class="basic-box">
           <div class="item">
-            <span>{{ $t('setting.basics.list[4]') }}</span>
+            <span>开启多标签栏</span>
             <el-switch v-model="showWorkTab" @change="showWorkTabFunc" />
           </div>
-          <div class="item" style="display: flex">
-            <span>{{ $t('setting.basics.list[0]') }}</span>
-            <el-switch v-model="uniqueOpened" @change="setUniqueOpened" />
-          </div>
           <div class="item">
-            <span>{{ $t('setting.basics.list[1]') }}</span>
+            <span>显示折叠侧边栏按钮</span>
             <el-switch v-model="showMenuButton" @change="setButton" />
           </div>
           <div class="item">
-            <span>{{ $t('setting.basics.list[2]') }}</span>
+            <span>显示重载页面按钮</span>
             <el-switch v-model="showRefreshButton" @change="setShowRefreshButton" />
           </div>
           <div class="item mobile-hide">
-            <span>{{ $t('setting.basics.list[3]') }}</span>
+            <span>显示全局面包屑导航</span>
             <el-switch v-model="showCrumbs" @change="setCrumbs" />
           </div>
 
           <div class="item">
-            <span>{{ $t('setting.basics.list[5]') }}</span>
-            <el-switch v-model="showLanguage" @change="setLanguage" />
-          </div>
-          <div class="item">
-            <span>{{ $t('setting.basics.list[6]') }}</span>
+            <span>显示顶部进度条</span>
             <el-switch v-model="showNprogress" @change="setNprogress" />
           </div>
           <div class="item">
-            <span>{{ $t('setting.basics.list[7]') }}</span>
+            <span>色弱模式</span>
             <el-switch v-model="colorWeak" @change="setColorWeak()" />
           </div>
           <div class="item">
-            <span>{{ $t('setting.basics.list[8]') }}</span>
+            <span>自动关闭设置中心</span>
             <el-switch v-model="autoClose" @change="setAutoClose" />
           </div>
           <div class="item">
-            <span>{{ $t('setting.basics.list[9]') }}</span>
+            <span>全局水印</span>
             <el-switch v-model="watermarkVisible" @change="setWatermarkVisible" />
           </div>
           <div class="item" style="display: flex">
-            <span>{{ $t('setting.basics.list[10]') }}</span>
+            <span>菜单宽度</span>
             <el-input-number
               :min="180"
               :max="320"
@@ -297,7 +289,7 @@
             />
           </div>
           <div class="item" style="display: flex">
-            <span>{{ $t('setting.basics.list[11]') }}</span>
+            <span>页面切换动画</span>
             <el-select
               v-model="pageTransition"
               placeholder="Select"
@@ -314,7 +306,7 @@
             </el-select>
           </div>
           <div class="item" style="display: flex">
-            <span>{{ $t('setting.basics.list[12]') }}</span>
+            <span>自定义圆角</span>
             <el-select
               v-model="customRadius"
               placeholder="Select"
@@ -342,9 +334,7 @@
   import { SystemThemeEnum, MenuThemeEnum, MenuTypeEnum } from '@/enums/appEnum'
   import mittBus from '@/utils/mittBus'
   import { useTheme } from '@/composables/useTheme'
-  import { useCeremony } from '@/composables/useCeremony'
   import { ContainerWidthEnum } from '@/enums/appEnum'
-  const { openFestival, cleanup } = useCeremony()
 
   const { setSystemTheme, setSystemAutoTheme, switchTheme } = useTheme()
 
@@ -408,7 +398,6 @@
   const showRefreshButton = ref(true)
   const showCrumbs = ref(true)
   let showWorkTab = ref(true)
-  const showLanguage = ref(true)
   const showNprogress = ref(true)
   const colorWeak = ref(false)
   const containerWidth = computed(() => store.containerWidth)
@@ -461,12 +450,12 @@
   const containerWidthList = [
     {
       value: ContainerWidthEnum.FULL,
-      label: 'setting.container.list[0]',
+      label: '铺满',
       icon: '&#xe694;'
     },
     {
       value: ContainerWidthEnum.BOXED,
-      label: 'setting.container.list[1]',
+      label: '定宽',
       icon: '&#xe6de;'
     }
   ]
@@ -485,13 +474,11 @@
     listenerSystemTheme()
     initUserSetting()
     initSystemTheme()
-    openFestival()
   })
 
   onUnmounted(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
     mediaQuery.removeEventListener('change', initSystemTheme)
-    cleanup()
   })
 
   //  如果主题色不在列表中，则设置为列表中的第一个元素
@@ -508,7 +495,6 @@
     showRefreshButton.value = store.showRefreshButton
     showCrumbs.value = store.showCrumbs
     showWorkTab.value = store.showWorkTab
-    showLanguage.value = store.showLanguage
     showNprogress.value = store.showNprogress
     colorWeak.value = store.colorWeak
     initColorWeak()
@@ -618,11 +604,6 @@
     isAutoClose()
   }
 
-  const setUniqueOpened = () => {
-    store['setUniqueOpened']()
-    isAutoClose()
-  }
-
   const setButton = () => {
     store['setButton']()
     isAutoClose()
@@ -635,11 +616,6 @@
 
   const setCrumbs = () => {
     store['setCrumbs']()
-    isAutoClose()
-  }
-
-  const setLanguage = () => {
-    store['setLanguage']()
     isAutoClose()
   }
 
@@ -707,7 +683,7 @@
 
     .el-drawer {
       // 背景滤镜
-      background: rgba($color: #fff, $alpha: 50%) !important;
+      background: rgb(255 255 255 / 50%) !important;
       box-shadow: 0 0 30px rgb(0 0 0 / 10%) !important;
 
       @include backdropBlur();
@@ -717,7 +693,7 @@
   .dark {
     .setting-modal {
       .el-drawer {
-        background: rgba($color: #000, $alpha: 50%) !important;
+        background: rgb(0 0 0 / 50%) !important;
       }
     }
   }

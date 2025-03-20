@@ -177,12 +177,6 @@
         }
       }
 
-      &.chat-button:hover {
-        i {
-          animation: shake 0.5s ease-in-out;
-        }
-      }
-
       &:hover {
         color: var(--main-color);
         background-color: rgba(var(--art-gray-200-rgb), 0.7);
@@ -367,24 +361,17 @@
 }
 
 @keyframes shake {
-  0% {
+  0%,
+  100% {
     transform: rotate(0);
   }
 
   25% {
-    transform: rotate(-5deg);
-  }
-
-  50% {
-    transform: rotate(5deg);
+    transform: rotate(-10deg);
   }
 
   75% {
-    transform: rotate(-5deg);
-  }
-
-  100% {
-    transform: rotate(0);
+    transform: rotate(10deg);
   }
 }
 

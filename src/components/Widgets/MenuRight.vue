@@ -44,6 +44,8 @@
 </template>
 
 <script setup lang="ts">
+  // 🔔 该组件用于实现右键菜单功能
+
   import { ref, computed } from 'vue'
   import type { CSSProperties } from 'vue'
 

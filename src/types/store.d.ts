@@ -43,7 +43,6 @@ export interface Setting {
   showCrumbs: boolean // 是否显示全局面包屑
   autoClose: boolean // 设置后是否自动关闭窗口
   showWorkTab: boolean // 是否显示多标签
-  showLanguage: boolean // 是否显示多语言选择
   showNprogress: boolean // 是否显示顶部进度条
   themeModel: string // 主题模式
 }

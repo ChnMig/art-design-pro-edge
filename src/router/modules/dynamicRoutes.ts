@@ -101,7 +101,7 @@ function handleLayoutRoute(
   route: MenuListType,
   component: string | undefined
 ): void {
-  converted.component = () => import('@/views/index/index.vue')
+  converted.component = () => import('@/views/layout/index.vue')
   converted.path = `/${(route.path?.split('/')[1] || '').trim()}`
   converted.name = ''
 

@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
-import { LanguageEnum } from '@/enums/appEnum'
-import { router, setPageTitle } from '@/router'
+import { router } from '@/router'
 import { UserInfo } from '@/types/store'
 import { useSettingStore } from './setting'
 import { useWorktabStore } from './worktab'
@@ -8,7 +7,6 @@ import { getSysStorage } from '@/utils/storage'
 import { MenuListType } from '@/types/menu'
 
 interface UserState {
-  language: LanguageEnum // 语言
   isLogin: boolean // 是否登录
   isLock: boolean // 是否锁屏
   lockPassword: string // 锁屏密码
@@ -18,10 +16,8 @@ interface UserState {
   refreshToken: string // 添加刷新令牌
 }
 
-export const useUserStore = defineStore({
-  id: 'userStore',
+export const useUserStore = defineStore('userStore', {
   state: (): UserState => ({
-    language: LanguageEnum.ZH,
     isLogin: false,
     isLock: false,
     lockPassword: '',
@@ -31,14 +27,14 @@ export const useUserStore = defineStore({
     refreshToken: ''
   }),
   getters: {
+    getToken(): string {
+      return this.accessToken
+    },
     getUserInfo(): Partial<UserInfo> {
       return this.info
     },
     getSettingState() {
       return useSettingStore().$state
-    },
-    getToken(): string {
-      return this.accessToken
     },
     getWorktabState() {
       return useWorktabStore().$state
@@ -50,13 +46,11 @@ export const useUserStore = defineStore({
 
       if (sys) {
         sys = JSON.parse(sys)
-        const { info, isLogin, language, searchHistory, isLock, lockPassword, refreshToken } =
-          sys.user
+        const { info, isLogin, searchHistory, isLock, lockPassword, refreshToken } = sys.user
 
         this.info = info || {}
         this.isLogin = isLogin || false
         this.isLock = isLock || false
-        this.language = language || LanguageEnum.ZH
         this.searchHistory = searchHistory || []
         this.lockPassword = lockPassword || ''
         this.refreshToken = refreshToken || ''
@@ -69,7 +63,6 @@ export const useUserStore = defineStore({
         user: {
           info: this.info,
           isLogin: this.isLogin,
-          language: this.language,
           isLock: this.isLock,
           lockPassword: this.lockPassword,
           searchHistory: this.searchHistory,
@@ -84,10 +77,6 @@ export const useUserStore = defineStore({
     },
     setLoginStatus(isLogin: boolean) {
       this.isLogin = isLogin
-    },
-    setLanguage(lang: LanguageEnum) {
-      setPageTitle(router.currentRoute.value)
-      this.language = lang
     },
     setSearchHistory(list: Array<MenuListType>) {
       this.searchHistory = list

@@ -4,7 +4,6 @@ import { ThemeList, ElementPlusTheme, DarkMenuStyles, SystemSetting } from '@/co
 import { SystemThemeEnum, MenuThemeEnum, MenuTypeEnum, ContainerWidthEnum } from '@/enums/appEnum'
 import { colourBlend, handleElementThemeColor } from '@/utils/utils'
 import { getSysStorage } from '@/utils/storage'
-import { useCeremony } from '@/composables/useCeremony'
 
 const { defaultMenuWidth, defaultCustomRadius } = SystemSetting
 
@@ -22,7 +21,6 @@ export interface SettingState {
   showCrumbs: boolean // 是否显示全局面包屑
   autoClose: boolean // 设置后是否自动关闭窗口
   showWorkTab: boolean // 是否显示多标签
-  showLanguage: boolean // 是否显示多语言选择
   showNprogress: boolean // 是否显示顶部进度条
   colorWeak: boolean // 是否显示顶部进度条
   showSettingGuide: boolean // 是否显示设置引导
@@ -31,15 +29,11 @@ export interface SettingState {
   refresh: boolean
   watermarkVisible: boolean // 水印是否显示
   customRadius: string // 自定义圆角
-  holidayFireworksLoaded: boolean // 是否加载完礼花
-  showFestivalText: boolean // 是否显示节日文本
-  festivalDate: string // 节日日期
   dualMenuShowText: boolean // 双列菜单是否显示文本
   containerWidth: ContainerWidthEnum // 容器宽度
 }
 
-export const useSettingStore = defineStore({
-  id: 'settingStore',
+export const useSettingStore = defineStore('settingStore', {
   state: (): SettingState => ({
     menuType: MenuTypeEnum.LEFT,
     menuOpenWidth: defaultMenuWidth,
@@ -54,7 +48,6 @@ export const useSettingStore = defineStore({
     showCrumbs: true,
     autoClose: false,
     showWorkTab: true,
-    showLanguage: true,
     showNprogress: true,
     colorWeak: false,
     showSettingGuide: true,
@@ -63,9 +56,6 @@ export const useSettingStore = defineStore({
     refresh: false,
     watermarkVisible: false,
     customRadius: defaultCustomRadius,
-    holidayFireworksLoaded: false,
-    showFestivalText: false,
-    festivalDate: '',
     dualMenuShowText: false,
     containerWidth: ContainerWidthEnum.FULL
   }),
@@ -89,10 +79,6 @@ export const useSettingStore = defineStore({
     // 获取自定义圆角
     getCustomRadius(): string {
       return this.customRadius + 'rem' || defaultCustomRadius + 'rem'
-    },
-    // 节日礼花否显示
-    isShowFireworks(): boolean {
-      return this.festivalDate === useCeremony().currentFestivalData.value?.date ? false : true
     }
   },
   actions: {
@@ -117,7 +103,6 @@ export const useSettingStore = defineStore({
         this.showCrumbs = setting.showCrumbs
         this.autoClose = setting.autoClose
         this.showWorkTab = setting.showWorkTab
-        this.showLanguage = setting.showLanguage
         this.showNprogress = setting.showNprogress
         this.colorWeak = setting.colorWeak
         this.showSettingGuide = setting.showSettingGuide
@@ -125,9 +110,6 @@ export const useSettingStore = defineStore({
         this.menuOpen = setting.menuOpen
         this.watermarkVisible = setting.watermarkVisible
         this.customRadius = setting.customRadius || defaultCustomRadius
-        this.holidayFireworksLoaded = setting.holidayFireworksLoaded
-        this.showFestivalText = setting.showFestivalText
-        this.festivalDate = setting.festivalDate
         this.dualMenuShowText = setting.dualMenuShowText
         this.setCustomRadius(this.customRadius)
         setElementThemeColor(setting.systemThemeColor)
@@ -186,10 +168,6 @@ export const useSettingStore = defineStore({
     setWorkTab(show: boolean) {
       this.showWorkTab = show
     },
-    // 是否显示多语言选择
-    setLanguage() {
-      this.showLanguage = !this.showLanguage
-    },
     // 是否显示顶部进度条
     setNprogress() {
       this.showNprogress = !this.showNprogress
@@ -227,18 +205,7 @@ export const useSettingStore = defineStore({
       this.customRadius = radius
       document.documentElement.style.setProperty('--custom-radius', `${radius}rem`)
     },
-    // 设置是否加载完礼花
-    setholidayFireworksLoaded(isLoad: boolean) {
-      this.holidayFireworksLoaded = isLoad
-    },
-    // 设置是否显示节日文本
-    setShowFestivalText(show: boolean) {
-      this.showFestivalText = show
-    },
-    // 设置节日日期
-    setFestivalDate(date: string) {
-      this.festivalDate = date
-    },
+
     // 设置双列菜单是否显示文本
     setDualMenuShowText(show: boolean) {
       this.dualMenuShowText = show

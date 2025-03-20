@@ -25,8 +25,7 @@
             <i class="iconfont-sys" @click="reload()"> &#xe6b3; </i>
           </div>
         </div>
-        <!-- 快速入口 -->
-        <fast-enter v-if="width >= 1200" />
+
         <!-- 面包屑 -->
         <breadcrumb
           v-if="(showCrumbs && isLeftMenu) || (showCrumbs && isDualMenu)"
@@ -46,7 +45,7 @@
           <div class="search-input" @click="openSearchDialog">
             <div class="left">
               <i class="iconfont-sys">&#xe710;</i>
-              <span>{{ $t('topBar.search.title') }}</span>
+              <span>搜索</span>
             </div>
             <div class="search-keydown">
               <i class="iconfont-sys" v-if="isWindows">&#xeeac;</i>
@@ -65,41 +64,7 @@
             <i class="iconfont-sys">{{ isFullscreen ? '&#xe62d;' : '&#xe8ce;' }}</i>
           </div>
         </div>
-        <!-- 通知 -->
-        <div class="btn-box notice-btn" @click="visibleNotice">
-          <div class="btn notice-button">
-            <i class="iconfont-sys notice-btn">&#xe6c2;</i>
-            <span class="count notice-btn"></span>
-          </div>
-        </div>
-        <!-- 聊天 -->
-        <div class="btn-box chat-btn" @click="openChat">
-          <div class="btn chat-button">
-            <i class="iconfont-sys">&#xe89a;</i>
-            <span class="dot"></span>
-          </div>
-        </div>
-        <!-- 语言 -->
-        <div class="btn-box" v-if="showLanguage">
-          <el-dropdown @command="changeLanguage" popper-class="langDropDownStyle">
-            <div class="btn language-btn">
-              <i class="iconfont-sys">&#xe611;</i>
-            </div>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <div v-for="item in languageOptions" :key="item.value" class="lang-btn-item">
-                  <el-dropdown-item
-                    :command="item.value"
-                    :class="{ 'is-selected': locale === item.value }"
-                  >
-                    <span class="menu-txt">{{ item.label }}</span>
-                    <i v-if="locale === item.value" class="iconfont-sys">&#xe621;</i>
-                  </el-dropdown-item>
-                </div>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </div>
+
         <!-- 设置 -->
         <div class="btn-box" @click="openSetting">
           <el-popover :visible="showSettingGuide" placement="bottom-start" :width="190" :offset="0">
@@ -151,24 +116,14 @@
                 <ul class="user-menu">
                   <li @click="goPage('/user/user')">
                     <i class="menu-icon iconfont-sys">&#xe734;</i>
-                    <span class="menu-txt">{{ $t('topBar.user.userCenter') }}</span>
-                  </li>
-                  <li @click="toDocs()">
-                    <i class="menu-icon iconfont-sys" style="font-size: 15px">&#xe828;</i>
-                    <span class="menu-txt">{{ $t('topBar.user.docs') }}</span>
-                  </li>
-                  <li @click="toGithub()">
-                    <i class="menu-icon iconfont-sys">&#xe8d6;</i>
-                    <span class="menu-txt">{{ $t('topBar.user.github') }}</span>
+                    <span class="menu-txt">个人中心</span>
                   </li>
                   <li @click="lockScreen()">
                     <i class="menu-icon iconfont-sys">&#xe817;</i>
-                    <span class="menu-txt">{{ $t('topBar.user.lockScreen') }}</span>
+                    <span class="menu-txt">锁定屏幕</span>
                   </li>
                   <div class="line"></div>
-                  <div class="logout-btn" @click="loginOut">
-                    {{ $t('topBar.user.logout') }}
-                  </div>
+                  <div class="logout-btn" @click="loginOut"> 退出登录 </div>
                 </ul>
               </div>
             </template>
@@ -177,28 +132,23 @@
       </div>
     </div>
     <slot></slot>
-
-    <Notice v-model:value="showNotice" ref="notice" />
   </div>
 </template>
 
 <script setup lang="ts">
   import Breadcrumb from '../Breadcrumb/index.vue'
-  import Notice from '../Notice/index.vue'
   import MixedMenu from '../MixedMenu/index.vue'
-  import { LanguageEnum, MenuTypeEnum, MenuWidth, SystemThemeEnum } from '@/enums/appEnum'
+  import { MenuTypeEnum, MenuWidth, SystemThemeEnum } from '@/enums/appEnum'
   import { useSettingStore } from '@/store/modules/setting'
   import { useUserStore } from '@/store/modules/user'
   import { useFullscreen } from '@vueuse/core'
   import { ElMessageBox } from 'element-plus'
-  import { HOME_PAGE } from '@/router'
-  import { useI18n } from 'vue-i18n'
+  import { HOME_PAGE } from '@/router/modules/routesAlias'
   import mittBus from '@/utils/mittBus'
   import { useMenuStore } from '@/store/modules/menu'
   import { SystemInfo } from '@/config/setting'
 
   const isWindows = navigator.userAgent.includes('Windows')
-  const { locale } = useI18n()
 
   const settingStore = useSettingStore()
   const userStore = useUserStore()
@@ -206,13 +156,10 @@
 
   const showMenuButton = computed(() => settingStore.showMenuButton)
   const showRefreshButton = computed(() => settingStore.showRefreshButton)
-  const showLanguage = computed(() => settingStore.showLanguage)
   const menuOpen = computed(() => settingStore.menuOpen)
   const showCrumbs = computed(() => settingStore.showCrumbs)
   const userInfo = computed(() => userStore.getUserInfo)
-  const language = computed(() => userStore.language)
   const showNotice = ref(false)
-  const notice = ref(null)
   const systemThemeColor = computed(() => settingStore.systemThemeColor)
   const showSettingGuide = computed(() => settingStore.showSettingGuide)
   const userMenuPopover = ref()
@@ -223,7 +170,6 @@
   const isTopMenu = computed(() => menuType.value === MenuTypeEnum.TOP)
   const isTopLeftMenu = computed(() => menuType.value === MenuTypeEnum.TOP_LEFT)
   const isDark = computed(() => settingStore.isDark)
-  const { t } = useI18n()
 
   const { width } = useWindowSize()
 
@@ -232,7 +178,6 @@
   })
 
   onMounted(() => {
-    initLanguage()
     document.addEventListener('click', bodyCloseNotice)
   })
 
@@ -270,14 +215,6 @@
     router.push(path)
   }
 
-  const toDocs = () => {
-    window.open('https://www.lingchen.kim/art-design-pro/docs')
-  }
-
-  const toGithub = () => {
-    window.open('https://github.com/Daymychen/art-design-pro')
-  }
-
   const toHome = () => {
     router.push(HOME_PAGE)
   }
@@ -285,9 +222,9 @@
   const loginOut = () => {
     closeUserMenu()
     setTimeout(() => {
-      ElMessageBox.confirm(t('common.logOutTips'), t('common.tips'), {
-        confirmButtonText: t('common.confirm'),
-        cancelButtonText: t('common.cancel'),
+      ElMessageBox.confirm('您是否要退出登录?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
         customClass: 'login-out-dialog'
       }).then(() => {
         userStore.logOut()
@@ -299,17 +236,6 @@
     setTimeout(() => {
       settingStore.reload()
     }, time)
-  }
-
-  const initLanguage = () => {
-    locale.value = language.value
-  }
-
-  const changeLanguage = (lang: LanguageEnum) => {
-    if (locale.value === lang) return
-    locale.value = lang
-    userStore.setLanguage(lang)
-    reload(50)
   }
 
   const openSetting = () => {
@@ -341,18 +267,6 @@
     }
   }
 
-  const visibleNotice = () => {
-    showNotice.value = !showNotice.value
-  }
-
-  const openChat = () => {
-    mittBus.emit('openChat')
-  }
-
-  const lockScreen = () => {
-    mittBus.emit('openLockScreen')
-  }
-
   const closeUserMenu = () => {
     setTimeout(() => {
       userMenuPopover.value.hide()
@@ -362,20 +276,15 @@
   // 切换主题
   import { useTheme } from '@/composables/useTheme'
 
+  const lockScreen = () => {
+    console.log('lockScreen')
+    mittBus.emit('openLockScreen')
+  }
+
   const toggleTheme = () => {
     let { LIGHT, DARK } = SystemThemeEnum
     useTheme().switchTheme(useSettingStore().systemThemeType === LIGHT ? DARK : LIGHT)
   }
-
-  interface LanguageOption {
-    label: string
-    value: LanguageEnum
-  }
-
-  const languageOptions: LanguageOption[] = [
-    { label: '简体中文', value: LanguageEnum.ZH },
-    { label: 'English', value: LanguageEnum.EN }
-  ]
 </script>
 
 <style lang="scss" scoped>

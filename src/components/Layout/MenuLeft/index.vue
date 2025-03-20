@@ -12,7 +12,7 @@
             <el-tooltip
               class="box-item"
               effect="dark"
-              :content="$t(menu.meta.title)"
+              content="菜单风格"
               placement="right"
               :offset="25"
               :hide-after="0"
@@ -37,9 +37,7 @@
                     marginBottom: settingStore.dualMenuShowText ? '5px' : '0'
                   }"
                 ></i>
-                <span v-if="settingStore.dualMenuShowText">
-                  {{ $t(menu.meta.title) }}
-                </span>
+                <span v-if="settingStore.dualMenuShowText">菜单风格</span>
               </div>
             </el-tooltip>
           </li>
@@ -97,7 +95,7 @@
 
 <script setup lang="ts">
   import Submenu from '../Submenu/submenu.vue'
-  import { HOME_PAGE } from '@/router/index'
+  import { HOME_PAGE } from '@/router/modules/routesAlias'
   import { useSettingStore } from '@/store/modules/setting'
   import { SystemInfo } from '@/config/setting'
   import { MenuTypeEnum, MenuWidth } from '@/enums/appEnum'

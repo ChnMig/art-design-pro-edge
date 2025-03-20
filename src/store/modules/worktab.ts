@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { WorkTabType } from '@/types/store'
-import { HOME_PAGE } from '@/router/index'
+import { HOME_PAGE } from '@/router/modules/routesAlias'
 import { router } from '@/router'
 import { getSysStorage } from '@/utils/storage'
 
@@ -10,8 +10,7 @@ interface WorktabState {
   keepAliveExclude: string[]
 }
 
-export const useWorktabStore = defineStore({
-  id: 'worktabStore',
+export const useWorktabStore = defineStore('worktabStore', {
   state: (): WorktabState => ({
     current: {},
     opened: [],

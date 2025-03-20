@@ -36,24 +36,24 @@
               command="left"
               :disabled="activeTabIndex === 0 || activeTabIndex === 1"
             >
-              <span>{{ $t('worktab.btn[0]') }}</span>
+              <span>关闭左侧</span>
             </el-dropdown-item>
             <el-dropdown-item
               :icon="ArrowRight"
               command="right"
               :disabled="activeTabIndex === list.length - 1"
             >
-              <span>{{ $t('worktab.btn[1]') }}</span>
+              <span>关闭右侧</span>
             </el-dropdown-item>
             <el-dropdown-item
               :icon="Close"
               command="other"
               :disabled="list.length === 1 || (list.length === 2 && activeTabIndex === 1)"
             >
-              <span>{{ $t('worktab.btn[2]') }}</span>
+              <span>关闭其他</span>
             </el-dropdown-item>
             <el-dropdown-item :icon="CircleClose" command="all" :disabled="list.length === 1">
-              <span>{{ $t('worktab.btn[3]') }}</span>
+              <span>关闭全部</span>
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
@@ -67,19 +67,15 @@
   // 导入必要的组件和工具
   import { computed, onMounted, ref, watch } from 'vue'
   import { LocationQueryRaw, useRoute, useRouter } from 'vue-router'
-  import { useI18n } from 'vue-i18n'
   import { ArrowDown, ArrowLeft, ArrowRight, Close, CircleClose } from '@element-plus/icons-vue'
 
   import { useWorktabStore } from '@/store/modules/worktab'
-  import { useUserStore } from '@/store/modules/user'
   import { formatMenuTitle } from '@/utils/menu'
 
   import type { MenuItemType } from '@/components/Widgets/MenuRight.vue'
   import { WorkTabType } from '@/types/store'
 
-  const { t } = useI18n()
   const store = useWorktabStore()
-  const userStore = useUserStore()
   const route = useRoute()
   const router = useRouter()
   const { currentRoute } = router
@@ -98,6 +94,7 @@
 
   // 打开的标签页列表
   const list = computed(() => store.opened)
+
   // 当前激活的标签页
   const activeTab = computed(() => currentRoute.value.path)
   // 获取当前激活 tab 的 index
@@ -114,25 +111,25 @@
     return [
       {
         key: 'left',
-        label: t('worktab.btn[0]'),
+        label: '关闭左侧',
         icon: 'ArrowLeft',
         disabled: isFirstOrSecondTab
       },
       {
         key: 'right',
-        label: t('worktab.btn[1]'),
+        label: '关闭右侧',
         icon: 'ArrowRight',
         disabled: isLastTab
       },
       {
         key: 'other',
-        label: t('worktab.btn[2]'),
+        label: '关闭其他',
         icon: 'Close',
         disabled: isOneTab || disableOther
       },
       {
         key: 'all',
-        label: t('worktab.btn[3]'),
+        label: '关闭全部',
         icon: 'CircleClose',
         disabled: isOneTab
       }
@@ -193,17 +190,6 @@
     () => {
       setTransition()
       worktabAutoPosition()
-    }
-  )
-
-  // 监听语言变化，重置标签页位置
-  watch(
-    () => userStore.language,
-    () => {
-      translateX.value = 0
-      nextTick(() => {
-        worktabAutoPosition()
-      })
     }
   )
 
