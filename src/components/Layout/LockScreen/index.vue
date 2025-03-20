@@ -145,7 +145,6 @@
   })
 
   onMounted(() => {
-    console.log('openLockScreen111')
     mittBus.on('openLockScreen', openLockScreen)
     document.addEventListener('keydown', handleKeydown)
 

@@ -114,7 +114,7 @@
                   </div>
                 </div>
                 <ul class="user-menu">
-                  <li @click="goPage('/user/user')">
+                  <li @click="goPage('/system/myInfo')">
                     <i class="menu-icon iconfont-sys">&#xe734;</i>
                     <span class="menu-txt">个人中心</span>
                   </li>

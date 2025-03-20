@@ -2,8 +2,6 @@
 // import { BaseResult } from '@/types/axios'
 import { SystemInfo } from '@/config/setting'
 import { BaseResult } from '@/types/axios'
-import { UserInfo } from '@/types/store'
-import avatar from '@imgs/user/avatar.png'
 
 export class UserService {
   // 模拟登录接口
@@ -27,23 +25,6 @@ export class UserService {
           data: null
         })
       }
-    })
-  }
-
-  // 获取用户信息
-  static getUserInfo(): Promise<BaseResult<UserInfo>> {
-    return new Promise((resolve) => {
-      resolve({
-        code: 200,
-        message: '获取用户信息成功',
-        data: {
-          id: 1,
-          name: '张三',
-          username: 'John Snow',
-          avatar: avatar,
-          email: 'art.design@gmail.com'
-        }
-      })
     })
   }
 }

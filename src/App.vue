@@ -7,7 +7,7 @@
 <script setup lang="ts">
   import { useUserStore } from './store/modules/user'
   import { initState, saveUserData } from './utils/storage'
-  import { UserService } from './api/usersApi'
+  import { getUserInfo } from './api/system/api'
   import { ApiStatus } from './utils/http/status'
 
   const userStore = useUserStore()
@@ -21,15 +21,15 @@
     initState()
     saveUserData()
     setBodyClass(false)
-    getUserInfo()
+    getUserInfoData()
   })
 
   // 获取用户信息
-  const getUserInfo = async () => {
+  const getUserInfoData = async () => {
     if (userStore.isLogin) {
-      const userRes = await UserService.getUserInfo()
-      if (userRes.code === ApiStatus.success) {
-        userStore.setUserInfo(userRes.data)
+      const res = await getUserInfo()
+      if (res.code === ApiStatus.SUCCESS) {
+        userStore.setUserInfo(res.data)
       }
     }
   }
