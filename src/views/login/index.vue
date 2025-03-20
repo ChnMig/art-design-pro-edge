@@ -10,24 +10,6 @@
             {{ isDark ? '&#xe6b5;' : '&#xe725;' }}
           </i>
         </div>
-        <el-dropdown @command="changeLanguage" popper-class="langDropDownStyle">
-          <div class="btn language-btn">
-            <i class="iconfont-sys icon-language">&#xe611;</i>
-          </div>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <div v-for="lang in languageOptions" :key="lang.value" class="lang-btn-item">
-                <el-dropdown-item
-                  :command="lang.value"
-                  :class="{ 'is-selected': locale === lang.value }"
-                >
-                  <span class="menu-txt">{{ lang.label }}</span>
-                  <i v-if="locale === lang.value" class="iconfont-sys icon-check">&#xe621;</i>
-                </el-dropdown-item>
-              </div>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
       </div>
       <div class="header">
         <svg class="icon" aria-hidden="true">
@@ -37,8 +19,8 @@
       </div>
       <div class="login-wrap">
         <div class="form">
-          <h3 class="title">{{ $t('login.title') }}</h3>
-          <p class="sub-title">{{ $t('login.subTitle') }}</p>
+          <h3 class="title">欢迎回来</h3>
+          <p class="sub-title">输入您的账号和密码登录</p>
           <el-form
             ref="formRef"
             :model="formData"
@@ -47,15 +29,11 @@
             style="margin-top: 25px"
           >
             <el-form-item prop="username">
-              <el-input
-                :placeholder="$t('login.placeholder[0]')"
-                size="large"
-                v-model.trim="formData.username"
-              />
+              <el-input placeholder="请输入账号" size="large" v-model.trim="formData.username" />
             </el-form-item>
             <el-form-item prop="password">
               <el-input
-                :placeholder="$t('login.placeholder[1]')"
+                placeholder="请输入密码"
                 size="large"
                 v-model.trim="formData.password"
                 type="password"
@@ -67,7 +45,7 @@
               <el-row :gutter="5">
                 <el-col :span="16">
                   <el-input
-                    :placeholder="$t('login.placeholder[2]')"
+                    placeholder="请输入验证码"
                     size="large"
                     v-model.trim="formData.captcha"
                   />
@@ -78,10 +56,8 @@
               </el-row>
             </el-form-item>
             <div class="forget-password">
-              <el-checkbox v-model="formData.rememberPassword">{{
-                $t('login.rememberPwd')
-              }}</el-checkbox>
-              <router-link to="/forget-password">{{ $t('login.forgetPwd') }}</router-link>
+              <el-checkbox v-model="formData.rememberPassword">记住密码</el-checkbox>
+              <router-link to="/forget-password">忘记密码</router-link>
             </div>
 
             <div style="margin-top: 30px">
@@ -91,9 +67,8 @@
                 type="primary"
                 @click="handleSubmit"
                 :loading="loading"
-                v-ripple
               >
-                {{ $t('login.btnText') }}
+                登录
               </el-button>
             </div>
           </el-form>
@@ -108,11 +83,9 @@
   import { SystemInfo } from '@/config/setting'
   import { ElMessage, ElNotification } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
-  import { HOME_PAGE } from '@/router'
+  import { HOME_PAGE } from '@/router/modules/routesAlias'
   import { ApiStatus } from '@/utils/http/status'
-  import { LanguageEnum, SystemThemeEnum } from '@/enums/appEnum'
-  import { useI18n } from 'vue-i18n'
-  const { t } = useI18n()
+  import { SystemThemeEnum } from '@/enums/appEnum'
   import { useSettingStore } from '@/store/modules/setting'
   import type { FormInstance, FormRules } from 'element-plus'
   import { onMounted, ref, reactive, computed } from 'vue'
@@ -131,9 +104,9 @@
   })
 
   const rules = computed<FormRules>(() => ({
-    username: [{ required: true, message: t('login.placeholder[0]'), trigger: 'blur' }],
-    password: [{ required: true, message: t('login.placeholder[1]'), trigger: 'blur' }],
-    captcha: [{ required: true, message: t('login.placeholder[2]'), trigger: 'blur' }]
+    username: [{ required: true, message: '请输入账号', trigger: 'blur' }],
+    password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+    captcha: [{ required: true, message: '请输入验证码', trigger: 'blur' }]
   }))
 
   const loading = ref(false)
@@ -199,22 +172,14 @@
   const showLoginSuccessNotice = () => {
     setTimeout(() => {
       ElNotification({
-        title: t('login.success.title'),
+        title: '登录成功',
         type: 'success',
-        showClose: false,
+        showClose: true,
         duration: 2500,
         zIndex: 10000,
-        message: `${t('login.success.message')}, ${systemName}!`
+        message: `欢迎回来, ${systemName}!`
       })
     }, 300)
-  }
-  // 切换语言
-  const { locale } = useI18n()
-
-  const changeLanguage = (lang: LanguageEnum) => {
-    if (locale.value === lang) return
-    locale.value = lang
-    userStore.setLanguage(lang)
   }
 
   // 切换主题
@@ -224,12 +189,6 @@
     let { LIGHT, DARK } = SystemThemeEnum
     useTheme().switchTheme(useSettingStore().systemThemeType === LIGHT ? DARK : LIGHT)
   }
-
-  // 语言配置
-  const languageOptions = [
-    { value: LanguageEnum.ZH, label: '简体中文' },
-    { value: LanguageEnum.EN, label: 'English' }
-  ]
 
   const refreshCaptcha = async () => {
     try {

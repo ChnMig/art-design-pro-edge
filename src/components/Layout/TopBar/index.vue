@@ -219,6 +219,11 @@
     router.push(HOME_PAGE)
   }
 
+  const lockScreen = () => {
+    console.log('lockScreen')
+    mittBus.emit('openLockScreen')
+  }
+
   const loginOut = () => {
     closeUserMenu()
     setTimeout(() => {
@@ -275,11 +280,6 @@
 
   // 切换主题
   import { useTheme } from '@/composables/useTheme'
-
-  const lockScreen = () => {
-    console.log('lockScreen')
-    mittBus.emit('openLockScreen')
-  }
 
   const toggleTheme = () => {
     let { LIGHT, DARK } = SystemThemeEnum

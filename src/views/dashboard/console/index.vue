@@ -7,12 +7,6 @@
       <SalesOverview></SalesOverview>
     </div>
 
-    <div class="column column3">
-      <NewUser></NewUser>
-      <Dynamic></Dynamic>
-      <TodoList></TodoList>
-    </div>
-
     <div class="bottom-wrap art-custom-card">
       <div>
         <h2 class="box-title">关于项目</h2>
@@ -53,10 +47,7 @@
   import CardList from './widget/CardList.vue'
   import ActiveUser from './widget/ActiveUser.vue'
   import SalesOverview from './widget/SalesOverview.vue'
-  import NewUser from './widget/NewUser.vue'
-  import Dynamic from './widget/Dynamic.vue'
   import { SystemInfo } from '@/config/setting'
-  import TodoList from './widget/TodoList.vue'
   import { scrollToTop } from '@/utils/utils'
   import { useSettingStore } from '@/store/modules/setting'
 
