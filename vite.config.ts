@@ -152,7 +152,6 @@ export default ({ mode }) => {
         'pinia',
         'axios',
         '@vueuse/core',
-        'echarts',
         '@wangeditor/editor',
         '@wangeditor/editor-for-vue',
         'vue-i18n',
