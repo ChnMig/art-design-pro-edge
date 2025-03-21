@@ -12,15 +12,11 @@
       </div>
       <div class="login-wrap">
         <div class="form">
-          <h3 class="title">{{ $t('forgetPassword.title') }}</h3>
-          <p class="sub-title">{{ $t('forgetPassword.subTitle') }}</p>
+          <h3 class="title">忘记密码？</h3>
+          <p class="sub-title">输入您的手机号码来重置您的密码</p>
           <div class="input-wrap">
             <span class="input-label" v-if="showInputLabel">账号</span>
-            <el-input
-              :placeholder="$t('forgetPassword.placeholder')"
-              size="large"
-              v-model.trim="username"
-            />
+            <el-input placeholder="请输入您的手机号" size="large" v-model.trim="username" />
           </div>
 
           <div style="margin-top: 15px">
@@ -32,13 +28,13 @@
               :loading="loading"
               v-ripple
             >
-              {{ $t('forgetPassword.submitBtnText') }}
+              提交
             </el-button>
           </div>
 
           <div style="margin-top: 15px">
             <el-button style="width: 100%; height: 46px" size="large" plain @click="toLogin">
-              {{ $t('forgetPassword.backBtnText') }}
+              返回
             </el-button>
           </div>
         </div>
