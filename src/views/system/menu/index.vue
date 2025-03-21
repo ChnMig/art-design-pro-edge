@@ -175,7 +175,7 @@
   import { IconTypeEnum } from '@/enums/appEnum'
   import { formatMenuTitle } from '@/utils/menu'
   import { getAllMenu } from '@/api/system/api'
-  import { ApiStatus } from '@/utils/http/status'
+  import { ApiStatus } from '@/api/status'
 
   const tableData = ref<any[]>([])
 

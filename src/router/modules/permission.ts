@@ -9,12 +9,17 @@ import 'nprogress/nprogress.css'
 
 import { setPageTitle } from '@/utils/setPageTitle'
 import { useUserStore } from '@/store/modules/user'
-import { menuService } from '@/api/menuApi'
+import { getUserMenu } from '@/api/system/api'
+import { ApiStatus } from '@/api/status'
+import { MenuListType } from '@/types/menu'
+import { processRoute } from '@/utils/menu'
+import { ElLoading, ElMessage } from 'element-plus'
 import { useMenuStore } from '@/store/modules/menu'
 import { useSettingStore } from '@/store/modules/setting'
 import { useTheme } from '@/composables/useTheme'
 import { setWorktab } from '@/utils/worktab'
 import { registerAsyncRoutes } from './dynamicRoutes'
+import { fourDotsSpinnerSvg } from '@/assets/svg/loading'
 
 /** 顶部进度条配置 */
 NProgress.configure({
@@ -90,9 +95,27 @@ router.afterEach(() => {
 async function getMenuData(): Promise<void> {
   try {
     // 获取菜单列表
-    const { menuList, closeLoading } = await menuService.getMenuList()
+    console.log('获取用户菜单...')
+    const asyncRoutesData = await getUserMenu()
+    if (asyncRoutesData.code === ApiStatus.success) {
+      console.log('获取用户菜单成功:', asyncRoutesData.data)
+    } else {
+      ElMessage.error(asyncRoutesData.message)
+      console.error('获取用户菜单失败:', asyncRoutesData.message)
+      asyncRoutesData.data = []
+    }
+    // 获取到的菜单数据
+    const menuRes = asyncRoutesData.data
+    // 处理后的菜单数据
+    const menuList: MenuListType[] = menuRes.map((route: MenuListType) => processRoute(route))
+    const loading = ElLoading.service({
+      lock: true,
+      background: 'rgba(0, 0, 0, 0)',
+      svg: fourDotsSpinnerSvg,
+      svgViewBox: '0 0 40 40'
+    })
     if (!Array.isArray(menuList) || menuList.length === 0) {
-      closeLoading()
+      loading.close()
       useUserStore().logOut()
       throw new Error('获取菜单列表失败，请重新登录！')
     }
@@ -104,7 +127,7 @@ async function getMenuData(): Promise<void> {
     // 标记路由已注册
     isRouteRegistered.value = true
     // 关闭加载动画
-    closeLoading()
+    loading.close()
   } catch (error) {
     console.error('获取菜单列表失败:', error)
     throw error

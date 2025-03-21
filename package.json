@@ -51,6 +51,7 @@
     "default-passive-events": "^2.0.0",
     "echarts": "^5.6.0",
     "element-plus": "^2.8.0",
+    "highlight.js": "^11.11.1",
     "mitt": "^3.0.1",
     "nprogress": "^0.2.0",
     "pinia": "^2.2.2",

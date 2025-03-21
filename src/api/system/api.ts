@@ -1,7 +1,8 @@
-import { getMethod, postMethod } from '@/api/client'
+import api from '@/api/client'
+import { ApiResponse } from '@/api/client'
 
-export const getCaptcha = (height: number, width: number) => {
-  return getMethod('/system/user/login/captcha', { height, width })
+export const getCaptcha = (height: number, width: number): Promise<ApiResponse<ApiResponse>> => {
+  return api.get({ url: '/system/user/login/captcha', params: { height, width } })
 }
 
 export const userLogin = (data: {
@@ -9,18 +10,33 @@ export const userLogin = (data: {
   password: string
   captcha: string
   captcha_id: string
-}) => {
-  return postMethod('/system/user/login', data)
+}): Promise<ApiResponse<ApiResponse>> => {
+  return api.post({ url: '/system/user/login', data })
 }
 
-export const getUserInfo = () => {
-  return getMethod('/system/user/info')
+export const getUserInfo = (): Promise<ApiResponse<ApiResponse>> => {
+  return api.get({ url: '/system/user/info' })
 }
 
-export const getUserMenu = () => {
-  return getMethod('/system/user/menu')
+export const getUserMenu = (): Promise<ApiResponse<ApiResponse>> => {
+  return api.get({ url: '/system/user/menu' })
 }
 
-export const getAllMenu = () => {
-  return getMethod('/system/menu')
+export const getAllMenu = (): Promise<ApiResponse<ApiResponse>> => {
+  return api.get({ url: '/system/menu' })
+}
+
+// 添加菜单
+export const addMenu = (data: any): Promise<ApiResponse<ApiResponse>> => {
+  return api.post({ url: '/system/menu', data })
+}
+
+// 更新菜单
+export const updateMenu = (data: any): Promise<ApiResponse<ApiResponse>> => {
+  return api.put({ url: `/system/menu/${data.id}`, data })
+}
+
+// 删除菜单
+export const deleteMenu = (id: string | number): Promise<ApiResponse<ApiResponse>> => {
+  return api.del({ url: `/system/menu/${id}` })
 }

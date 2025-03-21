@@ -8,7 +8,7 @@
   import { useUserStore } from './store/modules/user'
   import { initState, saveUserData } from './utils/storage'
   import { getUserInfo } from './api/system/api'
-  import { ApiStatus } from './utils/http/status'
+  import { ApiStatus } from '@api/status'
 
   const userStore = useUserStore()
   const elSize = computed(() => (document.body.clientWidth >= 500 ? 'large' : 'default'))
