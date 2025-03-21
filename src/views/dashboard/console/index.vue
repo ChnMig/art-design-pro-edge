@@ -48,8 +48,9 @@
   import ActiveUser from './widget/ActiveUser.vue'
   import SalesOverview from './widget/SalesOverview.vue'
   import { SystemInfo } from '@/config/setting'
-  import { scrollToTop } from '@/utils/utils'
   import { useSettingStore } from '@/store/modules/setting'
+
+  import { useCommon } from '@/composables/useCommon'
 
   const settingStore = useSettingStore()
   const currentGlopTheme = computed(() => settingStore.systemThemeType)
@@ -60,7 +61,7 @@
   })
 
   const systemName = SystemInfo.name
-  scrollToTop()
+  useCommon().scrollToTop()
 
   const goPage = (url: string) => {
     // 跳转到新页面

@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ArtTable: typeof import('./../components/Table/ArtTable.vue')['default']
+    BackToTop: typeof import('./../components/Widgets/BackToTop.vue')['default']
     Breadcrumb: typeof import('./../components/Layout/Breadcrumb/index.vue')['default']
     ButtonMore: typeof import('./../components/Form/ButtonMore.vue')['default']
     ButtonTable: typeof import('./../components/Form/ButtonTable.vue')['default']
