@@ -35,9 +35,9 @@
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column label="编辑时间">
+        <el-table-column label="启用">
           <template #default="scope">
-            {{ formatTimestamp(scope.row.updatedAt) }}
+            <el-switch v-model="scope.row.meta.isEnable" size="small" disabled />
           </template>
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="180">
@@ -60,7 +60,6 @@
   import { formatMenuTitle } from '@/utils/menu'
   import { getAllMenu } from '@/api/system/api'
   import { ApiStatus } from '@/api/status'
-  import { formatTimestamp } from '@/utils/time'
   import menuInfo from './modal/menuInfo.vue'
   const tableData = ref<any[]>([])
   const menuModalRef = ref()

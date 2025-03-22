@@ -259,7 +259,6 @@
           formData.isIframe = form.isIframe ? 1 : 2
           formData.isInMainContainer = form.isInMainContainer ? 1 : 2
           const res = await addMenu(formData)
-          console.log(formData)
           if (res.code === ApiStatus.success) {
             ElMessage.success(`${isEdit.value ? '编辑' : '新增'}成功`)
             dialogVisible.value = false
