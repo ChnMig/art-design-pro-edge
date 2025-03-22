@@ -44,7 +44,7 @@
           <template #default="scope">
             <button-table type="add" v-auth="'add'" @click="showMenuModal('menu')" />
             <button-table type="edit" v-auth="'edit'" @click="handleEdit('edit', scope.row)" />
-            <button-table type="delete" v-auth="'delete'" @click="deleteMenu" />
+            <button-table type="delete" v-auth="'delete'" @click="delMenu(scope.row.id)" />
           </template>
         </el-table-column>
       </template>
@@ -58,7 +58,7 @@
   import { onMounted, ref } from 'vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { formatMenuTitle } from '@/utils/menu'
-  import { getAllMenu } from '@/api/system/api'
+  import { getAllMenu, deleteMenu } from '@/api/system/api'
   import { ApiStatus } from '@/api/status'
   import menuInfo from './modal/menuInfo.vue'
   const tableData = ref<any[]>([])
@@ -82,15 +82,21 @@
   const handleEdit = (type: string, row: any) => {
     showMenuModal('menu', row, true)
   }
-  const deleteMenu = async () => {
+  const delMenu = async (id: number) => {
     try {
       await ElMessageBox.confirm('确定要删除该菜单吗？删除后无法恢复', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
-
-      ElMessage.success('删除成功')
+      const res = await deleteMenu(id)
+      if (res.code === ApiStatus.success) {
+        ElMessage.success('删除成功')
+      } else {
+        console.error(res.message)
+        ElMessage.error('删除失败')
+      }
+      await refreshMenuList()
     } catch (error) {
       if (error !== 'cancel') {
         ElMessage.error('删除失败')

@@ -38,5 +38,5 @@ export const updateMenu = (data: any): Promise<ApiResponse<ApiResponse>> => {
 
 // 删除菜单
 export const deleteMenu = (id: string | number): Promise<ApiResponse<ApiResponse>> => {
-  return api.del({ url: `/system/menu/${id}` })
+  return api.del({ url: `/system/menu?id=${id}` })
 }
