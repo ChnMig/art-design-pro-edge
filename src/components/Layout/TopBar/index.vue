@@ -82,7 +82,7 @@
           </el-popover>
         </div>
         <!-- 切换主题 -->
-        <div class="btn-box" @click="toggleTheme">
+        <div class="btn-box" @click="themeAnimation">
           <div class="btn theme-btn">
             <i class="iconfont-sys">{{ isDark ? '&#xe6b5;' : '&#xe725;' }}</i>
           </div>
@@ -138,7 +138,7 @@
 <script setup lang="ts">
   import Breadcrumb from '../Breadcrumb/index.vue'
   import MixedMenu from '../MixedMenu/index.vue'
-  import { MenuTypeEnum, MenuWidth, SystemThemeEnum } from '@/enums/appEnum'
+  import { MenuTypeEnum, MenuWidth } from '@/enums/appEnum'
   import { useSettingStore } from '@/store/modules/setting'
   import { useUserStore } from '@/store/modules/user'
   import { useFullscreen } from '@vueuse/core'
@@ -147,6 +147,7 @@
   import mittBus from '@/utils/mittBus'
   import { useMenuStore } from '@/store/modules/menu'
   import { SystemInfo } from '@/config/setting'
+  import { themeAnimation } from '@/utils/theme/animation'
 
   const isWindows = navigator.userAgent.includes('Windows')
 
@@ -276,14 +277,6 @@
     setTimeout(() => {
       userMenuPopover.value.hide()
     }, 100)
-  }
-
-  // 切换主题
-  import { useTheme } from '@/composables/useTheme'
-
-  const toggleTheme = () => {
-    let { LIGHT, DARK } = SystemThemeEnum
-    useTheme().switchTheme(useSettingStore().systemThemeType === LIGHT ? DARK : LIGHT)
   }
 </script>
 
