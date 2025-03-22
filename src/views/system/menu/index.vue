@@ -13,7 +13,7 @@
         </el-table-column>
         <el-table-column prop="path" label="路由" />
 
-        <el-table-column prop="meta.authList" label="按钮权限">
+        <el-table-column prop="meta.authList" label="元素权限">
           <template #default="scope">
             <el-popover
               placement="top-start"
