@@ -120,11 +120,12 @@
   import type { FormInstance, FormRules } from 'element-plus'
   import { ElMessage } from 'element-plus'
   import { IconTypeEnum } from '@/enums/appEnum'
-  import { addMenu } from '@/api/system/api'
+  import { addMenu, updateMenu } from '@/api/system/api'
   import { ApiStatus } from '@/api/status'
   const dialogVisible = ref(false)
   const form = reactive({
     // 菜单
+    id: 0,
     name: '',
     path: '',
     isHide: false,
@@ -203,8 +204,10 @@
       nextTick(() => {
         // 回显数据
         if (type === 'menu') {
+          console.log(row)
           // 菜单数据回显
-          form.name = row.meta.name
+          form.id = row.id
+          form.name = row.name
           form.path = row.path
           form.title = row.meta.title
           form.icon = row.meta.icon
@@ -213,6 +216,17 @@
           form.isEnable = row.meta.isEnable || true
           form.link = row.meta.link
           form.isIframe = row.meta.isIframe || false
+          form.isHide = row.meta.isHide || false
+          form.isHideTab = row.meta.isHideTab || false
+          form.isInMainContainer = row.meta.isInMainContainer || false
+          form.component = row.component
+          if (row.component) {
+            form.type = 'internal'
+            form.component = row.component
+          } else {
+            form.type = 'link'
+            form.link = row.meta.link
+          }
         }
       })
     }
@@ -231,7 +245,6 @@
     })
   }
   const submitForm = async () => {
-    console.log(iconType)
     if (!formRef.value) return
     // 根据当前类型决定需要验证的字段
     const fieldsToValidate = ['name', 'path']
@@ -249,7 +262,23 @@
       if (!valid) return
       try {
         if (isEdit.value) {
-          // await menuStore.updateMenu(params)
+          const formData = { ...form }
+          formData.status = form.isEnable ? 1 : 2
+          formData.keepAlive = form.keepAlive ? 1 : 2
+          formData.isHide = form.isHide ? 1 : 2
+          formData.isHideTab = form.isHideTab ? 1 : 2
+          formData.isIframe = form.isIframe ? 1 : 2
+          formData.isInMainContainer = form.isInMainContainer ? 1 : 2
+          const res = await updateMenu(formData)
+          if (res.code === ApiStatus.success) {
+            ElMessage.success(`${isEdit.value ? '编辑' : '新增'}成功`)
+            dialogVisible.value = false
+            // 触发父组件刷新列表
+            emit('refresh')
+          } else {
+            ElMessage.error(`${isEdit.value ? '编辑' : '新增'}失败`)
+            console.log('更新菜单失败', res.message)
+          }
         } else {
           const formData = { ...form }
           formData.status = form.isEnable ? 1 : 2

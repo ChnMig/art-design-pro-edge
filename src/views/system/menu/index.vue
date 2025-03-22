@@ -94,7 +94,7 @@
         ElMessage.success('删除成功')
       } else {
         console.error(res.message)
-        ElMessage.error('删除失败')
+        ElMessage.error('删除失败: ' + res.message)
       }
       await refreshMenuList()
     } catch (error) {

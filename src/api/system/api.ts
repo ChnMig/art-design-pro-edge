@@ -33,7 +33,7 @@ export const addMenu = (data: any): Promise<ApiResponse<ApiResponse>> => {
 
 // 更新菜单
 export const updateMenu = (data: any): Promise<ApiResponse<ApiResponse>> => {
-  return api.put({ url: `/system/menu/${data.id}`, data })
+  return api.put({ url: `/system/menu`, data })
 }
 
 // 删除菜单
