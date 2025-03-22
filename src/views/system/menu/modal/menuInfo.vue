@@ -1,110 +1,103 @@
 <template>
   <el-dialog :title="dialogTitle" v-model="dialogVisible" width="700px" align-center>
     <el-form ref="formRef" :model="form" :rules="rules" label-width="85px">
-      <template v-if="labelPosition === 'menu'">
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="菜单标题" prop="title">
-              <el-input v-model="form.title" placeholder="菜单标题"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="路由地址" prop="path">
-              <el-input v-model="form.path" placeholder="路由地址"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="页面类型">
-              <el-radio-group v-model="form.type">
-                <el-radio-button value="internal">内部组件</el-radio-button>
-                <el-radio-button value="link">外部链接</el-radio-button>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              label="组件路径"
-              prop="component"
-              v-if="form.type === 'internal'"
-              required
-            >
-              <el-input v-model="form.component" placeholder="组件路径"></el-input>
-            </el-form-item>
-            <el-form-item label="外部链接" prop="link" v-else-if="form.type === 'link'" required>
-              <el-input
-                v-model="form.link"
-                placeholder="外部链接地址 (https://www.example.com)"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="菜单标识" prop="name">
-              <el-input v-model="form.name" placeholder="菜单标识"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="图标" prop="icon">
-              <icon-selector
-                v-model="form.icon"
-                :iconType="iconType"
-                :defaultIcon="form.icon"
-                width="229px"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="菜单排序" prop="sort" style="width: 100%">
-              <el-input-number
-                v-model="form.sort"
-                style="width: 100%"
-                @change="handleChange"
-                :min="1"
-                controls-position="right"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="6">
-            <el-form-item label="启用" prop="isEnable">
-              <el-switch v-model="form.isEnable"></el-switch>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="页面缓存" prop="keepAlive">
-              <el-switch v-model="form.keepAlive"></el-switch>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="菜单隐藏" prop="isHide">
-              <el-switch v-model="form.isHide"></el-switch>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="标签页隐藏" prop="isHideTab">
-              <el-switch v-model="form.isHideTab"></el-switch>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="6">
-            <el-form-item label="iframe" prop="isIframe">
-              <el-switch v-model="form.isIframe"></el-switch>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="一级主页" prop="isInMainContainer">
-              <el-switch v-model="form.isInMainContainer"></el-switch>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </template>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="菜单标题" prop="title">
+            <el-input v-model="form.title" placeholder="菜单标题"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="路由地址" prop="path">
+            <el-input v-model="form.path" placeholder="路由地址"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="页面类型">
+            <el-radio-group v-model="form.type">
+              <el-radio-button value="internal">内部组件</el-radio-button>
+              <el-radio-button value="link">外部链接</el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="组件路径" prop="component" v-if="form.type === 'internal'" required>
+            <el-input v-model="form.component" placeholder="组件路径"></el-input>
+          </el-form-item>
+          <el-form-item label="外部链接" prop="link" v-else-if="form.type === 'link'" required>
+            <el-input
+              v-model="form.link"
+              placeholder="外部链接地址 (https://www.example.com)"
+            ></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="菜单标识" prop="name">
+            <el-input v-model="form.name" placeholder="菜单标识"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="图标" prop="icon">
+            <icon-selector
+              v-model="form.icon"
+              :iconType="iconType"
+              :defaultIcon="form.icon"
+              width="229px"
+            />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="菜单排序" prop="sort" style="width: 100%">
+            <el-input-number
+              v-model="form.sort"
+              style="width: 100%"
+              @change="handleChange"
+              :min="1"
+              controls-position="right"
+            />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="6">
+          <el-form-item label="启用" prop="isEnable">
+            <el-switch v-model="form.isEnable"></el-switch>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="页面缓存" prop="keepAlive">
+            <el-switch v-model="form.keepAlive"></el-switch>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="菜单隐藏" prop="isHide">
+            <el-switch v-model="form.isHide"></el-switch>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="标签页隐藏" prop="isHideTab">
+            <el-switch v-model="form.isHideTab"></el-switch>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="6">
+          <el-form-item label="iframe" prop="isIframe">
+            <el-switch v-model="form.isIframe"></el-switch>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="一级主页" prop="isInMainContainer">
+            <el-switch v-model="form.isInMainContainer"></el-switch>
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
     <template #footer>
       <span class="dialog-footer">
@@ -139,10 +132,10 @@
     sort: 1,
     keepAlive: true,
     link: '',
-    isIframe: false
+    isIframe: false,
+    parentId: 0
   })
   const iconType = ref(IconTypeEnum.UNICODE)
-  const labelPosition = ref('menu')
   const isEdit = ref(false)
   const lockMenuType = ref(false)
   const formRef = ref<FormInstance>()
@@ -189,37 +182,41 @@
     authLabel: [{ required: true, message: '请输入权限权限标识', trigger: 'blur' }]
   })
   const dialogTitle = computed(() => {
-    const type = labelPosition.value === 'menu' ? '菜单' : '权限'
+    const type = '菜单'
     return isEdit.value ? `编辑${type}` : `新建${type}`
   })
   const handleChange = () => {}
   const showModal = (type: string, row?: any, lock: boolean = false) => {
     dialogVisible.value = true
-    labelPosition.value = type
     isEdit.value = false
     lockMenuType.value = lock
     resetForm()
     if (row) {
-      isEdit.value = true
       nextTick(() => {
-        // 回显数据
-        if (type === 'menu') {
-          console.log(row)
+        // 新增一级菜单
+        if (type === 'add-menu-levle1') {
+          form.parentId = 0
+        } else if (type === 'add-menu-levle2') {
+          // 新增二级菜单
+          form.parentId = row.id
+        } else {
+          // 编辑
           // 菜单数据回显
           form.id = row.id
           form.name = row.name
           form.path = row.path
           form.title = row.meta.title
           form.icon = row.meta.icon
-          form.sort = row.meta.sort || 1
+          form.sort = row.meta.sort
           form.keepAlive = row.meta.keepAlive
-          form.isEnable = row.meta.isEnable || true
+          form.isEnable = row.meta.isEnable
           form.link = row.meta.link
-          form.isIframe = row.meta.isIframe || false
-          form.isHide = row.meta.isHide || false
-          form.isHideTab = row.meta.isHideTab || false
-          form.isInMainContainer = row.meta.isInMainContainer || false
+          form.isIframe = row.meta.isIframe
+          form.isHide = row.meta.isHide
+          form.isHideTab = row.meta.isHideTab
+          form.isInMainContainer = row.meta.isInMainContainer
           form.component = row.component
+          form.parentId = row.parentId
           if (row.component) {
             form.type = 'internal'
             form.component = row.component
@@ -227,6 +224,7 @@
             form.type = 'link'
             form.link = row.meta.link
           }
+          isEdit.value = true
         }
       })
     }
@@ -248,17 +246,14 @@
     if (!formRef.value) return
     // 根据当前类型决定需要验证的字段
     const fieldsToValidate = ['name', 'path']
-    if (labelPosition.value === 'menu') {
-      if (form.type === 'internal') {
-        fieldsToValidate.push('component')
-      } else if (form.type === 'link') {
-        fieldsToValidate.push('link')
-      }
-    } else if (labelPosition.value === 'button') {
-      fieldsToValidate.push('authName', 'authLabel')
+    if (form.type === 'internal') {
+      fieldsToValidate.push('component')
+    } else if (form.type === 'link') {
+      fieldsToValidate.push('link')
     }
     // 先验证指定的字段
     formRef.value.validateField(fieldsToValidate, async (valid) => {
+      console.log('edit', isEdit.value)
       if (!valid) return
       try {
         if (isEdit.value) {

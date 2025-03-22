@@ -1,7 +1,7 @@
 <template>
   <div class="page-content">
     <el-row :gutter="20" style="margin-left: 15px">
-      <el-button v-auth="'add'" @click="showMenuModal('menu', null, true)" v-ripple
+      <el-button v-auth="'add'" @click="showMenuModal('add-menu-levle1', null, true)" v-ripple
         >添加菜单</el-button
       >
     </el-row>
@@ -42,7 +42,11 @@
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="180">
           <template #default="scope">
-            <button-table type="add" v-auth="'add'" @click="showMenuModal('menu')" />
+            <button-table
+              type="add"
+              v-auth="'add'"
+              @click="showMenuModal('add-menu-levle2', scope.row)"
+            />
             <button-table type="edit" v-auth="'edit'" @click="handleEdit('edit', scope.row)" />
             <button-table type="delete" v-auth="'delete'" @click="delMenu(scope.row.id)" />
           </template>
@@ -80,6 +84,7 @@
     menuModalRef.value.showModal(type, row, lock)
   }
   const handleEdit = (type: string, row: any) => {
+    console.log(row)
     showMenuModal('menu', row, true)
   }
   const delMenu = async (id: number) => {
