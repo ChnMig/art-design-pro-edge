@@ -13,7 +13,7 @@
         </el-table-column>
         <el-table-column prop="path" label="路由" />
 
-        <el-table-column prop="meta.authList" label="可操作权限">
+        <el-table-column prop="meta.authList" label="按钮权限">
           <template #default="scope">
             <el-popover
               placement="top-start"
@@ -36,7 +36,11 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="编辑时间" prop="date">2022-3-12 12:00:00</el-table-column>
+        <el-table-column label="编辑时间">
+          <template #default="scope">
+            {{ formatTimestamp(scope.row.updatedAt) }}
+          </template>
+        </el-table-column>
 
         <el-table-column fixed="right" label="操作" width="180">
           <template #default="scope">
@@ -174,8 +178,9 @@
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { IconTypeEnum } from '@/enums/appEnum'
   import { formatMenuTitle } from '@/utils/menu'
-  import { getAllMenu } from '@/api/system/api'
+  import { getAllMenu, addMenu } from '@/api/system/api'
   import { ApiStatus } from '@/api/status'
+  import { formatTimestamp } from '@/utils/time'
 
   const tableData = ref<any[]>([])
 
@@ -188,7 +193,6 @@
       ElMessage.error('获取菜单列表失败')
       tableData.value = []
     }
-    console.log(tableData.value)
   })
 
   const dialogVisible = ref(false)
@@ -240,17 +244,25 @@
 
   const submitForm = async () => {
     if (!formRef.value) return
-
     await formRef.value.validate(async (valid) => {
       if (valid) {
         try {
           if (isEdit.value) {
             // await menuStore.updateMenu(params)
           } else {
+            const res = await addMenu(form)
+            console.log(form)
+            if (res.code === ApiStatus.success) {
+              ElMessage.success(`${isEdit.value ? '编辑' : '新增'}成功`)
+              dialogVisible.value = false
+              // 刷新列表
+              // await menuStore.getMenuList()
+            } else {
+              ElMessage.error(`${isEdit.value ? '编辑' : '新增'}失败`)
+              console.log('新增菜单失败', res.message)
+            }
             // await menuStore.addMenu(params)
           }
-
-          ElMessage.success(`${isEdit.value ? '编辑' : '新增'}成功`)
           dialogVisible.value = false
           // 刷新列表
           // await menuStore.getMenuList()
