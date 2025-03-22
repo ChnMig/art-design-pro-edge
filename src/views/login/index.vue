@@ -39,6 +39,7 @@
                 type="password"
                 radius="8px"
                 autocomplete="off"
+                show-password
               />
             </el-form-item>
             <el-form-item prop="captcha">

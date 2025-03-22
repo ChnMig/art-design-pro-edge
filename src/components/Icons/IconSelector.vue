@@ -55,7 +55,7 @@
   import { IconTypeEnum } from '@/enums/appEnum'
   import { extractIconClasses } from '@/utils/iconfont'
 
-  const emits = defineEmits(['getIcon'])
+  const emits = defineEmits(['getIcon', 'update:modelValue', 'change'])
 
   const iconsList = extractIconClasses()
 
@@ -83,7 +83,8 @@
     disabled: {
       type: Boolean,
       default: false
-    }
+    },
+    modelValue: String
   })
 
   const selectValue = ref(props.defaultIcon)
@@ -107,6 +108,8 @@
     }
     visible.value = false
     emits('getIcon', selectValue.value)
+    emits('update:modelValue', selectValue.value)
+    emits('change', selectValue.value)
   }
 
   const handleClick = () => {
