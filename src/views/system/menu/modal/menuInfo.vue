@@ -271,7 +271,7 @@
             // 触发父组件刷新列表
             emit('refresh')
           } else {
-            ElMessage.error(`${isEdit.value ? '编辑' : '新增'}失败`)
+            ElMessage.error(`${isEdit.value ? '编辑' : '新增'}失败: ${res.message}`)
             console.log('更新菜单失败', res.message)
           }
         } else {
@@ -289,7 +289,7 @@
             // 触发父组件刷新列表
             emit('refresh')
           } else {
-            ElMessage.error(`${isEdit.value ? '编辑' : '新增'}失败`)
+            ElMessage.error(`${isEdit.value ? '编辑' : '新增'}失败: ${res.message}`)
             console.log('新增菜单失败', res.message)
           }
         }
