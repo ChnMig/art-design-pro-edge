@@ -14,6 +14,7 @@ declare module 'vue' {
     ButtonTable: typeof import('./../components/Form/ButtonTable.vue')['default']
     DragVerify: typeof import('./../components/Form/DragVerify.vue')['default']
     Editor: typeof import('./../components/Form/Editor.vue')['default']
+    ElBadge: typeof import('element-plus/es')['ElBadge']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElButtonGroup: typeof import('element-plus/es')['ElButtonGroup']
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']

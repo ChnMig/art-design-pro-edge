@@ -15,24 +15,20 @@
         <el-table-column prop="path" label="路由" />
         <el-table-column prop="meta.authList" label="元素权限">
           <template #default="scope">
-            <el-popover
-              placement="top-start"
-              title="操作"
-              :width="200"
-              trigger="click"
-              v-for="(item, index) in scope.row.meta.authList"
-              :key="index"
+            <el-badge
+              :value="scope.row.meta.authList?.length || 0"
+              class="item"
+              type="primary"
+              :show-zero="false"
             >
-              <div style="margin: 0; text-align: right">
-                <el-button size="small" type="primary" @click="showMenuModal('button', item)"
-                  >编辑</el-button
-                >
-                <el-button size="small" type="danger" @click="deleteAuth()">删除</el-button>
-              </div>
-              <template #reference>
-                <el-button class="small-btn">{{ item.title }}</el-button>
-              </template>
-            </el-popover>
+              <el-button
+                class="share-button"
+                icon="More"
+                size="small"
+                style="margin: 0; text-align: right"
+                @click="showAuthModal(scope.row)"
+              />
+            </el-badge>
           </template>
         </el-table-column>
         <el-table-column label="启用">
@@ -55,6 +51,28 @@
     </art-table>
     <!-- 引用菜单弹窗组件 -->
     <menu-info ref="menuModalRef" @refresh="refreshMenuList" />
+    <!-- 引用权限弹窗组件 -->
+    <auth-info ref="authModalRef" @refresh="refreshMenuList" />
+    <el-dialog
+      :title="dialogTitle"
+      v-model="dialogVisible"
+      width="700px"
+      align-center
+      :close-on-click-modal="false"
+    >
+      <!-- 内容不变... -->
+    </el-dialog>
+
+    <!-- 添加/编辑权限的弹窗 -->
+    <el-dialog
+      :title="isEditingAuth ? '编辑权限' : '添加权限'"
+      v-model="authFormVisible"
+      width="500px"
+      append-to-body
+      :close-on-click-modal="false"
+    >
+      <!-- 内容不变... -->
+    </el-dialog>
   </div>
 </template>
 
@@ -65,8 +83,10 @@
   import { getAllMenu, deleteMenu } from '@/api/system/api'
   import { ApiStatus } from '@/api/status'
   import menuInfo from './modal/menuInfo.vue'
+  import authInfo from './modal/authInfo.vue'
   const tableData = ref<any[]>([])
   const menuModalRef = ref()
+  const authModalRef = ref()
   onMounted(async () => {
     await refreshMenuList()
   })
@@ -84,8 +104,10 @@
     menuModalRef.value.showModal(type, row, lock)
   }
   const handleEdit = (type: string, row: any) => {
-    console.log(row)
     showMenuModal('menu', row, true)
+  }
+  const showAuthModal = (row: any) => {
+    authModalRef.value.showModal(row)
   }
   const delMenu = async (id: number) => {
     try {
@@ -102,20 +124,6 @@
         ElMessage.error('删除失败: ' + res.message)
       }
       await refreshMenuList()
-    } catch (error) {
-      if (error !== 'cancel') {
-        ElMessage.error('删除失败')
-      }
-    }
-  }
-  const deleteAuth = async () => {
-    try {
-      await ElMessageBox.confirm('确定要删除该权限吗？删除后无法恢复', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-      ElMessage.success('删除成功')
     } catch (error) {
       if (error !== 'cancel') {
         ElMessage.error('删除失败')
@@ -139,5 +147,10 @@
       padding: 0 10px !important;
       font-size: 12px !important;
     }
+  }
+
+  .item {
+    margin-top: 10px;
+    margin-right: 30px;
   }
 </style>

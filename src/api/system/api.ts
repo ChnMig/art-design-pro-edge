@@ -40,3 +40,23 @@ export const updateMenu = (data: any): Promise<ApiResponse<ApiResponse>> => {
 export const deleteMenu = (id: string | number): Promise<ApiResponse<ApiResponse>> => {
   return api.del({ url: `/system/menu?id=${id}` })
 }
+
+// 新增权限
+export const addAuth = (data: any): Promise<ApiResponse<ApiResponse>> => {
+  return api.post({ url: '/system/menu/auth', data })
+}
+
+// 更新权限
+export const updateAuth = (data: any): Promise<ApiResponse<ApiResponse>> => {
+  return api.put({ url: `/system/menu/auth`, data })
+}
+
+// 删除权限
+export const deleteAuth = (id: number): Promise<ApiResponse<ApiResponse>> => {
+  return api.del({ url: `/system/menu/auth?id=${id}` })
+}
+
+// 获取权限列表
+export const getAuthList = (menuID: number): Promise<ApiResponse<ApiResponse>> => {
+  return api.get({ url: `/system/menu/auth?menu_id=${menuID}` })
+}

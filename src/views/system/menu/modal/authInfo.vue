@@ -1,0 +1,252 @@
+<template>
+  <el-dialog
+    title="元素权限管理"
+    v-model="dialogVisible"
+    width="700px"
+    align-center
+    :close-on-click-modal="false"
+    @closed="handleDialogClosed"
+  >
+    <el-button type="primary" style="margin-bottom: 15px" @click="addAuthPermission">
+      添加权限
+    </el-button>
+
+    <!-- 表格部分保持不变 -->
+    <el-table v-loading="loading" :data="tableData" style="width: 100%">
+      <el-table-column prop="title" label="权限名称" width="180" />
+      <el-table-column prop="mark" label="权限标识" width="180" />
+      <el-table-column label="操作">
+        <template #default="scope">
+          <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+          <el-button size="small" type="danger" @click="handleDelete(scope.row.id)">
+            删除
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="closeDialog">取消</el-button>
+        <el-button type="primary" @click="closeDialog">关闭</el-button>
+      </div>
+    </template>
+  </el-dialog>
+
+  <!-- 添加/编辑权限的弹窗 -->
+  <el-dialog
+    :title="isEditingAuth ? '编辑权限' : '添加权限'"
+    v-model="authFormVisible"
+    width="500px"
+    append-to-body
+    :close-on-click-modal="false"
+  >
+    <el-form ref="authFormRef" :model="authForm" :rules="authRules" label-width="100px">
+      <el-form-item label="权限名称" prop="title">
+        <el-input v-model="authForm.title" placeholder="请输入权限名称" />
+      </el-form-item>
+      <el-form-item label="权限标识" prop="mark">
+        <el-input v-model="authForm.mark" placeholder="请输入权限标识" />
+      </el-form-item>
+    </el-form>
+
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="authFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitAuthForm" :loading="submitLoading">提交</el-button>
+      </div>
+    </template>
+  </el-dialog>
+</template>
+
+<script lang="ts" setup>
+  import { ref, reactive } from 'vue'
+  import { ElMessage, ElMessageBox } from 'element-plus'
+  import type { FormInstance, FormRules } from 'element-plus'
+  import { getAuthList, addAuth, updateAuth, deleteAuth } from '@/api/system/api'
+  import { ApiStatus } from '@/api/status'
+
+  const emit = defineEmits(['refresh'])
+  const dialogVisible = ref(false)
+  const currentMenu = ref<any>(null)
+  const tableData = ref<any[]>([])
+  const loading = ref(false)
+  const submitLoading = ref(false)
+
+  // 权限表单相关
+  const authFormVisible = ref(false)
+  const isEditingAuth = ref(false)
+  const authFormRef = ref<FormInstance>()
+  const authForm = reactive({
+    id: 0,
+    title: '',
+    mark: '',
+    icon: '',
+    menu_id: 0
+  })
+
+  const authRules = reactive<FormRules>({
+    title: [{ required: true, message: '请输入权限名称', trigger: 'blur' }],
+    mark: [{ required: true, message: '请输入权限标识', trigger: 'blur' }]
+  })
+
+  // 显示主弹窗并加载数据
+  const showModal = async (row?: any) => {
+    if (!row || !row.id) {
+      ElMessage.warning('无法加载权限数据: 菜单ID无效')
+      return
+    }
+
+    dialogVisible.value = true
+    currentMenu.value = row
+    loading.value = true
+
+    try {
+      // 向后端请求当前菜单的权限列表
+      const response = await getAuthList(row.id)
+      if (response.code === ApiStatus.success) {
+        tableData.value = response.data || []
+      } else {
+        ElMessage.error(`获取权限列表失败: ${response.message}`)
+        tableData.value = []
+      }
+    } catch (error) {
+      console.error('获取权限列表出错:', error)
+      ElMessage.error('获取权限列表失败，请检查网络连接')
+      tableData.value = []
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // 添加权限
+  const addAuthPermission = () => {
+    if (!currentMenu.value || !currentMenu.value.id) {
+      ElMessage.warning('无法添加权限: 菜单ID无效')
+      return
+    }
+
+    isEditingAuth.value = false
+
+    // 重置表单
+    Object.assign(authForm, {
+      id: 0,
+      menu_id: currentMenu.value.id,
+      title: '',
+      mark: '',
+      icon: ''
+    })
+
+    authFormVisible.value = true
+  }
+
+  // 编辑权限
+  const handleEdit = (index: number, row: any) => {
+    isEditingAuth.value = true
+
+    // 填充表单数据
+    Object.assign(authForm, {
+      id: row.id,
+      menu_id: row.menu_id || currentMenu.value.id,
+      title: row.title,
+      mark: row.mark,
+      icon: row.icon || ''
+    })
+
+    authFormVisible.value = true
+  }
+
+  // 删除权限
+  const handleDelete = async (id: number) => {
+    if (!id) {
+      ElMessage.warning('无效的权限ID')
+      return
+    }
+
+    try {
+      await ElMessageBox.confirm('确定要删除该权限吗？删除后无法恢复', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+
+      loading.value = true
+      const res = await deleteAuth(id)
+
+      if (res.code === ApiStatus.success) {
+        ElMessage.success('删除成功')
+        // 重新加载数据
+        await showModal(currentMenu.value)
+      } else {
+        ElMessage.error(`删除失败: ${res.message}`)
+      }
+    } catch (error) {
+      if (error !== 'cancel') {
+        console.error('删除权限出错:', error)
+        ElMessage.error('删除失败')
+      }
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // 提交权限表单
+  const submitAuthForm = async () => {
+    if (!authFormRef.value) return
+
+    await authFormRef.value.validate(async (valid) => {
+      if (!valid) return
+
+      submitLoading.value = true
+      try {
+        const formData = { ...authForm }
+        let res
+
+        if (isEditingAuth.value && formData.id) {
+          // 编辑权限
+          res = await updateAuth(formData)
+        } else {
+          // 添加权限
+          res = await addAuth(formData)
+        }
+
+        if (res.code === ApiStatus.success) {
+          ElMessage.success(`${isEditingAuth.value ? '编辑' : '添加'}权限成功`)
+          authFormVisible.value = false
+          // 重新加载数据
+          await showModal(currentMenu.value)
+        } else {
+          ElMessage.error(`${isEditingAuth.value ? '编辑' : '添加'}权限失败: ${res.message}`)
+        }
+      } catch (error) {
+        console.error('提交权限表单出错:', error)
+        ElMessage.error(`${isEditingAuth.value ? '编辑' : '添加'}权限失败`)
+      } finally {
+        submitLoading.value = false
+      }
+    })
+  }
+
+  // 关闭弹窗的处理函数
+  const closeDialog = () => {
+    dialogVisible.value = false
+    emit('refresh') // 触发刷新事件
+  }
+
+  // 对话框关闭事件处理函数
+  const handleDialogClosed = () => {
+    emit('refresh') // 在弹窗完全关闭后触发刷新事件
+  }
+
+  // 对外暴露方法
+  defineExpose({
+    showModal
+  })
+</script>
+
+<style lang="scss" scoped>
+  .dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+</style>
