@@ -188,7 +188,7 @@
 
   const toggleTheme = () => {
     let { LIGHT, DARK } = SystemThemeEnum
-    useTheme().switchTheme(useSettingStore().systemThemeType === LIGHT ? DARK : LIGHT)
+    useTheme().switchThemeStyles(useSettingStore().systemThemeType === LIGHT ? DARK : LIGHT)
   }
 
   const refreshCaptcha = async () => {

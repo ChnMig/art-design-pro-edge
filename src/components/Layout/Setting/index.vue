@@ -17,34 +17,16 @@
 
         <!-- 主题风格 -->
         <p class="title">主题风格</p>
-        <div class="theme-wrap">
+        <div class="theme-styles">
           <div
-            class="item"
-            v-for="(item, index) in settingThemeList"
+            class="style-item"
+            v-for="item in settingThemeList"
             :key="item.theme"
-            @click="switchTheme(item.theme)"
+            @click="switchThemeStyles(item.theme)"
           >
             <div class="box" :class="{ 'is-active': item.theme === systemThemeMode }">
-              <div :style="{ background: item.color[0] + '!important' }">
-                <div
-                  v-for="(cItem, index) in 3"
-                  :key="index"
-                  :class="'line' + index"
-                  :style="{ background: item.leftLineColor }"
-                ></div>
-              </div>
-              <div
-                :style="{ background: index === 2 ? item.color[1] : item.color[0] + '!important' }"
-              >
-                <div
-                  v-for="(cItem, index) in 3"
-                  :key="index"
-                  :class="'line' + index"
-                  :style="{ background: item.rightLineColor }"
-                ></div>
-              </div>
+              <img :src="item.img" />
             </div>
-            <p class="name">{{ index === 0 ? '浅色' : index === 1 ? '深色' : '浅色' }}</p>
             <div class="active" v-show="item.theme === systemThemeMode"></div>
           </div>
         </div>
@@ -52,109 +34,34 @@
         <!-- 菜单布局 -->
         <div v-if="width > 1000">
           <p class="title" style="margin-top: 30px">菜单布局</p>
-          <div class="menu-type">
-            <div class="menu-type-wrap">
-              <!-- 左侧菜单 -->
-              <div class="item">
+          <div class="menu-layouts">
+            <div class="menu-layouts-wrap">
+              <div
+                class="style-item"
+                v-for="(item, index) in menuLayoutList"
+                :key="item.value"
+                @click="switchMenuLayouts(item.value)"
+              >
                 <div
-                  class="box bl"
-                  :class="{ 'is-active': isLeftMenu }"
-                  @click="setMenuType(MenuTypeEnum.LEFT)"
+                  class="box"
+                  :class="{ 'is-active': item.value === menuType, 'mt-16': index > 2 }"
                 >
-                  <div class="bl-menu">
-                    <div class="line" v-for="i in 6" :key="i"></div>
-                  </div>
-                  <div class="bl-content">
-                    <div class="header"></div>
-                    <div class="row1">
-                      <div v-for="i in 2" :key="i"></div>
-                    </div>
-                    <div class="row2"></div>
-                  </div>
+                  <img :src="item.img" />
                 </div>
-                <span class="name">垂直</span>
-              </div>
-              <!-- 顶部菜单 -->
-              <div class="item">
-                <div
-                  class="box bt"
-                  :class="{ 'is-active': isTopMenu }"
-                  @click="setMenuType(MenuTypeEnum.TOP)"
-                >
-                  <div class="bt-menu">
-                    <div class="line" v-for="i in 6" :key="i"></div>
-                  </div>
-                  <div class="bl-content">
-                    <div class="row1">
-                      <div v-for="i in 2" :key="i"></div>
-                    </div>
-                    <div class="row2"></div>
-                  </div>
-                </div>
-                <span class="name">水平</span>
-              </div>
-              <!-- 混合菜单 -->
-              <div class="item">
-                <div
-                  class="box tl"
-                  :class="{ 'is-active': isTopLeftMenu }"
-                  @click="setMenuType(MenuTypeEnum.TOP_LEFT)"
-                >
-                  <div class="tl-left">
-                    <div class="line" v-for="i in 6" :key="i"></div>
-                  </div>
-                  <div class="tl-right">
-                    <div class="bt-menu">
-                      <div class="line" v-for="i in 6" :key="i"></div>
-                    </div>
-                    <div class="bl-content">
-                      <div class="row1">
-                        <div v-for="i in 2" :key="i"></div>
-                      </div>
-                      <div class="row2"></div>
-                    </div>
-                  </div>
-                </div>
-                <span class="name">混合</span>
-              </div>
-              <!-- 双列菜单 -->
-              <div class="item" style="padding-right: 7px">
-                <div
-                  class="box dl"
-                  :class="{ 'is-active': isDualMenu }"
-                  @click="setMenuType(MenuTypeEnum.DUAL_MENU)"
-                >
-                  <div class="tl1-left" style="width: 8px !important">
-                    <div class="line" v-for="i in 1" :key="i"></div>
-                  </div>
-                  <div class="tl2-left">
-                    <div class="line" v-for="i in 6" :key="i"></div>
-                  </div>
-                  <div class="tl-right">
-                    <div class="bt-menu"></div>
-                    <div class="bl-content">
-                      <div class="row1">
-                        <div v-for="i in 2" :key="i"></div>
-                      </div>
-                      <div class="row2"></div>
-                    </div>
-                  </div>
-                </div>
-                <span class="name">双列</span>
               </div>
             </div>
           </div>
         </div>
 
         <!-- 菜单风格 -->
-        <p class="title" style="margin-top: 20px">菜单管理</p>
-        <div class="menu-theme-wrap">
-          <div>
+        <p class="title" style="margin-top: 0">菜单管理</p>
+        <div class="menu-styles">
+          <div class="menu-styles-wrap">
             <div
-              class="item"
+              class="style-item"
               v-for="item in menuThemeList"
               :key="item.theme"
-              @click="setMenuTheme(item.theme)"
+              @click="switchMenuStyles(item.theme)"
             >
               <div
                 class="box"
@@ -163,26 +70,7 @@
                   cursor: isDualMenu || isTopMenu || isDark ? 'no-drop' : 'pointer'
                 }"
               >
-                <div
-                  class="top"
-                  :style="{ background: item.tabBarBackground + '!important' }"
-                ></div>
-                <div class="left" :style="{ background: item.background + '!important' }">
-                  <div
-                    v-for="(cItem, index) in 3"
-                    :key="index"
-                    :class="'line' + index"
-                    :style="{ background: item.leftLineColor }"
-                  />
-                </div>
-                <div class="right">
-                  <div
-                    v-for="(cItem, index) in 3"
-                    :key="index"
-                    :class="'line' + index"
-                    :style="{ background: item.rightLineColor }"
-                  />
-                </div>
+                <img :src="item.img" />
               </div>
               <div class="active" v-if="item.theme === currentMenuTheme"></div>
             </div>
@@ -190,7 +78,7 @@
         </div>
 
         <!-- 系统主题色 -->
-        <p class="title" style="margin-top: 30px">系统主题色</p>
+        <p class="title" style="margin-top: 60px">系统主题色</p>
         <div class="main-color-wrap">
           <div class="offset">
             <div
@@ -326,13 +214,13 @@
 
 <script setup lang="ts">
   import { useSettingStore } from '@/store/modules/setting'
-  import { SettingThemeList, ThemeList, SystemMainColor } from '@/config/setting'
+  import { SettingThemeList, ThemeList, SystemMainColor, menuLayoutList } from '@/config/setting'
   import { SystemThemeEnum, MenuThemeEnum, MenuTypeEnum } from '@/enums/appEnum'
   import mittBus from '@/utils/mittBus'
   import { useTheme } from '@/composables/useTheme'
   import { ContainerWidthEnum } from '@/enums/appEnum'
 
-  const { setSystemTheme, setSystemAutoTheme, switchTheme } = useTheme()
+  const { setSystemTheme, setSystemAutoTheme, switchThemeStyles } = useTheme()
 
   // 删除原来的相关方法定义，直接使用从useTheme中导入的方法
 
@@ -352,13 +240,13 @@
     if (newWidth < 1000) {
       if (!hasChangedMenu.value) {
         beforeMenuType.value = menuType.value
-        setMenuType(MenuTypeEnum.LEFT)
+        switchMenuLayouts(MenuTypeEnum.LEFT)
         store.setMenuOpen(false)
         hasChangedMenu.value = true
       }
     } else {
       if (hasChangedMenu.value && beforeMenuType.value) {
-        setMenuType(beforeMenuType.value)
+        switchMenuLayouts(beforeMenuType.value)
         store.setMenuOpen(true)
         hasChangedMenu.value = false
       }
@@ -382,9 +270,7 @@
   const pageTransition = computed(() => store.pageTransition)
   const customRadius = computed(() => store.customRadius)
   const menuType = computed(() => store.menuType)
-  const isLeftMenu = computed(() => store.menuType === MenuTypeEnum.LEFT)
   const isTopMenu = computed(() => store.menuType === MenuTypeEnum.TOP)
-  const isTopLeftMenu = computed(() => store.menuType === MenuTypeEnum.TOP_LEFT)
   const isDualMenu = computed(() => store.menuType === MenuTypeEnum.DUAL_MENU)
   const menuOpenWidth = ref(store.menuOpenWidth)
   const uniqueOpened = ref(true)
@@ -496,11 +382,11 @@
     setBoxMode(true, store.boxBorderMode ? 'border-mode' : 'shadow-mode')
   }
 
-  const setMenuTheme = (theme: MenuThemeEnum) => {
+  const switchMenuStyles = (theme: MenuThemeEnum) => {
     if (isDualMenu.value || isTopMenu.value || isDark.value) {
       return
     }
-    store.setMenuTheme(theme)
+    store.switchMenuStyles(theme)
     isAutoClose()
   }
 
@@ -519,18 +405,13 @@
     }
   }
 
-  const setMenuType = (type: MenuTypeEnum) => {
+  const switchMenuLayouts = (type: MenuTypeEnum) => {
     if (type === MenuTypeEnum.LEFT || type === MenuTypeEnum.TOP_LEFT) store.setMenuOpen(true)
-    store.setMenuType(type)
+    store.switchMenuLayouts(type)
     if (type === MenuTypeEnum.DUAL_MENU) {
-      store.setMenuTheme(MenuThemeEnum.DESIGN)
+      store.switchMenuStyles(MenuThemeEnum.DESIGN)
       store.setMenuOpen(true)
     }
-    isAutoClose()
-  }
-
-  const showWorkTabFunc = () => {
-    store.setWorkTab(!store.showWorkTab)
     isAutoClose()
   }
 
@@ -553,13 +434,8 @@
     }
   }
 
-  const openSetting = () => {
-    showDrawer.value = true
-  }
-
-  const closeDrawer = () => {
-    showDrawer.value = false
-  }
+  const openSetting = () => (showDrawer.value = true)
+  const closeDrawer = () => (showDrawer.value = false)
 
   const switchBoxMode = (isInit: boolean = false, type: string) => {
     if (
@@ -583,52 +459,37 @@
     }, 50)
   }
 
-  const setPageTransition = (transition: string) => {
-    store.setPageTransition(transition)
+  // 高阶函数：封装 store 方法调用后自动关闭抽屉
+  const autoCloseHandler = (
+    storeMethod: (...args: any[]) => void,
+    needReload: boolean = false,
+    ...args: any[]
+  ) => {
+    storeMethod(...args)
+    if (needReload) {
+      store.reload()
+    }
     isAutoClose()
   }
 
-  const setCustomRadius = (radius: string) => {
-    store.setCustomRadius(radius)
-    isAutoClose()
-  }
+  const showWorkTabFunc = () => autoCloseHandler(store.setWorkTab, false, !store.showWorkTab)
 
-  const setContainerWidth = (type: ContainerWidthEnum) => {
-    store.setContainerWidth(type)
-    store.reload()
-    isAutoClose()
-  }
+  const setPageTransition = (transition: string) =>
+    autoCloseHandler(store.setPageTransition, false, transition)
 
-  const setButton = () => {
-    store['setButton']()
-    isAutoClose()
-  }
+  const setContainerWidth = (type: ContainerWidthEnum) =>
+    autoCloseHandler(store.setContainerWidth, true, type)
 
-  const setShowRefreshButton = () => {
-    store['setShowRefreshButton']()
-    isAutoClose()
-  }
+  const setElementTheme = (theme: string) => autoCloseHandler(store.setElementTheme, true, theme)
 
-  const setCrumbs = () => {
-    store['setCrumbs']()
-    isAutoClose()
-  }
+  const setCustomRadius = (radius: string) => autoCloseHandler(store.setCustomRadius, false, radius)
+  const setButton = () => autoCloseHandler(store.setButton)
+  const setShowRefreshButton = () => autoCloseHandler(store.setShowRefreshButton)
+  const setCrumbs = () => autoCloseHandler(store.setCrumbs)
 
-  const setNprogress = () => {
-    store['setNprogress']()
-    isAutoClose()
-  }
+  const setNprogress = () => autoCloseHandler(store.setNprogress)
 
-  const setAutoClose = () => {
-    store['setAutoClose']()
-    isAutoClose()
-  }
-
-  const setElementTheme = (theme: string) => {
-    store['setElementTheme'](theme)
-    store.reload()
-    isAutoClose()
-  }
+  const setAutoClose = () => autoCloseHandler(store.setAutoClose)
 
   const setColorWeak = () => {
     let el = document.getElementsByTagName('html')[0]
@@ -643,12 +504,8 @@
     isAutoClose()
   }
 
-  const setMenuOpenSize = () => {
-    if (menuOpenWidth.value) {
-      store.setMenuOpenWidth(menuOpenWidth.value)
-      isAutoClose()
-    }
-  }
+  const setMenuOpenSize = () =>
+    menuOpenWidth.value && autoCloseHandler(store.setMenuOpenWidth, false, menuOpenWidth.value)
 
   const initColorWeak = () => {
     if (colorWeak.value) {
@@ -658,7 +515,6 @@
       }, 100)
     }
   }
-
   watch(
     () => store.menuOpenWidth,
     (newVal) => {

@@ -146,6 +146,6 @@ async function getMenuData(): Promise<void> {
  */
 const setSystemTheme = (to: RouteLocationNormalized): void => {
   if (to.meta.setTheme) {
-    useTheme().switchTheme(useSettingStore().systemThemeType)
+    useTheme().switchThemeStyles(useSettingStore().systemThemeType)
   }
 }

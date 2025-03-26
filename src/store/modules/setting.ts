@@ -118,7 +118,7 @@ export const useSettingStore = defineStore('settingStore', {
         setElementThemeColor(ElementPlusTheme.primary)
       }
     },
-    setMenuType(type: MenuTypeEnum) {
+    switchMenuLayouts(type: MenuTypeEnum) {
       this.menuType = type
     },
     setMenuOpenWidth(width: number) {
@@ -128,7 +128,7 @@ export const useSettingStore = defineStore('settingStore', {
       this.systemThemeType = theme
       this.systemThemeMode = themeMode
     },
-    setMenuTheme(theme: MenuThemeEnum) {
+    switchMenuStyles(theme: MenuThemeEnum) {
       this.menuThemeType = theme
     },
     setElementTheme(theme: string) {
