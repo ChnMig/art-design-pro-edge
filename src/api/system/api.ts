@@ -60,3 +60,19 @@ export const deleteAuth = (id: number): Promise<ApiResponse<ApiResponse>> => {
 export const getAuthList = (menuID: number): Promise<ApiResponse<ApiResponse>> => {
   return api.get({ url: `/system/menu/auth?menu_id=${menuID}` })
 }
+
+export const getDepartmentList = (): Promise<ApiResponse<ApiResponse>> => {
+  return api.get({ url: '/system/department' })
+}
+
+export const addDepartment = (data: any): Promise<ApiResponse<ApiResponse>> => {
+  return api.post({ url: '/system/department', data })
+}
+
+export const updateDepartment = (data: any): Promise<ApiResponse<ApiResponse>> => {
+  return api.put({ url: '/system/department', data })
+}
+
+export const deleteDepartment = (id: number): Promise<ApiResponse<ApiResponse>> => {
+  return api.del({ url: `/system/department?id=${id}` })
+}

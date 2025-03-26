@@ -1,24 +1,32 @@
 <template>
   <div class="page-content">
     <el-row :gutter="12">
-      <el-col :xs="24" :sm="12" :lg="8">
-        <el-input placeholder="部门名称"></el-input>
+      <el-col :span="6">
+        <el-input v-model="searchName" placeholder="部门名称"></el-input>
       </el-col>
-      <el-col :xs="24" :sm="12" :lg="8" class="el-col2">
-        <el-button v-ripple>搜索</el-button>
+      <el-col :span="8" class="el-col2">
+        <el-button v-ripple type="info" @click="resetSearch">
+          <el-icon><Refresh /></el-icon>
+        </el-button>
+        <el-button v-ripple @click="searchDepartments">搜索</el-button>
+      </el-col>
+      <el-col :span="3" :offset="7" class="el-col2">
         <el-button @click="showDialog('add')" v-ripple>新增部门</el-button>
       </el-col>
     </el-row>
 
-    <art-table :data="tableData">
+    <art-table :data="tableData" v-loading="loading">
       <template #default>
         <el-table-column prop="name" label="名称" />
         <el-table-column prop="sort" label="排序" sortable />
-        <el-table-column prop="date" label="日期" />
-
+        <el-table-column prop="users" label="人数">
+          <template #default="scope">
+            {{ Array.isArray(scope.row.users) ? scope.row.users.length : 0 }}
+          </template>
+        </el-table-column>
         <el-table-column label="状态" prop="status">
           <template #default="scope">
-            <el-tag :type="scope.row.status === 1 ? 'primary' : 'info'">
+            <el-tag :type="scope.row.status === 1 ? 'primary' : 'warning'">
               {{ scope.row.status === 1 ? '启用' : '禁用' }}
             </el-tag>
           </template>
@@ -26,7 +34,7 @@
         <el-table-column fixed="right" label="操作" width="150px">
           <template #default="scope">
             <button-table type="edit" @click="showDialog('edit', scope.row)" />
-            <button-table type="delete" @click="deleteDepartment" />
+            <button-table type="delete" @click="deleteDepartment(scope.row.id)" />
           </template>
         </el-table-column>
       </template>
@@ -36,6 +44,7 @@
       v-model="dialogVisible"
       :title="dialogType === 'add' ? '添加部门' : '编辑部门'"
       width="30%"
+      :close-on-click-modal="false"
       @closed="resetForm"
     >
       <el-form ref="formRef" :model="formData" :rules="rules" label-width="60px">
@@ -43,16 +52,21 @@
           <el-input v-model="formData.name" />
         </el-form-item>
         <el-form-item label="排序" prop="sort">
-          <el-input v-model="formData.sort" />
+          <el-input-number
+            v-model="formData.sort"
+            style="width: 100%"
+            :min="1"
+            controls-position="right"
+          />
         </el-form-item>
-        <el-form-item label="状态" prop="status">
+        <el-form-item label="启用" prop="status">
           <el-switch v-model="formData.status" />
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="submitForm">提交</el-button>
+          <el-button type="primary" @click="submitForm" :loading="submitLoading">提交</el-button>
         </div>
       </template>
     </el-dialog>
@@ -60,11 +74,23 @@
 </template>
 
 <script setup lang="ts">
+  import { ref, reactive, onMounted } from 'vue'
   import { ElMessageBox, ElMessage } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
+  import {
+    getDepartmentList,
+    addDepartment,
+    updateDepartment,
+    deleteDepartment as apiDeleteDepartment
+  } from '@/api/system/api'
+  import { ApiStatus } from '@/api/status'
 
   const dialogType = ref('add')
   const dialogVisible = ref(false)
+  const loading = ref(false)
+  const submitLoading = ref(false)
+  const currentId = ref<number | null>(null)
+  const searchName = ref('')
 
   const formData = reactive({
     name: '',
@@ -72,108 +98,7 @@
     status: true
   })
 
-  const tableData = reactive([
-    {
-      id: 1,
-      date: '2016-05-02',
-      name: '人力资源部',
-      status: 1,
-      sort: 1
-    },
-    {
-      id: 2,
-      date: '2016-05-04',
-      name: '公关部',
-      status: 1,
-      sort: 2
-    },
-    {
-      id: 3,
-      date: '2016-05-01',
-      name: '市场部',
-      status: 1,
-      sort: 3,
-      children: [
-        {
-          id: 31,
-          date: '2016-05-01',
-          name: '王小虎',
-          status: 1,
-          sort: 1
-        },
-        {
-          id: 32,
-          date: '2016-05-01',
-          name: '王小虎',
-          status: 0,
-          sort: 2
-        }
-      ]
-    },
-    {
-      id: 4,
-      date: '2016-05-03',
-      name: '财务部',
-      status: 1,
-      sort: 4
-    },
-    {
-      id: 5,
-      date: '2016-05-03',
-      name: '广告部',
-      status: 1,
-      sort: 5
-    },
-    {
-      id: 6,
-      date: '2016-05-03',
-      name: '营销部',
-      status: 1,
-      sort: 5
-    },
-    {
-      id: 7,
-      date: '2016-05-03',
-      name: '开发部',
-      status: 1,
-      sort: 5
-    },
-    {
-      id: 8,
-      date: '2016-05-03',
-      name: '测试部',
-      status: 1,
-      sort: 5
-    },
-    {
-      id: 9,
-      date: '2016-05-03',
-      name: '安全监察部',
-      status: 0,
-      sort: 5
-    },
-    {
-      id: 10,
-      date: '2016-05-03',
-      name: '设计部',
-      status: 1,
-      sort: 5
-    },
-    {
-      id: 11,
-      date: '2016-05-03',
-      name: '监事会',
-      status: 1,
-      sort: 5
-    },
-    {
-      id: 12,
-      date: '2016-05-03',
-      name: '董事会',
-      status: 1,
-      sort: 5
-    }
-  ])
+  const tableData = ref<any[]>([])
 
   const formRef = ref<FormInstance>()
 
@@ -188,10 +113,50 @@
     ]
   })
 
+  // 在组件挂载时获取部门列表
+  onMounted(async () => {
+    await refreshDepartmentList()
+  })
+
+  // 刷新部门列表
+  const refreshDepartmentList = async () => {
+    loading.value = true
+    try {
+      const res = await getDepartmentList()
+      if (res.code === ApiStatus.success) {
+        tableData.value = res.data || []
+      } else {
+        ElMessage.error(`获取部门列表失败: ${res.message}`)
+      }
+    } catch (error) {
+      console.error('获取部门列表出错:', error)
+      ElMessage.error('获取部门列表失败，请检查网络连接')
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // 搜索部门
+  const searchDepartments = async () => {
+    await refreshDepartmentList()
+    if (searchName.value) {
+      tableData.value = tableData.value.filter((item) =>
+        item.name.toLowerCase().includes(searchName.value.toLowerCase())
+      )
+    }
+  }
+
+  // 重置搜索条件并刷新列表
+  const resetSearch = async () => {
+    searchName.value = ''
+    await refreshDepartmentList()
+  }
+
   const resetForm = () => {
     formData.name = ''
     formData.sort = '1'
     formData.status = true
+    currentId.value = null
   }
 
   const showDialog = (type: string, row?: any) => {
@@ -199,37 +164,93 @@
     dialogVisible.value = true
 
     if (type === 'edit' && row) {
+      currentId.value = row.id
       formData.name = row.name
-      formData.sort = row.sort.toString()
+      formData.sort = String(row.sort)
       formData.status = row.status === 1
     } else {
       resetForm()
     }
   }
 
-  const deleteDepartment = () => {
+  const deleteDepartment = (id: number) => {
     ElMessageBox.confirm('确定要删除该部门吗？', '删除部门', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
-      type: 'error'
-    }).then(() => {
-      console.log('删除部门')
+      type: 'warning'
     })
+      .then(async () => {
+        loading.value = true
+        try {
+          const res = await apiDeleteDepartment(id)
+          if (res.code === ApiStatus.success) {
+            ElMessage.success('删除部门成功')
+            await refreshDepartmentList()
+          } else {
+            ElMessage.error(`删除部门失败: ${res.message}`)
+          }
+        } catch (error) {
+          console.error('删除部门出错:', error)
+          ElMessage.error('删除部门失败')
+        } finally {
+          loading.value = false
+        }
+      })
+      .catch(() => {
+        // 用户取消删除，不做任何操作
+      })
   }
 
   const submitForm = async () => {
     if (!formRef.value) return
 
-    await formRef.value.validate((valid) => {
+    await formRef.value.validate(async (valid) => {
       if (valid) {
-        const params = {
-          ...formData,
-          status: formData.status ? 1 : 0
-        }
-        console.log('提交数据:', params)
+        submitLoading.value = true
+        try {
+          const params = {
+            name: formData.name,
+            sort: parseInt(formData.sort),
+            status: formData.status ? 1 : 0
+          }
 
-        ElMessage.success(dialogType.value === 'add' ? '添加成功' : '修改成功')
-        dialogVisible.value = false
+          if (dialogType.value === 'edit') {
+            // 编辑部门
+            if (!currentId.value) {
+              ElMessage.error('部门ID无效')
+              return
+            }
+
+            const res = await updateDepartment({
+              ...params,
+              id: currentId.value
+            })
+
+            if (res.code === ApiStatus.success) {
+              ElMessage.success('修改部门成功')
+              dialogVisible.value = false
+              await refreshDepartmentList()
+            } else {
+              ElMessage.error(`修改部门失败: ${res.message}`)
+            }
+          } else {
+            // 添加部门
+            const res = await addDepartment(params)
+
+            if (res.code === ApiStatus.success) {
+              ElMessage.success('添加部门成功')
+              dialogVisible.value = false
+              await refreshDepartmentList()
+            } else {
+              ElMessage.error(`添加部门失败: ${res.message}`)
+            }
+          }
+        } catch (error) {
+          console.error('提交表单出错:', error)
+          ElMessage.error(`${dialogType.value === 'add' ? '添加' : '修改'}部门失败`)
+        } finally {
+          submitLoading.value = false
+        }
       }
     })
   }
@@ -243,6 +264,11 @@
       overflow: hidden;
       vertical-align: -8px;
       fill: currentcolor;
+    }
+
+    .el-col2 {
+      display: flex;
+      gap: 10px;
     }
   }
 </style>

@@ -1,9 +1,11 @@
 <template>
   <div class="page-content">
-    <el-row :gutter="20" style="margin-left: 15px">
-      <el-button v-auth="'add'" @click="showMenuModal('add-menu-levle1', null, true)" v-ripple
-        >添加菜单</el-button
-      >
+    <el-row :gutter="20">
+      <el-col :span="3" :offset="21">
+        <el-button v-auth="'add'" @click="showMenuModal('add-menu-levle1', null, true)" v-ripple
+          >添加菜单</el-button
+        >
+      </el-col>
     </el-row>
     <art-table :data="tableData">
       <template #default>
@@ -31,9 +33,11 @@
             </el-badge>
           </template>
         </el-table-column>
-        <el-table-column label="启用">
+        <el-table-column label="状态">
           <template #default="scope">
-            <el-switch v-model="scope.row.meta.isEnable" size="small" disabled />
+            <el-tag :type="scope.row.meta.isEnable ? 'primary' : 'warning'">
+              {{ scope.row.meta.isEnable ? '启用' : '禁用' }}
+            </el-tag>
           </template>
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="180">
