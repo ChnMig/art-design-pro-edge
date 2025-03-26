@@ -76,3 +76,19 @@ export const updateDepartment = (data: any): Promise<ApiResponse<ApiResponse>> =
 export const deleteDepartment = (id: number): Promise<ApiResponse<ApiResponse>> => {
   return api.del({ url: `/system/department?id=${id}` })
 }
+
+export const getRoleList = (): Promise<ApiResponse<ApiResponse>> => {
+  return api.get({ url: '/system/role' })
+}
+
+export const addRole = (data: any): Promise<ApiResponse<ApiResponse>> => {
+  return api.post({ url: '/system/role', data })
+}
+
+export const updateRole = (data: any): Promise<ApiResponse<ApiResponse>> => {
+  return api.put({ url: '/system/role', data })
+}
+
+export const deleteRole = (id: number): Promise<ApiResponse<ApiResponse>> => {
+  return api.del({ url: `/system/role?id=${id}` })
+}

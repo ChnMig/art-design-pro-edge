@@ -1,16 +1,7 @@
 <template>
   <div class="page-content">
     <el-row :gutter="12">
-      <el-col :span="6">
-        <el-input v-model="searchName" placeholder="部门名称"></el-input>
-      </el-col>
-      <el-col :span="8" class="el-col2">
-        <el-button v-ripple type="info" @click="resetSearch">
-          <el-icon><Refresh /></el-icon>
-        </el-button>
-        <el-button v-ripple @click="searchDepartments">搜索</el-button>
-      </el-col>
-      <el-col :span="3" :offset="7" class="el-col2">
+      <el-col :span="3" :offset="21" class="el-col2">
         <el-button @click="showDialog('add')" v-ripple>新增部门</el-button>
       </el-col>
     </el-row>
