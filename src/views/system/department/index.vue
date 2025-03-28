@@ -8,21 +8,21 @@
 
     <art-table :data="tableData" v-loading="loading">
       <template #default>
-        <el-table-column prop="name" label="名称" />
-        <el-table-column prop="sort" label="排序" sortable />
-        <el-table-column prop="users" label="人数">
+        <el-table-column prop="name" label="名称" align="center" />
+        <el-table-column prop="sort" label="排序" sortable align="center" />
+        <el-table-column prop="users" label="人数" align="center">
           <template #default="scope">
             {{ Array.isArray(scope.row.users) ? scope.row.users.length : 0 }}
           </template>
         </el-table-column>
-        <el-table-column label="状态" prop="status">
+        <el-table-column label="状态" prop="status" align="center">
           <template #default="scope">
             <el-tag :type="scope.row.status === 1 ? 'primary' : 'warning'">
               {{ scope.row.status === 1 ? '启用' : '禁用' }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="150px">
+        <el-table-column fixed="right" label="操作" align="center">
           <template #default="scope">
             <button-table type="edit" @click="showDialog('edit', scope.row)" />
             <button-table type="delete" @click="deleteDepartment(scope.row.id)" />

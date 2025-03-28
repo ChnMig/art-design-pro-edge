@@ -20,21 +20,21 @@
 
     <art-table :data="tableData" :loading="loading" empty-text="暂无角色数据">
       <template #default>
-        <el-table-column label="角色名称" prop="name" min-width="120" />
-        <el-table-column label="描述" prop="desc" min-width="200" show-overflow-tooltip />
-        <el-table-column label="状态" prop="status" width="100" align="center">
+        <el-table-column label="角色名称" prop="name" align="center" />
+        <el-table-column label="描述" prop="desc" show-overflow-tooltip align="center" />
+        <el-table-column label="状态" prop="status" align="center">
           <template #default="scope">
             <el-tag :type="scope.row.status === 1 ? 'primary' : 'warning'">
               {{ scope.row.status === 1 ? '启用' : '禁用' }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="用户数量" align="center" width="100">
+        <el-table-column label="用户数量" align="center">
           <template #default="scope">
             {{ scope.row.users ? scope.row.users.length : 0 }}
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="120" align="center">
+        <el-table-column fixed="right" label="操作">
           <template #default="scope">
             <el-row>
               <button-more :list="actionButtons" @click="buttonMoreClick($event, scope.row)" />

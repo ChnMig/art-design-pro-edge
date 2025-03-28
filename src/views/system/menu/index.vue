@@ -9,12 +9,12 @@
     </el-row>
     <art-table :data="tableData">
       <template #default>
-        <el-table-column label="菜单名称">
+        <el-table-column label="菜单名称" align="center">
           <template #default="scope">
             {{ formatMenuTitle(scope.row.meta?.title) }}
           </template>
         </el-table-column>
-        <el-table-column prop="path" label="路由" />
+        <el-table-column prop="path" label="路由" align="center" />
         <el-table-column prop="meta.authList" label="元素权限">
           <template #default="scope">
             <el-badge
@@ -33,14 +33,14 @@
             </el-badge>
           </template>
         </el-table-column>
-        <el-table-column label="状态">
+        <el-table-column label="状态" align="center">
           <template #default="scope">
             <el-tag :type="scope.row.meta.isEnable ? 'primary' : 'warning'">
               {{ scope.row.meta.isEnable ? '启用' : '禁用' }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="180">
+        <el-table-column fixed="right" label="操作" align="center">
           <template #default="scope">
             <button-table
               type="add"

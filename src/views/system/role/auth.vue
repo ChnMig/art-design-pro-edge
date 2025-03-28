@@ -379,8 +379,35 @@
 
 <style lang="scss">
   .auth-drawer-namespace {
+    // 调整抽屉内容区布局为垂直Flex
+    .drawer-content {
+      display: flex;
+      flex-direction: column;
+      height: 100%; // 确保容器撑满整个抽屉高度
+    }
+
+    // 头部固定
+    .drawer-header {
+      flex-shrink: 0; // 不收缩
+      margin-bottom: 16px;
+    }
+
+    // 中间内容区可滚动
     .menu-tree-container {
+      flex: 1; // 占据所有剩余空间
+      overflow-y: auto; // 内容溢出时可滚动
       padding: 10px 0;
+      border-top: 1px solid #f0f0f0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    // 底部固定
+    .drawer-footer {
+      flex-shrink: 0; // 不收缩
+      margin-top: 16px;
+      display: flex;
+      justify-content: flex-end;
+      padding-top: 16px;
     }
 
     .el-tree-node__content {
