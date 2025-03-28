@@ -92,3 +92,11 @@ export const updateRole = (data: any): Promise<ApiResponse<ApiResponse>> => {
 export const deleteRole = (id: number): Promise<ApiResponse<ApiResponse>> => {
   return api.del({ url: `/system/role?id=${id}` })
 }
+
+export const getAllMenuByRole = (roleID: number): Promise<ApiResponse<ApiResponse>> => {
+  return api.get({ url: `/system/menu/role?role_id=${roleID}` })
+}
+
+export const saveRolePermission = (data: any): Promise<ApiResponse<ApiResponse>> => {
+  return api.put({ url: '/system/menu/role', data })
+}
