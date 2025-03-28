@@ -100,3 +100,19 @@ export const getAllMenuByRole = (roleID: number): Promise<ApiResponse<ApiRespons
 export const saveRolePermission = (data: any): Promise<ApiResponse<ApiResponse>> => {
   return api.put({ url: '/system/menu/role', data })
 }
+
+export const getUserList = (params: any): Promise<ApiResponse<ApiResponse>> => {
+  return api.get({ url: '/system/user', params })
+}
+
+export const addUser = (data: any): Promise<ApiResponse<ApiResponse>> => {
+  return api.post({ url: '/system/user', data })
+}
+
+export const updateUser = (data: any): Promise<ApiResponse<ApiResponse>> => {
+  return api.put({ url: '/system/user', data })
+}
+
+export const deleteUser = (id: number): Promise<ApiResponse<ApiResponse>> => {
+  return api.del({ url: `/system/user?id=${id}` })
+}

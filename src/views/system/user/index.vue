@@ -1,425 +1,383 @@
 <template>
-  <div class="page-content user">
-    <div class="content">
-      <div class="left-wrap">
-        <div class="user-wrap box-style">
-          <img class="bg" src="@imgs/user/bg.png" />
-          <img class="avatar" :src="userInfo.avatar" />
-          <h2 class="name">{{ userInfo.username }}</h2>
-          <p class="des">Art Design Pro 是一款漂亮的后台管理系统模版.</p>
+  <div class="page-content">
+    <table-bar
+      :showTop="false"
+      @search="search"
+      @reset="resetForm(searchFormRef)"
+      @changeColumn="changeColumn"
+      :columns="columns"
+    >
+      <template #top>
+        <el-form :model="searchForm" ref="searchFormRef" label-width="82px">
+          <el-row :gutter="20">
+            <form-input label="用户名" prop="name" v-model="searchForm.name" />
+            <form-input label="手机号" prop="phone" v-model="searchForm.phone" />
+            <form-input label="邮箱" prop="email" v-model="searchForm.email" />
+            <form-input label="账号" prop="account" v-model="searchForm.account" />
+          </el-row>
+          <el-row :gutter="20">
+            <form-input label="用户ID" prop="id" v-model="searchForm.id" />
+            <form-select
+              label="性别"
+              prop="gender"
+              v-model="searchForm.gender"
+              :options="genderOptions"
+            />
+            <form-select
+              label="会员等级"
+              prop="level"
+              v-model="searchForm.level"
+              :options="levelOptions"
+            />
+          </el-row>
+        </el-form>
+      </template>
+      <template #bottom>
+        <el-button @click="showDialog('add')" v-ripple>添加用户</el-button>
+      </template>
+    </table-bar>
 
-          <div class="outer-info">
-            <div>
-              <i class="iconfont-sys">&#xe72e;</i>
-              <span>jdkjjfnndf@mall.com</span>
-            </div>
-            <div>
-              <i class="iconfont-sys">&#xe608;</i>
-              <span>交互专家</span>
-            </div>
-            <div>
-              <i class="iconfont-sys">&#xe736;</i>
-              <span>广东省深圳市</span>
-            </div>
-            <div>
-              <i class="iconfont-sys">&#xe811;</i>
-              <span>字节跳动－某某平台部－UED</span>
-            </div>
-          </div>
+    <art-table
+      :data="tableData"
+      selection
+      :currentPage="pagination.currentPage"
+      :pageSize="pagination.pageSize"
+      :total="pagination.total"
+      @current-change="handleCurrentChange"
+      @size-change="handleSizeChange"
+    >
+      <template #default>
+        <el-table-column label="用户名" prop="name" width="200px" v-if="columns[0].show" />
+        <el-table-column label="手机号" prop="phone" v-if="columns[1].show" />
+        <el-table-column
+          label="性别"
+          prop="gender"
+          #default="scope"
+          sortable
+          v-if="columns[2].show"
+        >
+          {{ scope.row.gender === 1 ? '男' : scope.row.gender === 2 ? '女' : '未知' }}
+        </el-table-column>
+        <el-table-column label="部门" prop="department_id" v-if="columns[3].show" />
+        <el-table-column label="状态" prop="status" v-if="columns[4].show">
+          <template #default="scope">
+            <el-tag :type="getTagType(scope.row.status)">
+              {{ buildTagText(scope.row.status) }}</el-tag
+            >
+          </template>
+        </el-table-column>
+        <el-table-column label="创建日期" prop="created_at" sortable v-if="columns[5].show">
+          <template #default="scope">
+            {{ formatTimestamp(scope.row.created_at) }}
+          </template>
+        </el-table-column>
+        <el-table-column fixed="right" label="操作" width="150px">
+          <template #default="scope">
+            <button-table type="edit" @click="showDialog('edit', scope.row)" />
+            <button-table type="delete" @click="deleteUser(scope.row)" />
+          </template>
+        </el-table-column>
+      </template>
+    </art-table>
 
-          <div class="lables">
-            <h3>标签</h3>
-            <div>
-              <div v-for="item in lableList" :key="item">
-                {{ item }}
-              </div>
-            </div>
-          </div>
+    <el-dialog
+      v-model="dialogVisible"
+      :title="dialogType === 'add' ? '添加用户' : '编辑用户'"
+      width="30%"
+    >
+      <el-form ref="formRef" :model="formData" :rules="rules" label-width="80px">
+        <el-form-item label="用户名" prop="name">
+          <el-input v-model="formData.name" />
+        </el-form-item>
+        <el-form-item label="手机号" prop="phone">
+          <el-input v-model="formData.phone" />
+        </el-form-item>
+        <el-form-item label="性别" prop="gender">
+          <el-select v-model="formData.gender">
+            <el-option label="男" :value="1" />
+            <el-option label="女" :value="2" />
+            <el-option label="未知" :value="0" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="部门" prop="department_id">
+          <el-select v-model="formData.department_id">
+            <el-option label="董事会部" :value="1" />
+            <el-option label="市场部" :value="2" />
+            <el-option label="技术部" :value="3" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="handleSubmit">提交</el-button>
         </div>
-
-        <!-- <el-carousel class="gallery" height="160px"
-            :interval="5000"
-            indicator-position="none"
-          >
-            <el-carousel-item class="item" v-for="item in galleryList" :key="item">
-              <img :src="item"/>
-            </el-carousel-item>
-          </el-carousel> -->
-      </div>
-      <div class="right-wrap">
-        <div class="info box-style">
-          <h1 class="title">基本设置</h1>
-
-          <el-form
-            :model="form"
-            class="form"
-            ref="ruleFormRef"
-            :rules="rules"
-            label-width="86px"
-            label-position="top"
-          >
-            <el-row>
-              <el-form-item label="姓名" prop="realName">
-                <el-input v-model="form.realName" :disabled="!isEdit" />
-              </el-form-item>
-              <el-form-item label="性别" prop="sex" class="right-input">
-                <el-select v-model="form.sex" placeholder="Select" :disabled="!isEdit">
-                  <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-row>
-
-            <el-row>
-              <el-form-item label="昵称" prop="nikeName">
-                <el-input v-model="form.nikeName" :disabled="!isEdit" />
-              </el-form-item>
-              <el-form-item label="邮箱" prop="email" class="right-input">
-                <el-input v-model="form.email" :disabled="!isEdit" />
-              </el-form-item>
-            </el-row>
-
-            <el-row>
-              <el-form-item label="手机" prop="mobile">
-                <el-input v-model="form.mobile" :disabled="!isEdit" />
-              </el-form-item>
-              <el-form-item label="地址" prop="address" class="right-input">
-                <el-input v-model="form.address" :disabled="!isEdit" />
-              </el-form-item>
-            </el-row>
-
-            <el-form-item label="个人介绍" prop="des" :style="{ height: '130px' }">
-              <el-input type="textarea" :rows="4" v-model="form.des" :disabled="!isEdit" />
-            </el-form-item>
-
-            <div class="el-form-item-right">
-              <el-button type="primary" style="width: 90px" v-ripple @click="edit">
-                {{ isEdit ? '保存' : '编辑' }}
-              </el-button>
-            </div>
-          </el-form>
-        </div>
-
-        <div class="info box-style" style="margin-top: 20px">
-          <h1 class="title">更改密码</h1>
-
-          <el-form :model="pwdForm" class="form" label-width="86px" label-position="top">
-            <el-form-item label="当前密码" prop="password">
-              <el-input v-model="pwdForm.password" type="password" :disabled="!isEditPwd" />
-            </el-form-item>
-
-            <el-form-item label="新密码" prop="newPassword">
-              <el-input v-model="pwdForm.newPassword" type="password" :disabled="!isEditPwd" />
-            </el-form-item>
-
-            <el-form-item label="确认新密码" prop="confirmPassword">
-              <el-input v-model="pwdForm.confirmPassword" type="password" :disabled="!isEditPwd" />
-            </el-form-item>
-
-            <div class="el-form-item-right">
-              <el-button type="primary" style="width: 90px" v-ripple @click="editPwd">
-                {{ isEditPwd ? '保存' : '编辑' }}
-              </el-button>
-            </div>
-          </el-form>
-        </div>
-      </div>
-    </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { useUserStore } from '@/store/modules/user'
-  import { FormInstance, FormRules } from 'element-plus'
+  import { getUserList, addUser, updateUser, deleteUser } from '@/api/system/api'
+  import { FormInstance } from 'element-plus'
+  import { ElMessageBox, ElMessage } from 'element-plus'
+  import type { FormRules } from 'element-plus'
+  import { onMounted } from 'vue'
 
-  const userStore = useUserStore()
-  const userInfo = computed(() => userStore.getUserInfo)
-
-  const isEdit = ref(false)
-  const isEditPwd = ref(false)
-  const date = ref('')
-  const form = reactive({
-    realName: 'John Snow',
-    nikeName: '皮卡丘',
-    email: '59301283@mall.com',
-    mobile: '18888888888',
-    address: '广东省深圳市宝安区西乡街道101栋201',
-    sex: '2',
-    des: 'Art Design Pro 是一款漂亮的后台管理系统模版.'
+  const dialogType = ref('add')
+  const dialogVisible = ref(false)
+  const tableData = ref([])
+  const pagination = reactive({
+    currentPage: 1,
+    pageSize: 10,
+    total: 0
   })
 
-  const pwdForm = reactive({
-    password: '123456',
-    newPassword: '123456',
-    confirmPassword: '123456'
+  const formData = reactive({
+    id: '',
+    name: '',
+    phone: '',
+    gender: 0,
+    department_id: 1
   })
 
-  const ruleFormRef = ref<FormInstance>()
-
-  const rules = reactive<FormRules>({
-    realName: [
-      { required: true, message: '请输入昵称', trigger: 'blur' },
-      { min: 2, max: 50, message: '长度在 2 到 30 个字符', trigger: 'blur' }
-    ],
-    nikeName: [
-      { required: true, message: '请输入昵称', trigger: 'blur' },
-      { min: 2, max: 50, message: '长度在 2 到 30 个字符', trigger: 'blur' }
-    ],
-    email: [{ required: true, message: '请输入昵称', trigger: 'blur' }],
-    mobile: [{ required: true, message: '请输入手机号码', trigger: 'blur' }],
-    address: [{ required: true, message: '请输入地址', trigger: 'blur' }],
-    sex: [{ type: 'array', required: true, message: '请选择性别', trigger: 'blur' }]
-  })
-
-  const options = [
+  const genderOptions = [
     {
-      value: '1',
+      value: 1,
       label: '男'
     },
     {
-      value: '2',
+      value: 2,
       label: '女'
+    },
+    {
+      value: 0,
+      label: '未知'
+    }
+  ]
+  const levelOptions = [
+    {
+      value: '1',
+      label: '普通用户'
+    },
+    {
+      value: '2',
+      label: ' VIP'
     }
   ]
 
-  const lableList: Array<string> = ['专注设计', '很有想法', '辣~', '大长腿', '川妹子', '海纳百川']
+  const columns = reactive([
+    { name: '用户名', show: true },
+    { name: '手机号', show: true },
+    { name: '性别', show: true },
+    { name: '部门', show: true },
+    { name: '状态', show: true },
+    { name: '创建日期', show: true }
+  ])
 
-  onMounted(() => {
-    getDate()
+  const searchFormRef = ref<FormInstance>()
+  const searchForm = reactive({
+    name: '',
+    phone: '',
+    email: '',
+    account: '',
+    id: '',
+    gender: 0,
+    level: ''
   })
 
-  const getDate = () => {
-    const d = new Date()
-    const h = d.getHours()
-    let text = ''
+  const resetForm = (formEl: FormInstance | undefined) => {
+    if (!formEl) return
+    formEl.resetFields()
+    // 重置后重新加载数据
+    pagination.currentPage = 1
+    loadUserList()
+  }
 
-    if (h >= 6 && h < 9) {
-      text = '早上好'
-    } else if (h >= 9 && h < 11) {
-      text = '上午好'
-    } else if (h >= 11 && h < 13) {
-      text = '中午好'
-    } else if (h >= 13 && h < 18) {
-      text = '下午好'
-    } else if (h >= 18 && h < 24) {
-      text = '晚上好'
-    } else if (h >= 0 && h < 6) {
-      text = '很晚了，早点睡'
+  // 加载用户列表数据
+  const loadUserList = async () => {
+    try {
+      const params = {
+        page: pagination.currentPage,
+        pageSize: pagination.pageSize,
+        ...searchForm
+      }
+      const res = await getUserList(params)
+      if (res.code === 200) {
+        tableData.value = res.data || []
+        pagination.total = res.data?.length || 0 // 使用数组长度作为总数
+      } else {
+        ElMessage.error(res.message || '获取用户列表失败')
+      }
+    } catch (error) {
+      console.error('获取用户列表出错:', error)
+      ElMessage.error('获取用户列表失败')
     }
-
-    date.value = text
   }
 
-  const edit = () => {
-    isEdit.value = !isEdit.value
+  // 格式化时间戳
+  const formatTimestamp = (timestamp: number) => {
+    if (!timestamp) return '-'
+    const date = new Date(timestamp * 1000)
+    return date.toLocaleString()
   }
 
-  const editPwd = () => {
-    isEditPwd.value = !isEditPwd.value
+  // 页码变化
+  const handleCurrentChange = (page: number) => {
+    pagination.currentPage = page
+    loadUserList()
   }
+
+  // 每页条数变化
+  const handleSizeChange = (size: number) => {
+    pagination.pageSize = size
+    pagination.currentPage = 1
+    loadUserList()
+  }
+
+  const showDialog = (type: string, row?: any) => {
+    dialogVisible.value = true
+    dialogType.value = type
+
+    if (type === 'edit' && row) {
+      formData.id = row.id
+      formData.name = row.name
+      formData.phone = row.phone || ''
+      formData.gender = row.gender
+      formData.department_id = row.department_id
+    } else {
+      formData.id = ''
+      formData.name = ''
+      formData.phone = ''
+      formData.gender = 0
+      formData.department_id = 1
+    }
+  }
+
+  const deleteUser = (row: any) => {
+    ElMessageBox.confirm('确定要注销该用户吗？', '注销用户', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'error'
+    }).then(async () => {
+      try {
+        const res = await deleteUser(row.id)
+        if (res.code === 200) {
+          ElMessage.success('注销成功')
+          loadUserList()
+        } else {
+          ElMessage.error(res.message || '注销失败')
+        }
+      } catch (error) {
+        console.error('删除用户出错:', error)
+        ElMessage.error('注销失败')
+      }
+    })
+  }
+
+  const search = () => {
+    pagination.currentPage = 1
+    loadUserList()
+  }
+
+  const changeColumn = (list: any) => {
+    columns.values = list
+  }
+
+  const filterTag = (value: number, row: any) => {
+    return row.status === value
+  }
+
+  const getTagType = (status: number) => {
+    switch (status) {
+      case 1:
+        return 'primary'
+      case 2:
+        return 'warning'
+      default:
+        return 'info'
+    }
+  }
+
+  const buildTagText = (status: number) => {
+    if (status === 1) {
+      return '启用'
+    } else if (status === 2) {
+      return '禁用'
+    } else {
+      return '未知'
+    }
+  }
+
+  const rules = reactive<FormRules>({
+    name: [
+      { required: true, message: '请输入用户名', trigger: 'blur' },
+      { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+    ],
+    phone: [{ pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号格式', trigger: 'blur' }],
+    gender: [{ required: true, message: '请选择性别', trigger: 'change' }],
+    department_id: [{ required: true, message: '请选择部门', trigger: 'change' }]
+  })
+
+  const formRef = ref<FormInstance>()
+
+  const handleSubmit = async () => {
+    if (!formRef.value) return
+
+    await formRef.value.validate(async (valid) => {
+      if (valid) {
+        try {
+          // 准备提交的数据
+          const submitData = {
+            ...formData
+          }
+
+          let res
+          if (dialogType.value === 'add') {
+            res = await addUser(submitData)
+          } else {
+            res = await updateUser(submitData)
+          }
+
+          if (res.code === 200) {
+            ElMessage.success(dialogType.value === 'add' ? '添加成功' : '更新成功')
+            dialogVisible.value = false
+            loadUserList()
+          } else {
+            ElMessage.error(res.message || (dialogType.value === 'add' ? '添加失败' : '更新失败'))
+          }
+        } catch (error) {
+          console.error('提交表单出错:', error)
+          ElMessage.error(dialogType.value === 'add' ? '添加失败' : '更新失败')
+        }
+      }
+    })
+  }
+
+  // 初始化加载数据
+  onMounted(() => {
+    loadUserList()
+  })
 </script>
-
-<style lang="scss">
-  .user {
-    .icon {
-      width: 1.4em;
-      height: 1.4em;
-      overflow: hidden;
-      vertical-align: -0.15em;
-      fill: currentcolor;
-    }
-  }
-</style>
 
 <style lang="scss" scoped>
   .page-content {
     width: 100%;
     height: 100%;
-    padding: 0 !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
 
-    $box-radius: calc(var(--custom-radius) + 4px);
-
-    .box-style {
-      border: 1px solid var(--art-border-color);
-    }
-
-    .content {
-      position: relative;
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-
-      .left-wrap {
-        width: 450px;
-        margin-right: 25px;
-
-        .user-wrap {
-          position: relative;
-          height: 600px;
-          padding: 35px 40px;
-          overflow: hidden;
-          text-align: center;
-          background: var(--art-main-bg-color);
-          border-radius: $box-radius;
-
-          .bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-          }
-
-          .avatar {
-            position: relative;
-            z-index: 10;
-            width: 80px;
-            height: 80px;
-            margin-top: 120px;
-            object-fit: cover;
-            border: 2px solid #fff;
-            border-radius: 50%;
-          }
-
-          .name {
-            margin-top: 20px;
-            font-size: 22px;
-            font-weight: 400;
-          }
-
-          .des {
-            margin-top: 20px;
-            font-size: 14px;
-          }
-
-          .outer-info {
-            width: 300px;
-            margin: auto;
-            margin-top: 30px;
-            text-align: left;
-
-            > div {
-              margin-top: 10px;
-
-              span {
-                margin-left: 8px;
-                font-size: 14px;
-              }
-            }
-          }
-
-          .lables {
-            margin-top: 40px;
-
-            h3 {
-              font-size: 15px;
-              font-weight: 500;
-            }
-
-            > div {
-              display: flex;
-              flex-wrap: wrap;
-              justify-content: center;
-              margin-top: 15px;
-
-              > div {
-                padding: 3px 6px;
-                margin: 0 10px 10px 0;
-                font-size: 12px;
-                background: var(--art-main-bg-color);
-                border: 1px solid var(--art-border-color);
-                border-radius: 2px;
-              }
-            }
-          }
-        }
-
-        .gallery {
-          margin-top: 25px;
-          border-radius: 10px;
-
-          .item {
-            img {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-            }
-          }
-        }
+    .user {
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 6px;
       }
 
-      .right-wrap {
-        flex: 1;
-        overflow: hidden;
-        border-radius: $box-radius;
+      > div {
+        margin-left: 10px;
 
-        .info {
-          background: var(--art-main-bg-color);
-          border-radius: $box-radius;
-
-          .title {
-            padding: 15px 25px;
-            font-size: 20px;
-            font-weight: 400;
-            color: var(--art-text-gray-800);
-            border-bottom: 1px solid var(--art-border-color);
-          }
-
-          .form {
-            box-sizing: border-box;
-            padding: 30px 25px;
-
-            > .el-row {
-              .el-form-item {
-                width: calc(50% - 10px);
-              }
-
-              .el-input,
-              .el-select {
-                width: 100%;
-              }
-            }
-
-            .right-input {
-              margin-left: 20px;
-            }
-
-            .el-form-item-right {
-              display: flex;
-              align-items: center;
-              justify-content: end;
-
-              .el-button {
-                width: 110px !important;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  @media only screen and (max-width: $device-ipad-vertical) {
-    .page-content {
-      .content {
-        display: block;
-        margin-top: 5px;
-
-        .left-wrap {
-          width: 100%;
-        }
-
-        .right-wrap {
-          width: 100%;
-          margin-top: 15px;
+        .user-name {
+          font-weight: 500;
+          color: var(--art-text-gray-800);
         }
       }
     }
