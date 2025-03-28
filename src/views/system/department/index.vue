@@ -6,7 +6,7 @@
       </el-col>
     </el-row>
 
-    <art-table :data="tableData" v-loading="loading">
+    <art-table :data="tableData" v-loading="loading" :pagination="false">
       <template #default>
         <el-table-column prop="name" label="名称" align="center" />
         <el-table-column prop="sort" label="排序" sortable align="center" />

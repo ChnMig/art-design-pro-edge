@@ -5,7 +5,7 @@
         <el-button @click="showDialog('add')" v-ripple>添加角色</el-button>
       </el-col>
     </el-row>
-    <art-table :data="tableData" :loading="loading" empty-text="暂无角色数据">
+    <art-table :data="tableData" :loading="loading" empty-text="暂无角色数据" :pagination="false">
       <template #default>
         <el-table-column label="角色名称" prop="name" align="center" />
         <el-table-column label="描述" prop="desc" show-overflow-tooltip align="center" />

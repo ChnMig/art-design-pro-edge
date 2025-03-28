@@ -7,7 +7,7 @@
         >
       </el-col>
     </el-row>
-    <art-table :data="tableData">
+    <art-table :data="tableData" :pagination="false">
       <template #default>
         <el-table-column label="菜单名称" align="center">
           <template #default="scope">

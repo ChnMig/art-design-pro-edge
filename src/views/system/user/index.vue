@@ -37,48 +37,70 @@
       </template>
     </table-bar>
 
-    <art-table
-      :data="tableData"
-      selection
-      :currentPage="pagination.currentPage"
-      :pageSize="pagination.pageSize"
-      :total="pagination.total"
-      @current-change="handleCurrentChange"
-      @size-change="handleSizeChange"
-    >
-      <template #default>
-        <el-table-column label="用户名" prop="name" width="200px" v-if="columns[0].show" />
-        <el-table-column label="手机号" prop="phone" v-if="columns[1].show" />
-        <el-table-column
-          label="性别"
-          prop="gender"
-          #default="scope"
-          sortable
-          v-if="columns[2].show"
-        >
-          {{ scope.row.gender === 1 ? '男' : scope.row.gender === 2 ? '女' : '未知' }}
-        </el-table-column>
-        <el-table-column label="部门" prop="department_id" v-if="columns[3].show" />
-        <el-table-column label="状态" prop="status" v-if="columns[4].show">
-          <template #default="scope">
-            <el-tag :type="getTagType(scope.row.status)">
-              {{ buildTagText(scope.row.status) }}</el-tag
-            >
-          </template>
-        </el-table-column>
-        <el-table-column label="创建日期" prop="created_at" sortable v-if="columns[5].show">
-          <template #default="scope">
-            {{ formatTimestamp(scope.row.created_at) }}
-          </template>
-        </el-table-column>
-        <el-table-column fixed="right" label="操作" width="150px">
-          <template #default="scope">
-            <button-table type="edit" @click="showDialog('edit', scope.row)" />
-            <button-table type="delete" @click="deleteUser(scope.row)" />
-          </template>
-        </el-table-column>
-      </template>
-    </art-table>
+    <el-config-provider :locale="zhCn">
+      <art-table
+        :data="tableData"
+        :currentPage="pagination.currentPage"
+        :pageSize="pagination.pageSize"
+        :total="pagination.total"
+        :hideOnSinglePage="false"
+        @current-change="handleCurrentChange"
+        @size-change="handleSizeChange"
+      >
+        <template #default>
+          <el-table-column
+            label="用户名"
+            prop="User.name"
+            width="200px"
+            align="center"
+            v-if="columns[0].show"
+          />
+          <el-table-column
+            label="账号"
+            prop="User.username"
+            align="center"
+            v-if="columns[5].show"
+          />
+          <el-table-column label="手机号" align="center" v-if="columns[1].show">
+            <template #default="scope">
+              {{ scope.row.User.phone ? scope.row.User.phone : '--' }}
+            </template>
+          </el-table-column>
+          <el-table-column label="性别" align="center" v-if="columns[2].show">
+            <template #default="scope">
+              <el-tag v-if="scope.row.User.gender === 1" type="success" effect="light">男</el-tag>
+              <el-tag v-else-if="scope.row.User.gender === 2" type="danger" effect="light"
+                >女</el-tag
+              >
+              <el-tag v-else-if="scope.row.User.gender === 0" type="info" effect="light"
+                >未知</el-tag
+              >
+              <span v-else>--</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="部门"
+            prop="department_name"
+            align="center"
+            v-if="columns[3].show"
+          />
+          <el-table-column label="角色" prop="role_name" align="center" v-if="columns[6].show" />
+          <el-table-column label="状态" prop="User.status" align="center" v-if="columns[4].show">
+            <template #default="scope">
+              <el-tag :type="getTagType(scope.row.User.status)">
+                {{ buildTagText(scope.row.User.status) }}</el-tag
+              >
+            </template>
+          </el-table-column>
+          <el-table-column fixed="right" label="操作" width="150px" align="center">
+            <template #default="scope">
+              <button-table type="edit" @click="showDialog('edit', scope.row)" />
+              <button-table type="delete" @click="deleteUser(scope.row)" />
+            </template>
+          </el-table-column>
+        </template>
+      </art-table>
+    </el-config-provider>
 
     <el-dialog
       v-model="dialogVisible"
@@ -120,9 +142,11 @@
 <script setup lang="ts">
   import { getUserList, addUser, updateUser, deleteUser } from '@/api/system/api'
   import { FormInstance } from 'element-plus'
-  import { ElMessageBox, ElMessage } from 'element-plus'
+  import { ElMessageBox, ElMessage, ElConfigProvider } from 'element-plus'
   import type { FormRules } from 'element-plus'
   import { onMounted } from 'vue'
+  // 导入中文语言包
+  import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 
   const dialogType = ref('add')
   const dialogVisible = ref(false)
@@ -172,7 +196,8 @@
     { name: '性别', show: true },
     { name: '部门', show: true },
     { name: '状态', show: true },
-    { name: '创建日期', show: true }
+    { name: '账号', show: true },
+    { name: '角色', show: true }
   ])
 
   const searchFormRef = ref<FormInstance>()
@@ -205,7 +230,20 @@
       const res = await getUserList(params)
       if (res.code === 200) {
         tableData.value = res.data || []
-        pagination.total = res.data?.length || 0 // 使用数组长度作为总数
+
+        // 使用返回值中的count字段作为总数
+        if (res.count !== undefined) {
+          pagination.total = res.count
+        } else if (res.meta && res.meta.count) {
+          // 备用：检查meta.count
+          pagination.total = res.meta.count
+        } else if (res.meta && res.meta.total) {
+          // 备用：检查meta.total
+          pagination.total = res.meta.total
+        } else {
+          // 兜底：使用数组长度
+          pagination.total = res.data?.length || 0
+        }
       } else {
         ElMessage.error(res.message || '获取用户列表失败')
       }
@@ -240,11 +278,11 @@
     dialogType.value = type
 
     if (type === 'edit' && row) {
-      formData.id = row.id
-      formData.name = row.name
-      formData.phone = row.phone || ''
-      formData.gender = row.gender
-      formData.department_id = row.department_id
+      formData.id = row.User.id
+      formData.name = row.User.name
+      formData.phone = row.User.phone || ''
+      formData.gender = row.User.gender
+      formData.department_id = row.User.department_id
     } else {
       formData.id = ''
       formData.name = ''
@@ -261,7 +299,7 @@
       type: 'error'
     }).then(async () => {
       try {
-        const res = await deleteUser(row.id)
+        const res = await deleteUser(row.User.id)
         if (res.code === 200) {
           ElMessage.success('注销成功')
           loadUserList()
