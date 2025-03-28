@@ -27,7 +27,7 @@
           show-checkbox
           node-key="id"
           default-expand-all
-          :check-strictly="false"
+          :check-strictly="true"
           :props="defaultProps"
           @check="handleTreeCheck"
         >
@@ -140,7 +140,10 @@
         // 使用nextTick确保DOM更新后再设置选中状态
         nextTick(() => {
           console.log('设置树节点选中状态')
-          setTreeCheckedState()
+          // 确保树组件已完全渲染后再设置选中状态
+          setTimeout(() => {
+            setTreeCheckedState()
+          }, 100)
         })
       } else {
         ElMessage.error(response.message || '获取菜单权限失败')
@@ -220,57 +223,48 @@
     return !/[<>&;#]/.test(iconName)
   }
 
-  // 设置树的选中状态
+  // 设置树的选中状态 - 重写这个方法以确保正确勾选
   const setTreeCheckedState = () => {
     if (!menuTreeRef.value) return
 
     menuTreeRef.value.setCheckedKeys([])
 
-    // 收集所有应该被选中的节点ID
-    const checkedMenuIds = []
-    const checkedAuthIds = []
+    // 调试日志：输出处理后的菜单树结构
+    console.log('处理后的菜单树结构:', JSON.stringify(processedMenus.value))
 
-    // 递归收集所有选中的菜单和权限ID
-    const collectCheckedIds = (nodes) => {
+    // 收集所有应该被选中的节点ID
+    const checkedKeys = []
+
+    // 递归查找所有hasPermission为true的节点
+    const findCheckedNodes = (nodes) => {
       if (!nodes || !nodes.length) return
 
-      nodes.forEach((node) => {
-        // 如果菜单有权限，将ID加入到选中列表
-        if (node.hasPermission && !node.isAuth) {
-          checkedMenuIds.push(node.id)
+      nodes.forEach(node => {
+        if (node.hasPermission === true) {
+          console.log(`节点将被勾选: ${node.id}, 类型: ${node.isAuth ? '权限' : '菜单'}`)
+          checkedKeys.push(node.id)
         }
 
-        // 处理权限节点
-        if (node.meta?.authList && node.meta.authList.length > 0) {
-          node.meta.authList.forEach((auth) => {
-            if (auth.hasPermission) {
-              const authNodeId = `auth_${node.id}_${auth.id}`
-              checkedAuthIds.push(authNodeId)
-            }
-          })
-        }
-
-        // 递归处理子菜单
-        if (node.children && node.children.length) {
-          collectCheckedIds(node.children)
+        // 递归处理子节点
+        if (node.children && node.children.length > 0) {
+          findCheckedNodes(node.children)
         }
       })
     }
 
-    // 收集选中节点
-    collectCheckedIds(menus.value)
+    // 执行查找
+    findCheckedNodes(processedMenus.value)
 
-    const allCheckedIds = [...checkedMenuIds, ...checkedAuthIds]
+    console.log(`找到 ${checkedKeys.length} 个需要勾选的节点:`, checkedKeys)
 
-    // 打印检查选中的节点ID数量
-    console.log('菜单节点应选中数量:', checkedMenuIds.length)
-    console.log('权限节点应选中数量:', checkedAuthIds.length)
+    // 先执行一次设置，确保基本选中逻辑正确
+    if (checkedKeys.length > 0) {
+      menuTreeRef.value.setCheckedKeys(checkedKeys)
 
-    // 设置选中状态
-    if (allCheckedIds.length > 0) {
-      nextTick(() => {
-        menuTreeRef.value.setCheckedKeys(allCheckedIds)
-      })
+      // 再次设置选中状态，确保完全应用
+      setTimeout(() => {
+        menuTreeRef.value.setCheckedKeys(checkedKeys)
+      }, 50)
     }
   }
 
@@ -281,8 +275,8 @@
 
   // 递归收集选中的权限数据，用于保存
   const collectSelectedAuths = () => {
+    // 在严格模式下只需要获取选中的节点，不需要半选中节点
     const checkedKeys = menuTreeRef.value.getCheckedKeys()
-    const halfCheckedKeys = menuTreeRef.value.getHalfCheckedKeys()
 
     // 克隆原始菜单树
     const clonedMenus = JSON.parse(JSON.stringify(menus.value))
@@ -292,8 +286,8 @@
       if (!menuList || !menuList.length) return []
 
       return menuList.map((menu) => {
-        // 检查菜单是否选中
-        menu.hasPermission = checkedKeys.includes(menu.id) || halfCheckedKeys.includes(menu.id)
+        // 检查菜单是否选中 - 不再需要考虑半选中状态
+        menu.hasPermission = checkedKeys.includes(menu.id)
 
         // 处理权限列表
         if (menu.meta?.authList && menu.meta.authList.length > 0) {
@@ -350,6 +344,18 @@
       saveLoading.value = false
     }
   }
+
+  // 在树组件挂载后确认选中状态
+  watch(
+    () => processedMenus.value,
+    (newMenus) => {
+      if (newMenus && newMenus.length > 0) {
+        nextTick(() => {
+          setTreeCheckedState()
+        })
+      }
+    }
+  )
 
   // 关闭抽屉
   const handleClose = () => {
