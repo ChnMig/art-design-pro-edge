@@ -6,6 +6,7 @@
     size="30%"
     :before-close="handleClose"
     :destroy-on-close="false"
+    :close-on-click-modal="false"
     append-to-body
     class="auth-drawer-namespace"
   >
@@ -239,7 +240,7 @@
     const findCheckedNodes = (nodes) => {
       if (!nodes || !nodes.length) return
 
-      nodes.forEach(node => {
+      nodes.forEach((node) => {
         if (node.hasPermission === true) {
           console.log(`节点将被勾选: ${node.id}, 类型: ${node.isAuth ? '权限' : '菜单'}`)
           checkedKeys.push(node.id)
@@ -332,9 +333,10 @@
       const response = await saveRolePermission(permissionData)
 
       if (response.code === 200) {
-        ElMessage.success('权限设置已保存')
         emit('saved', { roleId: props.roleId, menus: updatedMenus })
-        handleClose()
+        // 重置更改状态标志，然后关闭抽屉
+        hasDataChanged.value = false
+        handleClose(true) // 传递true表示跳过更改检查
       } else {
         ElMessage.error(response.message || '保存权限失败')
       }
@@ -358,8 +360,8 @@
   )
 
   // 关闭抽屉
-  const handleClose = () => {
-    if (hasDataChanged.value) {
+  const handleClose = (skipCheck = false) => {
+    if (hasDataChanged.value && !skipCheck) {
       ElMessageBox.confirm('有未保存的权限更改，确定要关闭吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
