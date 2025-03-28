@@ -1,7 +1,7 @@
 <template>
   <div class="page-content">
     <el-row :gutter="12">
-      <el-col :span="3" :offset="21" class="el-col2">
+      <el-col :span="3" class="el-col2">
         <el-button v-auth="'add'" @click="showMenuModal('add-menu-levle1', null, true)" v-ripple
           >添加菜单</el-button
         >
