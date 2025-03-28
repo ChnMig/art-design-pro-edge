@@ -2,7 +2,7 @@
   <div class="page-content">
     <el-row :gutter="12">
       <el-col :span="3" :offset="21" class="el-col2">
-        <el-button @click="showDialog('add')" v-ripple>新增部门</el-button>
+        <el-button @click="showDialog('add')" v-ripple>添加部门</el-button>
       </el-col>
     </el-row>
 

@@ -1,23 +1,10 @@
 <template>
   <div class="page-content">
-    <!-- 添加搜索区域 -->
-    <div class="search-container">
-      <el-input
-        v-model="searchKeyword"
-        placeholder="搜索角色名称"
-        clearable
-        @keyup.enter="handleSearch"
-        @clear="resetSearch"
-      >
-        <template #suffix>
-          <el-icon class="el-input__icon" @click="handleSearch">
-            <search />
-          </el-icon>
-        </template>
-      </el-input>
-      <el-button type="primary" @click="showDialog('add')" v-ripple>新增角色</el-button>
-    </div>
-
+    <el-row :gutter="12">
+      <el-col :span="3" :offset="21" class="el-col2">
+        <el-button @click="showDialog('add')" v-ripple>添加角色</el-button>
+      </el-col>
+    </el-row>
     <art-table :data="tableData" :loading="loading" empty-text="暂无角色数据">
       <template #default>
         <el-table-column label="角色名称" prop="name" align="center" />
