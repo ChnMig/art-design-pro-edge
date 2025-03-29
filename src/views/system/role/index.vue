@@ -45,8 +45,8 @@
         <el-form-item label="描述" prop="desc">
           <el-input v-model="form.desc" type="textarea" :rows="3" placeholder="请输入角色描述" />
         </el-form-item>
-        <el-form-item label="状态">
-          <el-switch v-model="form.status" active-text="启用" inactive-text="禁用" />
+        <el-form-item label="启用">
+          <el-switch v-model="form.status" />
         </el-form-item>
       </el-form>
       <template #footer>

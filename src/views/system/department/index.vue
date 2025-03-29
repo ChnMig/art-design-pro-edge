@@ -34,25 +34,37 @@
     <el-dialog
       v-model="dialogVisible"
       :title="dialogType === 'add' ? '添加部门' : '编辑部门'"
-      width="30%"
+      width="600px"
+      align-center
       :close-on-click-modal="false"
       @closed="resetForm"
     >
-      <el-form ref="formRef" :model="formData" :rules="rules" label-width="60px">
-        <el-form-item label="名称" prop="name">
-          <el-input v-model="formData.name" />
-        </el-form-item>
-        <el-form-item label="排序" prop="sort">
-          <el-input-number
-            v-model="formData.sort"
-            style="width: 100%"
-            :min="1"
-            controls-position="right"
-          />
-        </el-form-item>
-        <el-form-item label="启用" prop="status">
-          <el-switch v-model="formData.status" />
-        </el-form-item>
+      <el-form ref="formRef" :model="formData" :rules="rules" label-width="85px">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="名称" prop="name">
+              <el-input v-model="formData.name" placeholder="请输入部门名称" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="排序" prop="sort">
+              <el-input-number
+                v-model="formData.sort"
+                style="width: 100%"
+                :min="1"
+                controls-position="right"
+                placeholder="请输入排序号"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="启用" prop="status">
+              <el-switch v-model="formData.status" />
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <template #footer>
         <div class="dialog-footer">

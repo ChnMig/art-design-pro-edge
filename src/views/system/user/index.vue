@@ -105,34 +105,84 @@
     <el-dialog
       v-model="dialogVisible"
       :title="dialogType === 'add' ? '添加用户' : '编辑用户'"
-      width="30%"
+      width="600px"
+      align-center
+      :close-on-click-modal="false"
     >
-      <el-form ref="formRef" :model="formData" :rules="rules" label-width="80px">
-        <el-form-item label="用户名" prop="name">
-          <el-input v-model="formData.name" />
-        </el-form-item>
-        <el-form-item label="手机号" prop="phone">
-          <el-input v-model="formData.phone" />
-        </el-form-item>
-        <el-form-item label="性别" prop="gender">
-          <el-select v-model="formData.gender">
-            <el-option label="男" :value="1" />
-            <el-option label="女" :value="2" />
-            <el-option label="未知" :value="0" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="部门" prop="department_id">
-          <el-select v-model="formData.department_id">
-            <el-option label="董事会部" :value="1" />
-            <el-option label="市场部" :value="2" />
-            <el-option label="技术部" :value="3" />
-          </el-select>
-        </el-form-item>
+      <el-form ref="formRef" :model="formData" :rules="rules" label-width="85px">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="账号" prop="username">
+              <el-input
+                v-model="formData.username"
+                :disabled="dialogType === 'edit'"
+                placeholder="请输入账号"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="用户名" prop="name">
+              <el-input v-model="formData.name" placeholder="请输入用户名" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="12" v-if="dialogType === 'add'">
+            <el-form-item label="密码" prop="password">
+              <el-input
+                v-model="formData.password"
+                type="password"
+                show-password
+                placeholder="请输入密码"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="dialogType === 'add' ? 12 : 24">
+            <el-form-item label="手机号" prop="phone">
+              <el-input v-model="formData.phone" placeholder="请输入手机号" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="性别" prop="gender">
+              <el-select v-model="formData.gender" placeholder="请选择性别" style="width: 100%">
+                <el-option label="男" :value="1" />
+                <el-option label="女" :value="2" />
+                <el-option label="未知" :value="0" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="部门" prop="department_id">
+              <el-select
+                v-model="formData.department_id"
+                placeholder="请选择部门"
+                style="width: 100%"
+              >
+                <el-option label="董事会部" :value="1" />
+                <el-option label="市场部" :value="2" />
+                <el-option label="技术部" :value="3" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="启用">
+              <el-switch v-model="formData.status" />
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
+
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="handleSubmit">提交</el-button>
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="handleSubmit">确 定</el-button>
         </div>
       </template>
     </el-dialog>
@@ -159,9 +209,12 @@
 
   const formData = reactive({
     id: '',
+    username: '',
     name: '',
+    password: '',
     phone: '',
     gender: 0,
+    status: 1,
     department_id: 1
   })
 
@@ -279,15 +332,20 @@
 
     if (type === 'edit' && row) {
       formData.id = row.User.id
+      formData.username = row.User.username || ''
       formData.name = row.User.name
       formData.phone = row.User.phone || ''
       formData.gender = row.User.gender
+      formData.status = row.User.status
       formData.department_id = row.User.department_id
     } else {
       formData.id = ''
+      formData.username = ''
       formData.name = ''
+      formData.password = ''
       formData.phone = ''
       formData.gender = 0
+      formData.status = 1
       formData.department_id = 1
     }
   }
@@ -348,12 +406,21 @@
   }
 
   const rules = reactive<FormRules>({
+    username: [
+      { required: true, message: '请输入账号', trigger: 'blur' },
+      { min: 4, max: 20, message: '长度在 4 到 20 个字符', trigger: 'blur' }
+    ],
     name: [
       { required: true, message: '请输入用户名', trigger: 'blur' },
       { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
     ],
+    password: [
+      { required: true, message: '请输入密码', trigger: 'blur' },
+      { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
+    ],
     phone: [{ pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号格式', trigger: 'blur' }],
     gender: [{ required: true, message: '请选择性别', trigger: 'change' }],
+    status: [{ required: true, message: '请选择状态', trigger: 'change' }],
     department_id: [{ required: true, message: '请选择部门', trigger: 'change' }]
   })
 
