@@ -11,24 +11,44 @@
         <el-form :model="searchForm" ref="searchFormRef" label-width="82px">
           <el-row :gutter="20">
             <form-input label="用户名" prop="name" v-model="searchForm.name" />
+            <form-input label="账号" prop="username" v-model="searchForm.username" />
             <form-input label="手机号" prop="phone" v-model="searchForm.phone" />
-            <form-input label="邮箱" prop="email" v-model="searchForm.email" />
-            <form-input label="账号" prop="account" v-model="searchForm.account" />
           </el-row>
           <el-row :gutter="20">
-            <form-input label="用户ID" prop="id" v-model="searchForm.id" />
-            <form-select
-              label="性别"
-              prop="gender"
-              v-model="searchForm.gender"
-              :options="genderOptions"
-            />
-            <form-select
-              label="会员等级"
-              prop="level"
-              v-model="searchForm.level"
-              :options="levelOptions"
-            />
+            <el-col :span="8">
+              <el-form-item label="部门" prop="department_id">
+                <el-select
+                  v-model="searchForm.department_id"
+                  placeholder="请选择部门"
+                  clearable
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="item in departmentList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="角色" prop="role_id">
+                <el-select
+                  v-model="searchForm.role_id"
+                  placeholder="请选择角色"
+                  clearable
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="item in roleList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
           </el-row>
         </el-form>
       </template>
@@ -92,7 +112,7 @@
           <el-table-column fixed="right" label="操作" width="150px" align="center">
             <template #default="scope">
               <button-table type="edit" @click="showDialog('edit', scope.row)" />
-              <button-table type="delete" @click="deleteUser(scope.row)" />
+              <button-table type="delete" @click="handleDeleteUser(scope.row)" />
             </template>
           </el-table-column>
         </template>
@@ -106,7 +126,7 @@
       align-center
       :close-on-click-modal="false"
     >
-      <el-form ref="formRef" :model="formData" :rules="rules" label-width="85px">
+      <el-form ref="formRef" :model="formData" :rules="computedRules" label-width="85px">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="账号" prop="username">
@@ -125,17 +145,17 @@
         </el-row>
 
         <el-row :gutter="20">
-          <el-col :span="12" v-if="dialogType === 'add'">
+          <el-col :span="12">
             <el-form-item label="密码" prop="password">
               <el-input
                 v-model="formData.password"
                 type="password"
                 show-password
-                placeholder="请输入密码"
+                :placeholder="dialogType === 'add' ? '请输入密码' : '不填则不修改密码'"
               />
             </el-form-item>
           </el-col>
-          <el-col :span="dialogType === 'add' ? 12 : 24">
+          <el-col :span="12">
             <el-form-item label="手机号" prop="phone">
               <el-input v-model="formData.phone" placeholder="请输入手机号" />
             </el-form-item>
@@ -146,6 +166,7 @@
           <el-col :span="12">
             <el-form-item label="性别" prop="gender">
               <el-select v-model="formData.gender" placeholder="请选择性别" style="width: 100%">
+                <el-option label="请选择" :value="undefined" disabled></el-option>
                 <el-option label="男" :value="1" />
                 <el-option label="女" :value="2" />
               </el-select>
@@ -158,9 +179,14 @@
                 placeholder="请选择部门"
                 style="width: 100%"
               >
-                <el-option label="董事会部" :value="1" />
-                <el-option label="市场部" :value="2" />
-                <el-option label="技术部" :value="3" />
+                <el-option label="请选择" :value="undefined" disabled></el-option>
+                <el-option
+                  v-for="item in departmentList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                  :disabled="item.status !== 1"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -169,11 +195,13 @@
           <el-col :span="12">
             <el-form-item label="角色" prop="role_id">
               <el-select v-model="formData.role_id" placeholder="请选择角色" style="width: 100%">
+                <el-option label="请选择" :value="undefined" disabled></el-option>
                 <el-option
-                  v-for="item in roleOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  v-for="item in roleList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                  :disabled="item.status !== 1"
                 />
               </el-select>
             </el-form-item>
@@ -197,13 +225,21 @@
 </template>
 
 <script setup lang="ts">
-  import { getUserList, addUser, updateUser, deleteUser } from '@/api/system/api'
+  import {
+    getUserList,
+    addUser,
+    updateUser,
+    deleteUser as apiDeleteUser, // 重命名导入的API函数
+    getDepartmentList,
+    getRoleList
+  } from '@/api/system/api'
   import { FormInstance } from 'element-plus'
   import { ElMessageBox, ElMessage, ElConfigProvider } from 'element-plus'
   import type { FormRules } from 'element-plus'
-  import { onMounted, nextTick } from 'vue'
+  import { onMounted, nextTick, computed } from 'vue'
   // 导入中文语言包
   import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+  import { ApiStatus } from '@/api/status'
 
   const dialogType = ref('add')
   const dialogVisible = ref(false)
@@ -220,10 +256,10 @@
     name: '',
     password: '',
     phone: '',
-    gender: 1, // 默认性别为男
+    gender: undefined, // 将默认值改为 undefined
     status: 1, // 默认启用状态
-    department_id: 1,
-    role_id: 1 // 默认角色ID
+    department_id: undefined, // 将默认值改为 undefined
+    role_id: undefined // 将默认值改为 undefined
   })
 
   const genderOptions = [
@@ -265,12 +301,10 @@
   const searchFormRef = ref<FormInstance>()
   const searchForm = reactive({
     name: '',
+    username: '', // 改为username以匹配API参数
     phone: '',
-    email: '',
-    account: '',
-    id: '',
-    gender: 0,
-    level: ''
+    department_id: undefined, // 添加部门ID搜索条件
+    role_id: undefined // 添加角色ID搜索条件
   })
 
   const resetForm = (formEl: FormInstance | undefined) => {
@@ -281,14 +315,26 @@
     loadUserList()
   }
 
-  // 加载用户列表数据
+  // 添加部门列表和角色列表的响应式数据
+  const departmentList = ref<any[]>([])
+  const roleList = ref<any[]>([])
+
+  // 加载用户列表数据 - 添加搜索参数
   const loadUserList = async () => {
     try {
+      // 构建搜索参数，过滤掉undefined和空字符串
       const params = {
         page: pagination.currentPage,
-        pageSize: pagination.pageSize,
-        ...searchForm
+        pageSize: pagination.pageSize
       }
+
+      // 只添加有值的搜索条件
+      if (searchForm.name) params.name = searchForm.name
+      if (searchForm.username) params.username = searchForm.username
+      if (searchForm.phone) params.phone = searchForm.phone
+      if (searchForm.department_id) params.department_id = searchForm.department_id
+      if (searchForm.role_id) params.role_id = searchForm.role_id
+
       const res = await getUserList(params)
       if (res.code === 200) {
         tableData.value = res.data || []
@@ -314,6 +360,42 @@
       ElMessage.error('获取用户列表失败')
     }
   }
+
+  // 加载部门列表数据
+  const loadDepartmentList = async () => {
+    try {
+      const res = await getDepartmentList()
+      if (res.code === ApiStatus.success) {
+        departmentList.value = res.data || []
+      } else {
+        ElMessage.error(res.message || '获取部门列表失败')
+      }
+    } catch (error) {
+      console.error('获取部门列表出错:', error)
+      ElMessage.error('获取部门列表失败')
+    }
+  }
+
+  // 加载角色列表数据
+  const loadRoleList = async () => {
+    try {
+      const res = await getRoleList()
+      if (res.code === ApiStatus.success) {
+        roleList.value = res.data || []
+      } else {
+        ElMessage.error(res.message || '获取角色列表失败')
+      }
+    } catch (error) {
+      console.error('获取角色列表出错:', error)
+      ElMessage.error('获取角色列表失败')
+    }
+  }
+
+  // 初始化加载数据
+  onMounted(async () => {
+    // 并行加载所有数据
+    await Promise.all([loadUserList(), loadDepartmentList(), loadRoleList()])
+  })
 
   // 格式化时间戳
   const formatTimestamp = (timestamp: number) => {
@@ -348,6 +430,7 @@
       formData.status = row.User.status
       formData.department_id = row.User.department_id
       formData.role_id = row.User.role_id || 1 // 获取角色ID，如果没有则默认为1
+      formData.password = '' // 编辑模式下明确清空密码
     } else {
       // 添加用户时重置表单并确保状态为启用
       formData.id = ''
@@ -355,37 +438,56 @@
       formData.name = ''
       formData.password = ''
       formData.phone = ''
-      formData.gender = 1 // 默认设置为男性
+      formData.gender = undefined // 默认不选择性别
       formData.status = 1 // 明确设置为启用状态
-      formData.department_id = 1
-      formData.role_id = 1 // 默认角色
+      formData.department_id = undefined // 默认不选择部门
+      formData.role_id = undefined // 默认不选择角色
 
       // 确保下一个渲染周期状态为启用
       nextTick(() => {
         formData.status = 1
       })
     }
+
+    // 强制重新计算验证规则
+    nextTick(() => {
+      if (formRef.value) {
+        formRef.value.clearValidate() // 清除之前的验证结果
+      }
+    })
   }
 
-  const deleteUser = (row: any) => {
-    ElMessageBox.confirm('确定要注销该用户吗？', '注销用户', {
+  const handleDeleteUser = (row: any) => {
+    ElMessageBox.confirm('确定要删除该用户吗？', '删除用户', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'error'
-    }).then(async () => {
-      try {
-        const res = await deleteUser(row.User.id)
-        if (res.code === 200) {
-          ElMessage.success('注销成功')
-          loadUserList()
-        } else {
-          ElMessage.error(res.message || '注销失败')
-        }
-      } catch (error) {
-        console.error('删除用户出错:', error)
-        ElMessage.error('注销失败')
-      }
     })
+      .then(async () => {
+        try {
+          // 确保用户ID正确传递
+          const userId = row.User?.id
+          if (!userId) {
+            ElMessage.error('用户ID无效')
+            return
+          }
+
+          const res = await apiDeleteUser(userId)
+          if (res.code === 200) {
+            ElMessage.success('删除用户成功')
+            // 重新加载用户列表
+            loadUserList()
+          } else {
+            ElMessage.error(res.message || '删除用户失败')
+          }
+        } catch (error) {
+          console.error('删除用户出错:', error)
+          ElMessage.error('删除用户失败，请稍后重试')
+        }
+      })
+      .catch(() => {
+        // 用户取消删除，不做处理
+      })
   }
 
   const search = () => {
@@ -422,7 +524,8 @@
     }
   }
 
-  const rules = reactive<FormRules>({
+  // 定义基本验证规则
+  const baseRules = {
     username: [
       { required: true, message: '请输入账号', trigger: 'blur' },
       { min: 4, max: 20, message: '长度在 4 到 20 个字符', trigger: 'blur' }
@@ -430,10 +533,6 @@
     name: [
       { required: true, message: '请输入用户名', trigger: 'blur' },
       { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
-    ],
-    password: [
-      { required: true, message: '请输入密码', trigger: 'blur' },
-      { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
     ],
     phone: [
       { required: true, message: '请输入手机号', trigger: 'blur' },
@@ -443,6 +542,41 @@
     status: [{ required: true, message: '请选择状态', trigger: 'change' }],
     department_id: [{ required: true, message: '请选择部门', trigger: 'change' }],
     role_id: [{ required: true, message: '请选择角色', trigger: 'change' }]
+  }
+
+  // 根据对话框类型动态计算验证规则
+  const computedRules = computed(() => {
+    // 添加模式下的规则
+    if (dialogType.value === 'add') {
+      return {
+        ...baseRules,
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
+        ]
+      }
+    }
+    // 编辑模式下的规则
+    else {
+      return {
+        ...baseRules,
+        password: [
+          { required: false }, // 明确设置为不必填
+          {
+            validator: (rule, value, callback) => {
+              if (!value || value === '') {
+                callback() // 空密码直接通过
+              } else if (value.length < 6 || value.length > 20) {
+                callback(new Error('长度在 6 到 20 个字符'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur'
+          }
+        ]
+      }
+    }
   })
 
   const formRef = ref<FormInstance>()
@@ -456,6 +590,11 @@
           // 准备提交的数据
           const submitData = {
             ...formData
+          }
+
+          // 如果是编辑模式且密码为空，则删除密码字段
+          if (dialogType.value === 'edit' && !submitData.password) {
+            delete submitData.password
           }
 
           let res
