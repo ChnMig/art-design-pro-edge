@@ -72,9 +72,6 @@
               <el-tag v-else-if="scope.row.User.gender === 2" type="danger" effect="light"
                 >女</el-tag
               >
-              <el-tag v-else-if="scope.row.User.gender === 0" type="info" effect="light"
-                >未知</el-tag
-              >
               <span v-else>--</span>
             </template>
           </el-table-column>
@@ -151,7 +148,6 @@
               <el-select v-model="formData.gender" placeholder="请选择性别" style="width: 100%">
                 <el-option label="男" :value="1" />
                 <el-option label="女" :value="2" />
-                <el-option label="未知" :value="0" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -169,11 +165,22 @@
             </el-form-item>
           </el-col>
         </el-row>
-
         <el-row :gutter="20">
           <el-col :span="12">
+            <el-form-item label="角色" prop="role_id">
+              <el-select v-model="formData.role_id" placeholder="请选择角色" style="width: 100%">
+                <el-option
+                  v-for="item in roleOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item label="启用">
-              <el-switch v-model="formData.status" />
+              <el-switch v-model="formData.status" :active-value="1" :inactive-value="2" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -194,7 +201,7 @@
   import { FormInstance } from 'element-plus'
   import { ElMessageBox, ElMessage, ElConfigProvider } from 'element-plus'
   import type { FormRules } from 'element-plus'
-  import { onMounted } from 'vue'
+  import { onMounted, nextTick } from 'vue'
   // 导入中文语言包
   import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 
@@ -213,9 +220,10 @@
     name: '',
     password: '',
     phone: '',
-    gender: 0,
-    status: 1,
-    department_id: 1
+    gender: 1, // 默认性别为男
+    status: 1, // 默认启用状态
+    department_id: 1,
+    role_id: 1 // 默认角色ID
   })
 
   const genderOptions = [
@@ -226,20 +234,21 @@
     {
       value: 2,
       label: '女'
-    },
-    {
-      value: 0,
-      label: '未知'
     }
   ]
-  const levelOptions = [
+
+  const roleOptions = [
     {
-      value: '1',
-      label: '普通用户'
+      value: 1,
+      label: '管理员'
     },
     {
-      value: '2',
-      label: ' VIP'
+      value: 2,
+      label: '普通员工'
+    },
+    {
+      value: 3,
+      label: '访客'
     }
   ]
 
@@ -335,18 +344,26 @@
       formData.username = row.User.username || ''
       formData.name = row.User.name
       formData.phone = row.User.phone || ''
-      formData.gender = row.User.gender
+      formData.gender = row.User.gender === 0 ? 1 : row.User.gender // 如果性别是未知(0)，则默认设为男(1)
       formData.status = row.User.status
       formData.department_id = row.User.department_id
+      formData.role_id = row.User.role_id || 1 // 获取角色ID，如果没有则默认为1
     } else {
+      // 添加用户时重置表单并确保状态为启用
       formData.id = ''
       formData.username = ''
       formData.name = ''
       formData.password = ''
       formData.phone = ''
-      formData.gender = 0
-      formData.status = 1
+      formData.gender = 1 // 默认设置为男性
+      formData.status = 1 // 明确设置为启用状态
       formData.department_id = 1
+      formData.role_id = 1 // 默认角色
+
+      // 确保下一个渲染周期状态为启用
+      nextTick(() => {
+        formData.status = 1
+      })
     }
   }
 
@@ -418,10 +435,14 @@
       { required: true, message: '请输入密码', trigger: 'blur' },
       { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
     ],
-    phone: [{ pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号格式', trigger: 'blur' }],
+    phone: [
+      { required: true, message: '请输入手机号', trigger: 'blur' },
+      { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号格式', trigger: 'blur' }
+    ],
     gender: [{ required: true, message: '请选择性别', trigger: 'change' }],
     status: [{ required: true, message: '请选择状态', trigger: 'change' }],
-    department_id: [{ required: true, message: '请选择部门', trigger: 'change' }]
+    department_id: [{ required: true, message: '请选择部门', trigger: 'change' }],
+    role_id: [{ required: true, message: '请选择角色', trigger: 'change' }]
   })
 
   const formRef = ref<FormInstance>()
@@ -486,5 +507,11 @@
         }
       }
     }
+  }
+
+  .status-hint {
+    margin-left: 8px;
+    font-size: 12px;
+    color: #909399;
   }
 </style>
