@@ -2,7 +2,7 @@
   <div class="page-content">
     <el-row :gutter="12">
       <el-col :span="3" class="el-col2">
-        <el-button v-auth="'add'" @click="showMenuModal('add-menu-levle1', null, true)" v-ripple
+        <el-button @click="showMenuModal('add-menu-levle1', null, true)" v-ripple
           >添加菜单</el-button
         >
       </el-col>
@@ -42,13 +42,9 @@
         </el-table-column>
         <el-table-column fixed="right" label="操作" align="center">
           <template #default="scope">
-            <button-table
-              type="add"
-              v-auth="'add'"
-              @click="showMenuModal('add-menu-levle2', scope.row)"
-            />
-            <button-table type="edit" v-auth="'edit'" @click="handleEdit('edit', scope.row)" />
-            <button-table type="delete" v-auth="'delete'" @click="delMenu(scope.row.id)" />
+            <button-table type="add" @click="showMenuModal('add-menu-levle2', scope.row)" />
+            <button-table type="edit" @click="handleEdit('edit', scope.row)" />
+            <button-table type="delete" @click="delMenu(scope.row.id)" />
           </template>
         </el-table-column>
       </template>

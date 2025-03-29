@@ -114,10 +114,6 @@
                   </div>
                 </div>
                 <ul class="user-menu">
-                  <li @click="goPage('/system/myInfo')">
-                    <i class="menu-icon iconfont-sys">&#xe734;</i>
-                    <span class="menu-txt">个人中心</span>
-                  </li>
                   <li @click="lockScreen()">
                     <i class="menu-icon iconfont-sys">&#xe817;</i>
                     <span class="menu-txt">锁定屏幕</span>
