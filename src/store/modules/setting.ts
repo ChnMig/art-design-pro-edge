@@ -5,7 +5,7 @@ import { SystemThemeEnum, MenuThemeEnum, MenuTypeEnum, ContainerWidthEnum } from
 import { colourBlend, handleElementThemeColor } from '@/utils/colors'
 import { getSysStorage } from '@/utils/storage'
 
-const { defaultMenuWidth, defaultCustomRadius } = SystemSetting
+const { defaultMenuWidth, defaultCustomRadius, defaultTabStyle } = SystemSetting
 
 export interface SettingState {
   menuType: MenuTypeEnum // 菜单类型
@@ -28,6 +28,7 @@ export interface SettingState {
   menuOpen: boolean // 菜单是否展开
   refresh: boolean
   watermarkVisible: boolean // 水印是否显示
+  tabStyle: string
   customRadius: string // 自定义圆角
   dualMenuShowText: boolean // 双列菜单是否显示文本
   containerWidth: ContainerWidthEnum // 容器宽度
@@ -54,6 +55,7 @@ export const useSettingStore = defineStore('settingStore', {
     pageTransition: 'slide-right',
     menuOpen: true,
     refresh: false,
+    tabStyle: defaultTabStyle,
     watermarkVisible: true,
     customRadius: defaultCustomRadius,
     dualMenuShowText: false,
@@ -109,6 +111,7 @@ export const useSettingStore = defineStore('settingStore', {
         this.pageTransition = setting.pageTransition
         this.menuOpen = setting.menuOpen
         this.watermarkVisible = setting.watermarkVisible
+        this.tabStyle = setting.tabStyle || defaultTabStyle
         this.customRadius = setting.customRadius || defaultCustomRadius
         this.dualMenuShowText = setting.dualMenuShowText
         this.setCustomRadius(this.customRadius)
@@ -186,6 +189,10 @@ export const useSettingStore = defineStore('settingStore', {
     // 设置页面切换动画
     setPageTransition(transition: string) {
       this.pageTransition = transition
+    },
+    // 设置标签页风格
+    setTabStyle(style: string) {
+      this.tabStyle = style
     },
     // 设置菜单是否展开
     setMenuOpen(open: boolean) {

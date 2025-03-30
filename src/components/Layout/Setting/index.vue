@@ -172,6 +172,24 @@
               @change="setMenuOpenSize"
             />
           </div>
+
+          <div class="item" style="display: flex">
+            <span>标签页风格</span>
+            <el-select
+              v-model="tabStyle"
+              placeholder="Select"
+              size="default"
+              style="width: 120px"
+              @change="setTabStyle"
+            >
+              <el-option
+                v-for="item in tabStyleOps"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </div>
           <div class="item" style="display: flex">
             <span>页面切换动画</span>
             <el-select
@@ -268,6 +286,7 @@
   const systemThemeColor = computed(() => store.systemThemeColor)
   const boxBorderMode = computed(() => store.boxBorderMode)
   const pageTransition = computed(() => store.pageTransition)
+  const tabStyle = computed(() => store.tabStyle)
   const customRadius = computed(() => store.customRadius)
   const menuType = computed(() => store.menuType)
   const isTopMenu = computed(() => store.menuType === MenuTypeEnum.TOP)
@@ -282,6 +301,20 @@
   const showNprogress = ref(true)
   const colorWeak = ref(false)
   const containerWidth = computed(() => store.containerWidth)
+  const tabStyleOps = computed(() => [
+    {
+      value: 'tab-default',
+      label: '默认'
+    },
+    {
+      value: 'tab-card',
+      label: '卡片'
+    },
+    {
+      value: 'tab-google',
+      label: '谷歌'
+    }
+  ])
   const pageTransitionOps = [
     {
       value: '',
@@ -476,6 +509,7 @@
 
   const setPageTransition = (transition: string) =>
     autoCloseHandler(store.setPageTransition, false, transition)
+  const setTabStyle = (style: string) => autoCloseHandler(store.setTabStyle, false, style)
 
   const setContainerWidth = (type: ContainerWidthEnum) =>
     autoCloseHandler(store.setContainerWidth, true, type)
