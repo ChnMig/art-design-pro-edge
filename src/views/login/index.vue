@@ -140,9 +140,7 @@
             const userRes = await getUserInfo()
             if (userRes.code === ApiStatus.success) {
               console.log('获取用户信息成功:', userRes.data)
-              if (userRes.data.avatar === '') {
-                userRes.data.avatar = '/src/assets/img/user/avatar.png'
-              }
+              userRes.data.avatar = '/src/assets/img/user/avatar.png'
               userStore.setUserInfo(userRes.data)
             } else {
               ElMessage.error(userRes.message)

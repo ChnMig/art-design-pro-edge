@@ -13,6 +13,7 @@ declare module 'vue' {
     ButtonMore: typeof import('./../components/Form/ButtonMore.vue')['default']
     ButtonTable: typeof import('./../components/Form/ButtonTable.vue')['default']
     DragVerify: typeof import('./../components/Form/DragVerify.vue')['default']
+    EditInfo: typeof import('./../components/Layout/EditInfo/index.vue')['default']
     Editor: typeof import('./../components/Form/Editor.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
     ElBadge: typeof import('element-plus/es')['ElBadge']
