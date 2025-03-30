@@ -7,7 +7,6 @@
   width: 100%;
   padding: 0 20px 10px;
   user-select: none;
-  background: var(--art-bg-color);
 
   .scroll-view {
     width: 100%;
@@ -57,6 +56,7 @@
       }
     }
   }
+
   &.tab-card {
     padding: 4px 20px;
     border-bottom: 1px solid var(--art-border-color);
@@ -163,6 +163,7 @@
       }
     }
   }
+
   .right {
     display: flex;
 
