@@ -10,7 +10,7 @@
     >
       <el-input
         v-model.trim="searchVal"
-        :placeholder="$t('search.placeholder')"
+        placeholder="搜索页面"
         @input="search"
         @blur="searchBlur"
         ref="searchInput"
@@ -43,7 +43,7 @@
           class="history-box"
           v-show="!searchVal && searchResult.length === 0 && historyResult.length > 0"
         >
-          <p class="title">{{ $t('search.historyTitle') }}</p>
+          <p class="title">搜索页面</p>
           <div class="history-result">
             <div
               class="box"
@@ -65,11 +65,11 @@
           <div>
             <i class="iconfont-sys"></i>
             <i class="iconfont-sys"></i>
-            <span>{{ $t('search.switchKeydown') }}</span>
+            <span>切换</span>
           </div>
           <div>
             <i class="iconfont-sys"></i>
-            <span>{{ $t('search.selectKeydown') }}</span>
+            <span>选择</span>
           </div>
         </div>
       </template>
