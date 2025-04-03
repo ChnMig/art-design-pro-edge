@@ -13,28 +13,15 @@
       <div class="login-wrap">
         <div class="form">
           <h3 class="title">忘记密码？</h3>
-          <p class="sub-title">输入您的手机号码来重置您的密码</p>
-          <div class="input-wrap">
-            <span class="input-label" v-if="showInputLabel">账号</span>
-            <el-input placeholder="请输入您的手机号" size="large" v-model.trim="username" />
+          <p class="sub-title">请联系管理员重置您的密码</p>
+          <div class="qrcode-container">
+            <img :src="qrcodeImage" alt="联系管理员二维码" class="qrcode-img" />
+            <p class="qrcode-tip">扫描上方二维码联系管理员</p>
           </div>
 
-          <div style="margin-top: 15px">
-            <el-button
-              class="login-btn"
-              size="large"
-              type="primary"
-              @click="register"
-              :loading="loading"
-              v-ripple
-            >
-              提交
-            </el-button>
-          </div>
-
-          <div style="margin-top: 15px">
+          <div style="margin-top: 25px">
             <el-button style="width: 100%; height: 46px" size="large" plain @click="toLogin">
-              返回
+              返回登录
             </el-button>
           </div>
         </div>
@@ -47,13 +34,10 @@
   import AppConfig from '@/config'
   import LeftView from '@/components/Pages/Login/LeftView.vue'
   const router = useRouter()
-  const showInputLabel = ref(false)
 
   const systemName = AppConfig.systemInfo.name
-  const username = ref('')
-  const loading = ref(false)
-
-  const register = async () => {}
+  // 替换为实际的二维码图片路径
+  const qrcodeImage = ref('src/assets/img/admin/qrcode.png')
 
   const toLogin = () => {
     router.push('/login')
@@ -62,4 +46,21 @@
 
 <style lang="scss" scoped>
   @use '../login/index';
+  .qrcode-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+  }
+  
+  .qrcode-img {
+    width: 180px;
+    height: 180px;
+    margin: 15px 0;
+  }
+  
+  .qrcode-tip {
+    color: #606266;
+    font-size: 14px;
+  }
 </style>
