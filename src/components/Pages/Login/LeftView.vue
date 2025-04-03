@@ -4,7 +4,7 @@
       <svg class="icon" aria-hidden="true">
         <use xlink:href="#iconsys-zhaopian-copy"></use>
       </svg>
-      <h1 class="title">{{ systemName }}</h1>
+      <h1 class="title">{{ AppConfig.systemInfo.name }}</h1>
     </div>
     <img class="left-bg" src="@imgs/login/lf_bg.png" />
     <img class="left-img" src="@imgs/login/lf_icon2.png" />
@@ -18,9 +18,7 @@
 
 <script setup lang="ts">
   // 🔔 该文件是登录页面左侧视图组件
-  import { SystemInfo } from '@/config/setting'
-
-  const systemName = SystemInfo.name
+  import AppConfig from '@/config'
 </script>
 
 <style lang="scss" scoped>

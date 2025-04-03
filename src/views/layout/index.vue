@@ -55,7 +55,7 @@
   import WorkTab from '@comps/Layout/WorkTab/index.vue'
   import Setting from '@comps/Layout/Setting/index.vue'
   import LockScreen from '@comps/Layout/LockScreen/index.vue'
-  import  EditInfo from '@comps/Layout/EditInfo/index.vue'
+  import EditInfo from '@comps/Layout/EditInfo/index.vue'
   import { MenuWidth, MenuTypeEnum } from '@/enums/appEnum'
   import { useMenuStore } from '@/store/modules/menu'
   import { useSettingStore } from '@/store/modules/setting'
@@ -87,6 +87,8 @@
   const menuType = computed(() => settingStore.menuType)
   // 水印是否显示
   const watermarkVisible = computed(() => settingStore.watermarkVisible)
+  // 设置水印显示
+  settingStore.watermarkVisible = true
   // 是否是双列菜单
   const isDualMenu = computed(() => settingStore.menuType === MenuTypeEnum.DUAL_MENU)
   // 容器宽度

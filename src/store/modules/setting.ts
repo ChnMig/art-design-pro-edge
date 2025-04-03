@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia'
 import { MenuThemeType } from '@/types/store'
-import { ThemeList, ElementPlusTheme, DarkMenuStyles, SystemSetting } from '@/config/setting'
+import AppConfig from '@/config'
 import { SystemThemeEnum, MenuThemeEnum, MenuTypeEnum, ContainerWidthEnum } from '@/enums/appEnum'
 import { colourBlend, handleElementThemeColor } from '@/utils/colors'
 import { getSysStorage } from '@/utils/storage'
 
-const { defaultMenuWidth, defaultCustomRadius, defaultTabStyle } = SystemSetting
+const { defaultMenuWidth, defaultCustomRadius, defaultTabStyle } = AppConfig.systemSetting
 
 export interface SettingState {
   menuType: MenuTypeEnum // 菜单类型
@@ -43,7 +43,7 @@ export const useSettingStore = defineStore('settingStore', {
     menuThemeType: MenuThemeEnum.DESIGN,
     boxBorderMode: true,
     uniqueOpened: true,
-    systemThemeColor: ElementPlusTheme.primary,
+    systemThemeColor: AppConfig.elementPlusTheme.primary,
     showMenuButton: true,
     showRefreshButton: true,
     showCrumbs: true,
@@ -63,9 +63,9 @@ export const useSettingStore = defineStore('settingStore', {
   }),
   getters: {
     getMenuTheme(): MenuThemeType {
-      const list = ThemeList.filter((item) => item.theme === this.menuThemeType)
+      const list = AppConfig.themeList.filter((item) => item.theme === this.menuThemeType)
       if (this.isDark) {
-        return DarkMenuStyles[0]
+        return AppConfig.darkMenuStyles[0]
       } else {
         return list[0]
       }
@@ -97,7 +97,7 @@ export const useSettingStore = defineStore('settingStore', {
         this.systemThemeMode = setting.systemThemeMode || SystemThemeEnum.LIGHT
         this.menuThemeType = setting.menuThemeType || MenuThemeEnum.DESIGN
         this.containerWidth = setting.containerWidth || ContainerWidthEnum.FULL
-        this.systemThemeColor = setting.systemThemeColor || ElementPlusTheme.primary
+        this.systemThemeColor = setting.systemThemeColor || AppConfig.elementPlusTheme.primary
         this.boxBorderMode = setting.boxBorderMode
         this.uniqueOpened = setting.uniqueOpened
         this.showMenuButton = setting.showMenuButton
@@ -118,7 +118,7 @@ export const useSettingStore = defineStore('settingStore', {
         setElementThemeColor(setting.systemThemeColor)
       } else {
         this.setCustomRadius(this.customRadius)
-        setElementThemeColor(ElementPlusTheme.primary)
+        setElementThemeColor(AppConfig.elementPlusTheme.primary)
       }
     },
     switchMenuLayouts(type: MenuTypeEnum) {

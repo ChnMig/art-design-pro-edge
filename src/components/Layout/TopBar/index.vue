@@ -7,7 +7,7 @@
           <svg class="svg-icon2" aria-hidden="true">
             <use xlink:href="#iconsys-zhaopian-copy"></use>
           </svg>
-          <p v-if="width >= 1400">{{ SystemInfo.name }}</p>
+          <p v-if="width >= 1400">{{ AppConfig.systemInfo.name }}</p>
         </div>
 
         <svg class="svg-icon" aria-hidden="true" @click="toHome()">
@@ -147,7 +147,7 @@
   import { HOME_PAGE } from '@/router/modules/routesAlias'
   import mittBus from '@/utils/mittBus'
   import { useMenuStore } from '@/store/modules/menu'
-  import { SystemInfo } from '@/config/setting'
+  import AppConfig from '@/config'
   import { themeAnimation } from '@/utils/theme/animation'
 
   const isWindows = navigator.userAgent.includes('Windows')

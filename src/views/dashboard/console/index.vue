@@ -47,7 +47,7 @@
   import CardList from './widget/CardList.vue'
   import ActiveUser from './widget/ActiveUser.vue'
   import SalesOverview from './widget/SalesOverview.vue'
-  import { SystemInfo } from '@/config/setting'
+  import AppConfig from '@/config'
   import { useSettingStore } from '@/store/modules/setting'
 
   import { useCommon } from '@/composables/useCommon'
@@ -60,7 +60,7 @@
     settingStore.reload()
   })
 
-  const systemName = SystemInfo.name
+  const systemName = AppConfig.systemInfo.name
   useCommon().scrollToTop()
 
   const goPage = (url: string) => {

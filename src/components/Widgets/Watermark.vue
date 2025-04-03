@@ -14,9 +14,8 @@
 </template>
 
 <script setup lang="ts">
-  import { useUserStore } from '@/store/modules/user'
   import { computed } from 'vue'
-
+  import { useUserStore } from '@/store/modules/user'
   const userStore = useUserStore()
 
   interface WatermarkProps {
@@ -32,10 +31,10 @@
     zIndex?: number
   }
 
-  // 修改这里，移除对 userStore 的引用
-  const props = withDefaults(defineProps<WatermarkProps>(), {
-    content: undefined, // 设置为 undefined
-    visible: false,
+  // 定义组件属性，设置默认值
+  withDefaults(defineProps<WatermarkProps>(), {
+    content: undefined,
+    visible: true,
     fontSize: 16,
     fontColor: 'rgba(128, 128, 128, 0.2)',
     rotate: -22,
@@ -45,10 +44,9 @@
     offsetY: 50,
     zIndex: 3100
   })
-
   // 添加计算属性处理默认值
   const effectiveContent = computed(
-    () => props.content ?? userStore.getUserInfo.id + ' | ' + userStore.getUserInfo.name
+    () => userStore.getUserInfo.id + ' | ' + userStore.getUserInfo.username
   )
 </script>
 

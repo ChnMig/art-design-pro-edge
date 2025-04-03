@@ -63,7 +63,7 @@
           :class="{ 'is-dual-menu-name': isDualMenu }"
           :style="{ color: theme.systemNameColor, opacity: collapse ? 0 : 1 }"
         >
-          {{ SystemInfo.name }}
+          {{ AppConfig.systemInfo.name }}
         </p>
       </div>
       <el-menu
@@ -97,7 +97,7 @@
   import Submenu from '../Submenu/submenu.vue'
   import { HOME_PAGE } from '@/router/modules/routesAlias'
   import { useSettingStore } from '@/store/modules/setting'
-  import { SystemInfo } from '@/config/setting'
+  import AppConfig from '@/config'
   import { MenuTypeEnum, MenuWidth } from '@/enums/appEnum'
   import { useMenuStore } from '@/store/modules/menu'
   import { isIframe } from '@/utils/utils'
