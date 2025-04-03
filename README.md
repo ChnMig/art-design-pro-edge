@@ -12,25 +12,50 @@
 4. 去除多余的依赖
 5. 用户登录滑动验证码改为图形验证码
 6. 去除用户注册
-7. 增加水印, 且无法关闭
-8. 更符合直觉的菜单管理
+7. 增加水印(`{用户id | 用户账号}`), 且无法关闭
+8. 更符合直觉的菜单和权限管理
+9. 去除忘记密码流程(通过二维码联系管理员进行修改)
+10. 去除用户头像自定义功能
+11. 去除用户邮箱
 
-# 版本
+## 版本
 
 目前同步 [art-design-pro](https://github.com/Daymychen/art-design-pro) 的版本(commitID)为 `6d76a301ae191e2c392bcaf9e160aad36067dfe2`
 
-# 后端代码
+## 后端代码
 
 [art-design-pro-edge-go-server](https://github.com/ChnMig/art-design-pro-edge-go-server)
 
 技术栈: `Golang` `Gin` `Gorm` `PostgreSQL` `Redis`
 
-# QA
+## QA
 
 ## 更新频率
 
-在原项目更新时, 本人会尽快同步更新, 但不保证能及时更新。如果是已经精简或者修改过的功能, 不与原项目同步。
+在原项目更新时, 本人会尽快同步更新, 但不保证能及时更新。如果是已经精简的页面和逻辑, 本人不会进行同步更新。
 
 ## 为什么不做初始化界面
 
 我们假设用户是一个具有开发经验的人，所以我们不会提供一个初始化界面。我们认为用户会通过阅读文档来了解如何使用我们的工具。
+
+## 使用方式
+
+### 安装依赖
+
+> 推荐使用 pnpm
+
+```bash
+pnpm install
+```
+
+### 调试项目
+
+```bash
+pnpm run dev
+```
+
+### 关键配置
+
+> 上线之前一定要看
+
+- 后端地址配置在 `.env` `.env.development` `.env.production` 的 `VITE_API_URL` 变量中
