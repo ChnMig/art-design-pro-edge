@@ -74,22 +74,30 @@
             width="200px"
             align="center"
             v-if="columns[0].show"
-          />
+          >
+            <template #default="scope">
+              {{ scope.row.User?.name || '--' }}
+            </template>
+          </el-table-column>
           <el-table-column
             label="账号"
             prop="User.username"
             align="center"
             v-if="columns[5].show"
-          />
+          >
+            <template #default="scope">
+              {{ scope.row.User?.username || '--' }}
+            </template>
+          </el-table-column>
           <el-table-column label="手机号" align="center" v-if="columns[1].show">
             <template #default="scope">
-              {{ scope.row.User.phone ? scope.row.User.phone : '--' }}
+              {{ scope.row.User?.phone || '--' }}
             </template>
           </el-table-column>
           <el-table-column label="性别" align="center" v-if="columns[2].show">
             <template #default="scope">
-              <el-tag v-if="scope.row.User.gender === 1" type="success" effect="light">男</el-tag>
-              <el-tag v-else-if="scope.row.User.gender === 2" type="danger" effect="light"
+              <el-tag v-if="scope.row.User?.gender === 1" type="success" effect="light">男</el-tag>
+              <el-tag v-else-if="scope.row.User?.gender === 2" type="danger" effect="light"
                 >女</el-tag
               >
               <span v-else>--</span>
@@ -104,8 +112,8 @@
           <el-table-column label="角色" prop="role_name" align="center" v-if="columns[6].show" />
           <el-table-column label="状态" prop="User.status" align="center" v-if="columns[4].show">
             <template #default="scope">
-              <el-tag :type="getTagType(scope.row.User.status)">
-                {{ buildTagText(scope.row.User.status) }}</el-tag
+              <el-tag :type="getTagType(scope.row.User?.status)">
+                {{ buildTagText(scope.row.User?.status) }}</el-tag
               >
             </template>
           </el-table-column>
