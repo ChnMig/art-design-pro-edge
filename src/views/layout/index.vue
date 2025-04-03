@@ -9,6 +9,9 @@
     <!-- 添加锁屏组件 -->
     <LockScreen />
 
+    <!-- 编辑信息组件 -->
+    <EditInfo />
+
     <!-- 顶栏 -->
     <top-bar>
       <work-tab v-if="showWorkTab"></work-tab>
@@ -52,6 +55,7 @@
   import WorkTab from '@comps/Layout/WorkTab/index.vue'
   import Setting from '@comps/Layout/Setting/index.vue'
   import LockScreen from '@comps/Layout/LockScreen/index.vue'
+  import  EditInfo from '@comps/Layout/EditInfo/index.vue'
   import { MenuWidth, MenuTypeEnum } from '@/enums/appEnum'
   import { useMenuStore } from '@/store/modules/menu'
   import { useSettingStore } from '@/store/modules/setting'

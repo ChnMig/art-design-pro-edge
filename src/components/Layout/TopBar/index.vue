@@ -118,6 +118,10 @@
                     <i class="menu-icon iconfont-sys">&#xe817;</i>
                     <span class="menu-txt">锁定屏幕</span>
                   </li>
+                  <li @click="openEditInfo()">
+                    <i class="menu-icon iconfont-sys">&#xe6e0;</i>
+                    <span class="menu-txt">修改个人信息</span>
+                  </li>
                   <div class="line"></div>
                   <div class="logout-btn" @click="loginOut"> 退出登录 </div>
                 </ul>
@@ -134,6 +138,7 @@
 <script setup lang="ts">
   import Breadcrumb from '../Breadcrumb/index.vue'
   import MixedMenu from '../MixedMenu/index.vue'
+  import EditInfo from '../EditInfo/index.vue'
   import { MenuTypeEnum, MenuWidth } from '@/enums/appEnum'
   import { useSettingStore } from '@/store/modules/setting'
   import { useUserStore } from '@/store/modules/user'
@@ -220,6 +225,11 @@
   const lockScreen = () => {
     console.log('lockScreen')
     mittBus.emit('openLockScreen')
+  }
+
+  const openEditInfo = () => {
+    closeUserMenu()
+    mittBus.emit('openEditInfoDialog')
   }
 
   const loginOut = () => {
