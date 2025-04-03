@@ -48,7 +48,7 @@
   import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
   import { ElMessage } from 'element-plus'
   import mittBus from '@/utils/mittBus'
-  import { getUserInfo, updateUser } from '@/api/system/api'
+  import { getUserInfo, updateUserInfo } from '@/api/system/api'
   import type { FormInstance } from 'element-plus'
 
   const dialogVisible = ref(false)
@@ -110,8 +110,7 @@
           if (!data.password) {
             delete data.password
           }
-
-          const res = await updateUser(data)
+          const res = await updateUserInfo(data)
           if (res.data.code === 0) {
             ElMessage.success('个人信息修改成功')
             dialogVisible.value = false

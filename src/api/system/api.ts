@@ -18,6 +18,10 @@ export const getUserInfo = (): Promise<ApiResponse<ApiResponse>> => {
   return api.get({ url: '/system/user/info' })
 }
 
+export const updateUserInfo = (data: any): Promise<ApiResponse<ApiResponse>> => {
+  return api.put({ url: '/system/user/info', data })
+}
+
 export const getUserMenu = (): Promise<ApiResponse<ApiResponse>> => {
   return api.get({ url: '/system/user/menu' })
 }
