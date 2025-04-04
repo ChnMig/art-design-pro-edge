@@ -69,3 +69,43 @@ pnpm run dev
 
 - 后端地址配置在 `.env` `.env.development` `.env.production` 的 `VITE_API_URL` 变量中
 - 联系管理员的二维码在 `src/assets/images/qrcode.png` 中, 项目默认的 qrcode 指向本项目地址, 上线前务必修改
+
+## 截图
+
+> 更多截图可以看 [art-design-pro](https://github.com/Daymychen/art-design-pro)
+
+### 登录
+
+![image](./doc/img/login.png)
+
+### 首页
+
+![image](./doc/img/console.png)
+
+### 菜单管理
+
+![image](./doc/img/menu.png)
+
+### 用户管理
+
+![image](./doc/img/user.png)
+
+### 权限管理
+
+![image](./doc/img/auth.png)
+
+### 设置组件
+
+![image](./doc/img/setting.png)
+
+### 搜索组件
+
+![image](./doc/img/search.png)
+
+### 锁屏组件
+
+![image](./doc/img/lock.png)
+
+### 黑夜模式
+
+![image](./doc/img/dark.png)

@@ -4,7 +4,7 @@
       <el-dialog v-model="visible" :width="370" :show-close="false" @open="handleDialogOpen">
         <div class="lock-content">
           <img class="cover" :src="userInfo.avatar" />
-          <div class="username">{{ userInfo.username }}</div>
+          <div class="username">{{ userInfo.name }}</div>
           <el-form ref="formRef" :model="formData" :rules="rules" @submit.prevent="handleLock">
             <el-form-item prop="password">
               <el-input
