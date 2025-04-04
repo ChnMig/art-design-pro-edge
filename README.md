@@ -18,6 +18,14 @@
 10. 去除用户头像自定义功能
 11. 去除用户邮箱
 
+## 项目特点
+
+- 项目的95%代码由 `github copilot` 辅助编写
+
+## TODO
+
+- API层权限管制
+
 ## 版本
 
 目前同步 [art-design-pro](https://github.com/Daymychen/art-design-pro) 的版本(commitID)为 `6d76a301ae191e2c392bcaf9e160aad36067dfe2`
