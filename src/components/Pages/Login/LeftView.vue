@@ -11,7 +11,9 @@
 
     <div class="text-wrap">
       <h1>专注于用户体验的后台管理系统模版</h1>
-      <p>美观实用的界面，经过视觉优化，确保卓越的用户体验</p>
+      <a class="beian-link" href="https://beian.miit.gov.cn/" target="_blank"
+        >苏ICP备XXXXXXXXXX号-X</a
+      >
     </div>
   </div>
 </template>
@@ -23,4 +25,15 @@
 
 <style lang="scss" scoped>
   @use '@/views/login/index' as login;
+  .beian-link {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    padding: 2px 0;
+    &:hover {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: underline;
+    }
+  }
 </style>
