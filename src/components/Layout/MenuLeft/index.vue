@@ -3,9 +3,9 @@
   <div class="left-menu-or-dual-menu">
     <!-- 双列菜单（左侧） -->
     <div class="dual-menu-left" :style="{ background: theme.background }" v-if="isDualMenu">
-      <svg class="svg-icon" aria-hidden="true" @click="toHome">
-        <use xlink:href="#iconsys-zhaopian-copy"></use>
-      </svg>
+      <div class="svg-icon" aria-hidden="true" @click="toHome">
+        <img class="icon" src="@/assets/img/logo.svg" alt="logo" />
+      </div>
       <el-scrollbar style="height: calc(100% - 135px)">
         <ul>
           <li v-for="menu in firstLevelMenus" :key="menu.path" @click="handleMenuJump(menu, true)">
@@ -56,9 +56,7 @@
       :style="{ background: theme.background }"
     >
       <div class="header" @click="toHome" :style="{ background: theme.background }">
-        <svg class="svg-icon" aria-hidden="true" v-if="!isDualMenu">
-          <use xlink:href="#iconsys-zhaopian-copy"></use>
-        </svg>
+        <img class="svg-icon" src="@/assets/img/logo.svg" alt="logo" v-if="!isDualMenu" />
         <p
           :class="{ 'is-dual-menu-name': isDualMenu }"
           :style="{ color: theme.systemNameColor, opacity: collapse ? 0 : 1 }"

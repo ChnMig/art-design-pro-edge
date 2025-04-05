@@ -5,9 +5,7 @@
     </div>
     <div class="right-wrap">
       <div class="header">
-        <svg class="icon" aria-hidden="true">
-          <use xlink:href="#iconsys-zhaopian-copy"></use>
-        </svg>
+        <img class="icon" src="@/assets/img/logo.svg" alt="logo" />
         <h1>{{ systemName }}</h1>
       </div>
       <div class="login-wrap">
@@ -52,13 +50,13 @@
     align-items: center;
     margin: 20px 0;
   }
-  
+
   .qrcode-img {
     width: 180px;
     height: 180px;
     margin: 15px 0;
   }
-  
+
   .qrcode-tip {
     color: #606266;
     font-size: 14px;
