@@ -120,3 +120,20 @@ export const updateUser = (data: any): Promise<ApiResponse<ApiResponse>> => {
 export const deleteUser = (id: number): Promise<ApiResponse<ApiResponse>> => {
   return api.del({ url: `/system/user?id=${id}` })
 }
+
+export const getTodoList = (params: any): Promise<ApiResponse<ApiResponse>> => {
+  return api.get({ url: '/system/todo', params })
+}
+export const addTodo = (data: any): Promise<ApiResponse<ApiResponse>> => {
+  return api.post({ url: '/system/todo', data })
+}
+export const updateTodo = (data: any): Promise<ApiResponse<ApiResponse>> => {
+  return api.put({ url: '/system/todo', data })
+}
+export const deleteTodo = (id: number): Promise<ApiResponse<ApiResponse>> => {
+  return api.del({ url: `/system/todo?id=${id}` })
+}
+
+export const getUserCache = (params: any = {}): Promise<ApiResponse<ApiResponse>> => {
+  return api.get({ url: '/system/user/cache', params })
+}

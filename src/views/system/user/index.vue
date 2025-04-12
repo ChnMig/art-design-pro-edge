@@ -57,7 +57,7 @@
       </template>
     </table-bar>
 
-    <el-config-provider :locale="zhCn">
+    <el-config-provider>
       <art-table
         :data="tableData"
         :currentPage="pagination.currentPage"
@@ -245,8 +245,6 @@
   import { ElMessageBox, ElMessage, ElConfigProvider } from 'element-plus'
   import type { FormRules } from 'element-plus'
   import { onMounted, nextTick, computed } from 'vue'
-  // 导入中文语言包
-  import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
   import { ApiStatus } from '@/api/status'
 
   const dialogType = ref('add')

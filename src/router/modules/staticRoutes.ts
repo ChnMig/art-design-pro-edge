@@ -12,26 +12,6 @@ export type AppRouteRecordRaw = RouteRecordRaw & {
 export const staticRoutes: AppRouteRecordRaw[] = [
   { path: '/', redirect: HOME_PAGE },
   {
-    path: '/dashboard',
-    component: Home,
-    name: 'Dashboard',
-    meta: { title: '仪表盘' },
-    children: [
-      {
-        path: RoutesAlias.Dashboard,
-        name: 'Console',
-        component: () => import('@views/dashboard/console/index.vue'),
-        meta: { title: '工作台', keepAlive: false }
-      },
-      {
-        path: RoutesAlias.Analysis,
-        name: 'Analysis',
-        component: () => import('@views/dashboard/analysis/index.vue'),
-        meta: { title: '分析页', keepAlive: false }
-      }
-    ]
-  },
-  {
     path: RoutesAlias.Login,
     name: 'Login',
     component: () => import('@views/login/index.vue'),

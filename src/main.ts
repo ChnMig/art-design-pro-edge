@@ -19,8 +19,12 @@ import '@styles/theme-animation.scss'              // 主题动画
 
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import { setupGlobDirectives } from './directives'
-
+import ElementPlus from 'element-plus'
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 const app = createApp(App)
+app.use(ElementPlus, {
+  locale: zhCn,
+})
 initStore(app)
 initRouter(app)
 registerGlobComp(app)
