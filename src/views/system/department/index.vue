@@ -1,35 +1,72 @@
 <template>
   <div class="page-content">
-    <el-row :gutter="12">
-      <el-col :span="3" class="el-col2">
-        <el-button @click="showDialog('add')" v-ripple>添加部门</el-button>
-      </el-col>
-    </el-row>
-
-    <art-table :data="tableData" v-loading="loading" :pagination="false">
-      <template #default>
-        <el-table-column prop="name" label="名称" align="center" />
-        <el-table-column prop="sort" label="排序" sortable align="center" />
-        <el-table-column prop="users" label="人数" align="center">
-          <template #default="scope">
-            {{ Array.isArray(scope.row.users) ? scope.row.users.length : 0 }}
-          </template>
-        </el-table-column>
-        <el-table-column label="状态" prop="status" align="center">
-          <template #default="scope">
-            <el-tag :type="scope.row.status === 1 ? 'primary' : 'warning'">
-              {{ scope.row.status === 1 ? '启用' : '禁用' }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column fixed="right" label="操作" align="center">
-          <template #default="scope">
-            <button-table type="edit" @click="showDialog('edit', scope.row)" />
-            <button-table type="delete" @click="deleteDepartment(scope.row.id)" />
-          </template>
-        </el-table-column>
+    <table-bar
+      :showTop="false"
+      @search="search"
+      @reset="resetSearch"
+      @changeColumn="changeColumn"
+      :columns="columns"
+    >
+      <template #top>
+        <el-form :model="searchForm" ref="searchFormRef" label-width="82px">
+          <el-row :gutter="20">
+            <form-input label="部门名称" prop="name" v-model="searchForm.name" />
+            <el-col :span="8">
+              <el-form-item label="状态" prop="status">
+                <el-select
+                  v-model="searchForm.status"
+                  placeholder="请选择状态"
+                  clearable
+                  style="width: 100%"
+                >
+                  <el-option label="启用" :value="1" />
+                  <el-option label="禁用" :value="2" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
       </template>
-    </art-table>
+      <template #bottom>
+        <el-button @click="showDialog('add')" v-ripple>添加部门</el-button>
+      </template>
+    </table-bar>
+
+    <el-config-provider>
+      <art-table
+        :data="filteredData"
+        :currentPage="pagination.currentPage"
+        :pageSize="pagination.pageSize"
+        :total="pagination.total"
+        :loading="loading"
+        :hideOnSinglePage="false"
+        @current-change="handleCurrentChange"
+        @size-change="handleSizeChange"
+      >
+        <template #default>
+          <el-table-column prop="name" label="名称" align="center" v-if="columns[0].show" />
+          <el-table-column prop="sort" label="排序" sortable align="center" v-if="columns[1].show" />
+          <el-table-column prop="users" label="人数" align="center" v-if="columns[2].show">
+            <template #default="scope">
+              {{ Array.isArray(scope.row.users) ? scope.row.users.length : 0 }}
+            </template>
+          </el-table-column>
+          <el-table-column label="状态" prop="status" align="center" v-if="columns[3].show">
+            <template #default="scope">
+              <el-tag :type="scope.row.status === 1 ? 'primary' : 'warning'">
+                {{ scope.row.status === 1 ? '启用' : '禁用' }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column fixed="right" label="操作" align="center">
+            <template #default="scope">
+              <button-table type="edit" @click="showDialog('edit', scope.row)" />
+              <button-table type="delete" @click="deleteDepartment(scope.row.id)" />
+            </template>
+          </el-table-column>
+        </template>
+      </art-table>
+    </el-config-provider>
 
     <el-dialog
       v-model="dialogVisible"
@@ -77,7 +114,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, onMounted } from 'vue'
+  import { ref, reactive, onMounted, computed } from 'vue'
   import { ElMessageBox, ElMessage } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
   import {
@@ -150,9 +187,11 @@
   }
 
   // 重置搜索条件并刷新列表
-  const resetSearch = async () => {
-    searchName.value = ''
-    await refreshDepartmentList()
+  const resetSearch = (formEl: FormInstance | undefined) => {
+    if (!formEl) return
+    formEl.resetFields()
+    pagination.currentPage = 1
+    refreshDepartmentList()
   }
 
   const resetForm = () => {
@@ -257,6 +296,71 @@
       }
     })
   }
+
+  const pagination = reactive({
+    currentPage: 1,
+    pageSize: 10,
+    total: 0
+  })
+
+  const columns = reactive([
+    { name: '名称', show: true },
+    { name: '排序', show: true },
+    { name: '人数', show: true },
+    { name: '状态', show: true }
+  ])
+
+  const searchForm = reactive({
+    name: '',
+    status: null
+  })
+
+  const searchFormRef = ref<FormInstance>()
+
+  // 简化搜索函数
+  const search = () => {
+    pagination.currentPage = 1;
+  }
+  
+  // 更新分页处理函数，不再需要重新加载数据
+  const handleCurrentChange = (page: number) => {
+    pagination.currentPage = page;
+  }
+  
+  const handleSizeChange = (size: number) => {
+    pagination.pageSize = size;
+    pagination.currentPage = 1;
+  }
+
+  const changeColumn = (newColumns: any) => {
+    columns.forEach((column, index) => {
+      column.show = newColumns[index].show
+    })
+  }
+
+  // 使用计算属性处理筛选和分页
+  const filteredData = computed(() => {
+    let result = [...tableData.value];
+    
+    // 根据搜索条件筛选数据
+    if (searchForm.name) {
+      result = result.filter(item => 
+        item.name.toLowerCase().includes(searchForm.name.toLowerCase())
+      );
+    }
+    
+    if (searchForm.status !== null) {
+      result = result.filter(item => item.status === searchForm.status);
+    }
+    
+    // 计算总数
+    pagination.total = result.length;
+    
+    // 处理分页
+    const start = (pagination.currentPage - 1) * pagination.pageSize;
+    const end = start + pagination.pageSize;
+    return result.slice(start, end);
+  });
 </script>
 
 <style lang="scss" scoped>

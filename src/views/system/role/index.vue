@@ -1,35 +1,79 @@
 <template>
   <div class="page-content">
-    <el-row :gutter="12">
-      <el-col :span="3" class="el-col2">
-        <el-button @click="showDialog('add')" v-ripple>添加角色</el-button>
-      </el-col>
-    </el-row>
-    <art-table :data="tableData" :loading="loading" empty-text="暂无角色数据" :pagination="false">
-      <template #default>
-        <el-table-column label="角色名称" prop="name" align="center" />
-        <el-table-column label="描述" prop="desc" show-overflow-tooltip align="center" />
-        <el-table-column label="状态" prop="status" align="center">
-          <template #default="scope">
-            <el-tag :type="scope.row.status === 1 ? 'primary' : 'warning'">
-              {{ scope.row.status === 1 ? '启用' : '禁用' }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="用户数量" align="center">
-          <template #default="scope">
-            {{ scope.row.users ? scope.row.users.length : 0 }}
-          </template>
-        </el-table-column>
-        <el-table-column fixed="right" label="操作">
-          <template #default="scope">
-            <el-row>
-              <button-more :list="actionButtons" @click="buttonMoreClick($event, scope.row)" />
-            </el-row>
-          </template>
-        </el-table-column>
+    <table-bar
+      :showTop="false"
+      @search="search"
+      @reset="resetSearch"
+      @changeColumn="changeColumn"
+      :columns="columns"
+    >
+      <template #top>
+        <el-form :model="searchForm" ref="searchFormRef" label-width="82px">
+          <el-row :gutter="20">
+            <form-input label="角色名称" prop="name" v-model="searchForm.name" />
+            <el-col :span="8">
+              <el-form-item label="状态" prop="status">
+                <el-select
+                  v-model="searchForm.status"
+                  placeholder="请选择状态"
+                  clearable
+                  style="width: 100%"
+                >
+                  <el-option label="启用" :value="1" />
+                  <el-option label="禁用" :value="2" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
       </template>
-    </art-table>
+      <template #bottom>
+        <el-button @click="showDialog('add')" v-ripple>添加角色</el-button>
+      </template>
+    </table-bar>
+
+    <el-config-provider>
+      <art-table
+        :data="tableData"
+        :currentPage="pagination.currentPage"
+        :pageSize="pagination.pageSize"
+        :total="pagination.total"
+        :loading="loading"
+        :hideOnSinglePage="false"
+        @current-change="handleCurrentChange"
+        @size-change="handleSizeChange"
+      >
+        <template #default>
+          <el-table-column label="角色名称" prop="name" align="center" v-if="columns[0].show" />
+          <el-table-column
+            label="描述"
+            prop="desc"
+            show-overflow-tooltip
+            align="center"
+            v-if="columns[1].show"
+          />
+          <el-table-column label="状态" prop="status" align="center" v-if="columns[2].show">
+            <template #default="scope">
+              <el-tag :type="scope.row.status === 1 ? 'primary' : 'warning'">
+                {{ scope.row.status === 1 ? '启用' : '禁用' }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="用户数量" align="center" v-if="columns[3].show">
+            <template #default="scope">
+              {{ scope.row.users ? scope.row.users.length : 0 }}
+            </template>
+          </el-table-column>
+          <el-table-column fixed="right" label="操作">
+            <template #default="scope">
+              <el-row>
+                <button-more :list="actionButtons" @click="buttonMoreClick($event, scope.row)" />
+              </el-row>
+            </template>
+          </el-table-column>
+        </template>
+      </art-table>
+    </el-config-provider>
 
     <el-dialog
       v-model="dialogVisible"
@@ -83,18 +127,32 @@
   const permissionDrawer = ref(false)
   const loading = ref(false)
   const submitLoading = ref(false)
-  const searchKeyword = ref('')
   const currentRoleId = ref(null)
   const formRef = ref<FormInstance>()
   const dialogType = ref('add')
   const tableData = ref([])
+  const searchFormRef = ref<FormInstance>()
 
-  // 操作按钮列表
-  const actionButtons = [
-    { key: 'permission', label: '菜单权限' },
-    { key: 'edit', label: '编辑角色' },
-    { key: 'delete', label: '删除角色' }
-  ]
+  // 分页配置
+  const pagination = reactive({
+    currentPage: 1,
+    pageSize: 10,
+    total: 0
+  })
+
+  // 列设置
+  const columns = reactive([
+    { name: '角色名称', show: true },
+    { name: '描述', show: true },
+    { name: '状态', show: true },
+    { name: '用户数量', show: true }
+  ])
+
+  // 搜索表单
+  const searchForm = reactive({
+    name: '',
+    status: undefined
+  })
 
   // 表单验证规则
   const rules = reactive<FormRules>({
@@ -113,20 +171,42 @@
     status: true
   })
 
-  // 搜索处理
-  const handleSearch = () => {
-    fetchRoleList()
-  }
+  // 操作按钮列表
+  const actionButtons = [
+    { key: 'permission', label: '菜单权限' },
+    { key: 'edit', label: '编辑角色' },
+    { key: 'delete', label: '删除角色' }
+  ]
 
   // 获取角色列表
   const fetchRoleList = async () => {
     loading.value = true
     try {
-      const params = searchKeyword.value ? { keyword: searchKeyword.value.trim() } : undefined
+      // 构建搜索参数
+      const params = {
+        page: pagination.currentPage,
+        pageSize: pagination.pageSize
+      }
+
+      // 添加搜索条件
+      if (searchForm.name) params.name = searchForm.name
+      if (searchForm.status !== undefined) params.status = searchForm.status
+
       const response = await getRoleList(params)
 
       if (response.code === 200) {
         tableData.value = response.data || []
+
+        // 设置总数
+        if (response.count !== undefined) {
+          pagination.total = response.count
+        } else if (response.meta && response.meta.count) {
+          pagination.total = response.meta.count
+        } else if (response.meta && response.meta.total) {
+          pagination.total = response.meta.total
+        } else {
+          pagination.total = response.data?.length || 0
+        }
       } else {
         ElMessage.error(response.message || '获取角色列表失败')
       }
@@ -137,10 +217,36 @@
     }
   }
 
-  // 重置搜索
-  const resetSearch = () => {
-    searchKeyword.value = ''
+  // 页码变化处理
+  const handleCurrentChange = (page: number) => {
+    pagination.currentPage = page
     fetchRoleList()
+  }
+
+  // 每页条数变化处理
+  const handleSizeChange = (size: number) => {
+    pagination.pageSize = size
+    pagination.currentPage = 1
+    fetchRoleList()
+  }
+
+  // 搜索处理
+  const search = () => {
+    pagination.currentPage = 1
+    fetchRoleList()
+  }
+
+  // 重置搜索
+  const resetSearch = (formEl: FormInstance | undefined) => {
+    if (!formEl) return
+    formEl.resetFields()
+    pagination.currentPage = 1
+    fetchRoleList()
+  }
+
+  // 列配置变化
+  const changeColumn = (list: any) => {
+    columns.values = list
   }
 
   // 初始化
