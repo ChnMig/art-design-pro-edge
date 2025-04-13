@@ -99,20 +99,20 @@
           />
           <el-table-column
             label="负责人"
-            prop="assigneeName"
+            prop="assignee_name"
             width="120"
             align="center"
             v-if="columns[1].show"
           />
           <el-table-column
             label="创建时间"
-            prop="createTime"
+            prop="created_at"
             width="180"
             align="center"
             v-if="columns[2].show"
           >
             <template #default="scope">
-              {{ formatDate(scope.row.createTime) }}
+              {{ formatDate(scope.row.created_at) }}
             </template>
           </el-table-column>
           <el-table-column
@@ -123,7 +123,7 @@
             v-if="columns[3].show"
           >
             <template #default="scope">
-              {{ formatDate(scope.row.deadline) }}
+              {{ formatDate(scope.row.deadline, false) }}
             </template>
           </el-table-column>
           <el-table-column
@@ -174,8 +174,9 @@
               <span v-else>--</span>
             </template>
           </el-table-column>
-          <el-table-column fixed="right" label="操作" width="150" align="center">
+          <el-table-column fixed="right" label="操作" width="200" align="center">
             <template #default="scope">
+              <button-table type="view" icon="ChatDotRound" @click="showDetailDialog(scope.row)" title="查看信息" />
               <button-table type="edit" @click="showDialog('edit', scope.row)" />
               <button-table type="delete" @click="handleDeleteTodo(scope.row)" />
             </template>
@@ -195,6 +196,11 @@
       @submit="handleSubmit"
       @cancel="dialogVisible = false"
     />
+    <!-- 使用引入的TodoDetail组件 -->
+    <todo-detail
+      v-model:dialogVisible="detailDialogVisible"
+      :todoData="currentTodoDetail"
+    />
   </div>
 </template>
 
@@ -207,6 +213,8 @@
   import { getTodoList, addTodo, updateTodo, deleteTodo, getUserList } from '@/api/system/api'
   // 导入TodoInfo组件
   import TodoInfo from './modal/todoInfo.vue'
+  // 导入TodoDetail组件
+  import TodoDetail from './modal/todoDetail.vue'
 
   const dialogType = ref('add')
   const dialogVisible = ref(false)
@@ -219,8 +227,8 @@
 
   // 状态选项
   const statusOptions = [
-    { value: 1, label: '待处理' },
-    { value: 2, label: '进行中' },
+    { value: 1, label: '未处理' },
+    { value: 2, label: '处理中' },
     { value: 3, label: '已完成' },
     { value: 4, label: '已取消' }
   ]
@@ -236,12 +244,12 @@
   // 表单数据
   const formData = reactive({
     id: '',
-    title: '',          // 对应后端的Title
-    content: '',        // 对应后端的Content
-    deadline: '',       // 对应后端的Deadline
-    priority: 2,        // 对应后端的Priority
-    status: 1,          // 对应后端的Status
-    assignee_user_id: undefined  // 对应后端的AssigneeUserID
+    title: '', // 对应后端的Title
+    content: '', // 对应后端的Content
+    deadline: '', // 对应后端的Deadline
+    priority: 2, // 对应后端的Priority
+    status: 1, // 对应后端的Status
+    assignee_user_id: undefined // 对应后端的AssigneeUserID
   })
 
   // 用户列表（负责人）
@@ -250,7 +258,7 @@
   const columns = reactive([
     { name: '任务名称', show: true },
     { name: '负责人', show: true },
-    { name: '创建时间', show: true },
+    { name: '创建时间', show: false }, // 默认不展示创建时间
     { name: '截止时间', show: true },
     { name: '任务状态', show: true },
     { name: '优先级', show: true },
@@ -300,18 +308,17 @@
       const res = await getTodoList(params)
 
       if (res.code === ApiStatus.success) {
-        tableData.value = res.data || []
+        // 处理返回的数据，将SystemUserTodo内的字段提取出来与外层字段合并
+        tableData.value = (res.data || []).map((item) => ({
+          ...item.SystemUserTodo, // 展开SystemUserTodo里的所有字段
+          assignee_name: item.assignee_name, // 保留外层的assignee_name
+          creator_name: item.creator_name, // 保留外层的creator_name
+          created_at: item.SystemUserTodo.created_at, // 时间戳转换
+          updated_at: item.SystemUserTodo.updated_at // 时间戳转换
+        }))
 
         // 使用返回值中的count字段作为总数
-        if (res.count !== undefined) {
-          pagination.total = res.count
-        } else if (res.meta && res.meta.count) {
-          pagination.total = res.meta.count
-        } else if (res.meta && res.meta.total) {
-          pagination.total = res.meta.total
-        } else {
-          pagination.total = res.data?.length || 0
-        }
+        pagination.total = res.count || 0
       } else {
         ElMessage.error(res.message || '获取任务列表失败')
       }
@@ -345,16 +352,40 @@
   })
 
   // 格式化日期
-  const formatDate = (dateString) => {
-    if (!dateString) return '--'
-    const date = new Date(dateString)
-    return date.toLocaleString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
+  const formatDate = (dateOrTimestamp, showTime = true) => {
+    if (!dateOrTimestamp) return '--'
+
+    let date
+    // 处理时间戳（数字）
+    if (typeof dateOrTimestamp === 'number') {
+      date = new Date(dateOrTimestamp * 1000) // 假设后端返回的是秒级时间戳
+    }
+    // 处理日期字符串
+    else {
+      date = new Date(dateOrTimestamp)
+    }
+
+    // 检查日期是否有效
+    if (isNaN(date.getTime())) return '--'
+
+    // 根据参数决定是否显示时间
+    if (showTime) {
+      return date
+        .toLocaleString('zh-CN', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+        .replace(/\//g, '-') // 将所有的斜杠替换为连字符
+    } else {
+      // 对于只显示日期的情况，确保输出格式为 YYYY-MM-DD
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    }
   }
 
   // 页码变化
@@ -500,6 +531,16 @@
       console.error('提交表单出错:', error)
       ElMessage.error(dialogType.value === 'add' ? '添加失败' : '更新失败')
     }
+  }
+
+  // 详情对话框
+  const detailDialogVisible = ref(false)
+  const currentTodoDetail = ref(null)
+
+  // 显示详情对话框
+  const showDetailDialog = (row: any) => {
+    currentTodoDetail.value = row
+    detailDialogVisible.value = true
   }
 </script>
 

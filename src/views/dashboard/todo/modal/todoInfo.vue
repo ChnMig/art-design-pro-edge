@@ -166,8 +166,8 @@
     statusOptions: {
       type: Array as PropType<any[]>,
       default: () => [
-        { value: 1, label: '待处理' },
-        { value: 2, label: '进行中' },
+        { value: 1, label: '未处理' },
+        { value: 2, label: '处理中' },
         { value: 3, label: '已完成' },
         { value: 4, label: '已取消' }
       ]
