@@ -79,7 +79,7 @@
       </template>
     </table-bar>
 
-    <el-config-provider :locale="zhCn">
+    <el-config-provider>
       <art-table
         :data="tableData"
         :currentPage="pagination.currentPage"
@@ -176,7 +176,7 @@
           </el-table-column>
           <el-table-column fixed="right" label="操作" width="200" align="center">
             <template #default="scope">
-              <button-table type="view" icon="ChatDotRound" @click="showDetailDialog(scope.row)" title="查看信息" />
+              <button-table type="show" @click="showDetailDialog(scope.row)" title="查看信息" />
               <button-table type="edit" @click="showDialog('edit', scope.row)" />
               <button-table type="delete" @click="handleDeleteTodo(scope.row)" />
             </template>
@@ -197,15 +197,12 @@
       @cancel="dialogVisible = false"
     />
     <!-- 使用引入的TodoDetail组件 -->
-    <todo-detail
-      v-model:dialogVisible="detailDialogVisible"
-      :todoData="currentTodoDetail"
-    />
+    <todo-detail v-model:dialogVisible="detailDialogVisible" :todoData="currentTodoDetail" />
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, onMounted, nextTick } from 'vue'
+  import { ref, reactive, onMounted } from 'vue'
   import { FormInstance } from 'element-plus'
   import { ElMessageBox, ElMessage, ElConfigProvider } from 'element-plus'
   import { ApiStatus } from '@/api/status'

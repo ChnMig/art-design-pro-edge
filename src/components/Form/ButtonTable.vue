@@ -31,7 +31,8 @@
     { type: 'add', icon: '&#xe602;', color: BgColorEnum.PRIMARY },
     { type: 'edit', icon: '&#xe642;', color: BgColorEnum.SECONDARY },
     { type: 'delete', icon: '&#xe783;', color: BgColorEnum.ERROR },
-    { type: 'more', icon: '&#xe6df;', color: '' }
+    { type: 'more', icon: '&#xe6df;', color: '' },
+    { type: 'show', icon: '&#xe689;', color: BgColorEnum.SUCCESS }
   ] as const
 
   // 计算最终使用的图标：优先使用外部传入的 icon，否则根据 type 获取默认图标
