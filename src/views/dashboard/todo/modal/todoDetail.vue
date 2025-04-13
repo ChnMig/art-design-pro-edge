@@ -9,7 +9,7 @@
   >
     <el-tabs v-model="activeTab">
       <el-tab-pane label="任务详情" name="details">
-        <el-descriptions title="任务信息" :column="2" border>
+        <el-descriptions :column="2" border>
           <el-descriptions-item label="任务名称">{{
             todoData?.title || '--'
           }}</el-descriptions-item>
@@ -45,9 +45,32 @@
       </el-tab-pane>
 
       <el-tab-pane label="评论" name="comments">
-        <div class="placeholder-content">
-          <el-empty description="暂无评论数据" />
-          <!-- 后续可添加评论功能 -->
+        <div class="comments-container" v-loading="commentLoading">
+          <el-empty description="暂无评论数据" v-if="!commentLoading && comments.length === 0" />
+          <div v-else class="comments-list">
+            <div v-for="comment in comments" :key="comment.id" class="comment-item">
+              <div class="comment-header">
+                <span class="comment-author">{{ comment.creator_name || '匿名用户' }}</span>
+                <span class="comment-time">{{ formatDate(comment.created_at) }}</span>
+              </div>
+              <div class="comment-content">{{ comment.content }}</div>
+            </div>
+          </div>
+
+          <div class="comment-input-container">
+            <el-input
+              v-model="newComment"
+              type="textarea"
+              :rows="3"
+              placeholder="请输入评论内容"
+              class="comment-input"
+            />
+            <div class="comment-button">
+              <el-button type="primary" @click="submitComment" :loading="submitLoading">
+                发布评论
+              </el-button>
+            </div>
+          </div>
         </div>
       </el-tab-pane>
 
@@ -68,7 +91,10 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, PropType } from 'vue'
+  import { ref, PropType, watch } from 'vue'
+  import { ElMessage } from 'element-plus'
+  import { getTodoComment, addTodoComment } from '@/api/system/api'
+  import { ApiStatus } from '@/api/status'
 
   // 定义属性
   const props = defineProps({
@@ -184,6 +210,73 @@
     const option = priorityOptions.find((item) => item.value === priority)
     return option ? option.label : '--'
   }
+
+  // 评论相关
+  const comments = ref<any[]>([])
+  const commentLoading = ref(false)
+  const newComment = ref('')
+  const submitLoading = ref(false)
+
+  // 监听标签页切换和对话框可见性
+  watch([() => activeTab.value, () => props.dialogVisible], async ([tab, visible]) => {
+    if (tab === 'comments' && visible && props.todoData?.id) {
+      await loadComments()
+    }
+  })
+
+  // 加载评论列表
+  const loadComments = async () => {
+    if (!props.todoData?.id) return
+
+    commentLoading.value = true
+    try {
+      const res = await getTodoComment({ todo_id: props.todoData.id })
+      if (res.code === ApiStatus.success) {
+        comments.value = res.data || []
+      } else {
+        ElMessage.error(res.message || '获取评论失败')
+      }
+    } catch (error) {
+      console.error('获取评论出错:', error)
+      ElMessage.error('获取评论失败')
+    } finally {
+      commentLoading.value = false
+    }
+  }
+
+  // 提交新评论
+  const submitComment = async () => {
+    if (!newComment.value.trim()) {
+      ElMessage.warning('请输入评论内容')
+      return
+    }
+
+    if (!props.todoData?.id) {
+      ElMessage.error('任务ID无效')
+      return
+    }
+
+    submitLoading.value = true
+    try {
+      const res = await addTodoComment({
+        todo_id: props.todoData.id,
+        content: newComment.value.trim()
+      })
+
+      if (res.code === ApiStatus.success) {
+        ElMessage.success('评论发布成功')
+        newComment.value = ''
+        await loadComments() // 重新加载评论列表
+      } else {
+        ElMessage.error(res.message || '评论发布失败')
+      }
+    } catch (error) {
+      console.error('发布评论出错:', error)
+      ElMessage.error('评论发布失败')
+    } finally {
+      submitLoading.value = false
+    }
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -207,5 +300,60 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .comments-container {
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .comments-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+  }
+
+  .comment-item {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: #f5f5f5;
+  }
+
+  .comment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+
+  .comment-author {
+    font-weight: bold;
+  }
+
+  .comment-time {
+    color: #999;
+    font-size: 12px;
+  }
+
+  .comment-content {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .comment-input-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+  }
+
+  .comment-input {
+    margin-bottom: 10px;
+  }
+
+  .comment-button {
+    display: flex;
+    justify-content: flex-end;
   }
 </style>

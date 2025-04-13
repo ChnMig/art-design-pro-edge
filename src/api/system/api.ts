@@ -141,3 +141,7 @@ export const getUserCache = (params: any = {}): Promise<ApiResponse<ApiResponse>
 export const getTodoComment = (params: any): Promise<ApiResponse<ApiResponse>> => {
   return api.get({ url: '/system/todo/comment', params })
 }
+
+export const addTodoComment = (data: any): Promise<ApiResponse<ApiResponse>> => {
+  return api.post({ url: '/system/todo/comment', data })
+}
