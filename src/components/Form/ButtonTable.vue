@@ -13,7 +13,7 @@
   const props = withDefaults(
     defineProps<{
       text?: string
-      type?: 'add' | 'edit' | 'delete' | 'more'
+      type?: 'add' | 'edit' | 'delete' | 'more' | 'show' // 按钮类型
       icon?: string // 自定义图标
       iconClass?: BgColorEnum // 自定义按钮背景色、文字颜色
       iconColor?: string // 外部传入的图标文字颜色
