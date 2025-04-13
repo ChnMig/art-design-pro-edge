@@ -137,3 +137,7 @@ export const deleteTodo = (id: number): Promise<ApiResponse<ApiResponse>> => {
 export const getUserCache = (params: any = {}): Promise<ApiResponse<ApiResponse>> => {
   return api.get({ url: '/system/user/cache', params })
 }
+
+export const getTodoComment = (params: any): Promise<ApiResponse<ApiResponse>> => {
+  return api.get({ url: '/system/todo/comment', params })
+}
