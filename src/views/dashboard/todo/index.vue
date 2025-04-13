@@ -202,9 +202,6 @@
   import { ref, reactive, onMounted, nextTick } from 'vue'
   import { FormInstance } from 'element-plus'
   import { ElMessageBox, ElMessage, ElConfigProvider } from 'element-plus'
-  import type { FormRules } from 'element-plus'
-  // 导入中文语言包
-  import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
   import { ApiStatus } from '@/api/status'
   // 导入TODO相关API
   import { getTodoList, addTodo, updateTodo, deleteTodo, getUserList } from '@/api/system/api'

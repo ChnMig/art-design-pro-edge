@@ -45,7 +45,13 @@
       >
         <template #default>
           <el-table-column prop="name" label="名称" align="center" v-if="columns[0].show" />
-          <el-table-column prop="sort" label="排序" sortable align="center" v-if="columns[1].show" />
+          <el-table-column
+            prop="sort"
+            label="排序"
+            sortable
+            align="center"
+            v-if="columns[1].show"
+          />
           <el-table-column prop="users" label="人数" align="center" v-if="columns[2].show">
             <template #default="scope">
               {{ Array.isArray(scope.row.users) ? scope.row.users.length : 0 }}
@@ -319,17 +325,17 @@
 
   // 简化搜索函数
   const search = () => {
-    pagination.currentPage = 1;
+    pagination.currentPage = 1
   }
-  
+
   // 更新分页处理函数，不再需要重新加载数据
   const handleCurrentChange = (page: number) => {
-    pagination.currentPage = page;
+    pagination.currentPage = page
   }
-  
+
   const handleSizeChange = (size: number) => {
-    pagination.pageSize = size;
-    pagination.currentPage = 1;
+    pagination.pageSize = size
+    pagination.currentPage = 1
   }
 
   const changeColumn = (newColumns: any) => {
@@ -340,27 +346,27 @@
 
   // 使用计算属性处理筛选和分页
   const filteredData = computed(() => {
-    let result = [...tableData.value];
-    
+    let result = [...tableData.value]
+
     // 根据搜索条件筛选数据
     if (searchForm.name) {
-      result = result.filter(item => 
+      result = result.filter((item) =>
         item.name.toLowerCase().includes(searchForm.name.toLowerCase())
-      );
+      )
     }
-    
+
     if (searchForm.status !== null) {
-      result = result.filter(item => item.status === searchForm.status);
+      result = result.filter((item) => item.status === searchForm.status)
     }
-    
+
     // 计算总数
-    pagination.total = result.length;
-    
+    pagination.total = result.length
+
     // 处理分页
-    const start = (pagination.currentPage - 1) * pagination.pageSize;
-    const end = start + pagination.pageSize;
-    return result.slice(start, end);
-  });
+    const start = (pagination.currentPage - 1) * pagination.pageSize
+    const end = start + pagination.pageSize
+    return result.slice(start, end)
+  })
 </script>
 
 <style lang="scss" scoped>

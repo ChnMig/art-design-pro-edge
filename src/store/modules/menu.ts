@@ -1,27 +1,19 @@
 import { defineStore } from 'pinia'
+import { ref } from 'vue'
 import { MenuListType } from '@/types/menu'
 
-interface MenuState {
-  menuList: MenuListType[]
-  menuWidth: string
-}
+// 菜单
+export const useMenuStore = defineStore('menuStore', () => {
+  const menuList = ref<MenuListType[]>([])
+  const menuWidth = ref('')
+  const setMenuList = (list: MenuListType[]) => (menuList.value = list)
 
-export const useMenuStore = defineStore('menuStore', {
-  state: (): MenuState => ({
-    menuList: [],
-    menuWidth: ''
-  }),
-  getters: {
-    getMenuList(): MenuListType[] {
-      return this.menuList
-    }
-  },
-  actions: {
-    setMenuList(list: []) {
-      this.menuList = list
-    },
-    setMenuWidth(width: string) {
-      this.menuWidth = width
-    }
+  const setMenuWidth = (width: string) => (menuWidth.value = width)
+
+  return {
+    menuList,
+    menuWidth,
+    setMenuList,
+    setMenuWidth
   }
 })

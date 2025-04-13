@@ -2,7 +2,7 @@
 <template>
   <div class="left-menu-or-dual-menu">
     <!-- 双列菜单（左侧） -->
-    <div class="dual-menu-left" :style="{ background: theme.background }" v-if="isDualMenu">
+    <div class="dual-menu-left" :style="{ background: getMenuTheme.background }" v-if="isDualMenu">
       <div class="svg-icon" aria-hidden="true" @click="toHome">
         <img class="icon" src="@/assets/img/logo.svg" alt="logo" />
       </div>
@@ -16,7 +16,7 @@
               placement="right"
               :offset="25"
               :hide-after="0"
-              :disabled="settingStore.dualMenuShowText"
+              :disabled="dualMenuShowText"
             >
               <div
                 :class="{
@@ -25,19 +25,19 @@
                     : menu.path === firstLevelMenuPath
                 }"
                 :style="{
-                  margin: settingStore.dualMenuShowText ? '5px' : '15px',
-                  height: settingStore.dualMenuShowText ? '60px' : '46px'
+                  margin: dualMenuShowText ? '5px' : '15px',
+                  height: dualMenuShowText ? '60px' : '46px'
                 }"
               >
                 <i
                   class="iconfont-sys"
                   v-html="menu.meta.icon"
                   :style="{
-                    fontSize: settingStore.dualMenuShowText ? '18px' : '22px',
-                    marginBottom: settingStore.dualMenuShowText ? '5px' : '0'
+                    fontSize: dualMenuShowText ? '18px' : '22px',
+                    marginBottom: dualMenuShowText ? '5px' : '0'
                   }"
                 ></i>
-                <span v-if="settingStore.dualMenuShowText">菜单风格</span>
+                <span v-if="dualMenuShowText">菜单风格</span>
               </div>
             </el-tooltip>
           </li>
@@ -52,37 +52,42 @@
     <div
       class="menu-left"
       id="menu-left"
-      :class="`menu-left-${theme.theme} menu-left-${collapse ? 'close' : 'open'}`"
-      :style="{ background: theme.background }"
+      :class="`menu-left-${getMenuTheme.theme} menu-left-${!menuOpen ? 'close' : 'open'}`"
+      :style="{ background: getMenuTheme.background }"
     >
-      <div class="header" @click="toHome" :style="{ background: theme.background }">
+      <div class="header" @click="toHome" :style="{ background: getMenuTheme.background }">
         <img class="svg-icon" src="@/assets/img/logo.svg" alt="logo" v-if="!isDualMenu" />
         <p
           :class="{ 'is-dual-menu-name': isDualMenu }"
-          :style="{ color: theme.systemNameColor, opacity: collapse ? 0 : 1 }"
+          :style="{ color: getMenuTheme.systemNameColor, opacity: !menuOpen ? 0 : 1 }"
         >
           {{ AppConfig.systemInfo.name }}
         </p>
       </div>
       <el-menu
-        :class="'el-menu-' + theme.theme"
-        :collapse="collapse"
+        :class="'el-menu-' + getMenuTheme.theme"
+        :collapse="!menuOpen"
         :default-active="routerPath"
-        :text-color="theme.textColor"
+        :text-color="getMenuTheme.textColor"
         :unique-opened="uniqueOpened"
-        :background-color="theme.background"
-        :active-text-color="theme.textActiveColor"
+        :background-color="getMenuTheme.background"
+        :active-text-color="getMenuTheme.textActiveColor"
         :default-openeds="defaultOpenedsArray"
-        :popper-class="`menu-left-${theme.theme}-popper`"
+        :popper-class="`menu-left-${getMenuTheme.theme}-popper`"
       >
-        <submenu :list="menuList" :isMobile="isMobileModel" :theme="theme" @close="closeMenu" />
+        <submenu
+          :list="menuList"
+          :isMobile="isMobileModel"
+          :theme="getMenuTheme"
+          @close="closeMenu"
+        />
       </el-menu>
 
       <div
         class="menu-model"
         @click="visibleMenu"
         :style="{
-          opacity: collapse ? 0 : 1,
+          opacity: !menuOpen ? 0 : 1,
           transform: showMobileModel ? 'scale(1)' : 'scale(0)'
         }"
       >
@@ -92,10 +97,10 @@
 </template>
 
 <script setup lang="ts">
+  import AppConfig from '@/config'
   import Submenu from '../Submenu/submenu.vue'
   import { HOME_PAGE } from '@/router/modules/routesAlias'
   import { useSettingStore } from '@/store/modules/setting'
-  import AppConfig from '@/config'
   import { MenuTypeEnum, MenuWidth } from '@/enums/appEnum'
   import { useMenuStore } from '@/store/modules/menu'
   import { isIframe } from '@/utils/utils'
@@ -104,22 +109,21 @@
   const route = useRoute()
   const router = useRouter()
   const settingStore = useSettingStore()
-  const menuOpenWidth = computed(() => settingStore.getMenuOpenWidth)
+  const { getMenuOpenWidth, menuType, uniqueOpened, dualMenuShowText, menuOpen, getMenuTheme } =
+    storeToRefs(settingStore)
   const menuCloseWidth = MenuWidth.CLOSE
-  const isTopLeftMenu = computed(() => settingStore.menuType === MenuTypeEnum.TOP_LEFT)
-  const isDualMenu = computed(() => settingStore.menuType === MenuTypeEnum.DUAL_MENU)
+  const isTopLeftMenu = computed(() => menuType.value === MenuTypeEnum.TOP_LEFT)
+  const isDualMenu = computed(() => menuType.value === MenuTypeEnum.DUAL_MENU)
 
-  const collapse = computed(() => !settingStore.menuOpen)
-  const uniqueOpened = computed(() => settingStore.uniqueOpened)
   const defaultOpenedsArray = ref([])
 
   // 一级菜单列表
   const firstLevelMenus = computed(() => {
-    return useMenuStore().getMenuList
+    return useMenuStore().menuList
   })
 
   const menuList = computed(() => {
-    const list = useMenuStore().getMenuList
+    const list = useMenuStore().menuList
 
     // 如果不是顶部左侧菜单或双列菜单，直接返回完整菜单列表
     if (!isTopLeftMenu.value && !isDualMenu.value) {
@@ -181,10 +185,9 @@
 
   const isMobileModel = ref(false)
   const showMobileModel = ref(false)
-  const theme = computed(() => settingStore.getMenuTheme)
 
   watch(
-    () => collapse.value,
+    () => !menuOpen.value,
     (collapse: boolean) => {
       if (!collapse) {
         showMobileModel.value = true
@@ -219,7 +222,7 @@
   }
 
   const visibleMenu = () => {
-    settingStore.setMenuOpen(!!collapse.value)
+    settingStore.setMenuOpen(!menuOpen.value)
 
     // 移动端模态框
     if (!showMobileModel.value) {
@@ -239,7 +242,7 @@
   }
 
   const setDualMenuMode = () => {
-    settingStore.setDualMenuShowText(!settingStore.dualMenuShowText)
+    settingStore.setDualMenuShowText(!dualMenuShowText.value)
   }
 </script>
 
@@ -253,7 +256,7 @@
   .menu-left {
     // 展开的宽度
     .el-menu:not(.el-menu--collapse) {
-      width: v-bind(menuOpenWidth);
+      width: v-bind(getMenuOpenWidth);
     }
 
     // 折叠后宽度

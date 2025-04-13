@@ -151,23 +151,28 @@
   const userStore = useUserStore()
   const router = useRouter()
 
-  const showMenuButton = computed(() => settingStore.showMenuButton)
-  const showRefreshButton = computed(() => settingStore.showRefreshButton)
-  const menuOpen = computed(() => settingStore.menuOpen)
-  const showCrumbs = computed(() => settingStore.showCrumbs)
-  const userInfo = computed(() => userStore.getUserInfo)
+  const {
+    showMenuButton,
+    showRefreshButton,
+    menuOpen,
+    showCrumbs,
+    systemThemeColor,
+    showSettingGuide,
+    menuType,
+    isDark,
+    tabStyle
+  } = storeToRefs(settingStore)
+
+  const { getUserInfo: userInfo } = storeToRefs(userStore)
+
+  const { menuList } = storeToRefs(useMenuStore())
+
   const showNotice = ref(false)
-  const systemThemeColor = computed(() => settingStore.systemThemeColor)
-  const showSettingGuide = computed(() => settingStore.showSettingGuide)
   const userMenuPopover = ref()
-  const menuList = computed(() => useMenuStore().getMenuList)
-  const menuType = computed(() => settingStore.menuType)
   const isLeftMenu = computed(() => menuType.value === MenuTypeEnum.LEFT)
   const isDualMenu = computed(() => menuType.value === MenuTypeEnum.DUAL_MENU)
   const isTopMenu = computed(() => menuType.value === MenuTypeEnum.TOP)
   const isTopLeftMenu = computed(() => menuType.value === MenuTypeEnum.TOP_LEFT)
-  const isDark = computed(() => settingStore.isDark)
-  const tabStyle = computed(() => settingStore.tabStyle)
 
   const { width } = useWindowSize()
 

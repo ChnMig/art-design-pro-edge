@@ -29,10 +29,12 @@
         </el-form>
       </template>
       <template #bottom>
-        <el-button @click="showMenuModal('add-menu-levle1', null, true)" v-ripple>添加菜单</el-button>
+        <el-button @click="showMenuModal('add-menu-levle1', null, true)" v-ripple
+          >添加菜单</el-button
+        >
       </template>
     </table-bar>
-    
+
     <el-config-provider>
       <art-table
         :data="filteredTableData"
@@ -85,7 +87,7 @@
         </template>
       </art-table>
     </el-config-provider>
-    
+
     <!-- 引用菜单弹窗组件 -->
     <menu-info ref="menuModalRef" @refresh="refreshMenuList" />
     <!-- 引用权限弹窗组件 -->
@@ -121,13 +123,13 @@
   import { ApiStatus } from '@/api/status'
   import menuInfo from './modal/menuInfo.vue'
   import authInfo from './modal/authInfo.vue'
-  
+
   const tableData = ref<any[]>([])
   const menuModalRef = ref()
   const authModalRef = ref()
   const loading = ref(false)
   const searchFormRef = ref<FormInstance>()
-  
+
   // 分页配置
   const pagination = reactive({
     currentPage: 1,
@@ -153,7 +155,7 @@
   onMounted(async () => {
     await refreshMenuList()
   })
-  
+
   const refreshMenuList = async () => {
     // 向后端查询数据
     const menuRes = await getAllMenu()
@@ -198,50 +200,48 @@
   const search = () => {
     pagination.currentPage = 1
   }
-  
+
   const resetSearch = (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.resetFields()
     pagination.currentPage = 1
   }
-  
+
   const changeColumn = (newColumns: any) => {
     columns.forEach((column, index) => {
       column.show = newColumns[index].show
     })
   }
-  
+
   const handleCurrentChange = (newPage: number) => {
     pagination.currentPage = newPage
   }
-  
+
   const handleSizeChange = (newSize: number) => {
     pagination.pageSize = newSize
     pagination.currentPage = 1
   }
-  
+
   const filteredTableData = computed(() => {
     let result = [...tableData.value]
-    
+
     // 基于表单进行筛选
     if (searchForm.title) {
-      result = result.filter(item => 
+      result = result.filter((item) =>
         item.meta?.title?.toLowerCase().includes(searchForm.title.toLowerCase())
       )
     }
-    
+
     if (searchForm.path) {
-      result = result.filter(item => 
+      result = result.filter((item) =>
         item.path?.toLowerCase().includes(searchForm.path.toLowerCase())
       )
     }
-    
+
     if (searchForm.isEnable !== undefined) {
-      result = result.filter(item => 
-        item.meta?.isEnable === searchForm.isEnable
-      )
+      result = result.filter((item) => item.meta?.isEnable === searchForm.isEnable)
     }
-    
+
     // 计算分页后的数据
     pagination.total = result.length
     const start = (pagination.currentPage - 1) * pagination.pageSize

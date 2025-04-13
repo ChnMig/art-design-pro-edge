@@ -65,14 +65,14 @@
             >
               <div
                 class="box"
-                :class="{ 'is-active': item.theme === currentMenuTheme }"
+                :class="{ 'is-active': item.theme === menuThemeType }"
                 :style="{
                   cursor: isDualMenu || isTopMenu || isDark ? 'no-drop' : 'pointer'
                 }"
               >
                 <img :src="item.img" />
               </div>
-              <div class="active" v-if="item.theme === currentMenuTheme"></div>
+              <div class="active" v-if="item.theme === menuThemeType"></div>
             </div>
           </div>
         </div>
@@ -242,7 +242,22 @@
 
   // 删除原来的相关方法定义，直接使用从useTheme中导入的方法
 
-  const store = useSettingStore()
+  const settingStore = useSettingStore()
+
+  const {
+    isDark,
+    systemThemeType,
+    systemThemeMode,
+    menuThemeType,
+    boxBorderMode,
+    pageTransition,
+    tabStyle,
+    customRadius,
+    menuType,
+    watermarkVisible,
+    menuOpenWidth,
+    containerWidth
+  } = storeToRefs(settingStore)
 
   const props = defineProps(['open'])
 
@@ -259,13 +274,13 @@
       if (!hasChangedMenu.value) {
         beforeMenuType.value = menuType.value
         switchMenuLayouts(MenuTypeEnum.LEFT)
-        store.setMenuOpen(false)
+        settingStore.setMenuOpen(false)
         hasChangedMenu.value = true
       }
     } else {
       if (hasChangedMenu.value && beforeMenuType.value) {
         switchMenuLayouts(beforeMenuType.value)
-        store.setMenuOpen(true)
+        settingStore.setMenuOpen(true)
         hasChangedMenu.value = false
       }
     }
@@ -279,28 +294,21 @@
   const settingThemeList = AppConfig.settingThemeList
   const menuThemeList = AppConfig.themeList
   const mainColor = AppConfig.systemMainColor
-  const isDark = computed(() => store.isDark)
-  const currentGlopTheme = computed(() => store.systemThemeType)
-  const systemThemeMode = computed(() => store.systemThemeMode)
-  const currentMenuTheme = computed(() => store.menuThemeType)
-  const systemThemeColor = computed(() => store.systemThemeColor as (typeof mainColor)[number])
-  const boxBorderMode = computed(() => store.boxBorderMode)
-  const pageTransition = computed(() => store.pageTransition)
-  const tabStyle = computed(() => store.tabStyle)
-  const customRadius = computed(() => store.customRadius)
-  const menuType = computed(() => store.menuType)
-  const isTopMenu = computed(() => store.menuType === MenuTypeEnum.TOP)
-  const isDualMenu = computed(() => store.menuType === MenuTypeEnum.DUAL_MENU)
-  const menuOpenWidth = ref(store.menuOpenWidth)
+
+  const systemThemeColor = computed(
+    () => settingStore.systemThemeColor as (typeof mainColor)[number]
+  )
+
+  const isTopMenu = computed(() => menuType.value === MenuTypeEnum.TOP)
+  const isDualMenu = computed(() => menuType.value === MenuTypeEnum.DUAL_MENU)
   const uniqueOpened = ref(true)
   const showMenuButton = ref(true)
   const autoClose = ref(true)
   const showRefreshButton = ref(true)
   const showCrumbs = ref(true)
-  let showWorkTab = ref(true)
+  const showWorkTab = ref(true)
   const showNprogress = ref(true)
   const colorWeak = ref(false)
-  const containerWidth = computed(() => store.containerWidth)
   const tabStyleOps = computed(() => [
     {
       value: 'tab-default',
@@ -375,7 +383,7 @@
   ]
 
   watch(
-    () => store.showWorkTab,
+    () => settingStore.showWorkTab,
     (e: boolean) => {
       showWorkTab.value = e
     }
@@ -403,23 +411,29 @@
   }
 
   const initUserSetting = () => {
-    uniqueOpened.value = store.uniqueOpened
-    showMenuButton.value = store.showMenuButton
-    autoClose.value = store.autoClose
-    showRefreshButton.value = store.showRefreshButton
-    showCrumbs.value = store.showCrumbs
-    showWorkTab.value = store.showWorkTab
-    showNprogress.value = store.showNprogress
-    colorWeak.value = store.colorWeak
+    const mapping = {
+      uniqueOpened,
+      showMenuButton,
+      autoClose,
+      showRefreshButton,
+      showCrumbs,
+      showWorkTab,
+      showNprogress,
+      colorWeak
+    }
+
+    Object.entries(mapping).forEach(([key, refVal]) => {
+      refVal.value = (settingStore as any)[key]
+    })
     initColorWeak()
-    setBoxMode(true, store.boxBorderMode ? 'border-mode' : 'shadow-mode')
+    setBoxMode(true, settingStore.boxBorderMode ? 'border-mode' : 'shadow-mode')
   }
 
   const switchMenuStyles = (theme: MenuThemeEnum) => {
     if (isDualMenu.value || isTopMenu.value || isDark.value) {
       return
     }
-    store.switchMenuStyles(theme)
+    settingStore.switchMenuStyles(theme)
     isAutoClose()
   }
 
@@ -434,16 +448,16 @@
     if (systemThemeMode.value === SystemThemeEnum.AUTO) {
       setSystemAutoTheme()
     } else {
-      setSystemTheme(currentGlopTheme.value)
+      setSystemTheme(systemThemeType.value)
     }
   }
 
   const switchMenuLayouts = (type: MenuTypeEnum) => {
-    if (type === MenuTypeEnum.LEFT || type === MenuTypeEnum.TOP_LEFT) store.setMenuOpen(true)
-    store.switchMenuLayouts(type)
+    if (type === MenuTypeEnum.LEFT || type === MenuTypeEnum.TOP_LEFT) settingStore.setMenuOpen(true)
+    settingStore.switchMenuLayouts(type)
     if (type === MenuTypeEnum.DUAL_MENU) {
-      store.switchMenuStyles(MenuThemeEnum.DESIGN)
-      store.setMenuOpen(true)
+      settingStore.switchMenuStyles(MenuThemeEnum.DESIGN)
+      settingStore.setMenuOpen(true)
     }
     isAutoClose()
   }
@@ -487,7 +501,7 @@
       el.setAttribute('data-box-mode', type)
 
       if (!isInit) {
-        store.setBorderMode()
+        settingStore.setBorderMode()
       }
     }, 50)
   }
@@ -500,30 +514,33 @@
   ) => {
     storeMethod(...args)
     if (needReload) {
-      store.reload()
+      settingStore.reload()
     }
     isAutoClose()
   }
 
-  const showWorkTabFunc = () => autoCloseHandler(store.setWorkTab, false, !store.showWorkTab)
+  const showWorkTabFunc = () =>
+    autoCloseHandler(settingStore.setWorkTab, false, !settingStore.showWorkTab)
 
   const setPageTransition = (transition: string) =>
-    autoCloseHandler(store.setPageTransition, false, transition)
-  const setTabStyle = (style: string) => autoCloseHandler(store.setTabStyle, false, style)
+    autoCloseHandler(settingStore.setPageTransition, false, transition)
+  const setTabStyle = (style: string) => autoCloseHandler(settingStore.setTabStyle, false, style)
 
   const setContainerWidth = (type: ContainerWidthEnum) =>
-    autoCloseHandler(store.setContainerWidth, true, type)
+    autoCloseHandler(settingStore.setContainerWidth, true, type)
 
-  const setElementTheme = (theme: string) => autoCloseHandler(store.setElementTheme, true, theme)
+  const setElementTheme = (theme: string) =>
+    autoCloseHandler(settingStore.setElementTheme, true, theme)
 
-  const setCustomRadius = (radius: string) => autoCloseHandler(store.setCustomRadius, false, radius)
-  const setButton = () => autoCloseHandler(store.setButton)
-  const setShowRefreshButton = () => autoCloseHandler(store.setShowRefreshButton)
-  const setCrumbs = () => autoCloseHandler(store.setCrumbs)
+  const setCustomRadius = (radius: string) =>
+    autoCloseHandler(settingStore.setCustomRadius, false, radius)
+  const setButton = () => autoCloseHandler(settingStore.setButton)
+  const setShowRefreshButton = () => autoCloseHandler(settingStore.setShowRefreshButton)
+  const setCrumbs = () => autoCloseHandler(settingStore.setCrumbs)
 
-  const setNprogress = () => autoCloseHandler(store.setNprogress)
+  const setNprogress = () => autoCloseHandler(settingStore.setNprogress)
 
-  const setAutoClose = () => autoCloseHandler(store.setAutoClose)
+  const setAutoClose = () => autoCloseHandler(settingStore.setAutoClose)
 
   const setColorWeak = () => {
     let el = document.getElementsByTagName('html')[0]
@@ -534,12 +551,13 @@
       el.removeAttribute('class')
       setSystemTheme(SystemThemeEnum.LIGHT)
     }
-    store.setColorWeak()
+    settingStore.setColorWeak()
     isAutoClose()
   }
 
   const setMenuOpenSize = () =>
-    menuOpenWidth.value && autoCloseHandler(store.setMenuOpenWidth, false, menuOpenWidth.value)
+    menuOpenWidth.value &&
+    autoCloseHandler(settingStore.setMenuOpenWidth, false, menuOpenWidth.value)
 
   const initColorWeak = () => {
     if (colorWeak.value) {
@@ -550,7 +568,7 @@
     }
   }
   watch(
-    () => store.menuOpenWidth,
+    () => settingStore.menuOpenWidth,
     (newVal) => {
       menuOpenWidth.value = newVal
     }

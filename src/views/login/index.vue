@@ -90,6 +90,9 @@
   import { onMounted, ref, reactive, computed } from 'vue'
   import { getCaptcha, userLogin, getUserInfo } from '@/api/system/api'
 
+  const settingStore = useSettingStore()
+  const { isDark, systemThemeType } = storeToRefs(settingStore)
+
   const userStore = useUserStore()
   const router = useRouter()
 
@@ -109,9 +112,6 @@
   }))
 
   const loading = ref(false)
-
-  const store = useSettingStore()
-  const isDark = computed(() => store.isDark)
 
   const captchaImageUrl = ref('') // 验证码图片的URL
   const captchaImageID = ref('') // 验证码图片的ID
@@ -174,7 +174,7 @@
         showClose: true,
         duration: 2500,
         zIndex: 10000,
-        message: `欢迎回来, ${systemName}!`
+        message: `欢迎回来!`
       })
     }, 300)
   }
@@ -184,7 +184,7 @@
 
   const toggleTheme = () => {
     let { LIGHT, DARK } = SystemThemeEnum
-    useTheme().switchThemeStyles(useSettingStore().systemThemeType === LIGHT ? DARK : LIGHT)
+    useTheme().switchThemeStyles(systemThemeType.value === LIGHT ? DARK : LIGHT)
   }
 
   const refreshCaptcha = async () => {

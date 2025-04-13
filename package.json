@@ -54,7 +54,7 @@
     "highlight.js": "^11.11.1",
     "mitt": "^3.0.1",
     "nprogress": "^0.2.0",
-    "pinia": "^2.2.2",
+    "pinia": "^3.0.2",
     "vue": "^3.5.12",
     "vue-demi": "^0.14.10",
     "vue-draggable-plus": "^0.6.0",

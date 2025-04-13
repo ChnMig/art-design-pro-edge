@@ -132,13 +132,11 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, nextTick, PropType, onMounted } from 'vue'
+  import { ref, nextTick, PropType, onMounted } from 'vue'
   import { FormInstance } from 'element-plus'
   import { ElMessage } from 'element-plus'
   import { getUserCache } from '@/api/system/api'
   import { ApiStatus } from '@/api/status'
-  // 正确导入中文语言包
-  import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 
   const props = defineProps({
     dialogVisible: {

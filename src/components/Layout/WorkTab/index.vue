@@ -81,7 +81,7 @@
   const router = useRouter()
   const { currentRoute } = router
   const settingStore = useSettingStore()
-  const tabStyle = computed(() => settingStore.tabStyle)
+  const { tabStyle } = storeToRefs(settingStore)
 
   // 初始化状态和引用
   const scrollRef = ref<HTMLElement | null>(null) // 滚动容器引用
