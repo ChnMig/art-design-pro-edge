@@ -10,17 +10,17 @@
     <el-form ref="formRef" :model="formData" :rules="rules" label-width="85px">
       <el-row :gutter="20">
         <el-col :span="24">
-          <el-form-item label="任务名称" prop="name">
-            <el-input v-model="formData.name" placeholder="请输入任务名称" />
+          <el-form-item label="任务名称" prop="title">
+            <el-input v-model="formData.title" placeholder="请输入任务名称" />
           </el-form-item>
         </el-col>
       </el-row>
 
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="负责人" prop="assignee">
+          <el-form-item label="负责人" prop="assignee_user_id">
             <el-select
-              v-model="formData.assignee"
+              v-model="formData.assignee_user_id"
               placeholder="请选择负责人"
               style="width: 100%"
               filterable
@@ -76,9 +76,9 @@
 
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="截止时间" prop="dueTime">
+          <el-form-item label="截止时间" prop="deadline">
             <el-date-picker
-              v-model="formData.dueTime"
+              v-model="formData.deadline"
               type="date"
               placeholder="请选择截止日期"
               style="width: 100%"
@@ -110,9 +110,9 @@
 
       <el-row :gutter="20">
         <el-col :span="24">
-          <el-form-item label="描述" prop="description">
+          <el-form-item label="描述" prop="content">
             <el-input
-              v-model="formData.description"
+              v-model="formData.content"
               type="textarea"
               :rows="4"
               placeholder="请输入任务描述"
@@ -151,13 +151,12 @@
       type: Object,
       default: () => ({
         id: '',
-        name: '',
-        assignee: undefined,
-        status: 1,
-        createTime: '',
-        dueTime: '',
-        priority: 2,
-        description: ''
+        title: '', // 对应后端的Title
+        content: '', // 对应后端的Content
+        deadline: '', // 对应后端的Deadline
+        priority: 2, // 对应后端的Priority
+        status: 1, // 对应后端的Status
+        assignee_user_id: undefined // 对应后端的AssigneeUserID
       })
     },
     userList: {
@@ -196,14 +195,15 @@
 
   // 表单验证规则
   const rules = {
-    name: [
+    title: [
       { required: true, message: '请输入任务名称', trigger: 'blur' },
       { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
     ],
-    assignee: [{ required: true, message: '请选择负责人', trigger: 'change' }],
+    assignee_user_id: [{ required: true, message: '请选择负责人', trigger: 'change' }],
     status: [{ required: true, message: '请选择任务状态', trigger: 'change' }],
-    dueTime: [{ required: true, message: '请选择截止时间', trigger: 'change' }],
-    priority: [{ required: true, message: '请选择优先级', trigger: 'change' }]
+    deadline: [{ required: true, message: '请选择截止时间', trigger: 'change' }],
+    priority: [{ required: true, message: '请选择优先级', trigger: 'change' }],
+    content: [{ required: true, message: '请输入任务描述', trigger: 'blur' }]
   }
 
   const formRef = ref<FormInstance>()

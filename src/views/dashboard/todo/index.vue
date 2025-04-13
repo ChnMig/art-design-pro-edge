@@ -92,7 +92,7 @@
         <template #default>
           <el-table-column
             label="任务名称"
-            prop="name"
+            prop="title"
             min-width="150"
             align="center"
             v-if="columns[0].show"
@@ -117,13 +117,13 @@
           </el-table-column>
           <el-table-column
             label="截止时间"
-            prop="dueTime"
+            prop="deadline"
             width="180"
             align="center"
             v-if="columns[3].show"
           >
             <template #default="scope">
-              {{ formatDate(scope.row.dueTime) }}
+              {{ formatDate(scope.row.deadline) }}
             </template>
           </el-table-column>
           <el-table-column
@@ -154,21 +154,21 @@
           </el-table-column>
           <el-table-column
             label="描述"
-            prop="description"
+            prop="content"
             min-width="200"
             align="center"
             v-if="columns[6].show"
           >
             <template #default="scope">
               <el-tooltip
-                :content="scope.row.description"
+                :content="scope.row.content"
                 placement="top"
                 :hide-after="0"
-                v-if="scope.row.description"
+                v-if="scope.row.content"
               >
                 <span
-                  >{{ scope.row.description.slice(0, 20)
-                  }}{{ scope.row.description.length > 20 ? '...' : '' }}</span
+                  >{{ scope.row.content.slice(0, 20)
+                  }}{{ scope.row.content.length > 20 ? '...' : '' }}</span
                 >
               </el-tooltip>
               <span v-else>--</span>
@@ -236,13 +236,12 @@
   // 表单数据
   const formData = reactive({
     id: '',
-    name: '',
-    assignee: undefined,
-    status: 1,
-    createTime: '',
-    dueTime: '',
-    priority: 2,
-    description: ''
+    title: '',          // 对应后端的Title
+    content: '',        // 对应后端的Content
+    deadline: '',       // 对应后端的Deadline
+    priority: 2,        // 对应后端的Priority
+    status: 1,          // 对应后端的Status
+    assignee_user_id: undefined  // 对应后端的AssigneeUserID
   })
 
   // 用户列表（负责人）
@@ -382,21 +381,21 @@
     if (type === 'edit' && row) {
       // 编辑模式，填充表单数据
       formData.id = row.id
-      formData.name = row.name
-      formData.assignee = row.assignee
+      formData.title = row.title
+      formData.content = row.content
+      formData.assignee_user_id = row.assignee_user_id
       formData.status = row.status
-      formData.dueTime = row.dueTime ? new Date(row.dueTime) : ''
+      formData.deadline = row.deadline
       formData.priority = row.priority
-      formData.description = row.description
     } else {
       // 添加模式，重置表单
       formData.id = ''
-      formData.name = ''
-      formData.assignee = undefined
+      formData.title = ''
+      formData.content = ''
+      formData.assignee_user_id = undefined
       formData.status = 1
-      formData.dueTime = ''
+      formData.deadline = ''
       formData.priority = 2
-      formData.description = ''
     }
   }
 
