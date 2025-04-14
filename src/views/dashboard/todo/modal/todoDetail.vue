@@ -44,41 +44,71 @@
         </el-descriptions>
       </el-tab-pane>
 
-      <el-tab-pane label="评论" name="comments">
-        <div class="comments-container" v-loading="commentLoading">
-          <el-empty description="暂无评论数据" v-if="!commentLoading && comments.length === 0" />
-          <div v-else class="comments-list">
-            <div v-for="comment in comments" :key="comment.id" class="comment-item">
-              <div class="comment-header">
-                <span class="comment-author">{{ comment.creator_name || '匿名用户' }}</span>
-                <span class="comment-time">{{ formatDate(comment.created_at) }}</span>
-              </div>
-              <div class="comment-content">{{ comment.content }}</div>
-            </div>
+      <el-tab-pane label="任务进度" name="progress">
+        <div class="timeline-container" v-loading="timelineLoading">
+          <div class="timeline-header">
+            <el-button type="primary" size="small" @click="showAddProgressDialog">
+              添加进度节点
+            </el-button>
           </div>
 
-          <div class="comment-input-container">
-            <el-input
-              v-model="newComment"
-              type="textarea"
-              :rows="3"
-              placeholder="请输入评论内容"
-              class="comment-input"
-            />
-            <div class="comment-button">
-              <el-button type="primary" @click="submitComment" :loading="submitLoading">
-                发布评论
+          <el-empty
+            description="暂无进度记录"
+            v-if="!timelineLoading && timelineData.length === 0"
+          />
+
+          <el-timeline v-else>
+            <el-timeline-item
+              v-for="(item, index) in timelineData"
+              :key="index"
+              :timestamp="formatDate(item.SystemUserTodoStep.created_at)"
+              :type="getTimelineItemType(item.SystemUserTodoStep)"
+            >
+              <div class="timeline-item-content">
+                <div class="timeline-item-header">
+                  <span class="timeline-title">
+                    {{ item.operator_name ? item.operator_name : '系统' }}
+                  </span>
+                  <!-- 状态标签已被移除 -->
+                </div>
+                <div class="timeline-description">{{ item.SystemUserTodoStep.content }}</div>
+              </div>
+            </el-timeline-item>
+          </el-timeline>
+        </div>
+
+        <!-- 添加进度节点对话框 -->
+        <el-dialog
+          v-model="progressDialogVisible"
+          title="添加进度节点"
+          width="500px"
+          append-to-body
+        >
+          <el-form
+            ref="progressFormRef"
+            :model="progressForm"
+            :rules="progressRules"
+            label-width="80px"
+          >
+            <el-form-item label="进度内容" prop="content">
+              <el-input
+                v-model="progressForm.content"
+                type="textarea"
+                :rows="4"
+                placeholder="请输入进度内容，例如：任务处理中，已完成30%"
+              />
+            </el-form-item>
+          </el-form>
+
+          <template #footer>
+            <div class="dialog-footer">
+              <el-button @click="progressDialogVisible = false">取消</el-button>
+              <el-button type="primary" @click="submitProgress" :loading="submitLoading">
+                确定
               </el-button>
             </div>
-          </div>
-        </div>
-      </el-tab-pane>
-
-      <el-tab-pane label="进度日志" name="logs">
-        <div class="placeholder-content">
-          <el-empty description="暂无进度日志" />
-          <!-- 后续可添加进度日志功能 -->
-        </div>
+          </template>
+        </el-dialog>
       </el-tab-pane>
     </el-tabs>
 
@@ -91,9 +121,9 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, PropType, watch } from 'vue'
-  import { ElMessage } from 'element-plus'
-  import { getTodoComment, addTodoComment } from '@/api/system/api'
+  import { ref, PropType, watch, reactive } from 'vue'
+  import { ElMessage, FormInstance, FormRules } from 'element-plus'
+  import { getTodoTimeline, addTodoProgress } from '@/api/system/api'
   import { ApiStatus } from '@/api/status'
 
   // 定义属性
@@ -168,18 +198,48 @@
   }
 
   // 获取状态标签类型
-  const getTagType = (status) => {
-    switch (status) {
-      case 1:
-        return 'info' // 未处理
-      case 2:
-        return 'warning' // 处理中
-      case 3:
-        return 'success' // 已完成
-      case 4:
-        return 'danger' // 已取消
-      default:
+  const getTagType = (item) => {
+    if (typeof item === 'number') {
+      // 针对数字类型的状态码
+      switch (item) {
+        case 1:
+          return 'info'
+        case 2:
+          return 'warning'
+        case 3:
+          return 'success'
+        case 4:
+          return 'danger'
+        default:
+          return 'info'
+      }
+    } else if (item && typeof item === 'object') {
+      // 针对进度项对象
+      const content = item.content.toLowerCase()
+      if (content.includes('已完成') || content.includes('完成')) {
+        return 'success'
+      } else if (content.includes('取消') || content.includes('终止')) {
+        return 'danger'
+      } else if (content.includes('处理中') || content.includes('进行中')) {
+        return 'warning'
+      } else {
         return 'info'
+      }
+    }
+    return 'info'
+  }
+
+  // 获取时间线项的类型
+  const getTimelineItemType = (item) => {
+    const content = item.content.toLowerCase()
+    if (content.includes('已完成') || content.includes('完成')) {
+      return 'success'
+    } else if (content.includes('取消') || content.includes('终止')) {
+      return 'danger'
+    } else if (content.includes('处理中') || content.includes('进行中')) {
+      return 'warning'
+    } else {
+      return 'primary' // 默认类型
     }
   }
 
@@ -211,71 +271,107 @@
     return option ? option.label : '--'
   }
 
-  // 评论相关
-  const comments = ref<any[]>([])
-  const commentLoading = ref(false)
-  const newComment = ref('')
-  const submitLoading = ref(false)
-
-  // 监听标签页切换和对话框可见性
-  watch([() => activeTab.value, () => props.dialogVisible], async ([tab, visible]) => {
-    if (tab === 'comments' && visible && props.todoData?.id) {
-      await loadComments()
-    }
-  })
-
-  // 加载评论列表
-  const loadComments = async () => {
-    if (!props.todoData?.id) return
-
-    commentLoading.value = true
-    try {
-      const res = await getTodoComment({ todo_id: props.todoData.id })
-      if (res.code === ApiStatus.success) {
-        comments.value = res.data || []
-      } else {
-        ElMessage.error(res.message || '获取评论失败')
-      }
-    } catch (error) {
-      console.error('获取评论出错:', error)
-      ElMessage.error('获取评论失败')
-    } finally {
-      commentLoading.value = false
+  // 获取进度状态标签
+  const getProgressStatusLabel = (item) => {
+    // 根据内容判断状态
+    const content = item.content.toLowerCase()
+    if (content.includes('已完成') || content.includes('完成')) {
+      return '已完成'
+    } else if (content.includes('取消') || content.includes('终止')) {
+      return '已取消'
+    } else {
+      return '' // 不显示默认状态
     }
   }
 
-  // 提交新评论
-  const submitComment = async () => {
-    if (!newComment.value.trim()) {
-      ElMessage.warning('请输入评论内容')
-      return
-    }
+  // 进度时间线相关
+  const timelineData = ref<any[]>([])
+  const timelineLoading = ref(false)
+  const submitLoading = ref(false)
+  const progressDialogVisible = ref(false)
+  const progressFormRef = ref<FormInstance>()
 
-    if (!props.todoData?.id) {
-      ElMessage.error('任务ID无效')
-      return
-    }
+  // 进度表单
+  const progressForm = reactive({
+    content: ''
+  })
 
-    submitLoading.value = true
+  // 表单验证规则
+  const progressRules = reactive<FormRules>({
+    content: [{ required: true, message: '请输入进度内容', trigger: 'blur' }]
+  })
+
+  // 监听标签页切换和对话框可见性
+  watch([() => activeTab.value, () => props.dialogVisible], async ([tab, visible]) => {
+    if (tab === 'progress' && visible && props.todoData?.id) {
+      await loadTimeline()
+    }
+  })
+
+  // 加载时间线数据
+  const loadTimeline = async () => {
+    if (!props.todoData?.id) return
+
+    timelineLoading.value = true
     try {
-      const res = await addTodoComment({
-        todo_id: props.todoData.id,
-        content: newComment.value.trim()
-      })
-
+      const res = await getTodoTimeline({ todo_id: props.todoData.id })
       if (res.code === ApiStatus.success) {
-        ElMessage.success('评论发布成功')
-        newComment.value = ''
-        await loadComments() // 重新加载评论列表
+        timelineData.value = res.data || []
       } else {
-        ElMessage.error(res.message || '评论发布失败')
+        ElMessage.error(res.message || '获取进度时间线失败')
       }
     } catch (error) {
-      console.error('发布评论出错:', error)
-      ElMessage.error('评论发布失败')
+      console.error('获取进度时间线出错:', error)
+      ElMessage.error('获取进度时间线失败')
     } finally {
-      submitLoading.value = false
+      timelineLoading.value = false
     }
+  }
+
+  // 显示添加进度节点对话框
+  const showAddProgressDialog = () => {
+    // 重置表单
+    progressForm.content = ''
+
+    // 显示对话框
+    progressDialogVisible.value = true
+  }
+
+  // 提交进度节点
+  const submitProgress = async () => {
+    if (!progressFormRef.value) return
+
+    await progressFormRef.value.validate(async (valid) => {
+      if (!valid) return
+
+      if (!props.todoData?.id) {
+        ElMessage.error('任务ID无效')
+        return
+      }
+
+      submitLoading.value = true
+      try {
+        const data = {
+          system_user_todo_id: props.todoData.id,
+          content: progressForm.content
+        }
+
+        const res = await addTodoProgress(data)
+
+        if (res.code === ApiStatus.success) {
+          ElMessage.success('进度节点添加成功')
+          progressDialogVisible.value = false
+          await loadTimeline() // 重新加载时间线数据
+        } else {
+          ElMessage.error(res.message || '进度节点添加失败')
+        }
+      } catch (error) {
+        console.error('添加进度节点出错:', error)
+        ElMessage.error('进度节点添加失败')
+      } finally {
+        submitLoading.value = false
+      }
+    })
   }
 </script>
 
@@ -295,65 +391,89 @@
     border-radius: 4px;
   }
 
-  .placeholder-content {
-    min-height: 200px;
+  .timeline-container {
+    min-height: 300px;
+
+    :deep(.el-timeline) {
+      padding-left: 28px; // 增加左侧padding，让时间线节点有足够空间显示
+
+      .el-timeline-item__node {
+        left: 0;
+        z-index: 1;
+      }
+
+      .el-timeline-item__tail {
+        left: 4px;
+      }
+    }
+  }
+
+  .timeline-header {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
+    margin-bottom: 20px;
+
+    h3 {
+      margin: 0;
+      font-weight: 500;
+    }
   }
 
-  .comments-container {
-    min-height: 200px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
-  .comments-list {
-    flex-grow: 1;
-    overflow-y: auto;
+  .timeline-item-content {
     padding: 10px;
-  }
-
-  .comment-item {
-    margin-bottom: 10px;
-    padding: 10px;
+    background-color: #f8f8f8;
     border-radius: 4px;
-    background-color: #f5f5f5;
   }
 
-  .comment-header {
+  .timeline-item-header {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 5px;
+    align-items: center;
+    margin-bottom: 8px;
   }
 
-  .comment-author {
-    font-weight: bold;
+  .timeline-title {
+    font-weight: 500;
+    font-size: 16px;
   }
 
-  .comment-time {
-    color: #999;
-    font-size: 12px;
-  }
-
-  .comment-content {
+  .timeline-description {
     white-space: pre-wrap;
     word-break: break-word;
+    margin-bottom: 8px;
   }
 
-  .comment-input-container {
-    display: flex;
-    flex-direction: column;
-    margin-top: 10px;
-  }
-
-  .comment-input {
-    margin-bottom: 10px;
-  }
-
-  .comment-button {
+  .timeline-footer {
     display: flex;
     justify-content: flex-end;
+    font-size: 12px;
+    color: #999;
+  }
+
+  .status-option {
+    display: flex;
+    align-items: center;
+
+    .color-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    // 任务状态颜色
+    .status-1 {
+      background-color: #909399;
+    }
+    .status-2 {
+      background-color: #e6a23c;
+    }
+    .status-3 {
+      background-color: #67c23a;
+    }
+    .status-4 {
+      background-color: #f56c6c;
+    }
   }
 </style>

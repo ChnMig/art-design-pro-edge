@@ -137,11 +137,11 @@ export const deleteTodo = (id: number): Promise<ApiResponse<ApiResponse>> => {
 export const getUserCache = (params: any = {}): Promise<ApiResponse<ApiResponse>> => {
   return api.get({ url: '/system/user/cache', params })
 }
-
-export const getTodoComment = (params: any): Promise<ApiResponse<ApiResponse>> => {
-  return api.get({ url: '/system/todo/comment', params })
+// 获取任务进度时间线
+export const getTodoTimeline = (params: any): Promise<ApiResponse<ApiResponse>> => {
+  return api.get({ url: '/system/todo/step', params })
 }
-
-export const addTodoComment = (data: any): Promise<ApiResponse<ApiResponse>> => {
-  return api.post({ url: '/system/todo/comment', data })
+// 添加任务进度节点
+export const addTodoProgress = (data: any): Promise<ApiResponse<ApiResponse>> => {
+  return api.post({ url: '/system/todo/step', data })
 }
