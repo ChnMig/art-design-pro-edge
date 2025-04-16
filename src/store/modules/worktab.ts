@@ -117,9 +117,28 @@ export const useWorktabStore = defineStore('worktabStore', () => {
    * @param path 当前选项卡的路由路径
    */
   const removeOthers = (path: string) => {
+    // 找到当前标签的完整信息（保留其查询参数）
+    const currentTab = opened.value.find((tab) => tab.path === path)
+
+    // 过滤出需要删除的标签（不是当前标签也不是首页的标签）
     const tabsToRemove = opened.value.filter((tab) => tab.path !== path && tab.path !== HOME_PAGE)
     markTabsToRemove(tabsToRemove)
+
+    // 保留首页和当前标签
     opened.value = opened.value.filter((tab) => tab.path === path || tab.path === HOME_PAGE)
+
+    // 确保当前标签保持激活状态（及其完整信息）
+    if (currentTab) {
+      current.value = currentTab
+
+      // 重要：重新导航到当前路径，确保包含查询参数
+      if (currentTab.query && Object.keys(currentTab.query).length > 0) {
+        router.push({
+          path: currentTab.path,
+          query: currentTab.query as Record<string, string | string[]>
+        })
+      }
+    }
   }
 
   /**
