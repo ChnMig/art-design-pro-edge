@@ -1,11 +1,13 @@
 <template>
-  <el-dialog
-    :title="dialogTitle"
-    v-model="dialogVisible"
-    width="700px"
-    align-center
-    :close-on-click-modal="false"
-  >
+  <el-dialog v-model="dialogVisible" width="700px" align-center :close-on-click-modal="false">
+    <template #header>
+      <div class="dialog-title-with-help">
+        <span>{{ dialogTitle }}</span>
+        <el-tooltip effect="dark" :content="helpContent" placement="top">
+          <el-icon class="help-icon" @click="showHelp"><QuestionFilled /></el-icon>
+        </el-tooltip>
+      </div>
+    </template>
     <el-form ref="formRef" :model="form" :rules="rules" label-width="85px">
       <el-row :gutter="20">
         <el-col :span="12">
@@ -112,6 +114,29 @@
       </span>
     </template>
   </el-dialog>
+
+  <!-- 帮助弹窗 -->
+  <el-dialog v-model="helpDialogVisible" title="菜单配置帮助" width="600px" append-to-body>
+    <div class="help-content">
+      <h3>菜单配置说明</h3>
+      <p>菜单标题：显示在导航菜单中的名称</p>
+      <p>路由地址：访问该菜单的URL路径</p>
+      <p>页面类型：选择内部组件或外部链接</p>
+      <p>组件路径：内部组件的路径，例如：system/user/index</p>
+      <p>菜单标识：系统内部使用的唯一标识符</p>
+      <p>图标：显示在菜单项前的图标</p>
+      <p>菜单排序：决定菜单显示的顺序，数字越小排序越靠前</p>
+      <p>各项开关功能说明：</p>
+      <ul>
+        <li>启用：控制该菜单是否生效</li>
+        <li>页面缓存：是否启用keep-alive缓存该页面</li>
+        <li>菜单隐藏：是否在导航菜单中显示</li>
+        <li>标签页隐藏：是否在标签页中显示</li>
+        <li>iframe：是否以iframe方式加载</li>
+        <li>一级主页：是否作为一级菜单的主页</li>
+      </ul>
+    </div>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -121,7 +146,11 @@
   import { IconTypeEnum } from '@/enums/appEnum'
   import { addMenu, updateMenu } from '@/api/system/api'
   import { ApiStatus } from '@/api/status'
+  import { QuestionFilled } from '@element-plus/icons-vue'
+
   const dialogVisible = ref(false)
+  const helpDialogVisible = ref(false)
+  const helpContent = ref('点击查看帮助')
   const form = reactive({
     // 菜单
     id: 0,
@@ -331,4 +360,46 @@
       }
     }
   )
+  const showHelp = () => {
+    helpDialogVisible.value = true
+  }
 </script>
+
+<style lang="scss" scoped>
+  .dialog-title-with-help {
+    display: flex;
+    align-items: center;
+
+    .help-icon {
+      margin-left: 8px;
+      font-size: 16px;
+      color: #909399;
+      cursor: pointer;
+
+      &:hover {
+        color: #409eff;
+      }
+    }
+  }
+
+  .help-content {
+    h3 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      font-weight: bold;
+    }
+
+    p {
+      margin: 8px 0;
+      line-height: 1.6;
+    }
+
+    ul {
+      padding-left: 20px;
+
+      li {
+        margin-bottom: 4px;
+      }
+    }
+  }
+</style>

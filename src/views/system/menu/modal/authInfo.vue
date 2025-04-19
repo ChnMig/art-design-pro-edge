@@ -1,12 +1,24 @@
 <template>
   <el-dialog
-    title="元素权限管理"
     v-model="dialogVisible"
     width="700px"
     align-center
     :close-on-click-modal="false"
     @closed="handleDialogClosed"
   >
+    <template #header>
+      <div class="dialog-title-with-help">
+        <span>元素权限管理</span>
+        <el-tooltip
+          effect="dark"
+          :content="helpContent"
+          placement="top"
+        >
+          <el-icon class="help-icon" @click="showHelp"><QuestionFilled /></el-icon>
+        </el-tooltip>
+      </div>
+    </template>
+    
     <el-button type="primary" style="margin-bottom: 15px" @click="addAuthPermission">
       添加权限
     </el-button>
@@ -35,12 +47,24 @@
 
   <!-- 添加/编辑权限的弹窗 -->
   <el-dialog
-    :title="isEditingAuth ? '编辑权限' : '添加权限'"
     v-model="authFormVisible"
     width="500px"
     append-to-body
     :close-on-click-modal="false"
   >
+    <template #header>
+      <div class="dialog-title-with-help">
+        <span>{{ isEditingAuth ? '编辑权限' : '添加权限' }}</span>
+        <el-tooltip
+          effect="dark"
+          content="配置页面元素权限信息"
+          placement="top"
+        >
+          <el-icon class="help-icon" @click="showAuthHelp"><QuestionFilled /></el-icon>
+        </el-tooltip>
+      </div>
+    </template>
+    
     <el-form ref="authFormRef" :model="authForm" :rules="authRules" label-width="100px">
       <el-form-item label="权限名称" prop="title">
         <el-input v-model="authForm.title" placeholder="请输入权限名称" />
@@ -57,6 +81,50 @@
       </div>
     </template>
   </el-dialog>
+  
+  <!-- 帮助弹窗 -->
+  <el-dialog
+    v-model="helpDialogVisible"
+    title="元素权限管理帮助"
+    width="600px"
+    append-to-body
+  >
+    <div class="help-content">
+      <h3>元素权限管理说明</h3>
+      <p>本功能用于管理页面内元素级权限，可以控制按钮等UI元素的显示和隐藏。</p>
+      <p>主要功能：</p>
+      <ul>
+        <li>添加权限：为当前菜单添加新的元素权限</li>
+        <li>编辑权限：修改已有权限信息</li>
+        <li>删除权限：移除不需要的权限</li>
+      </ul>
+      <p>权限标识的使用方法：</p>
+      <ul>
+        <li>在页面元素上使用v-permission指令控制元素显示</li>
+        <li>使用权限标识作为判断依据，例如：v-permission="'system:user:add'"</li>
+        <li>可以在按钮、表单、表格等需要权限控制的地方应用</li>
+      </ul>
+    </div>
+  </el-dialog>
+  
+  <!-- 权限表单帮助弹窗 -->
+  <el-dialog
+    v-model="authHelpDialogVisible"
+    title="权限配置帮助"
+    width="600px"
+    append-to-body
+  >
+    <div class="help-content">
+      <h3>权限配置说明</h3>
+      <p>权限名称：描述该权限的作用，例如"添加用户"、"删除角色"等</p>
+      <p>权限标识：系统内使用的唯一标识，通常使用冒号分隔，例如：</p>
+      <ul>
+        <li>system:user:add - 系统模块用户管理添加权限</li>
+        <li>system:role:delete - 系统模块角色管理删除权限</li>
+      </ul>
+      <p>命名规范：建议使用 "模块:功能:操作" 的格式</p>
+    </div>
+  </el-dialog>
 </template>
 
 <script lang="ts" setup>
@@ -65,6 +133,7 @@
   import type { FormInstance, FormRules } from 'element-plus'
   import { getAuthList, addAuth, updateAuth, deleteAuth } from '@/api/system/api'
   import { ApiStatus } from '@/api/status'
+  import { QuestionFilled } from '@element-plus/icons-vue'
 
   const emit = defineEmits(['refresh'])
   const dialogVisible = ref(false)
@@ -72,6 +141,9 @@
   const tableData = ref<any[]>([])
   const loading = ref(false)
   const submitLoading = ref(false)
+  const helpDialogVisible = ref(false)
+  const authHelpDialogVisible = ref(false)
+  const helpContent = ref('点击查看帮助')
 
   // 权限表单相关
   const authFormVisible = ref(false)
@@ -238,6 +310,14 @@
     emit('refresh') // 在弹窗完全关闭后触发刷新事件
   }
 
+  const showHelp = () => {
+    helpDialogVisible.value = true
+  }
+  
+  const showAuthHelp = () => {
+    authHelpDialogVisible.value = true
+  }
+
   // 对外暴露方法
   defineExpose({
     showModal
@@ -248,5 +328,42 @@
   .dialog-footer {
     display: flex;
     justify-content: flex-end;
+  }
+  
+  .dialog-title-with-help {
+    display: flex;
+    align-items: center;
+    
+    .help-icon {
+      margin-left: 8px;
+      font-size: 16px;
+      color: #909399;
+      cursor: pointer;
+      
+      &:hover {
+        color: #409EFF;
+      }
+    }
+  }
+  
+  .help-content {
+    h3 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      font-weight: bold;
+    }
+    
+    p {
+      margin: 8px 0;
+      line-height: 1.6;
+    }
+    
+    ul {
+      padding-left: 20px;
+      
+      li {
+        margin-bottom: 4px;
+      }
+    }
   }
 </style>
