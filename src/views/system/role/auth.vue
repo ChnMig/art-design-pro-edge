@@ -28,7 +28,7 @@
           show-checkbox
           node-key="id"
           default-expand-all
-          :check-strictly="true"
+          :check-strictly="false"
           :props="defaultProps"
           @check="handleTreeCheck"
         >
@@ -499,6 +499,19 @@
       margin-top: 20px;
       display: flex;
       justify-content: flex-end;
+    }
+
+    /* 修复半选中状态的横杠位置 - 增加更高优先级 */
+    :deep(.el-tree-node) {
+      .el-checkbox__input.is-indeterminate {
+        .el-checkbox__inner {
+          &::before {
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            height: 2px !important;
+          }
+        }
+      }
     }
   }
 </style>

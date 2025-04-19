@@ -60,6 +60,7 @@ declare module 'vue' {
     CommentItem: typeof import('./../components/custom/comment-widget/widget/CommentItem.vue')['default']
     CommentWidget: typeof import('./../components/custom/comment-widget/index.vue')['default']
     EditInfo: typeof import('./../components/core/layouts/art-header-bar/widget/EditInfo.vue')['default']
+    ElAlert: typeof import('element-plus/es')['ElAlert']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElBadge: typeof import('element-plus/es')['ElBadge']
     ElButton: typeof import('element-plus/es')['ElButton']
