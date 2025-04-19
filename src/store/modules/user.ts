@@ -6,6 +6,7 @@ import { useSettingStore } from './setting'
 import { useWorktabStore } from './worktab'
 import { getSysStorage } from '@/utils/storage'
 import { MenuListType } from '@/types/menu'
+import { isRouteRegistered } from '@/router/modules/permission' // <--- Import the ref
 
 // 用户
 export const useUserStore = defineStore('userStore', () => {
@@ -101,6 +102,7 @@ export const useUserStore = defineStore('userStore', () => {
       useWorktabStore().opened = []
       saveUserData()
       sessionStorage.removeItem('iframeRoutes')
+      isRouteRegistered.value = false // <--- Reset the flag here
       router.push('/login')
     }, 300)
   }

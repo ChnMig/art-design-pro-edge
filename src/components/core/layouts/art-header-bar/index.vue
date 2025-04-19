@@ -97,7 +97,7 @@
             popper-style="border: 1px solid var(--art-border-dashed-color); border-radius: calc(var(--custom-radius) / 2 + 4px); padding: 5px 16px; 5px 16px;"
           >
             <template #reference>
-              <img class="cover" :src="userInfo.avatar" />
+              <img class="cover" :src="userInfo.avatar" ref="userAvatarRef" tabindex="-1" />
             </template>
             <template #default>
               <div class="user-menu-box">
@@ -141,6 +141,7 @@
   import { useMenuStore } from '@/store/modules/menu'
   import AppConfig from '@/config'
   import { themeAnimation } from '@/utils/theme/animation'
+  import { nextTick, ref } from 'vue' // Ensure ref is imported
 
   const isWindows = navigator.userAgent.includes('Windows')
 
@@ -166,6 +167,8 @@
 
   const showNotice = ref(false)
   const userMenuPopover = ref()
+  const userAvatarRef = ref() // Add a ref for the avatar image
+
   const isLeftMenu = computed(() => menuType.value === MenuTypeEnum.LEFT)
   const isDualMenu = computed(() => menuType.value === MenuTypeEnum.DUAL_MENU)
   const isTopMenu = computed(() => menuType.value === MenuTypeEnum.TOP)
@@ -222,7 +225,13 @@
 
   const openEditInfo = () => {
     closeUserMenu()
-    mittBus.emit('openEditInfoDialog')
+    nextTick(() => {
+      // Explicitly move focus back to the avatar before opening the dialog
+      if (userAvatarRef.value) {
+        userAvatarRef.value.focus()
+      }
+      mittBus.emit('openEditInfoDialog')
+    })
   }
 
   const loginOut = () => {
@@ -274,9 +283,12 @@
   }
 
   const closeUserMenu = () => {
-    setTimeout(() => {
+    // Check if userMenuPopover.value exists and has a hide method
+    if (userMenuPopover.value && typeof userMenuPopover.value.hide === 'function') {
       userMenuPopover.value.hide()
-    }, 100)
+    } else {
+      console.warn('userMenuPopover ref or hide method not found.')
+    }
   }
 </script>
 

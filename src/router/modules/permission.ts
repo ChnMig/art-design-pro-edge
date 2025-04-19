@@ -36,7 +36,7 @@ export type AppRouteRecordRaw = RouteRecordRaw & {
 }
 
 // 标记是否已经注册动态路由
-const isRouteRegistered = ref(false)
+export const isRouteRegistered = ref(false)
 
 /**
  * 路由全局前置守卫
