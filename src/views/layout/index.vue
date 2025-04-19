@@ -14,6 +14,8 @@
     <ArtScreenLock />
     <!-- 水印效果 -->
     <ArtWatermark :visible="watermarkVisible" />
+        <!-- 编辑信息组件 -->
+        <EditInfo />
   </div>
 </template>
 
@@ -25,6 +27,8 @@
   import { useMenuStore } from '@/store/modules/menu'
   import { useSettingStore } from '@/store/modules/setting'
   import { getTabConfig } from '@/utils/tabs'
+
+  import EditInfo from '@comps/core/layouts/art-header-bar/widget/EditInfo.vue'
 
   // Store instances
   const settingStore = useSettingStore()
