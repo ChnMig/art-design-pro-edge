@@ -88,6 +88,7 @@
   import type { FormInstance, FormRules } from 'element-plus'
   import { onMounted, ref, reactive, computed } from 'vue'
   import { getCaptcha, userLogin, getUserInfo } from '@/api/system/api'
+  import defaultAvatar from '@/assets/img/user/avatar.png';
 
   const settingStore = useSettingStore()
   const { isDark, systemThemeType } = storeToRefs(settingStore)
@@ -137,7 +138,8 @@
             const userRes = await getUserInfo()
             if (userRes.code === ApiStatus.success) {
               console.log('获取用户信息成功:', userRes.data)
-              userRes.data.avatar = '/src/assets/img/user/avatar.png'
+              // 使用导入的图片路径
+              userRes.data.avatar = defaultAvatar
               userStore.setUserInfo(userRes.data)
             } else {
               ElMessage.error(userRes.message)
