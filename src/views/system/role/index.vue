@@ -67,7 +67,7 @@
           <el-table-column fixed="right" label="操作">
             <template #default="scope">
               <el-row>
-                <button-more :list="actionButtons" @click="buttonMoreClick($event, scope.row)" />
+                <ArtButtonMore :list="actionButtons" @click="buttonMoreClick($event, scope.row)" />
               </el-row>
             </template>
           </el-table-column>
@@ -114,7 +114,7 @@
 <script setup lang="ts">
   import { ref, reactive, computed, onMounted, nextTick } from 'vue'
   import { Search } from '@element-plus/icons-vue'
-  import { ButtonMoreItem } from '@/components/Form/ButtonMore.vue'
+  import { ButtonMoreItem } from '@/components/core/forms/ArtButtonMore.vue'
   import { useMenuStore } from '@/store/modules/menu'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'

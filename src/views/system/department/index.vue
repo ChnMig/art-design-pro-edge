@@ -66,8 +66,8 @@
           </el-table-column>
           <el-table-column fixed="right" label="操作" align="center">
             <template #default="scope">
-              <button-table type="edit" @click="showDialog('edit', scope.row)" />
-              <button-table type="delete" @click="deleteDepartment(scope.row.id)" />
+              <ArtButtonTable type="edit" @click="showDialog('edit', scope.row)" />
+              <ArtButtonTable type="delete" @click="deleteDepartment(scope.row.id)" />
             </template>
           </el-table-column>
         </template>

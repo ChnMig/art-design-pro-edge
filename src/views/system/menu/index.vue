@@ -42,9 +42,9 @@
         </el-table-column>
         <el-table-column fixed="right" label="操作" align="center">
           <template #default="scope">
-            <button-table type="add" @click="showMenuModal('add-menu-levle2', scope.row)" />
-            <button-table type="edit" @click="handleEdit('edit', scope.row)" />
-            <button-table type="delete" @click="delMenu(scope.row.id)" />
+            <ArtButtonTable type="add" @click="showMenuModal('add-menu-levle2', scope.row)" />
+            <ArtButtonTable type="edit" @click="handleEdit('edit', scope.row)" />
+            <ArtButtonTable type="delete" @click="delMenu(scope.row.id)" />
           </template>
         </el-table-column>
       </template>

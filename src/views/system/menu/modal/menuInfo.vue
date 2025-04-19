@@ -48,7 +48,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="图标" prop="icon">
-            <icon-selector
+            <ArtIconSelector
               v-model="form.icon"
               :iconType="iconType"
               :defaultIcon="form.icon"

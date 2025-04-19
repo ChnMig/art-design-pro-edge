@@ -119,8 +119,8 @@
           </el-table-column>
           <el-table-column fixed="right" label="操作" width="150px" align="center">
             <template #default="scope">
-              <button-table type="edit" @click="showDialog('edit', scope.row)" />
-              <button-table type="delete" @click="handleDeleteUser(scope.row)" />
+              <ArtButtonTable type="edit" @click="showDialog('edit', scope.row)" />
+              <ArtButtonTable type="delete" @click="handleDeleteUser(scope.row)" />
             </template>
           </el-table-column>
         </template>

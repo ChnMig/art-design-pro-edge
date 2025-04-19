@@ -43,6 +43,7 @@ const isRouteRegistered = ref(false)
  * 处理进度条、获取菜单列表、动态路由注册、404 检查、工作标签页及页面标题设置
  */
 router.beforeEach(async (to, from, next) => {
+  console.log('路由前置守卫:', to.path)
   const settingStore = useSettingStore()
   if (settingStore.showNprogress) NProgress.start()
 

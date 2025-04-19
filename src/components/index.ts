@@ -1,4 +1,4 @@
-// 🔔 注册全局组件
+// 注册全局组件
 import type { App } from 'vue'
 import TableBar from './Table/TableBar.vue'
 import ArtTable from './Table/ArtTable.vue'
