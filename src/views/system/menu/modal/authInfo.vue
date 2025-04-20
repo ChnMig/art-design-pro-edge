@@ -9,16 +9,12 @@
     <template #header>
       <div class="dialog-title-with-help">
         <span>元素权限管理</span>
-        <el-tooltip
-          effect="dark"
-          :content="helpContent"
-          placement="top"
-        >
+        <el-tooltip effect="dark" :content="helpContent" placement="top">
           <el-icon class="help-icon" @click="showHelp"><QuestionFilled /></el-icon>
         </el-tooltip>
       </div>
     </template>
-    
+
     <el-button type="primary" style="margin-bottom: 15px" @click="addAuthPermission">
       添加权限
     </el-button>
@@ -46,25 +42,16 @@
   </el-dialog>
 
   <!-- 添加/编辑权限的弹窗 -->
-  <el-dialog
-    v-model="authFormVisible"
-    width="500px"
-    append-to-body
-    :close-on-click-modal="false"
-  >
+  <el-dialog v-model="authFormVisible" width="500px" append-to-body :close-on-click-modal="false">
     <template #header>
       <div class="dialog-title-with-help">
         <span>{{ isEditingAuth ? '编辑权限' : '添加权限' }}</span>
-        <el-tooltip
-          effect="dark"
-          content="配置页面元素权限信息"
-          placement="top"
-        >
+        <el-tooltip effect="dark" content="配置页面元素权限信息" placement="top">
           <el-icon class="help-icon" @click="showAuthHelp"><QuestionFilled /></el-icon>
         </el-tooltip>
       </div>
     </template>
-    
+
     <el-form ref="authFormRef" :model="authForm" :rules="authRules" label-width="100px">
       <el-form-item label="权限名称" prop="title">
         <el-input v-model="authForm.title" placeholder="请输入权限名称" />
@@ -81,14 +68,9 @@
       </div>
     </template>
   </el-dialog>
-  
+
   <!-- 帮助弹窗 -->
-  <el-dialog
-    v-model="helpDialogVisible"
-    title="元素权限管理帮助"
-    width="600px"
-    append-to-body
-  >
+  <el-dialog v-model="helpDialogVisible" title="元素权限管理帮助" width="600px" append-to-body>
     <div class="help-content">
       <h3>元素权限管理说明</h3>
       <p>本功能用于管理页面内元素级权限，可以控制按钮等UI元素的显示和隐藏。</p>
@@ -106,14 +88,9 @@
       </ul>
     </div>
   </el-dialog>
-  
+
   <!-- 权限表单帮助弹窗 -->
-  <el-dialog
-    v-model="authHelpDialogVisible"
-    title="权限配置帮助"
-    width="600px"
-    append-to-body
-  >
+  <el-dialog v-model="authHelpDialogVisible" title="权限配置帮助" width="600px" append-to-body>
     <div class="help-content">
       <h3>权限配置说明</h3>
       <p>权限名称：描述该权限的作用，例如"添加用户"、"删除角色"等</p>
@@ -313,7 +290,7 @@
   const showHelp = () => {
     helpDialogVisible.value = true
   }
-  
+
   const showAuthHelp = () => {
     authHelpDialogVisible.value = true
   }
@@ -329,38 +306,38 @@
     display: flex;
     justify-content: flex-end;
   }
-  
+
   .dialog-title-with-help {
     display: flex;
     align-items: center;
-    
+
     .help-icon {
       margin-left: 8px;
       font-size: 16px;
       color: #909399;
       cursor: pointer;
-      
+
       &:hover {
-        color: #409EFF;
+        color: #409eff;
       }
     }
   }
-  
+
   .help-content {
     h3 {
       margin-top: 0;
       margin-bottom: 16px;
       font-weight: bold;
     }
-    
+
     p {
       margin: 8px 0;
       line-height: 1.6;
     }
-    
+
     ul {
       padding-left: 20px;
-      
+
       li {
         margin-bottom: 4px;
       }
