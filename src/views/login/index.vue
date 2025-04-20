@@ -88,7 +88,7 @@
   import type { FormInstance, FormRules } from 'element-plus'
   import { onMounted, ref, reactive, computed } from 'vue'
   import { getCaptcha, userLogin, getUserInfo } from '@/api/system/api'
-  import defaultAvatar from '@/assets/img/user/avatar.png';
+  import defaultAvatar from '@/assets/img/user/avatar.png'
 
   const settingStore = useSettingStore()
   const { isDark, systemThemeType } = storeToRefs(settingStore)

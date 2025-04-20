@@ -34,7 +34,7 @@
 
   const systemName = AppConfig.systemInfo.name
   // 替换为实际的二维码图片路径
-  const qrcodeImage = ref('src/assets/img/admin/qrcode.png')
+  const qrcodeImage = ref('@/assets/img/admin/qrcode.png')
 
   const toLogin = () => {
     router.push('/login')
