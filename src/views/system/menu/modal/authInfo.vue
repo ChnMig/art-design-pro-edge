@@ -74,16 +74,11 @@
     <div class="help-content">
       <h3>元素权限管理说明</h3>
       <p>本功能用于管理页面内元素级权限，可以控制按钮等UI元素的显示和隐藏。</p>
-      <p>主要功能：</p>
-      <ul>
-        <li>添加权限：为当前菜单添加新的元素权限</li>
-        <li>编辑权限：修改已有权限信息</li>
-        <li>删除权限：移除不需要的权限</li>
-      </ul>
       <p>权限标识的使用方法：</p>
       <ul>
-        <li>在页面元素上使用v-permission指令控制元素显示</li>
-        <li>使用权限标识作为判断依据，例如：v-permission="'system:user:add'"</li>
+        <li>在页面元素上使用v-auth指令控制元素显示</li>
+        <li>例如：页面上有标签：<pre><code>&lt;el-button v-auth="'system:user:add'"&gt;新增&lt;/el-button&gt;</code></pre></li>
+        <li>如果用户没有`system:user:add`权限，则按钮不会显示</li>
         <li>可以在按钮、表单、表格等需要权限控制的地方应用</li>
       </ul>
     </div>
