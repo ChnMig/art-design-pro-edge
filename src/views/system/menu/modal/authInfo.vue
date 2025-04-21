@@ -72,13 +72,14 @@
   <!-- 帮助弹窗 -->
   <el-dialog v-model="helpDialogVisible" title="元素权限管理帮助" width="600px" append-to-body>
     <div class="help-content">
-      <h3>元素权限管理说明</h3>
       <p>本功能用于管理页面内元素级权限，可以控制按钮等UI元素的显示和隐藏。</p>
       <p>权限标识的使用方法：</p>
       <ul>
         <li>在页面元素上使用v-auth指令控制元素显示</li>
-        <li>例如：页面上有标签：<pre><code>&lt;el-button v-auth="'system:user:add'"&gt;新增&lt;/el-button&gt;</code></pre></li>
-        <li>如果用户没有`system:user:add`权限，则按钮不会显示</li>
+        <li
+          >例如：页面上有标签：<pre><code>&lt;el-button v-auth="'system:user:add'"&gt;新增&lt;/el-button&gt;</code></pre>
+        </li>
+        <li>如果用户没有`system:user:add`权限，则元素不会显示</li>
         <li>可以在按钮、表单、表格等需要权限控制的地方应用</li>
       </ul>
     </div>
@@ -87,7 +88,6 @@
   <!-- 权限表单帮助弹窗 -->
   <el-dialog v-model="authHelpDialogVisible" title="权限配置帮助" width="600px" append-to-body>
     <div class="help-content">
-      <h3>权限配置说明</h3>
       <p>权限名称：描述该权限的作用，例如"添加用户"、"删除角色"等</p>
       <p>权限标识：系统内使用的唯一标识，通常使用冒号分隔，例如：</p>
       <ul>
