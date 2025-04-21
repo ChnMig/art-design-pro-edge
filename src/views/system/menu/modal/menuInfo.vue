@@ -118,7 +118,6 @@
   <!-- 帮助弹窗 -->
   <el-dialog v-model="helpDialogVisible" title="菜单配置帮助" width="600px" append-to-body>
     <div class="help-content">
-      <h3>菜单配置说明</h3>
       <p>菜单标题：显示在导航菜单中的名称</p>
       <p>路由地址：访问该菜单的URL路径</p>
       <p>页面类型：选择内部组件或外部链接</p>
