@@ -11,7 +11,7 @@
       background-color="transparent"
     >
       <HorizontalSubmenu
-        v-for="item in list"
+        v-for="item in filteredMenuItems"
         :key="item.id"
         :item="item"
         :isMobile="false"
@@ -26,7 +26,7 @@
 
   const route = useRoute()
 
-  defineProps({
+  const props = defineProps({
     list: {
       type: [Array] as PropType<MenuListType[]>,
       default: () => []
@@ -35,6 +35,10 @@
       type: Number,
       default: 500
     }
+  })
+
+  const filteredMenuItems = computed(() => {
+    return props.list.filter((item) => !item.meta.isHide)
   })
 
   const routerPath = computed(() => {
