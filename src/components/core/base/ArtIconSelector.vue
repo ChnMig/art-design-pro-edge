@@ -1,5 +1,5 @@
 <template>
-  <div class="ArtIconSelector">
+  <div class="icon-selector">
     <div
       class="select"
       @click="handleClick"
