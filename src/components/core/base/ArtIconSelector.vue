@@ -125,7 +125,9 @@
 </script>
 
 <style lang="scss" scoped>
-  .ArtIconSelector {
+  .icon-selector {
+    width: 100%;
+
     .select {
       box-sizing: border-box;
       display: flex;
@@ -137,6 +139,11 @@
       border: 1px solid var(--art-border-dashed-color);
       border-radius: calc(var(--custom-radius) / 2 + 2px) !important;
       transition: border 0.3s;
+
+      @media (width <= 500px) {
+        width: 100% !important;
+        height: 32px !important;
+      }
 
       &:hover:not(.is-disabled).has-icon {
         .arrow-icon {
@@ -182,6 +189,10 @@
         color: var(--art-gray-600);
 
         @include ellipsis();
+
+        @media (width <= 500px) {
+          display: none;
+        }
       }
 
       .arrow {
