@@ -256,9 +256,25 @@
   const refreshDepartmentList = async () => {
     loading.value = true
     try {
-      const res = await getDepartmentList()
+      const params = {
+        page: pagination.currentPage,
+        pageSize: pagination.pageSize,
+        ...searchForm
+      }
+      const res = await getDepartmentList(params)
       if (res.code === ApiStatus.success) {
         tableData.value = res.data || []
+        
+        // 使用返回值中的count字段作为总数
+        if (res.count !== undefined) {
+          pagination.total = res.count
+        } else if (res.meta && res.meta.count) {
+          pagination.total = res.meta.count
+        } else if (res.meta && res.meta.total) {
+          pagination.total = res.meta.total
+        } else {
+          pagination.total = res.data?.length || 0
+        }
       } else {
         ElMessage.error(`获取部门列表失败: ${res.message}`)
       }

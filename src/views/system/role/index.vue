@@ -238,40 +238,25 @@
     loading.value = true
     try {
       // 调用 API 获取角色列表数据
-      const response = await getRoleList()
+      const params = {
+        page: pagination.currentPage,
+        pageSize: pagination.pageSize,
+        ...searchForm
+      }
+      const response = await getRoleList(params)
 
       if (response.code === 200) {
         // 处理响应数据
-        const responseData = response.data || {}
-
-        // 处理角色列表数据
-        if (Array.isArray(responseData)) {
-          tableData.value = responseData
-        } else if (responseData && typeof responseData === 'object') {
-          tableData.value = Array.isArray(responseData.list) ? responseData.list : []
-
-          // 设置总数
-          if (typeof responseData.total === 'number') {
-            pagination.total = responseData.total
-          } else if (typeof responseData.count === 'number') {
-            pagination.total = responseData.count
-          }
+        tableData.value = response.data || []
+        
+        // 使用返回值中的count字段作为总数
+        if (response.count !== undefined) {
+          pagination.total = response.count
+        } else if (response.meta && response.meta.count) {
+          pagination.total = response.meta.count
+        } else if (response.meta && response.meta.total) {
+          pagination.total = response.meta.total
         } else {
-          tableData.value = []
-        }
-
-        // 如果没有设置总数，使用数组长度
-        if (pagination.total === 0) {
-          pagination.total = tableData.value.length
-        }
-
-        // 应用筛选条件 (前端筛选)
-        if (searchForm.name || searchForm.status !== undefined) {
-          tableData.value = tableData.value.filter((item) => {
-            const nameMatch = !searchForm.name || (item.name && item.name.includes(searchForm.name))
-            const statusMatch = searchForm.status === undefined || item.status === searchForm.status
-            return nameMatch && statusMatch
-          })
           pagination.total = tableData.value.length
         }
       } else {

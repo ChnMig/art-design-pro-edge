@@ -65,8 +65,8 @@ export const getAuthList = (menuID: number): Promise<ApiResponse<ApiResponse>> =
   return api.get({ url: `/system/menu/auth?menu_id=${menuID}` })
 }
 
-export const getDepartmentList = (): Promise<ApiResponse<ApiResponse>> => {
-  return api.get({ url: '/system/department' })
+export const getDepartmentList = (params?: any): Promise<ApiResponse<ApiResponse>> => {
+  return api.get({ url: '/system/department', params })
 }
 
 export const addDepartment = (data: any): Promise<ApiResponse<ApiResponse>> => {
@@ -81,8 +81,8 @@ export const deleteDepartment = (id: number): Promise<ApiResponse<ApiResponse>> 
   return api.del({ url: `/system/department?id=${id}` })
 }
 
-export const getRoleList = (): Promise<ApiResponse<ApiResponse>> => {
-  return api.get({ url: '/system/role' })
+export const getRoleList = (params?: any): Promise<ApiResponse<ApiResponse>> => {
+  return api.get({ url: '/system/role', params })
 }
 
 export const addRole = (data: any): Promise<ApiResponse<ApiResponse>> => {
