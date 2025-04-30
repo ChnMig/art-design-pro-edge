@@ -1,137 +1,127 @@
 <template>
-  <div class="page-content">
-    <table-bar
-      :showTop="false"
-      @search="search"
-      @reset="resetSearch"
-      @changeColumn="changeColumn"
-      :columns="columns"
-    >
-      <template #top>
-        <el-form :model="searchForm" ref="searchFormRef" label-width="82px">
-          <el-row :gutter="20">
-            <form-input label="角色名称" prop="name" v-model="searchForm.name" />
-            <el-col :span="8">
-              <el-form-item label="状态" prop="status">
-                <el-select
-                  v-model="searchForm.status"
-                  placeholder="请选择状态"
-                  clearable
-                  style="width: 100%"
-                >
-                  <el-option label="启用" :value="1" />
-                  <el-option label="禁用" :value="2" />
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-      </template>
-      <template #bottom>
-        <el-button @click="showDialog('add')" v-ripple>添加角色</el-button>
-      </template>
-    </table-bar>
+  <ArtTableFullScreen>
+    <div class="role-page" id="table-full-screen">
+      <!-- 搜索栏 -->
+      <ArtSearchBar
+        v-model:filter="searchForm"
+        :items="searchItems"
+        @reset="resetSearch"
+        @search="search"
+      ></ArtSearchBar>
 
-    <el-config-provider>
-      <art-table
-        :data="tableData"
-        :currentPage="pagination.currentPage"
-        :pageSize="pagination.pageSize"
-        :total="pagination.total"
-        :loading="loading"
-        :hideOnSinglePage="false"
-        @current-change="handleCurrentChange"
-        @size-change="handleSizeChange"
+      <ElCard shadow="never" class="art-table-card">
+        <!-- 表格头部 -->
+        <ArtTableHeader
+          :columnList="columnOptions"
+          v-model:columns="columnChecks"
+          @refresh="handleRefresh"
+        >
+          <template #left>
+            <ElButton @click="showDialog('add')" v-ripple>添加角色</ElButton>
+          </template>
+        </ArtTableHeader>
+
+        <!-- 表格 -->
+        <ArtTable
+          :data="tableData"
+          :currentPage="pagination.currentPage"
+          :pageSize="pagination.pageSize"
+          :total="pagination.total"
+          :loading="loading"
+          :hideOnSinglePage="false"
+          :marginTop="10"
+          height="100%"
+          @current-change="handleCurrentChange"
+          @size-change="handleSizeChange"
+        >
+          <template #default>
+            <el-table-column
+              v-for="col in filteredColumns"
+              :key="col.prop || col.type"
+              v-bind="col"
+            >
+              <!-- 自定义状态列的渲染 -->
+              <template #default="scope" v-if="col.prop === 'status'">
+                <el-tag :type="scope.row.status === 1 ? 'primary' : 'warning'">
+                  {{ scope.row.status === 1 ? '启用' : '禁用' }}
+                </el-tag>
+              </template>
+
+              <!-- 自定义用户数量列的渲染 -->
+              <template #default="scope" v-else-if="col.prop === 'users'">
+                {{ scope.row.users ? scope.row.users.length : 0 }}
+              </template>
+
+              <!-- 自定义操作列的渲染 -->
+              <template #default="scope" v-else-if="col.prop === 'operation'">
+                <div class="operation-column-container">
+                  <ArtButtonMore
+                    :list="actionButtons"
+                    @click="buttonMoreClick($event, scope.row)"
+                  />
+                </div>
+              </template>
+            </el-table-column>
+          </template>
+        </ArtTable>
+      </ElCard>
+
+      <el-dialog
+        v-model="dialogVisible"
+        :title="dialogType === 'add' ? '新增角色' : '编辑角色'"
+        width="500px"
+        :close-on-click-modal="false"
+        destroy-on-close
       >
-        <template #default>
-          <el-table-column label="角色名称" prop="name" align="center" v-if="columns[0].show" />
-          <el-table-column
-            label="描述"
-            prop="desc"
-            show-overflow-tooltip
-            align="center"
-            v-if="columns[1].show"
-          />
-          <el-table-column label="状态" prop="status" align="center" v-if="columns[2].show">
-            <template #default="scope">
-              <el-tag :type="scope.row.status === 1 ? 'primary' : 'warning'">
-                {{ scope.row.status === 1 ? '启用' : '禁用' }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="用户数量" align="center" v-if="columns[3].show">
-            <template #default="scope">
-              {{ scope.row.users ? scope.row.users.length : 0 }}
-            </template>
-          </el-table-column>
-          <el-table-column fixed="right" label="操作">
-            <template #default="scope">
-              <el-row>
-                <ArtButtonMore :list="actionButtons" @click="buttonMoreClick($event, scope.row)" />
-              </el-row>
-            </template>
-          </el-table-column>
+        <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" @submit.prevent>
+          <el-form-item label="角色名称" prop="name">
+            <el-input v-model="form.name" placeholder="请输入角色名称" />
+          </el-form-item>
+          <el-form-item label="描述" prop="desc">
+            <el-input v-model="form.desc" type="textarea" :rows="3" placeholder="请输入角色描述" />
+          </el-form-item>
+          <el-form-item label="启用">
+            <el-switch v-model="form.status" />
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="dialogVisible = false">取消</el-button>
+            <el-button type="primary" @click="handleSubmit(formRef)" :loading="submitLoading"
+              >提交</el-button
+            >
+          </div>
         </template>
-      </art-table>
-    </el-config-provider>
+      </el-dialog>
 
-    <el-dialog
-      v-model="dialogVisible"
-      :title="dialogType === 'add' ? '新增角色' : '编辑角色'"
-      width="500px"
-      :close-on-click-modal="false"
-      destroy-on-close
-    >
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" @submit.prevent>
-        <el-form-item label="角色名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入角色名称" />
-        </el-form-item>
-        <el-form-item label="描述" prop="desc">
-          <el-input v-model="form.desc" type="textarea" :rows="3" placeholder="请输入角色描述" />
-        </el-form-item>
-        <el-form-item label="启用">
-          <el-switch v-model="form.status" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="handleSubmit(formRef)" :loading="submitLoading"
-            >提交</el-button
-          >
-        </div>
-      </template>
-    </el-dialog>
-
-    <role-auth
-      v-model:visible="permissionDrawer"
-      :role-id="currentRoleId"
-      @saved="handlePermissionSaved"
-    />
-  </div>
+      <role-auth
+        v-model:visible="permissionDrawer"
+        :role-id="currentRoleId"
+        @saved="handlePermissionSaved"
+      />
+    </div>
+  </ArtTableFullScreen>
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, computed, onMounted, nextTick } from 'vue'
-  import { Search } from '@element-plus/icons-vue'
+  import { ref, reactive, onMounted, nextTick, watch, computed } from 'vue'
   import { ButtonMoreItem } from '@/components/core/forms/ArtButtonMore.vue'
-  import { useMenuStore } from '@/store/modules/menu'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
-  import { formatMenuTitle } from '@/utils/menu'
-  import { getRoleList, addRole, updateRole, deleteRole, getAllMenuByRole } from '@/api/system/api'
+  import { getRoleList, addRole, updateRole, deleteRole } from '@/api/system/api'
   import RoleAuth from './auth.vue'
+  import { useCheckedColumns } from '@/composables/useCheckedColumns'
+  import { SearchFormItem } from '@/types/search-form'
 
   // 状态变量
   const dialogVisible = ref(false)
   const permissionDrawer = ref(false)
   const loading = ref(false)
   const submitLoading = ref(false)
-  const currentRoleId = ref(null)
+  const currentRoleId = ref<number | undefined>(undefined)
   const formRef = ref<FormInstance>()
   const dialogType = ref('add')
-  const tableData = ref([])
-  const searchFormRef = ref<FormInstance>()
+  const tableData = ref<any[]>([])
 
   // 分页配置
   const pagination = reactive({
@@ -140,18 +130,83 @@
     total: 0
   })
 
-  // 列设置
-  const columns = reactive([
-    { name: '角色名称', show: true },
-    { name: '描述', show: true },
-    { name: '状态', show: true },
-    { name: '用户数量', show: true }
-  ])
-
   // 搜索表单
   const searchForm = reactive({
     name: '',
-    status: undefined
+    status: undefined as undefined | number
+  })
+
+  // 搜索表单配置项
+  const searchItems: SearchFormItem[] = [
+    {
+      label: '角色名称',
+      prop: 'name',
+      type: 'input',
+      config: {
+        clearable: true,
+        placeholder: '请输入角色名称'
+      }
+    },
+    {
+      label: '状态',
+      prop: 'status',
+      type: 'select',
+      config: {
+        clearable: true,
+        placeholder: '请选择状态'
+      },
+      options: [
+        { label: '启用', value: 1 },
+        { label: '禁用', value: 2 }
+      ]
+    }
+  ]
+
+  // 列配置选项
+  const columnOptions = [
+    { label: '角色名称', prop: 'name' },
+    { label: '描述', prop: 'desc' },
+    { label: '状态', prop: 'status' },
+    { label: '用户数量', prop: 'users' },
+    { label: '操作', prop: 'operation' }
+  ]
+
+  // 动态列配置
+  const { columnChecks, columns } = useCheckedColumns(() => [
+    {
+      prop: 'name',
+      label: '角色名称',
+      align: 'center'
+    },
+    {
+      prop: 'desc',
+      label: '描述',
+      showOverflowTooltip: true,
+      align: 'center'
+    },
+    {
+      prop: 'status',
+      label: '状态',
+      align: 'center'
+    },
+    {
+      prop: 'users',
+      label: '用户数量',
+      align: 'center'
+    },
+    {
+      prop: 'operation',
+      label: '操作',
+      align: 'center'
+    }
+  ])
+
+  // 根据列选中状态筛选得到最终显示的列
+  const filteredColumns = computed(() => {
+    return columns.value.map((col) => {
+      // 不再强制设置操作列固定
+      return col
+    })
   })
 
   // 表单验证规则
@@ -182,39 +237,59 @@
   const fetchRoleList = async () => {
     loading.value = true
     try {
-      // 构建搜索参数
-      const params = {
-        page: pagination.currentPage,
-        pageSize: pagination.pageSize
-      }
-
-      // 添加搜索条件
-      if (searchForm.name) params.name = searchForm.name
-      if (searchForm.status !== undefined) params.status = searchForm.status
-
-      const response = await getRoleList(params)
+      // 调用 API 获取角色列表数据
+      const response = await getRoleList()
 
       if (response.code === 200) {
-        tableData.value = response.data || []
+        // 处理响应数据
+        const responseData = response.data || {}
 
-        // 设置总数
-        if (response.count !== undefined) {
-          pagination.total = response.count
-        } else if (response.meta && response.meta.count) {
-          pagination.total = response.meta.count
-        } else if (response.meta && response.meta.total) {
-          pagination.total = response.meta.total
+        // 处理角色列表数据
+        if (Array.isArray(responseData)) {
+          tableData.value = responseData
+        } else if (responseData && typeof responseData === 'object') {
+          tableData.value = Array.isArray(responseData.list) ? responseData.list : []
+
+          // 设置总数
+          if (typeof responseData.total === 'number') {
+            pagination.total = responseData.total
+          } else if (typeof responseData.count === 'number') {
+            pagination.total = responseData.count
+          }
         } else {
-          pagination.total = response.data?.length || 0
+          tableData.value = []
+        }
+
+        // 如果没有设置总数，使用数组长度
+        if (pagination.total === 0) {
+          pagination.total = tableData.value.length
+        }
+
+        // 应用筛选条件 (前端筛选)
+        if (searchForm.name || searchForm.status !== undefined) {
+          tableData.value = tableData.value.filter((item) => {
+            const nameMatch = !searchForm.name || (item.name && item.name.includes(searchForm.name))
+            const statusMatch = searchForm.status === undefined || item.status === searchForm.status
+            return nameMatch && statusMatch
+          })
+          pagination.total = tableData.value.length
         }
       } else {
         ElMessage.error(response.message || '获取角色列表失败')
       }
-    } catch (error) {
+    } catch (err) {
+      console.error('获取角色列表出错:', err)
       ElMessage.error('获取角色列表失败，请稍后再试')
     } finally {
       loading.value = false
     }
+  }
+
+  // 刷新表格数据
+  const handleRefresh = () => {
+    tableData.value = []
+    loading.value = true
+    fetchRoleList()
   }
 
   // 页码变化处理
@@ -237,16 +312,11 @@
   }
 
   // 重置搜索
-  const resetSearch = (formEl: FormInstance | undefined) => {
-    if (!formEl) return
-    formEl.resetFields()
+  const resetSearch = () => {
+    searchForm.name = ''
+    searchForm.status = undefined
     pagination.currentPage = 1
     fetchRoleList()
-  }
-
-  // 列配置变化
-  const changeColumn = (list: any) => {
-    columns.values = list
   }
 
   // 初始化
@@ -268,6 +338,11 @@
         form.name = row.name
         form.desc = row.desc
         form.status = row.status === 1
+      } else {
+        form.id = ''
+        form.name = ''
+        form.desc = ''
+        form.status = true
       }
     })
   }
@@ -315,7 +390,8 @@
           } else {
             ElMessage.error(response.message || '删除失败')
           }
-        } catch (error) {
+        } catch (err) {
+          console.error('删除角色出错:', err)
           ElMessage.error('删除失败，请稍后再试')
         }
       })
@@ -349,7 +425,8 @@
           } else {
             ElMessage.error(response.message || '操作失败')
           }
-        } catch (error) {
+        } catch (err) {
+          console.error('提交表单出错:', err)
           ElMessage.error('操作失败，请稍后再试')
         } finally {
           submitLoading.value = false
@@ -360,7 +437,14 @@
 </script>
 
 <style lang="scss" scoped>
-  .page-content {
+  .role-page {
+    // 添加表格容器样式
+    .table-container {
+      flex: 1;
+      min-height: 0; // 重要：允许容器收缩
+      padding: 16px; // 根据需求调整内边距
+    }
+
     .search-container {
       display: flex;
       justify-content: space-between;
@@ -377,6 +461,12 @@
       height: 1.8em;
       vertical-align: -8px;
       fill: currentcolor;
+    }
+
+    .operation-column-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 </style>
