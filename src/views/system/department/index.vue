@@ -1,78 +1,69 @@
 <template>
-  <div class="page-content">
-    <table-bar
-      :showTop="false"
-      @search="search"
-      @reset="resetSearch"
-      @changeColumn="changeColumn"
-      :columns="columns"
-    >
-      <template #top>
-        <el-form :model="searchForm" ref="searchFormRef" label-width="82px">
-          <el-row :gutter="20">
-            <form-input label="部门名称" prop="name" v-model="searchForm.name" />
-            <el-col :span="8">
-              <el-form-item label="状态" prop="status">
-                <el-select
-                  v-model="searchForm.status"
-                  placeholder="请选择状态"
-                  clearable
-                  style="width: 100%"
-                >
-                  <el-option label="启用" :value="1" />
-                  <el-option label="禁用" :value="2" />
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-      </template>
-      <template #bottom>
-        <el-button @click="showDialog('add')" v-ripple>添加部门</el-button>
-      </template>
-    </table-bar>
+  <ArtTableFullScreen>
+    <div class="department-page" id="table-full-screen">
+      <!-- 搜索栏 -->
+      <ArtSearchBar
+        v-model:filter="searchForm"
+        :items="searchItems"
+        @reset="resetSearch"
+        @search="search"
+      ></ArtSearchBar>
 
-    <el-config-provider>
-      <art-table
-        :data="filteredData"
-        :currentPage="pagination.currentPage"
-        :pageSize="pagination.pageSize"
-        :total="pagination.total"
-        :loading="loading"
-        :hideOnSinglePage="false"
-        @current-change="handleCurrentChange"
-        @size-change="handleSizeChange"
-      >
-        <template #default>
-          <el-table-column prop="name" label="名称" align="center" v-if="columns[0].show" />
-          <el-table-column
-            prop="sort"
-            label="排序"
-            sortable
-            align="center"
-            v-if="columns[1].show"
-          />
-          <el-table-column prop="users" label="人数" align="center" v-if="columns[2].show">
-            <template #default="scope">
-              {{ Array.isArray(scope.row.users) ? scope.row.users.length : 0 }}
-            </template>
-          </el-table-column>
-          <el-table-column label="状态" prop="status" align="center" v-if="columns[3].show">
-            <template #default="scope">
-              <el-tag :type="scope.row.status === 1 ? 'primary' : 'warning'">
-                {{ scope.row.status === 1 ? '启用' : '禁用' }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column fixed="right" label="操作" align="center">
-            <template #default="scope">
-              <ArtButtonTable type="edit" @click="showDialog('edit', scope.row)" />
-              <ArtButtonTable type="delete" @click="deleteDepartment(scope.row.id)" />
-            </template>
-          </el-table-column>
-        </template>
-      </art-table>
-    </el-config-provider>
+      <ElCard shadow="never" class="art-table-card">
+        <!-- 表格头部 -->
+        <ArtTableHeader
+          :columnList="columnOptions"
+          v-model:columns="columnChecks"
+          @refresh="handleRefresh"
+        >
+          <template #left>
+            <ElButton @click="showDialog('add')" v-ripple>添加部门</ElButton>
+          </template>
+        </ArtTableHeader>
+
+        <!-- 表格 -->
+        <ArtTable
+          :data="filteredData"
+          :currentPage="pagination.currentPage"
+          :pageSize="pagination.pageSize"
+          :total="pagination.total"
+          :loading="loading"
+          :hideOnSinglePage="false"
+          :marginTop="10"
+          height="100%"
+          @current-change="handleCurrentChange"
+          @size-change="handleSizeChange"
+        >
+          <template #default>
+            <el-table-column
+              v-for="col in filteredColumns"
+              :key="col.prop || col.type"
+              v-bind="col"
+            >
+              <!-- 自定义人数列的渲染 -->
+              <template #default="scope" v-if="col.prop === 'users'">
+                {{ Array.isArray(scope.row.users) ? scope.row.users.length : 0 }}
+              </template>
+
+              <!-- 自定义状态列的渲染 -->
+              <template #default="scope" v-else-if="col.prop === 'status'">
+                <el-tag :type="scope.row.status === 1 ? 'primary' : 'warning'">
+                  {{ scope.row.status === 1 ? '启用' : '禁用' }}
+                </el-tag>
+              </template>
+
+              <!-- 自定义操作列的渲染 -->
+              <template #default="scope" v-else-if="col.prop === 'operation'">
+                <div class="operation-column-container">
+                  <ArtButtonTable type="edit" @click="showDialog('edit', scope.row)" />
+                  <ArtButtonTable type="delete" @click="deleteDepartment(scope.row.id)" />
+                </div>
+              </template>
+            </el-table-column>
+          </template>
+        </ArtTable>
+      </ElCard>
+    </div>
 
     <el-dialog
       v-model="dialogVisible"
@@ -116,7 +107,7 @@
         </div>
       </template>
     </el-dialog>
-  </div>
+  </ArtTableFullScreen>
 </template>
 
 <script setup lang="ts">
@@ -130,24 +121,110 @@
     deleteDepartment as apiDeleteDepartment
   } from '@/api/system/api'
   import { ApiStatus } from '@/api/status'
+  import { useCheckedColumns } from '@/composables/useCheckedColumns'
+  import { SearchFormItem } from '@/types/search-form'
 
+  // 状态变量
   const dialogType = ref('add')
   const dialogVisible = ref(false)
   const loading = ref(false)
   const submitLoading = ref(false)
   const currentId = ref<number | null>(null)
-  const searchName = ref('')
+  const tableData = ref<any[]>([])
 
+  // 表单数据
   const formData = reactive({
     name: '',
     sort: '1',
     status: true
   })
 
-  const tableData = ref<any[]>([])
+  // 分页配置
+  const pagination = reactive({
+    currentPage: 1,
+    pageSize: 10,
+    total: 0
+  })
 
-  const formRef = ref<FormInstance>()
+  // 搜索表单
+  const searchForm = reactive({
+    name: '',
+    status: null as null | number
+  })
 
+  // 搜索表单配置项
+  const searchItems: SearchFormItem[] = [
+    {
+      label: '部门名称',
+      prop: 'name',
+      type: 'input',
+      elColSpan: 6, // 从8改为6，缩短显示宽度
+      config: {
+        clearable: true,
+        placeholder: '请输入部门名称'
+      }
+    },
+    {
+      label: '状态',
+      prop: 'status',
+      type: 'select',
+      elColSpan: 6, // 从8改为6，缩短显示宽度
+      config: {
+        clearable: true,
+        placeholder: '请选择状态'
+      },
+      options: [
+        { label: '启用', value: 1 },
+        { label: '禁用', value: 2 }
+      ]
+    }
+  ]
+
+  // 列配置选项
+  const columnOptions = [
+    { label: '名称', prop: 'name' },
+    { label: '排序', prop: 'sort' },
+    { label: '人数', prop: 'users' },
+    { label: '状态', prop: 'status' },
+    { label: '操作', prop: 'operation' }
+  ]
+
+  // 动态列配置
+  const { columnChecks, columns } = useCheckedColumns(() => [
+    {
+      prop: 'name',
+      label: '名称',
+      align: 'center'
+    },
+    {
+      prop: 'sort',
+      label: '排序',
+      sortable: true,
+      align: 'center'
+    },
+    {
+      prop: 'users',
+      label: '人数',
+      align: 'center'
+    },
+    {
+      prop: 'status',
+      label: '状态',
+      align: 'center'
+    },
+    {
+      prop: 'operation',
+      label: '操作',
+      align: 'center'
+    }
+  ])
+
+  // 根据列选中状态筛选得到最终显示的列
+  const filteredColumns = computed(() => {
+    return columns.value
+  })
+
+  // 表单验证规则
   const rules = reactive<FormRules>({
     name: [
       { required: true, message: '请输入部门名称', trigger: 'blur' },
@@ -159,10 +236,21 @@
     ]
   })
 
+  // 表单实例引用
+  const formRef = ref<FormInstance>()
+  const searchFormRef = ref<FormInstance>()
+
   // 在组件挂载时获取部门列表
   onMounted(async () => {
     await refreshDepartmentList()
   })
+
+  // 刷新表格数据
+  const handleRefresh = () => {
+    tableData.value = []
+    loading.value = true
+    refreshDepartmentList()
+  }
 
   // 刷新部门列表
   const refreshDepartmentList = async () => {
@@ -174,8 +262,8 @@
       } else {
         ElMessage.error(`获取部门列表失败: ${res.message}`)
       }
-    } catch (error) {
-      console.error('获取部门列表出错:', error)
+    } catch (err) {
+      console.error('获取部门列表出错:', err)
       ElMessage.error('获取部门列表失败，请检查网络连接')
     } finally {
       loading.value = false
@@ -183,23 +271,20 @@
   }
 
   // 搜索部门
-  const searchDepartments = async () => {
-    await refreshDepartmentList()
-    if (searchName.value) {
-      tableData.value = tableData.value.filter((item) =>
-        item.name.toLowerCase().includes(searchName.value.toLowerCase())
-      )
-    }
+  const search = () => {
+    pagination.currentPage = 1
+    // refreshDepartmentList 后有 filteredData 计算属性处理搜索，无需额外操作
   }
 
   // 重置搜索条件并刷新列表
-  const resetSearch = (formEl: FormInstance | undefined) => {
-    if (!formEl) return
-    formEl.resetFields()
+  const resetSearch = () => {
+    searchForm.name = ''
+    searchForm.status = null
     pagination.currentPage = 1
     refreshDepartmentList()
   }
 
+  // 重置表单
   const resetForm = () => {
     formData.name = ''
     formData.sort = '1'
@@ -207,6 +292,7 @@
     currentId.value = null
   }
 
+  // 显示对话框
   const showDialog = (type: string, row?: any) => {
     dialogType.value = type
     dialogVisible.value = true
@@ -221,6 +307,7 @@
     }
   }
 
+  // 删除部门
   const deleteDepartment = (id: number) => {
     ElMessageBox.confirm('确定要删除该部门吗？', '删除部门', {
       confirmButtonText: '确定',
@@ -237,8 +324,8 @@
           } else {
             ElMessage.error(`删除部门失败: ${res.message}`)
           }
-        } catch (error) {
-          console.error('删除部门出错:', error)
+        } catch (err) {
+          console.error('删除部门出错:', err)
           ElMessage.error('删除部门失败')
         } finally {
           loading.value = false
@@ -249,6 +336,7 @@
       })
   }
 
+  // 提交表单
   const submitForm = async () => {
     if (!formRef.value) return
 
@@ -293,8 +381,8 @@
               ElMessage.error(`添加部门失败: ${res.message}`)
             }
           }
-        } catch (error) {
-          console.error('提交表单出错:', error)
+        } catch (err) {
+          console.error('提交表单出错:', err)
           ElMessage.error(`${dialogType.value === 'add' ? '添加' : '修改'}部门失败`)
         } finally {
           submitLoading.value = false
@@ -303,45 +391,15 @@
     })
   }
 
-  const pagination = reactive({
-    currentPage: 1,
-    pageSize: 10,
-    total: 0
-  })
-
-  const columns = reactive([
-    { name: '名称', show: true },
-    { name: '排序', show: true },
-    { name: '人数', show: true },
-    { name: '状态', show: true }
-  ])
-
-  const searchForm = reactive({
-    name: '',
-    status: null
-  })
-
-  const searchFormRef = ref<FormInstance>()
-
-  // 简化搜索函数
-  const search = () => {
-    pagination.currentPage = 1
-  }
-
-  // 更新分页处理函数，不再需要重新加载数据
+  // 页码变化处理
   const handleCurrentChange = (page: number) => {
     pagination.currentPage = page
   }
 
+  // 每页条数变化处理
   const handleSizeChange = (size: number) => {
     pagination.pageSize = size
     pagination.currentPage = 1
-  }
-
-  const changeColumn = (newColumns: any) => {
-    columns.forEach((column, index) => {
-      column.show = newColumns[index].show
-    })
   }
 
   // 使用计算属性处理筛选和分页
@@ -370,18 +428,36 @@
 </script>
 
 <style lang="scss" scoped>
-  .page-content {
+  .department-page {
+    .table-container {
+      flex: 1;
+      min-height: 0;
+      padding: 16px;
+    }
+
+    .search-container {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+
+      .el-input {
+        width: 240px;
+        margin-right: 16px;
+      }
+    }
+
+    .operation-column-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
     .svg-icon {
       width: 1.8em;
       height: 1.8em;
       overflow: hidden;
       vertical-align: -8px;
       fill: currentcolor;
-    }
-
-    .el-col2 {
-      display: flex;
-      gap: 10px;
     }
   }
 </style>
