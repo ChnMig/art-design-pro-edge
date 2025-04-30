@@ -264,7 +264,7 @@
       const res = await getDepartmentList(params)
       if (res.code === ApiStatus.success) {
         tableData.value = res.data || []
-        
+
         // 使用返回值中的count字段作为总数
         if (res.count !== undefined) {
           pagination.total = res.count
@@ -289,7 +289,7 @@
   // 搜索部门
   const search = () => {
     pagination.currentPage = 1
-    // refreshDepartmentList 后有 filteredData 计算属性处理搜索，无需额外操作
+    refreshDepartmentList() // 调用刷新方法获取数据
   }
 
   // 重置搜索条件并刷新列表
@@ -410,36 +410,19 @@
   // 页码变化处理
   const handleCurrentChange = (page: number) => {
     pagination.currentPage = page
+    refreshDepartmentList() // 调用刷新方法获取数据
   }
 
   // 每页条数变化处理
   const handleSizeChange = (size: number) => {
     pagination.pageSize = size
     pagination.currentPage = 1
+    refreshDepartmentList() // 调用刷新方法获取数据
   }
 
-  // 使用计算属性处理筛选和分页
+  // 使用后端数据进行表格渲染，不再进行前端过滤和分页
   const filteredData = computed(() => {
-    let result = [...tableData.value]
-
-    // 根据搜索条件筛选数据
-    if (searchForm.name) {
-      result = result.filter((item) =>
-        item.name.toLowerCase().includes(searchForm.name.toLowerCase())
-      )
-    }
-
-    if (searchForm.status !== null) {
-      result = result.filter((item) => item.status === searchForm.status)
-    }
-
-    // 计算总数
-    pagination.total = result.length
-
-    // 处理分页
-    const start = (pagination.currentPage - 1) * pagination.pageSize
-    const end = start + pagination.pageSize
-    return result.slice(start, end)
+    return tableData.value
   })
 </script>
 
