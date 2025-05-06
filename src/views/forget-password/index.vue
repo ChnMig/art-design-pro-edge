@@ -28,11 +28,11 @@
 
 <script setup lang="ts">
   import AppConfig from '@/config'
+  import qrcodePng from '@/assets/img/admin/qrcode.png'
   const router = useRouter()
 
   const systemName = AppConfig.systemInfo.name
-  // 替换为实际的二维码图片路径
-  const qrcodeImage = ref('@/assets/img/admin/qrcode.png')
+  const qrcodeImage = ref(qrcodePng)
 
   const toLogin = () => {
     router.push('/login')
