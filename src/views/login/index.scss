@@ -18,8 +18,8 @@
   }
 
   .el-input--medium .el-input__inner {
-    height: 40px;
-    line-height: 40px;
+    height: var(--el-component-custom-height);
+    line-height: var(--el-component-custom-height);
   }
 
   .left-wrap {
@@ -137,10 +137,6 @@
         padding: 40px 0;
         widows: 100%;
 
-        .captcha-image {
-          width: 100%;
-        }
-
         .title {
           margin-left: -2px;
           font-size: 34px;
@@ -168,7 +164,7 @@
 
         .el-input,
         .login-btn {
-          height: 46px;
+          height: 40px;
         }
 
         .drag-verify {
@@ -219,8 +215,14 @@
 
         .login-btn {
           width: 100%;
+          height: 40px !important;
           color: #fff;
           border: 0;
+        }
+
+        .back-btn {
+          width: 100%;
+          height: 40px !important;
         }
 
         .footer {

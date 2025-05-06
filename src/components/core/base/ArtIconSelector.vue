@@ -78,7 +78,7 @@
     },
     size: {
       type: String as PropType<'large' | 'default' | 'small'>,
-      default: 'large'
+      default: 'default'
     },
     disabled: {
       type: Boolean,
@@ -133,16 +133,23 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 32px;
+      height: var(--el-component-custom-height);
       padding: 0 15px;
       cursor: pointer;
       border: 1px solid var(--art-border-dashed-color);
-      border-radius: calc(var(--custom-radius) / 2 + 2px) !important;
+      border-radius: calc(var(--custom-radius) / 3 + 2px) !important;
       transition: border 0.3s;
 
       @media (width <= 500px) {
         width: 100% !important;
-        height: 32px !important;
+      }
+
+      &.large {
+        height: 40px;
+      }
+
+      &.small {
+        height: 24px;
       }
 
       &:hover:not(.is-disabled).has-icon {
@@ -153,14 +160,6 @@
         .clear-icon {
           display: block !important;
         }
-      }
-
-      &.large {
-        height: 40px;
-      }
-
-      &.small {
-        height: 24px;
       }
 
       &:hover {

@@ -18,9 +18,7 @@
           </div>
 
           <div style="margin-top: 25px">
-            <el-button style="width: 100%; height: 46px" size="large" plain @click="toLogin">
-              返回登录
-            </el-button>
+            <el-button class="back-btn" plain @click="toLogin"> 返回登录 </el-button>
           </div>
         </div>
       </div>

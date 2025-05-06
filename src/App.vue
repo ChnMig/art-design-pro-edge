@@ -1,5 +1,5 @@
 <template>
-  <ElConfigProvider :size="elSize" :z-index="3000">
+  <ElConfigProvider size="default" :z-index="3000">
     <RouterView></RouterView>
   </ElConfigProvider>
 </template>
@@ -12,7 +12,6 @@
   import { setThemeTransitionClass } from './utils/theme/animation'
 
   const userStore = useUserStore()
-  const elSize = computed(() => (document.body.clientWidth >= 500 ? 'large' : 'default'))
 
   onBeforeMount(() => {
     setThemeTransitionClass(true)

@@ -27,12 +27,11 @@
             style="margin-top: 25px"
           >
             <el-form-item prop="username">
-              <el-input placeholder="请输入账号" size="large" v-model.trim="formData.username" />
+              <el-input placeholder="请输入账号" v-model.trim="formData.username" />
             </el-form-item>
             <el-form-item prop="password">
               <el-input
                 placeholder="请输入密码"
-                size="large"
                 v-model.trim="formData.password"
                 type="password"
                 radius="8px"
@@ -43,11 +42,7 @@
             <el-form-item prop="captcha">
               <el-row :gutter="5">
                 <el-col :span="16">
-                  <el-input
-                    placeholder="请输入验证码"
-                    size="large"
-                    v-model.trim="formData.captcha"
-                  />
+                  <el-input placeholder="请输入验证码" v-model.trim="formData.captcha" />
                 </el-col>
                 <el-col :push="1" :span="8">
                   <img :src="captchaImageUrl" @click="refreshCaptcha" class="captcha-image" />
@@ -60,13 +55,7 @@
             </div>
 
             <div style="margin-top: 30px">
-              <el-button
-                class="login-btn"
-                size="large"
-                type="primary"
-                @click="handleSubmit"
-                :loading="loading"
-              >
+              <el-button class="login-btn" type="primary" @click="handleSubmit" :loading="loading">
                 登录
               </el-button>
             </div>

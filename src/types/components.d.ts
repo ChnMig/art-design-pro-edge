@@ -7,6 +7,15 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ElCascader: typeof import('element-plus/es')['ElCascader']
+    ElCheckboxButton: typeof import('element-plus/es')['ElCheckboxButton']
+    ElDivider: typeof import('element-plus/es')['ElDivider']
+    ElInputTag: typeof import('element-plus/es')['ElInputTag']
+    ElMention: typeof import('element-plus/es')['ElMention']
+    ElSelectV2: typeof import('element-plus/es')['ElSelectV2']
+    ElTimePicker: typeof import('element-plus/es')['ElTimePicker']
+    ElTimeSelect: typeof import('element-plus/es')['ElTimeSelect']
+    ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     ArtBackToTop: typeof import('./../components/core/base/ArtBackToTop.vue')['default']
     ArtBreadcrumb: typeof import('./../components/core/layouts/art-breadcrumb/index.vue')['default']
     ArtButtonMore: typeof import('./../components/core/forms/ArtButtonMore.vue')['default']
