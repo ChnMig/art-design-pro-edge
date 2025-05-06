@@ -194,7 +194,6 @@
             <span>页面切换动画</span>
             <el-select
               v-model="pageTransition"
-              placeholder="Select"
               size="default"
               style="width: 120px"
               @change="setPageTransition"
@@ -323,28 +322,28 @@
       label: '谷歌'
     }
   ])
-  const pageTransitionOps = [
+  const pageTransitionOps = computed(() => [
     {
       value: '',
       label: '无动画'
     },
     {
       value: 'fade',
-      label: 'fade'
+      label: '淡入淡出'
     },
     {
-      value: 'slide-right',
-      label: 'slide-right'
-    },
-    {
-      value: 'slide-top',
-      label: 'slide-top'
+      value: 'slide-left',
+      label: '左侧滑入'
     },
     {
       value: 'slide-bottom',
-      label: 'slide-bottom'
+      label: '下方滑入'
+    },
+    {
+      value: 'slide-top',
+      label: '上方滑入'
     }
-  ]
+  ])
 
   const customRadiusOps = [
     {
