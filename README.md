@@ -31,7 +31,7 @@
 
 ## 版本
 
-目前同步 [art-design-pro](https://github.com/Daymychen/art-design-pro) 的版本(commitID)为 `530e56e2911b88e71d5f9406ca4871ce5a2fd00d`
+目前同步 [art-design-pro](https://github.com/Daymychen/art-design-pro) 的版本(commitID)为 `ad409dcc5367c37313a2296331c065d776c69a65`
 
 ## 后端代码
 
