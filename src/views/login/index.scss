@@ -137,6 +137,10 @@
         padding: 40px 0;
         widows: 100%;
 
+        .captcha-image {
+          width: 100%;
+        }
+
         .title {
           margin-left: -2px;
           font-size: 34px;
@@ -164,7 +168,7 @@
 
         .el-input,
         .login-btn {
-          height: 40px;
+          height: 46px;
         }
 
         .drag-verify {
@@ -238,15 +242,6 @@
       }
     }
   }
-}
-
-.captcha-image {
-  width: 100%;
-  max-width: 100px; // 或你想要的宽度
-  height: 36px;     // 或与输入框高度一致
-  object-fit: contain;
-  cursor: pointer;
-  display: block;
 }
 
 @media only screen and (max-width: $device-notebook) {
