@@ -30,7 +30,11 @@
           <div
             class="action-buttons-wrapper"
             :style="{
-              'justify-content': items.length <= buttonLeftLimit ? 'flex-start' : 'flex-end'
+              'justify-content': isMobile
+                ? 'flex-end'
+                : items.length <= buttonLeftLimit
+                  ? 'flex-start'
+                  : 'flex-end'
             }"
           >
             <div class="form-buttons">
@@ -61,6 +65,9 @@
   import ArtSearchSelect from './widget/ArtSearchSelect.vue'
   import ArtSearchRadio from './widget/ArtSearchRadio.vue'
   import { SearchComponentType, SearchFormItem } from '@/types/search-form'
+
+  const { width } = useWindowSize()
+  const isMobile = computed(() => width.value < 500)
 
   type FilterVo = string | number | undefined | null | unknown[]
 
