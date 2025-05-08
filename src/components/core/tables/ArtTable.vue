@@ -10,13 +10,17 @@
         v-loading="loading"
         :data="tableData"
         :row-key="rowKey"
-        :border="border"
-        :stripe="stripe"
         :height="height"
         :max-height="maxHeight"
         :show-header="showHeader"
         :highlight-current-row="highlightCurrentRow"
         :size="tableSizeComputed"
+        :stripe="stripeComputed"
+        :border="borderComputed"
+        :header-cell-style="{
+          backgroundColor: showHeaderBackground ? 'var(--el-fill-color-lighter)' : '',
+          fontWeight: '500'
+        }"
         @row-click="handleRowClick"
       >
         <!-- 序号列 -->
@@ -146,6 +150,22 @@
   const tableSizeComputed = computed(() => {
     return props.size || tableSize.value
   })
+
+  // 斑马纹
+  const stripeComputed = computed(() => {
+    return props.stripe || tableStore.isZebra
+  })
+
+  // 边框
+  const borderComputed = computed(() => {
+    return props.border || tableStore.isBorder
+  })
+
+  // 表头背景
+  const showHeaderBackground = computed(() => {
+    return props.showHeaderBackground || tableStore.isHeaderBackground
+  })
+
   // 表格数据
   const tableData = computed(() => {
     if (!props.pagination) return props.data

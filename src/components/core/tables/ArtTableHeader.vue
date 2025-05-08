@@ -33,9 +33,7 @@
       <!-- 列设置 -->
       <ElPopover placement="bottom" trigger="click">
         <template #reference>
-          <div class="btn">
-            <i class="iconfont-sys" style="font-size: 18px">&#xe72b;</i>
-          </div>
+          <div class="btn"><i class="iconfont-sys" style="font-size: 17px">&#xe620;</i> </div>
         </template>
         <div>
           <VueDraggable v-model="columns">
@@ -48,6 +46,19 @@
               }}</ElCheckbox>
             </div>
           </VueDraggable>
+        </div>
+      </ElPopover>
+      <!-- 其他设置 -->
+      <ElPopover placement="bottom" trigger="click">
+        <template #reference>
+          <div class="btn">
+            <i class="iconfont-sys" style="font-size: 17px">&#xe72b;</i>
+          </div>
+        </template>
+        <div>
+          <ElCheckbox v-model="isZebra">斑马纹</ElCheckbox>
+          <ElCheckbox v-model="isBorder">边框</ElCheckbox>
+          <ElCheckbox v-model="isHeaderBackground">背景</ElCheckbox>
         </div>
       </ElPopover>
       <slot name="right"></slot>
@@ -87,7 +98,7 @@
   ]
 
   const tableStore = useTableStore()
-  const { tableSize } = storeToRefs(tableStore)
+  const { tableSize, isZebra, isBorder, isHeaderBackground } = storeToRefs(tableStore)
 
   const refresh = () => {
     emit('refresh')
@@ -104,6 +115,7 @@
   const toggleFullScreen = () => {
     const el = document.querySelector('#table-full-screen')
     if (!el) return
+    isFullScreen.value = !isFullScreen.value
 
     el.classList.toggle('el-full-screen')
   }
