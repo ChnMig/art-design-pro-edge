@@ -7,24 +7,24 @@
       <div class="btn" @click="refresh">
         <i class="iconfont-sys">&#xe614;</i>
       </div>
-      <el-dropdown @command="handleTableSizeChange">
+      <ElDropdown @command="handleTableSizeChange">
         <div class="btn">
           <i class="iconfont-sys">&#xe63d;</i>
         </div>
         <template #dropdown>
-          <el-dropdown-menu>
+          <ElDropdownMenu>
             <div v-for="item in tableSizeOptions" :key="item.value" class="table-size-btn-item">
-              <el-dropdown-item
+              <ElDropdownItem
                 :key="item.value"
                 :command="item.value"
                 :class="{ 'is-selected': tableSize === item.value }"
               >
                 {{ item.label }}
-              </el-dropdown-item>
+              </ElDropdownItem>
             </div>
-          </el-dropdown-menu>
+          </ElDropdownMenu>
         </template>
-      </el-dropdown>
+      </ElDropdown>
 
       <div class="btn" @click="toggleFullScreen">
         <i class="iconfont-sys">{{ isFullScreen ? '&#xe62d;' : '&#xe8ce;' }}</i>
@@ -56,9 +56,11 @@
           </div>
         </template>
         <div>
-          <ElCheckbox v-model="isZebra">斑马纹</ElCheckbox>
-          <ElCheckbox v-model="isBorder">边框</ElCheckbox>
-          <ElCheckbox v-model="isHeaderBackground">背景</ElCheckbox>
+          <ElCheckbox v-if="showZebra" v-model="isZebra" :value="true">斑马纹</ElCheckbox>
+          <ElCheckbox v-if="showBorder" v-model="isBorder" :value="true">边框</ElCheckbox>
+          <ElCheckbox v-if="showHeaderBackground" v-model="isHeaderBackground" :value="true"
+            >背景</ElCheckbox
+          >
         </div>
       </ElPopover>
       <slot name="right"></slot>
@@ -71,6 +73,24 @@
   import { useTableStore } from '@/store/modules/table'
   import { ElPopover, ElCheckbox } from 'element-plus'
   import { VueDraggable } from 'vue-draggable-plus'
+
+  defineProps({
+    // 斑马纹
+    showZebra: {
+      type: Boolean,
+      default: true
+    },
+    // 边框
+    showBorder: {
+      type: Boolean,
+      default: true
+    },
+    // 表头背景
+    showHeaderBackground: {
+      type: Boolean,
+      default: true
+    }
+  })
 
   const columns = defineModel<ColumnOption[]>('columns', { required: true })
   const emit = defineEmits<{
@@ -119,6 +139,23 @@
 
     el.classList.toggle('el-full-screen')
   }
+
+  // 监听ESC键退出全屏
+  onMounted(() => {
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isFullScreen.value) {
+        toggleFullScreen()
+      }
+    })
+  })
+
+  onUnmounted(() => {
+    document.removeEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isFullScreen.value) {
+        toggleFullScreen()
+      }
+    })
+  })
 </script>
 
 <style lang="scss" scoped>
@@ -192,6 +229,23 @@
 
       i {
         font-size: 18px;
+      }
+    }
+  }
+
+  @media (max-width: $device-phone) {
+    .table-header {
+      flex-direction: column;
+
+      .right {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 10px;
+
+        .btn {
+          margin-right: 10px;
+          margin-left: 0;
+        }
       }
     }
   }
