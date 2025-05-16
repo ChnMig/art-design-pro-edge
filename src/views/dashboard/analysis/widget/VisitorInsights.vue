@@ -10,25 +10,14 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
-  import { useECharts } from '@/utils/echarts/useECharts'
-  import { useSettingStore } from '@/store/modules/setting'
+  import { useChart } from '@/composables/useChart'
+  import { EChartsOption } from 'echarts'
 
-  const chartRef = ref<HTMLDivElement | null>(null)
-  const { setOptions, removeResize, resize } = useECharts(chartRef as Ref<HTMLDivElement>)
-  const settingStore = useSettingStore()
-  const { menuOpen, isDark } = storeToRefs(settingStore)
+  const { chartRef, isDark, initChart } = useChart()
+
   const { width } = useWindowSize()
 
-  // 收缩菜单时，重新计算图表大小
-  watch(menuOpen, () => {
-    const delays = [100, 200, 300]
-    delays.forEach((delay) => {
-      setTimeout(resize, delay)
-    })
-  })
-
-  const getChartOption = computed(() => {
+  const options: () => EChartsOption = () => {
     return {
       tooltip: {
         trigger: 'axis'
@@ -106,18 +95,14 @@
         }
       ]
     }
-  })
+  }
 
   watch(isDark, () => {
-    setOptions(getChartOption.value)
+    initChart(options())
   })
 
   onMounted(() => {
-    setOptions(getChartOption.value)
-  })
-
-  onUnmounted(() => {
-    removeResize()
+    initChart(options())
   })
 </script>
 

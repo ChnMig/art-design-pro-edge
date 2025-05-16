@@ -1,3 +1,4 @@
+import { fa } from 'element-plus/es/locale'
 import { RoutesAlias } from '../routesAlias'
 import { MenuListType } from '@/types/menu'
 
@@ -30,7 +31,7 @@ export const asyncRoutes: MenuListType[] = [
         component: RoutesAlias.Dashboard,
         meta: {
           title: '工作台',
-          keepAlive: true
+          keepAlive: false
         }
       },
       {
@@ -40,7 +41,7 @@ export const asyncRoutes: MenuListType[] = [
         component: RoutesAlias.Analysis,
         meta: {
           title: '分析页',
-          keepAlive: true
+          keepAlive: false
         }
       }
     ]
