@@ -84,6 +84,8 @@
   import { ApiStatus } from '@/api/status'
   import menuInfo from './modal/menuInfo.vue'
   import authInfo from './modal/authInfo.vue'
+  import { useAuth } from '@/composables/useAuth'
+  const { hasAuth } = useAuth()
   const tableData = ref<any[]>([])
   const menuModalRef = ref()
   const authModalRef = ref()
