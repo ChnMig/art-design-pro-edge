@@ -12,5 +12,5 @@ export enum RoutesAlias {
   Analysis = '/dashboard/analysis' // 分析页
 }
 
-/** 首页路径常量 */
-export const HOME_PAGE = '/dashboard/console'
+// 主页路由
+export const HOME_PAGE = RoutesAlias.Dashboard

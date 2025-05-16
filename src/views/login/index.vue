@@ -81,7 +81,7 @@
   import AppConfig from '@/config'
   import { ElMessage, ElNotification } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
-  import { HOME_PAGE } from '@/router/modules/routesAlias'
+  import { HOME_PAGE } from '@/router/routesAlias'
   import { ApiStatus } from '@api/status'
   import { SystemThemeEnum } from '@/enums/appEnum'
   import { useSettingStore } from '@/store/modules/setting'

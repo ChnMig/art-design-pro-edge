@@ -58,7 +58,7 @@
 
 <script setup lang="ts">
   import { ref, nextTick, watch, computed, onMounted } from 'vue'
-  import { formatMenuTitle } from '@/utils/menu'
+  import { formatMenuTitle } from '@/router/utils/utils'
   import { getAllMenuByRole, saveRolePermission } from '@/api/system/api'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { Document } from '@element-plus/icons-vue'

@@ -1,4 +1,4 @@
-import { RoutesAlias } from './routesAlias'
+import { RoutesAlias } from '../routesAlias'
 import { MenuListType } from '@/types/menu'
 
 /**

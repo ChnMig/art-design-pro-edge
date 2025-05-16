@@ -136,7 +136,7 @@
   import { useUserStore } from '@/store/modules/user'
   import { useFullscreen } from '@vueuse/core'
   import { ElMessageBox } from 'element-plus'
-  import { HOME_PAGE } from '@/router/modules/routesAlias'
+  import { HOME_PAGE } from '@/router/routesAlias'
   import mittBus from '@/utils/mittBus'
   import { useMenuStore } from '@/store/modules/menu'
   import AppConfig from '@/config'

@@ -6,8 +6,9 @@ import { useSettingStore } from './setting'
 import { useWorktabStore } from './worktab'
 import { getSysStorage } from '@/utils/storage'
 import { MenuListType } from '@/types/menu'
-import { isRouteRegistered } from '@/router/modules/permission' // <--- Import the ref
+import { isRouteRegistered } from '@/router/guards/beforeEach' // <--- Import the ref
 import { useTableStore } from './table'
+import { setPageTitle } from '@/router/utils/utils'
 
 // 用户
 export const useUserStore = defineStore('userStore', () => {

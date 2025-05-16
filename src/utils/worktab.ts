@@ -1,9 +1,9 @@
 import { useWorktabStore } from '@/store/modules/worktab'
 import { RouteLocationNormalized } from 'vue-router'
-import { getIframeRoutes } from './menu'
+import { getIframeRoutes } from '@/router/utils/menuToRouter'
 import { isIframe } from './utils'
 import { useSettingStore } from '@/store/modules/setting'
-import { HOME_PAGE } from '@/router/modules/routesAlias'
+import { HOME_PAGE } from '@/router/routesAlias'
 
 /**
  * 根据当前路由信息设置工作标签页（worktab）

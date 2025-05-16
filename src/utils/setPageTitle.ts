@@ -1,5 +1,5 @@
 import { RouteLocationNormalized } from 'vue-router'
-import { formatMenuTitle } from '@/utils/menu'
+import { formatMenuTitle } from '@/router/utils/utils'
 import AppConfig from '@/config'
 
 /**

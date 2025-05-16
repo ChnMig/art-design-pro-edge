@@ -79,7 +79,7 @@
 <script setup lang="ts">
   import { onMounted, ref } from 'vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
-  import { formatMenuTitle } from '@/utils/menu'
+  import { formatMenuTitle } from '@/router/utils/utils'
   import { getAllMenu, deleteMenu } from '@/api/system/api'
   import { ApiStatus } from '@/api/status'
   import menuInfo from './modal/menuInfo.vue'

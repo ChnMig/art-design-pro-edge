@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { WorkTabType } from '@/types/store'
-import { HOME_PAGE } from '@/router/modules/routesAlias'
+import { HOME_PAGE } from '@/router/routesAlias'
+import { getIframeRoutes } from '@/router/utils/menuToRouter'
 import { router } from '@/router'
 import { getSysStorage } from '@/utils/storage'
 

@@ -1,21 +1,21 @@
-import { RouteRecordRaw } from 'vue-router'
+import { AppRouteRecordRaw } from '../utils/utils'
+import { RoutesAlias, HOME_PAGE } from '../routesAlias'
 import Home from '@views/layout/index.vue'
-import { RoutesAlias } from './routesAlias'
-import { HOME_PAGE } from './routesAlias'
 
-/** 扩展的路由配置类型 */
-export type AppRouteRecordRaw = RouteRecordRaw & {
-  hidden?: boolean
-}
-
-/** 静态路由配置 */
+/**
+ * 静态路由配置
+ * 不需要权限就能访问的路由
+ */
 export const staticRoutes: AppRouteRecordRaw[] = [
-  { path: '/', redirect: HOME_PAGE },
+  {
+    path: '/',
+    redirect: HOME_PAGE
+  },
   {
     path: RoutesAlias.Login,
     name: 'Login',
     component: () => import('@views/login/index.vue'),
-    meta: { title: '登录', isHideTab: true, setTheme: true }
+    meta: { title: 'menus.login.title', isHideTab: true, setTheme: true }
   },
   {
     path: RoutesAlias.ForgetPassword,
@@ -27,16 +27,16 @@ export const staticRoutes: AppRouteRecordRaw[] = [
     path: '/exception',
     component: Home,
     name: 'Exception',
-    meta: { title: '异常页面' },
+    meta: { title: 'menus.exception.title' },
     children: [
       {
         path: RoutesAlias.Exception403,
         name: 'Exception403',
-        component: () => import('@/views/exception/403.vue'),
+        component: () => import('@views/exception/403.vue'),
         meta: { title: '403' }
       },
       {
-        path: RoutesAlias.Exception404,
+        path: '/:catchAll(.*)',
         name: 'Exception404',
         component: () => import('@views/exception/404.vue'),
         meta: { title: '404' }
@@ -46,12 +46,20 @@ export const staticRoutes: AppRouteRecordRaw[] = [
         name: 'Exception500',
         component: () => import('@views/exception/500.vue'),
         meta: { title: '500' }
-      },
+      }
+    ]
+  },
+  {
+    path: '/outside',
+    component: Home,
+    name: 'Outside',
+    meta: { title: 'menus.outside.title' },
+    children: [
       {
-        path: '/:catchAll(.*)',
-        name: 'Exception404',
-        component: () => import('@views/exception/404.vue'),
-        meta: { title: '404' }
+        path: '/outside/iframe/:path',
+        name: 'Iframe',
+        component: () => import('@/views/outside/Iframe.vue'),
+        meta: { title: 'iframe' }
       }
     ]
   }

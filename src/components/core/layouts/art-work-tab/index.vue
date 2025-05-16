@@ -71,7 +71,7 @@
   import { ArrowDown, ArrowLeft, ArrowRight, Close, CircleClose } from '@element-plus/icons-vue'
 
   import { useWorktabStore } from '@/store/modules/worktab'
-  import { formatMenuTitle } from '@/utils/menu'
+  import { formatMenuTitle } from '@/router/utils/utils'
 
   import { WorkTabType } from '@/types/store'
   import { useSettingStore } from '@/store/modules/setting'
