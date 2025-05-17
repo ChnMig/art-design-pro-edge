@@ -7,6 +7,8 @@ export interface UserInfo {
   username: string
   avatar: string
   email: string
+  roles: string[] // 角色
+  buttons: string[] // 按钮
 }
 
 // 系统主题样式（light | dark）

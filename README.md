@@ -19,6 +19,7 @@
 11. 去除用户邮箱
 12. 系统 logo 修改为使用 svg 静态资源
 13. 修复原项目在去除其他标签后, 本标签页的 query 参数丢失的问题
+14. 使用原项目中权限管理的 `backend` 模式(后端进行管理)
 
 ## 项目特点
 
@@ -31,7 +32,7 @@
 
 ## 版本
 
-目前同步 [art-design-pro](https://github.com/Daymychen/art-design-pro) 的版本(commitID)为 `e1e4ae74052b5f1db8d7ded5011a8ce612157446`
+目前同步 [art-design-pro](https://github.com/Daymychen/art-design-pro) 的版本(commitID)为 `e080f6c80f86a2e643f961b7370ecbe7bf16d6c5`
 
 ## 后端代码
 

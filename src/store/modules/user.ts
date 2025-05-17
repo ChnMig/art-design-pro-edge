@@ -6,9 +6,9 @@ import { useSettingStore } from './setting'
 import { useWorktabStore } from './worktab'
 import { getSysStorage } from '@/utils/storage'
 import { MenuListType } from '@/types/menu'
-import { isRouteRegistered } from '@/router/guards/beforeEach' // <--- Import the ref
 import { useTableStore } from './table'
 import { setPageTitle } from '@/router/utils/utils'
+import { resetRouterState } from '@/router/guards/beforeEach'
 
 // 用户
 export const useUserStore = defineStore('userStore', () => {
@@ -36,6 +36,7 @@ export const useUserStore = defineStore('userStore', () => {
         searchHistory: storedSearchHistory,
         isLock: storedIsLock,
         lockPassword: storedLockPassword,
+        token: storedToken,
         refreshToken: storedRefreshToken
       } = sys.user
 
@@ -45,7 +46,7 @@ export const useUserStore = defineStore('userStore', () => {
       searchHistory.value = storedSearchHistory || []
       lockPassword.value = storedLockPassword || ''
       refreshToken.value = storedRefreshToken || ''
-      accessToken.value = sessionStorage.getItem('accessToken') || ''
+      accessToken.value = storedToken || ''
     }
   }
 
@@ -57,6 +58,7 @@ export const useUserStore = defineStore('userStore', () => {
         isLock: isLock.value,
         lockPassword: lockPassword.value,
         searchHistory: searchHistory.value,
+        token: accessToken.value,
         refreshToken: refreshToken.value,
         worktab: getWorktabState.value,
         setting: getSettingState.value,
@@ -90,7 +92,6 @@ export const useUserStore = defineStore('userStore', () => {
     if (newRefreshToken) {
       refreshToken.value = newRefreshToken
     }
-    sessionStorage.setItem('accessToken', newAccessToken)
     saveUserData()
   }
 
@@ -102,11 +103,10 @@ export const useUserStore = defineStore('userStore', () => {
       lockPassword.value = ''
       accessToken.value = ''
       refreshToken.value = ''
-      sessionStorage.removeItem('accessToken')
       useWorktabStore().opened = []
       saveUserData()
       sessionStorage.removeItem('iframeRoutes')
-      isRouteRegistered.value = false // <--- Reset the flag here
+      resetRouterState(router)
       router.push('/login')
     }, 300)
   }

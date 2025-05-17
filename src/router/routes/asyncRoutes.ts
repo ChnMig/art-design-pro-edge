@@ -21,7 +21,8 @@ export const asyncRoutes: MenuListType[] = [
     meta: {
       title: '仪表盘',
       icon: '&#xe721;',
-      keepAlive: false
+      keepAlive: false,
+      roles: ['R_SUPER', 'R_ADMIN']
     },
     children: [
       {
@@ -31,7 +32,8 @@ export const asyncRoutes: MenuListType[] = [
         component: RoutesAlias.Dashboard,
         meta: {
           title: '工作台',
-          keepAlive: false
+          keepAlive: false,
+          roles: ['R_SUPER', 'R_ADMIN']
         }
       },
       {
@@ -41,7 +43,8 @@ export const asyncRoutes: MenuListType[] = [
         component: RoutesAlias.Analysis,
         meta: {
           title: '分析页',
-          keepAlive: false
+          keepAlive: false,
+          roles: ['R_SUPER', 'R_ADMIN']
         }
       }
     ]
