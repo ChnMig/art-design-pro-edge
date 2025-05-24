@@ -15,9 +15,6 @@
         @blur="searchBlur"
         ref="searchInput"
         :prefix-icon="Search"
-        @keydown.up.prevent="highlightPrevious"
-        @keydown.down.prevent="highlightNext"
-        @keydown.enter.prevent="selectHighlighted"
       >
         <template #suffix>
           <div class="search-keydown">
@@ -123,6 +120,23 @@
       showSearchDialog.value = true
       focusInput()
     }
+
+    // 当搜索对话框打开时，处理方向键和回车键
+    if (showSearchDialog.value) {
+      if (event.key === 'ArrowUp') {
+        event.preventDefault()
+        highlightPrevious()
+      } else if (event.key === 'ArrowDown') {
+        event.preventDefault()
+        highlightNext()
+      } else if (event.key === 'Enter') {
+        event.preventDefault()
+        selectHighlighted()
+      } else if (event.key === 'Escape') {
+        event.preventDefault()
+        showSearchDialog.value = false
+      }
+    }
   }
 
   const focusInput = () => {
@@ -202,13 +216,14 @@
       const scrollWrapper = searchResultScrollbar.value.wrapRef
       if (!scrollWrapper) return
 
-      const highlightedElement = scrollWrapper.querySelector('.highlighted')
-      if (!highlightedElement) return
+      const highlightedElements = scrollWrapper.querySelectorAll('.result .box')
+      if (!highlightedElements[highlightedIndex.value]) return
 
-      const itemHeight = (highlightedElement as HTMLElement).offsetHeight
+      const highlightedElement = highlightedElements[highlightedIndex.value] as HTMLElement
+      const itemHeight = highlightedElement.offsetHeight
       const scrollTop = scrollWrapper.scrollTop
       const containerHeight = scrollWrapper.clientHeight
-      const itemTop = (highlightedElement as HTMLElement).offsetTop
+      const itemTop = highlightedElement.offsetTop
       const itemBottom = itemTop + itemHeight
 
       if (itemTop < scrollTop) {

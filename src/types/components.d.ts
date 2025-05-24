@@ -36,7 +36,6 @@ declare module 'vue' {
     ArtTableHeader: typeof import('./../components/core/tables/ArtTableHeader.vue')['default']
     ArtWatermark: typeof import('./../components/core/others/ArtWatermark.vue')['default']
     ArtWorkTab: typeof import('./../components/core/layouts/art-work-tab/index.vue')['default']
-    Base: typeof import('./../components/core/base/index.vue')['default']
     EditInfo: typeof import('./../components/core/layouts/art-header-bar/widget/EditInfo.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
     ElBadge: typeof import('element-plus/es')['ElBadge']

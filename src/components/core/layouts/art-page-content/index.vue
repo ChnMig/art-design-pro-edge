@@ -2,7 +2,7 @@
 <template>
   <div class="layout-content" :style="containerStyle">
     <RouterView
-      v-if="isRefresh && isOnline"
+      v-if="isRefresh"
       v-slot="{ Component, route }"
       :style="{ minHeight: containerMinHeight }"
     >
@@ -25,7 +25,6 @@
 </template>
 
 <script setup lang="ts">
-  import { useNetwork } from '@vueuse/core'
   import { useCommon } from '@/composables/useCommon'
   import { useWorktabStore } from '@/store/modules/worktab'
   import { useSettingStore } from '@/store/modules/setting'
@@ -35,7 +34,6 @@
   const { keepAliveExclude } = storeToRefs(useWorktabStore())
 
   const { containerMinHeight } = useCommon()
-  const { isOnline } = useNetwork()
 
   const containerStyle = computed(() => {
     return {
