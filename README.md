@@ -73,8 +73,7 @@ pnpm run dev
 - 后端地址配置在 `.env` `.env.development` `.env.production` 的 `VITE_API_URL` 变量中
 - 联系管理员的二维码在 `src/assets/images/qrcode.png` 中, 项目默认的 qrcode 指向本项目地址, 上线前务必修改
 - 系统名称在 `src/config/env` 中的 `name` 变量中
-- 系统 icon 在 `src/assets/img/favicon.ico` 中
-- 系统 logo 在 `src/assets/img/logo.svg` 中
+- 系统 logo 在 `src/assets/img/common/logo.png` 中
 
 ## 截图
 

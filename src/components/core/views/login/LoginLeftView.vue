@@ -1,7 +1,7 @@
 <template>
   <div class="LoginLeftView">
     <div class="logo">
-      <img class="icon" src="@/assets/img/logo.svg" alt="logo" />
+      <ArtLogo class="icon" />
       <h1 class="title">{{ AppConfig.systemInfo.name }}</h1>
     </div>
     <img class="left-bg" src="@imgs/login/lf_bg.png" />

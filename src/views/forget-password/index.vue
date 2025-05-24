@@ -5,7 +5,7 @@
     </div>
     <div class="right-wrap">
       <div class="header">
-        <img class="icon" src="@/assets/img/logo.svg" alt="logo" />
+        <ArtLogo class="icon" />
         <h1>{{ systemName }}</h1>
       </div>
       <div class="login-wrap">

@@ -115,6 +115,7 @@
   top: 0;
   right: 0;
   z-index: 100;
+  // background: transparent !important;
   background-color: var(--art-bg-color) !important;
   transition: all 0.3s ease-in-out;
 
@@ -193,6 +194,12 @@
         }
       }
 
+      &.chat-button:hover {
+        i {
+          animation: shake 0.5s ease-in-out;
+        }
+      }
+
       &:hover {
         color: var(--main-color);
         background-color: rgba(var(--art-gray-200-rgb), 0.7);
@@ -240,9 +247,7 @@
         align-items: center;
         cursor: pointer;
 
-        .svg-icon2 {
-          width: 32px;
-          height: 32px;
+        .logo {
           padding-left: 18px;
         }
 
@@ -252,9 +257,8 @@
         }
       }
 
-      .svg-icon {
+      .logo2 {
         display: none;
-        width: 30px;
         padding-left: 15px;
         overflow: hidden;
         vertical-align: -0.15em;
@@ -377,17 +381,24 @@
 }
 
 @keyframes shake {
-  0%,
-  100% {
+  0% {
     transform: rotate(0);
   }
 
   25% {
-    transform: rotate(-10deg);
+    transform: rotate(-5deg);
+  }
+
+  50% {
+    transform: rotate(5deg);
   }
 
   75% {
-    transform: rotate(10deg);
+    transform: rotate(-5deg);
+  }
+
+  100% {
+    transform: rotate(0);
   }
 }
 

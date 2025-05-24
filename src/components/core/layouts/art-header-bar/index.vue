@@ -4,10 +4,10 @@
       <div class="left" style="display: flex">
         <!-- 系统信息  -->
         <div class="top-header" @click="toHome" v-if="isTopMenu">
-          <img class="svg-icon2" src="@/assets/img/logo.svg" alt="logo" />
+          <ArtLogo class="logo" />
           <p v-if="width >= 1400">{{ AppConfig.systemInfo.name }}</p>
         </div>
-        <img class="svg-icon" src="@/assets/img/logo.svg" alt="logo" />
+        <ArtLogo class="svg-icon" />
         <!-- 菜单按钮 -->
         <div class="btn-box" v-if="isLeftMenu && showMenuButton">
           <div class="btn menu-btn">

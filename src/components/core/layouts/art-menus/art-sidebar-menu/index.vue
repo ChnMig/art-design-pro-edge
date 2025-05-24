@@ -7,9 +7,7 @@
   >
     <!-- 双列菜单（左侧） -->
     <div class="dual-menu-left" :style="{ background: getMenuTheme.background }" v-if="isDualMenu">
-      <div class="svg-icon" aria-hidden="true" @click="toHome">
-        <img class="icon" src="@/assets/img/logo.svg" alt="logo" />
-      </div>
+      <ArtLogo class="logo" @click="toHome" />
       <el-scrollbar style="height: calc(100% - 135px)">
         <ul>
           <li v-for="menu in firstLevelMenus" :key="menu.path" @click="handleMenuJump(menu, true)">
@@ -61,7 +59,7 @@
       :style="{ background: getMenuTheme.background }"
     >
       <div class="header" @click="toHome" :style="{ background: getMenuTheme.background }">
-        <img class="svg-icon" src="@/assets/img/logo.svg" alt="logo" v-if="!isDualMenu" />
+        <ArtLogo class="logo" v-if="!isDualMenu" />
         <p
           :class="{ 'is-dual-menu-name': isDualMenu }"
           :style="{ color: getMenuTheme.systemNameColor, opacity: !menuOpen ? 0 : 1 }"
