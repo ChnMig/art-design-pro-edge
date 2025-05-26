@@ -101,8 +101,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item label="一级主页" prop="isRootMenu">
-            <el-switch v-model="form.isRootMenu"></el-switch>
+          <el-form-item label="一级主页" prop="isFirstLevel">
+            <el-switch v-model="form.isFirstLevel"></el-switch>
           </el-form-item>
         </el-col>
       </el-row>
@@ -149,7 +149,7 @@
     path: '',
     isHide: false,
     isHideTab: false,
-    isRootMenu: false,
+    isFirstLevel: false,
     title: '',
     type: 'internal',
     component: '',
@@ -240,7 +240,7 @@
           form.isIframe = row.meta.isIframe
           form.isHide = row.meta.isHide
           form.isHideTab = row.meta.isHideTab
-          form.isRootMenu = row.meta.isRootMenu
+          form.isFirstLevel = row.meta.isFirstLevel
           form.component = row.component
           form.parentId = row.parentId
           if (row.component) {
@@ -289,7 +289,7 @@
           formData.isHide = form.isHide ? 1 : 2
           formData.isHideTab = form.isHideTab ? 1 : 2
           formData.isIframe = form.isIframe ? 1 : 2
-          formData.isRootMenu = form.isRootMenu ? 1 : 2
+          formData.isFirstLevel = form.isFirstLevel ? 1 : 2
           const res = await updateMenu(formData)
           if (res.code === ApiStatus.success) {
             ElMessage.success(`${isEdit.value ? '编辑' : '新增'}成功`)
@@ -307,7 +307,7 @@
           formData.isHide = form.isHide ? 1 : 2
           formData.isHideTab = form.isHideTab ? 1 : 2
           formData.isIframe = form.isIframe ? 1 : 2
-          formData.isRootMenu = form.isRootMenu ? 1 : 2
+          formData.isFirstLevel = form.isFirstLevel ? 1 : 2
           const res = await addMenu(formData)
           if (res.code === ApiStatus.success) {
             ElMessage.success(`${isEdit.value ? '编辑' : '新增'}成功`)
