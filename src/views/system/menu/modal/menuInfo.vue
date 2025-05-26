@@ -118,8 +118,8 @@
   <!-- 帮助弹窗 -->
   <el-dialog v-model="helpDialogVisible" title="菜单配置帮助" width="600px" append-to-body>
     <div class="help-content">
-      <p>没有实际页面的节点菜单,确保将组件路径填成 /layout/index</p>
-      <p>有实际页面的菜单, 确保精确到 .vue 文件, 例如: /layout/index</p>
+      <p>没有实际页面的节点菜单,确保将组件路径填成 /index/index</p>
+      <p>有实际页面的菜单, 确保精确到 .vue 文件, 例如: /index/index</p>
       <p>一级节点,确保路由地址前缀带 / , 例如 /dashboard</p>
       <p>菜单标识不要重复</p>
       <p

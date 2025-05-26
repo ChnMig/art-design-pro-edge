@@ -1,6 +1,6 @@
 import { AppRouteRecordRaw } from '../utils/utils'
 import { RoutesAlias, HOME_PAGE } from '../routesAlias'
-import Home from '@views/layout/index.vue'
+import Home from '@views/index/index.vue'
 
 /**
  * 静态路由配置
