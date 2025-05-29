@@ -1,5 +1,4 @@
 import App from './App.vue'
-import 'default-passive-events'
 import { createApp } from 'vue'
 import { initStore } from './store'                 // Store
 import { initRouter } from './router'               // Router
@@ -18,6 +17,12 @@ import ElementPlus from 'element-plus'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import { setupGlobDirectives } from './directives'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+
+document.addEventListener(
+  'touchstart',
+  function () {},
+  { passive: false }
+)
 
 const app = createApp(App)
 app.use(ElementPlus, {

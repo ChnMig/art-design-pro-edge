@@ -10,8 +10,8 @@
   >
     <div class="table-container">
       <el-table
-        v-loading="loading"
         ref="tableRef"
+        v-loading="loading"
         :data="tableData"
         :row-key="rowKey"
         :height="height"
@@ -26,6 +26,7 @@
           fontWeight: '500'
         }"
         @row-click="handleRowClick"
+        @selection-change="handleSelectionChange"
       >
         <!-- 序号列 -->
         <el-table-column
@@ -72,7 +73,6 @@
 
 <script setup lang="ts">
   import { useTableStore } from '@/store/modules/table'
-
   const { width } = useWindowSize()
   const isMobile = computed(() => width.value < 500)
 
@@ -167,8 +167,10 @@
     'update:pageSize',
     'row-click',
     'size-change',
-    'current-change'
+    'current-change',
+    'selection-change'
   ])
+
   const tableStore = useTableStore()
   const { tableSize } = storeToRefs(tableStore)
 
@@ -261,6 +263,11 @@
   // 行点击事件
   const handleRowClick = (row: any, column: any, event: any) => {
     emit('row-click', row, column, event)
+  }
+
+  // 选择变化事件
+  const handleSelectionChange = (selection: any) => {
+    emit('selection-change', selection)
   }
 
   // 每页条数改变
