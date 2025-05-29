@@ -17,6 +17,7 @@ export type MenuListType = {
     isFirstLevel?: boolean // 是否为一级菜单（系统自动处理，不需要手动添加）
     isEnable?: boolean // 是否启用
     roles?: string[] // 角色
+    fixedTab?: boolean // 是否固定标签页
   }
   children?: MenuListType[] // 子菜单
 }

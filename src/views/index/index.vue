@@ -30,7 +30,7 @@
 
   import { useRouter } from 'vue-router'
 
-  import EditInfo from '@comps/core/layouts/art-header-bar/widget/EditInfo.vue'
+  import EditInfo from '@/components/core/layouts/art-header-bar/widget/EditInfo.vue'
 
   // Store instances
   const settingStore = useSettingStore()

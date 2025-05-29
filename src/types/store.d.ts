@@ -59,4 +59,5 @@ export interface WorkTabType {
   keepAlive: boolean
   params?: object
   query?: LocationQueryRaw
+  fixedTab?: boolean // 是否固定标签页
 }
