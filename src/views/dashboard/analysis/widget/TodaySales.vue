@@ -47,21 +47,21 @@
       value: 300,
       change: '+5%',
       iconfont: '&#xe70f',
-      class: 'bg-success'
+      class: 'bg-warning'
     },
     {
       label: '已售产品',
       value: 56,
       change: '+2%',
       iconfont: '&#xe712',
-      class: 'bg-warning'
+      class: 'bg-error'
     },
     {
       label: '新客户',
       value: 68,
       change: '+8%',
       iconfont: '&#xe77f',
-      class: 'bg-error'
+      class: 'bg-success'
     }
   ])
 </script>
@@ -118,7 +118,7 @@
           color: var(--el-color-primary);
           text-align: center;
           background-color: var(--el-color-primary-light-9);
-          border-radius: 50%;
+          border-radius: 10px;
         }
 
         h2 {

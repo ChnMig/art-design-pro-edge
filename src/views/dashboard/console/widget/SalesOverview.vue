@@ -26,7 +26,6 @@
   const { menuOpen, systemThemeType } = storeToRefs(settingStore)
 
   const isLight = computed(() => systemThemeType.value === SystemThemeEnum.LIGHT)
-
   // 收缩菜单时，重新计算图表大小
   watch(menuOpen, () => {
     const delays = [100, 200, 300]
