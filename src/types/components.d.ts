@@ -87,6 +87,7 @@ declare module 'vue' {
     ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     ElWatermark: typeof import('element-plus/es')['ElWatermark']
     Exception: typeof import('./../components/Views/Exception.vue')['default']
+    HorizontalSubmenu: typeof import('./../components/core/layouts/art-menus/art-horizontal-menu/widget/HorizontalSubmenu.vue')['default']
     LoginLeftView: typeof import('./../components/core/views/login/LoginLeftView.vue')['default']
     MenuTopSubmenu: typeof import('./../components/core/layouts/art-menus/art-horizontal-menu/widget/MenuTopSubmenu.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

@@ -6,10 +6,11 @@
 
 <script setup lang="ts">
   import { useUserStore } from './store/modules/user'
-  import { initState, saveUserData } from './utils/storage'
   import { getUserInfo } from './api/system/api'
+  import { systemUpgrade } from './utils/upgrade'
   import { ApiStatus } from '@api/status'
   import { setThemeTransitionClass } from './utils/theme/animation'
+  import { checkStorageCompatibility } from './utils/storage/storage'
 
   const userStore = useUserStore()
 
@@ -18,10 +19,14 @@
   })
 
   onMounted(() => {
-    initState()
-    saveUserData()
+    // 检查存储兼容性
+    checkStorageCompatibility()
+    // 提升暗黑主题下页面刷新视觉体验
     setThemeTransitionClass(false)
-    getUserInfoData()
+    // 系统升级
+    systemUpgrade()
+    // 获取用户信息
+    getUserInfo()
   })
 
   // 获取用户信息
