@@ -7,7 +7,7 @@
           <ArtLogo class="logo" />
           <p v-if="width >= 1400">{{ AppConfig.systemInfo.name }}</p>
         </div>
-        <ArtLogo class="svg-icon" />
+        <ArtLogo class="logo2" @click="toHome" />
         <!-- 菜单按钮 -->
         <div class="btn-box" v-if="isLeftMenu && showMenuButton">
           <div class="btn menu-btn">

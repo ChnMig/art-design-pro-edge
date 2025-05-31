@@ -99,7 +99,7 @@
   const visible = ref(false)
   const position = ref({ x: 0, y: 0 })
 
-  // 计算菜单样式
+  // 计算菜单风格
   const menuStyle = computed(
     (): CSSProperties => ({
       position: 'fixed' as const,

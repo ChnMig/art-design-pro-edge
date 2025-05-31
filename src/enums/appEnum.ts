@@ -1,6 +1,6 @@
 // 系统级别枚举
 
-// 菜单类型
+// 菜单布局
 export enum MenuTypeEnum {
   LEFT = 'left',
   TOP = 'top',

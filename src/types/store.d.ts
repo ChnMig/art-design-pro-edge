@@ -22,7 +22,7 @@ export type SystemThemeTypes = {
   [key in Exclude<SystemThemeEnum, SystemThemeEnum.AUTO>]: SystemThemeType
 }
 
-// 菜单主题样式
+// 菜单风格样式
 export interface MenuThemeType {
   theme: MenuThemeEnum // 主题名称
   background: string // 背景色

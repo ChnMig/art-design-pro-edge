@@ -55,7 +55,7 @@ export const createBaseConfig = (): SystemConfig => ({
     { name: 'Mixed', value: MenuTypeEnum.TOP_LEFT, img: configImages.menuLayouts.mixed },
     { name: 'Dual Column', value: MenuTypeEnum.DUAL_MENU, img: configImages.menuLayouts.dualColumn }
   ],
-  // 菜单主题列表
+  // 菜单风格列表
   themeList: [
     {
       theme: MenuThemeEnum.DESIGN,

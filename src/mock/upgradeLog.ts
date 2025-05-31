@@ -10,6 +10,11 @@ interface UpgradeLog {
 
 export const upgradeLogList = ref<UpgradeLog[]>([
   {
+    version: 'v2.3.2',
+    title: '设置中心代码重构',
+    date: '2025-05-30'
+  },
+  {
     version: 'v2.3.1',
     title: '修复 2.3.0 版本主题样式初始化bug',
     date: '2025-05-30'
@@ -101,7 +106,7 @@ export const upgradeLogList = ref<UpgradeLog[]>([
   },
   {
     version: 'v2.2.78',
-    title: '优化左侧菜单样式',
+    title: '优化左侧菜单风格',
     date: '2025-05-14'
   },
   {
