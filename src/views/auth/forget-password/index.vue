@@ -30,7 +30,7 @@
   import AppConfig from '@/config'
   import qrcodePng from '@/assets/img/admin/qrcode.png'
   const router = useRouter()
-
+  defineOptions({ name: 'ForgetPassword' })
   const systemName = AppConfig.systemInfo.name
   const qrcodeImage = ref(qrcodePng)
 

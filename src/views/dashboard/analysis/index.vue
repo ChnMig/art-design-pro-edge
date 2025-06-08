@@ -14,6 +14,7 @@
 <script setup lang="ts">
   import TodaySales from './widget/TodaySales.vue'
   import VisitorInsights from './widget/VisitorInsights.vue'
+  defineOptions({ name: 'AnalysisDashboard' })
 </script>
 
 <style lang="scss" scoped>

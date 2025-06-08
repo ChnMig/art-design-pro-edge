@@ -51,7 +51,7 @@
   import { useSettingStore } from '@/store/modules/setting'
 
   import { useCommon } from '@/composables/useCommon'
-
+  defineOptions({ name: 'ConsoleDashboard' })
   const settingStore = useSettingStore()
   const currentGlopTheme = computed(() => settingStore.systemThemeType)
 

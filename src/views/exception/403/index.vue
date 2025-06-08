@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
   import imgUrl from '@imgs/state/403.png'
-
+  defineOptions({ name: '403' })
   const data = reactive({
     title: '403',
     desc: '抱歉，你无权访问该页面',

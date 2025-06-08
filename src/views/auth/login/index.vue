@@ -89,7 +89,7 @@
   import { onMounted, ref, reactive, computed } from 'vue'
   import { getCaptcha, userLogin, getUserInfo } from '@/api/system/api'
   import defaultAvatar from '@/assets/img/user/avatar.png'
-
+  defineOptions({ name: 'Login' })
   const settingStore = useSettingStore()
   const { isDark, systemThemeType } = storeToRefs(settingStore)
 
