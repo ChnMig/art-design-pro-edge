@@ -1,4 +1,3 @@
-import { fa } from 'element-plus/es/locale'
 import { RoutesAlias } from '../routesAlias'
 import { MenuListType } from '@/types/menu'
 
