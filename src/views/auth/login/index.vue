@@ -99,8 +99,8 @@
   const systemName = AppConfig.systemInfo.name
   const formRef = ref<FormInstance>()
   const formData = reactive({
-    username: AppConfig.systemInfo.login.username,
-    password: AppConfig.systemInfo.login.password,
+    username: '',
+    password: '',
     rememberPassword: true,
     captcha: ''
   })
