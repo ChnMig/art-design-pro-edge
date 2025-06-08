@@ -14,13 +14,13 @@ export const staticRoutes: AppRouteRecordRaw[] = [
   {
     path: RoutesAlias.Login,
     name: 'Login',
-    component: () => import('@views/login/index.vue'),
+    component: () => import('@views/auth/login/index.vue'),
     meta: { title: 'menus.login.title', isHideTab: true, setTheme: true }
   },
   {
     path: RoutesAlias.ForgetPassword,
     name: 'ForgetPassword',
-    component: () => import('@views/forget-password/index.vue'),
+    component: () => import('@views/auth/forget-password/index.vue'),
     meta: { title: 'menus.forgetPassword.title', isHideTab: true, noLogin: true, setTheme: true }
   },
   {
@@ -32,19 +32,19 @@ export const staticRoutes: AppRouteRecordRaw[] = [
       {
         path: RoutesAlias.Exception403,
         name: 'Exception403',
-        component: () => import('@views/exception/403.vue'),
+        component: () => import('@views/exception/403/index.vue'),
         meta: { title: '403' }
       },
       {
         path: '/:catchAll(.*)',
         name: 'Exception404',
-        component: () => import('@views/exception/404.vue'),
+        component: () => import('@views/exception/404/index.vue'),
         meta: { title: '404' }
       },
       {
         path: RoutesAlias.Exception500,
         name: 'Exception500',
-        component: () => import('@views/exception/500.vue'),
+        component: () => import('@views/exception/500/index.vue'),
         meta: { title: '500' }
       }
     ]

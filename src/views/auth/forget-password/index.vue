@@ -35,7 +35,7 @@
   const qrcodeImage = ref(qrcodePng)
 
   const toLogin = () => {
-    router.push('/login')
+    router.push('/auth/login')
   }
 </script>
 

@@ -7,6 +7,7 @@ import { useWorktabStore } from './worktab'
 import { MenuListType } from '@/types/menu'
 import { setPageTitle } from '@/router/utils/utils'
 import { resetRouterState } from '@/router/guards/beforeEach'
+import { RoutesAlias } from '@/router/routesAlias'
 
 // 用户
 export const useUserStore = defineStore(
@@ -61,7 +62,7 @@ export const useUserStore = defineStore(
       useWorktabStore().opened = []
       sessionStorage.removeItem('iframeRoutes')
       resetRouterState(router)
-      router.push('/login')
+      router.push(RoutesAlias.Login)
     }
 
     return {

@@ -22,7 +22,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @use '@/views/login/index' as login;
+  @use '@/views/auth/login/index' as login;
   .beian-link {
     font-size: 12px;
     color: rgba(255, 255, 255, 0.6);

@@ -56,7 +56,7 @@
             </el-form-item>
             <div class="forget-password">
               <el-checkbox v-model="formData.rememberPassword">记住密码</el-checkbox>
-              <router-link to="/forget-password">忘记密码</router-link>
+              <router-link to="/auth/forget-password">忘记密码</router-link>
             </div>
 
             <div style="margin-top: 30px">
