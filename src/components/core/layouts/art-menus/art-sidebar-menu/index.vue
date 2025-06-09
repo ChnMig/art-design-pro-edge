@@ -14,7 +14,7 @@
             <el-tooltip
               class="box-item"
               effect="dark"
-              content="菜单风格"
+              :content="$t(menu.meta.title)"
               placement="right"
               :offset="25"
               :hide-after="0"
@@ -39,7 +39,9 @@
                     marginBottom: dualMenuShowText ? '5px' : '0'
                   }"
                 ></i>
-                <span v-if="dualMenuShowText">菜单风格</span>
+                <span v-if="dualMenuShowText">
+                  {{ $t(menu.meta.title) }}
+                </span>
               </div>
             </el-tooltip>
           </li>
@@ -77,6 +79,8 @@
         :active-text-color="getMenuTheme.textActiveColor"
         :default-openeds="defaultOpenedsArray"
         :popper-class="`menu-left-${getMenuTheme.theme}-popper`"
+        :show-timeout="50"
+        :hide-timeout="50"
       >
         <SidebarSubmenu
           :list="menuList"

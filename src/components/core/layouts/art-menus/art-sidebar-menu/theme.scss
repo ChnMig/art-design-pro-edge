@@ -1,7 +1,7 @@
 @use '@styles/variables.scss' as *;
 @use '@styles/mixin.scss' as *;
 
-// 重新修改菜单风格
+// 重新修改菜单样式
 $menu-height: 46px; // 菜单高度
 $menu-icon-size: 20px; // 菜单图标大小
 $menu-font-size: 14px; // 菜单字体大小
@@ -29,9 +29,8 @@ $hover-bg-color: rgba(var(--art-gray-200-rgb), 0.8); // 鼠标移入背景色
   .el-sub-menu__title,
   .el-menu-item {
     height: $menu-height !important;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
     line-height: $menu-height !important;
-    transition: background-color 0s !important;
 
     span {
       font-size: $menu-font-size !important;
