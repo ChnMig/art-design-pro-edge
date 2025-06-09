@@ -10,6 +10,45 @@ interface UpgradeLog {
 
 export const upgradeLogList = ref<UpgradeLog[]>([
   {
+    version: 'v2.4.0',
+    title: '代码重构与资源优化',
+    date: '2025-06-06',
+    detail: [
+      '全局 TypeScript 类型体系重构，提升类型准确性与可维护性',
+      '重构 utils 工具包，统一工具方法结构，增强可读性与复用性',
+      'utils 新增表单验证与 Cookie 操作相关工具函数',
+      '删除未使用的工具模块与无效资源，精简项目体积',
+      '优化 views 页面结构，移除冗余页面文件',
+      '页面组件增加 defineOptions，明确组件命名',
+      '异常页面多语言支持, 提升国际化体验',
+      '图片资源统一转换为 webp 格式，整体资源体积减少约 50%',
+      '打包产物减少约 1MB，提高加载效率',
+      'HTTP 请求增加 token 过期自动处理逻辑，提升安全性与用户体验'
+    ],
+    requireReLogin: true
+  },
+  {
+    version: 'v2.3.6',
+    title: 'config 文件夹结构简化',
+    date: '2025-06-03'
+  },
+  {
+    version: 'v2.3.5',
+    title: 'prettier、stylelint、lint-staged、cz-git 版本升级',
+    date: '2025-06-03'
+  },
+  {
+    version: 'v2.3.4',
+    title: 'views 目录结构调整',
+    date: '2025-06-03',
+    requireReLogin: true
+  },
+  {
+    version: 'v2.3.3',
+    title: '用户列表使用 Apifox Mock 数据',
+    date: '2025-06-03'
+  },
+  {
     version: 'v2.3.2',
     title: '设置中心代码重构',
     date: '2025-05-30'
@@ -106,7 +145,7 @@ export const upgradeLogList = ref<UpgradeLog[]>([
   },
   {
     version: 'v2.2.78',
-    title: '优化左侧菜单风格',
+    title: '优化左侧菜单样式',
     date: '2025-05-14'
   },
   {

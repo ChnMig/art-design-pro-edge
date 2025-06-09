@@ -50,5 +50,8 @@ export const setSystemTheme = (to: RouteLocationNormalized): void => {
  * @returns 格式化后的菜单标题
  */
 export const formatMenuTitle = (title: string): string => {
-  return title.startsWith('menus.') ? '标题' : title
+  if (title) {
+    return title.startsWith('menus.') ? '标题' : title
+  }
+  return ''
 }

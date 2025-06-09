@@ -1,7 +1,7 @@
 import axios, { InternalAxiosRequestConfig, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/modules/user'
-import EmojiText from '@/utils/emojo'
+import EmojiText from '@/utils/ui/emojo'
 
 export interface ApiResponse<T = any> {
   code: number

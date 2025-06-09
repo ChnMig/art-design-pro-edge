@@ -1,8 +1,6 @@
 <template>
   <div class="login">
-    <div class="left-wrap">
-      <LoginLeftView></LoginLeftView>
-    </div>
+  <LoginLeftView></LoginLeftView>
     <div class="right-wrap">
       <div class="top-right-wrap">
         <div class="btn theme-btn" @click="toggleTheme">
@@ -19,18 +17,18 @@
         <div class="form">
           <h3 class="title">欢迎回来</h3>
           <p class="sub-title">输入您的账号和密码登录</p>
-          <el-form
+          <ElForm
             ref="formRef"
             :model="formData"
             :rules="rules"
             @keyup.enter="handleSubmit"
             style="margin-top: 25px"
           >
-            <el-form-item prop="username">
-              <el-input placeholder="请输入账号" size="large" v-model.trim="formData.username" />
-            </el-form-item>
-            <el-form-item prop="password">
-              <el-input
+            <ElFormItem prop="username">
+              <ElInput placeholder="请输入账号" size="large" v-model.trim="formData.username" />
+            </ElFormItem>
+            <ElFormItem prop="password">
+              <ElInput
                 placeholder="请输入密码"
                 size="large"
                 v-model.trim="formData.password"
@@ -39,28 +37,28 @@
                 autocomplete="off"
                 show-password
               />
-            </el-form-item>
-            <el-form-item prop="captcha">
-              <el-row :gutter="5">
-                <el-col :span="16">
-                  <el-input
+            </ElFormItem>
+            <ElFormItem prop="captcha">
+              <ElRow :gutter="5">
+                <ElCol :span="16">
+                  <ElInput
                     placeholder="请输入验证码"
                     size="large"
                     v-model.trim="formData.captcha"
                   />
-                </el-col>
-                <el-col :push="1" :span="8">
+                </ElCol>
+                <ElCol :push="1" :span="8">
                   <img :src="captchaImageUrl" @click="refreshCaptcha" class="captcha-image" />
-                </el-col>
-              </el-row>
-            </el-form-item>
+                </ElCol>
+              </ElRow>
+            </ElFormItem>
             <div class="forget-password">
-              <el-checkbox v-model="formData.rememberPassword">记住密码</el-checkbox>
+              <ElCheckbox v-model="formData.rememberPassword">记住密码</ElCheckbox>
               <router-link to="/auth/forget-password">忘记密码</router-link>
             </div>
 
             <div style="margin-top: 30px">
-              <el-button
+              <ElButton
                 class="login-btn"
                 size="large"
                 type="primary"
@@ -68,9 +66,9 @@
                 :loading="loading"
               >
                 登录
-              </el-button>
+              </ElButton>
             </div>
-          </el-form>
+          </ElForm>
         </div>
       </div>
     </div>
@@ -79,7 +77,7 @@
 
 <script setup lang="ts">
   import AppConfig from '@/config'
-  import { ElMessage, ElNotification } from 'element-plus'
+  import { ElForm, ElMessage, ElNotification } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
   import { HOME_PAGE } from '@/router/routesAlias'
   import { ApiStatus } from '@api/status'

@@ -1,5 +1,5 @@
 import { RoutesAlias } from '../routesAlias'
-import { MenuListType } from '@/types/menu'
+import { AppRouteRecord } from '@/types/router'
 
 /**
  * 菜单列表、异步路由
@@ -11,7 +11,7 @@ import { MenuListType } from '@/types/menu'
  * 菜单标题（title）:
  * 可以是 i18n 的 key，也可以是字符串，比如：'用户列表'
  */
-export const asyncRoutes: MenuListType[] = [
+export const asyncRoutes: AppRouteRecord[] = [
   {
     id: 1,
     name: 'Dashboard',

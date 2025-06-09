@@ -1,4 +1,4 @@
-import { upgradeLogList } from '@/mock/upgradeLog'
+import { upgradeLogList } from '@/mock/upgrade/changeLog'
 import { ElNotification } from 'element-plus'
 import { useUserStore } from '@/store/modules/user'
 import { StorageConfig } from '@/utils/storage/storage-config'

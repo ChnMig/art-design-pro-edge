@@ -1,122 +1,122 @@
 <template>
-  <el-dialog v-model="dialogVisible" width="700px" align-center :close-on-click-modal="false">
+  <ElDialog v-model="dialogVisible" width="700px" align-center :close-on-click-modal="false">
     <template #header>
       <div class="dialog-title-with-help">
         <span>{{ dialogTitle }}</span>
-        <el-tooltip effect="dark" :content="helpContent" placement="top">
-          <el-icon class="help-icon" @click="showHelp"><QuestionFilled /></el-icon>
-        </el-tooltip>
+        <ElTooltip effect="dark" :content="helpContent" placement="top">
+          <ElIcon class="help-icon" @click="showHelp"><QuestionFilled /></ElIcon>
+        </ElTooltip>
       </div>
     </template>
-    <el-form ref="formRef" :model="form" :rules="rules" label-width="85px">
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="菜单标题" prop="title">
-            <el-input v-model="form.title" placeholder="菜单标题"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="路由地址" prop="path">
-            <el-input v-model="form.path" placeholder="路由地址"></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="页面类型">
-            <el-radio-group v-model="form.type">
-              <el-radio-button value="internal">内部组件</el-radio-button>
-              <el-radio-button value="link">外部链接</el-radio-button>
-            </el-radio-group>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="组件路径" prop="component" v-if="form.type === 'internal'" required>
-            <el-input v-model="form.component" placeholder="组件路径"></el-input>
-          </el-form-item>
-          <el-form-item label="外部链接" prop="link" v-else-if="form.type === 'link'" required>
-            <el-input
+    <ElForm ref="formRef" :model="form" :rules="rules" label-width="85px">
+      <ElRow :gutter="20">
+        <ElCol :span="12">
+          <ElFormItem label="菜单标题" prop="title">
+            <ElInput v-model="form.title" placeholder="菜单标题"></ElInput>
+          </ElFormItem>
+        </ElCol>
+        <ElCol :span="12">
+          <ElFormItem label="路由地址" prop="path">
+            <ElInput v-model="form.path" placeholder="路由地址"></ElInput>
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20">
+        <ElCol :span="12">
+          <ElFormItem label="页面类型">
+            <ElRadioGroup v-model="form.type">
+              <ElRadioButton value="internal">内部组件</ElRadioButton>
+              <ElRadioButton value="link">外部链接</ElRadioButton>
+            </ElRadioGroup>
+          </ElFormItem>
+        </ElCol>
+        <ElCol :span="12">
+          <ElFormItem label="组件路径" prop="component" v-if="form.type === 'internal'" required>
+            <ElInput v-model="form.component" placeholder="组件路径"></ElInput>
+          </ElFormItem>
+          <ElFormItem label="外部链接" prop="link" v-else-if="form.type === 'link'" required>
+            <ElInput
               v-model="form.link"
               placeholder="外部链接地址 (https://www.example.com)"
-            ></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="菜单标识" prop="name">
-            <el-input v-model="form.name" placeholder="菜单标识"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="图标" prop="icon">
+            ></ElInput>
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20">
+        <ElCol :span="12">
+          <ElFormItem label="菜单标识" prop="name">
+            <ElInput v-model="form.name" placeholder="菜单标识"></ElInput>
+          </ElFormItem>
+        </ElCol>
+        <ElCol :span="12">
+          <ElFormItem label="图标" prop="icon">
             <ArtIconSelector
               v-model="form.icon"
               :iconType="iconType"
               :defaultIcon="form.icon"
               width="229px"
             />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="菜单排序" prop="sort" style="width: 100%">
-            <el-input-number
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20">
+        <ElCol :span="12">
+          <ElFormItem label="菜单排序" prop="sort" style="width: 100%">
+            <ElInputNumber
               v-model="form.sort"
               style="width: 100%"
               @change="handleChange"
               :min="1"
               controls-position="right"
             />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="6">
-          <el-form-item label="启用" prop="isEnable">
-            <el-switch v-model="form.isEnable"></el-switch>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="页面缓存" prop="keepAlive">
-            <el-switch v-model="form.keepAlive"></el-switch>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="菜单隐藏" prop="isHide">
-            <el-switch v-model="form.isHide"></el-switch>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="标签页隐藏" prop="isHideTab">
-            <el-switch v-model="form.isHideTab"></el-switch>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="6">
-          <el-form-item label="iframe" prop="isIframe">
-            <el-switch v-model="form.isIframe"></el-switch>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="一级主页" prop="isFirstLevel">
-            <el-switch v-model="form.isFirstLevel"></el-switch>
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20">
+        <ElCol :span="6">
+          <ElFormItem label="启用" prop="isEnable">
+            <ElSwitch v-model="form.isEnable"></ElSwitch>
+          </ElFormItem>
+        </ElCol>
+        <ElCol :span="6">
+          <ElFormItem label="页面缓存" prop="keepAlive">
+            <ElSwitch v-model="form.keepAlive"></ElSwitch>
+          </ElFormItem>
+        </ElCol>
+        <ElCol :span="6">
+          <ElFormItem label="菜单隐藏" prop="isHide">
+            <ElSwitch v-model="form.isHide"></ElSwitch>
+          </ElFormItem>
+        </ElCol>
+        <ElCol :span="6">
+          <ElFormItem label="标签页隐藏" prop="isHideTab">
+            <ElSwitch v-model="form.isHideTab"></ElSwitch>
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+      <ElRow :gutter="20">
+        <ElCol :span="6">
+          <ElFormItem label="iframe" prop="isIframe">
+            <ElSwitch v-model="form.isIframe"></ElSwitch>
+          </ElFormItem>
+        </ElCol>
+        <ElCol :span="6">
+          <ElFormItem label="一级主页" prop="isFirstLevel">
+            <ElSwitch v-model="form.isFirstLevel"></ElSwitch>
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+    </ElForm>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm()"> 确 定 </el-button>
+        <ElButton @click="dialogVisible = false">取 消</ElButton>
+        <ElButton type="primary" @click="submitForm()"> 确 定 </ElButton>
       </span>
     </template>
-  </el-dialog>
+  </ElDialog>
 
   <!-- 帮助弹窗 -->
-  <el-dialog v-model="helpDialogVisible" title="菜单配置帮助" width="600px" append-to-body>
+  <ElDialog v-model="helpDialogVisible" title="菜单配置帮助" width="600px" append-to-body>
     <div class="help-content">
       <p>没有实际页面的节点菜单,确保将组件路径填成 /index/index</p>
       <p>有实际页面的菜单, 确保精确到 .vue 文件, 例如: /index/index</p>
@@ -127,7 +127,7 @@
         属性</p
       >
     </div>
-  </el-dialog>
+  </ElDialog>
 </template>
 
 <script setup lang="ts">

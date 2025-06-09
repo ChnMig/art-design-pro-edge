@@ -1,6 +1,6 @@
 <!-- 全局水印组件 -->
 <template>
-  <div v-if="visible" class="layout-watermark" :style="{ zIndex: zIndex }">
+  <div v-if="watermarkVisible" class="layout-watermark" :style="{ zIndex: zIndex }">
     <el-watermark
       :content="effectiveContent"
       :font="{ fontSize: fontSize, color: fontColor }"
@@ -14,6 +14,9 @@
 </template>
 
 <script setup lang="ts">
+  import { useSettingStore } from '@/store/modules/setting'
+  const settingStore = useSettingStore()
+  const { watermarkVisible } = storeToRefs(settingStore)
   import { computed } from 'vue'
   import { useUserStore } from '@/store/modules/user'
   const userStore = useUserStore()

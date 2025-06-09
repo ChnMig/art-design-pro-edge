@@ -1,6 +1,6 @@
 import { useWorktabStore } from '@/store/modules/worktab'
 import { RouteLocationNormalized } from 'vue-router'
-import { isIframe } from './utils'
+import { isIframe } from './route'
 import { useSettingStore } from '@/store/modules/setting'
 import { HOME_PAGE } from '@/router/routesAlias'
 import { getIframeRoutes } from '@/router/utils/menuToRouter'

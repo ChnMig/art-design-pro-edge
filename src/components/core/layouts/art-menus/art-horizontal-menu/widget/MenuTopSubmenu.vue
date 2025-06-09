@@ -38,13 +38,13 @@
 </template>
 
 <script lang="ts" setup>
-  import { MenuListType } from '@/types/menu'
-  import { handleMenuJump } from '@/utils/jump'
+  import type { AppRouteRecord } from '@/types/router'
+  import { handleMenuJump } from '@/utils/navigation'
   import { formatMenuTitle } from '@/router/utils/utils'
 
   defineProps({
     item: {
-      type: Object as PropType<MenuListType>,
+      type: Object as PropType<AppRouteRecord>,
       required: true
     },
     theme: {
@@ -60,7 +60,7 @@
 
   const emit = defineEmits(['close'])
 
-  const goPage = (item: MenuListType) => {
+  const goPage = (item: AppRouteRecord) => {
     closeMenu()
     handleMenuJump(item)
   }
@@ -69,7 +69,7 @@
     emit('close')
   }
 
-  const isNotEmpty = (children: MenuListType[] | undefined) => {
+  const isNotEmpty = (children: AppRouteRecord[] | undefined) => {
     return children && children.length > 0
   }
 </script>

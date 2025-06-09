@@ -1,12 +1,12 @@
 <template>
-  <el-dialog
+  <ElDialog
     v-model="dialogVisible"
     title="修改个人信息"
     width="500px"
     :close-on-click-modal="false"
     :destroy-on-close="true"
   >
-    <el-form
+    <ElForm
       :model="userForm"
       :rules="rules"
       ref="userFormRef"
@@ -14,40 +14,40 @@
       status-icon
       @submit.prevent
     >
-      <el-form-item label="用户名" prop="username">
-        <el-input v-model="userForm.username" />
-      </el-form-item>
-      <el-form-item label="密码" prop="password">
-        <el-input
+      <ElFormItem label="用户名" prop="username">
+        <ElInput v-model="userForm.username" />
+      </ElFormItem>
+      <ElFormItem label="密码" prop="password">
+        <ElInput
           v-model="userForm.password"
           type="password"
           placeholder="不填则不修改密码"
           show-password
         />
-      </el-form-item>
-      <el-form-item label="手机号" prop="phone">
-        <el-input v-model="userForm.phone" />
-      </el-form-item>
-      <el-form-item label="性别" prop="gender">
-        <el-radio-group v-model="userForm.gender">
-          <el-radio :label="1">男</el-radio>
-          <el-radio :label="2">女</el-radio>
-        </el-radio-group>
-      </el-form-item>
-    </el-form>
+      </ElFormItem>
+      <ElFormItem label="手机号" prop="phone">
+        <ElInput v-model="userForm.phone" />
+      </ElFormItem>
+      <ElFormItem label="性别" prop="gender">
+        <ElRadioGroup v-model="userForm.gender">
+          <ElRadio :label="1">男</ElRadio>
+          <ElRadio :label="2">女</ElRadio>
+        </ElRadioGroup>
+      </ElFormItem>
+    </ElForm>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleSubmit" :loading="loading"> 确认 </el-button>
+        <ElButton @click="dialogVisible = false">取消</ElButton>
+        <ElButton type="primary" @click="handleSubmit" :loading="loading"> 确认 </ElButton>
       </span>
     </template>
-  </el-dialog>
+  </ElDialog>
 </template>
 
 <script setup lang="ts">
   import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
   import { ElMessage } from 'element-plus'
-  import mittBus from '@/utils/mittBus'
+  import { mittBus } from '@/utils/sys'
   import { getUserInfo, updateUserInfo } from '@/api/system/api'
   import type { FormInstance } from 'element-plus'
 

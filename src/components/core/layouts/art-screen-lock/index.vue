@@ -1,13 +1,13 @@
 <template>
   <div class="layout-lock-screen">
     <div v-if="!isLock">
-      <el-dialog v-model="visible" :width="370" :show-close="false" @open="handleDialogOpen">
+      <ElDialog v-model="visible" :width="370" :show-close="false" @open="handleDialogOpen">
         <div class="lock-content">
           <img class="cover" :src="userInfo.avatar" />
           <div class="username">{{ userInfo.name }}</div>
-          <el-form ref="formRef" :model="formData" :rules="rules" @submit.prevent="handleLock">
-            <el-form-item prop="password">
-              <el-input
+          <ElForm ref="formRef" :model="formData" :rules="rules" @submit.prevent="handleLock">
+            <ElFormItem prop="password">
+              <ElInput
                 v-model="formData.password"
                 type="password"
                 placeholder="请输入锁屏密码"
@@ -16,32 +16,30 @@
                 @keyup.enter="handleLock"
               >
                 <template #suffix>
-                  <el-icon class="cursor-pointer" @click="handleLock">
+                  <ElIcon class="cursor-pointer" @click="handleLock">
                     <Lock />
-                  </el-icon>
+                  </ElIcon>
                 </template>
-              </el-input>
-            </el-form-item>
-            <el-button type="primary" class="lock-btn" @click="handleLock" v-ripple>
-              锁定
-            </el-button>
-          </el-form>
+              </ElInput>
+            </ElFormItem>
+            <ElButton type="primary" class="lock-btn" @click="handleLock" v-ripple> 锁定 </ElButton>
+          </ElForm>
         </div>
-      </el-dialog>
+      </ElDialog>
     </div>
 
     <div class="unlock-content" v-else>
       <div class="box">
         <img class="cover" :src="userInfo.avatar" />
         <div class="username">{{ userInfo.username }}</div>
-        <el-form
+        <ElForm
           ref="unlockFormRef"
           :model="unlockForm"
           :rules="rules"
           @submit.prevent="handleUnlock"
         >
-          <el-form-item prop="password">
-            <el-input
+          <ElFormItem prop="password">
+            <ElInput
               v-model="unlockForm.password"
               type="password"
               placeholder="请输入锁屏密码"
@@ -49,18 +47,18 @@
               ref="unlockInputRef"
             >
               <template #suffix>
-                <el-icon class="cursor-pointer" @click="handleUnlock">
+                <ElIcon class="cursor-pointer" @click="handleUnlock">
                   <Unlock />
-                </el-icon>
+                </ElIcon>
               </template>
-            </el-input>
-          </el-form-item>
+            </ElInput>
+          </ElFormItem>
 
-          <el-button type="primary" class="unlock-btn" @click="handleUnlock" v-ripple>
+          <ElButton type="primary" class="unlock-btn" @click="handleUnlock" v-ripple>
             解锁
-          </el-button>
-          <el-button text class="login-btn" @click="toLogin"> 返回登录 </el-button>
-        </el-form>
+          </ElButton>
+          <ElButton text class="login-btn" @click="toLogin"> 返回登录 </ElButton>
+        </ElForm>
       </div>
     </div>
   </div>
@@ -73,7 +71,7 @@
   import { useUserStore } from '@/store/modules/user'
   import CryptoJS from 'crypto-js'
   import { ElMessage } from 'element-plus'
-  import mittBus from '@/utils/mittBus'
+  import { mittBus } from '@/utils/sys'
 
   const ENCRYPT_KEY = import.meta.env.VITE_LOCK_ENCRYPT_KEY
   const userStore = useUserStore()

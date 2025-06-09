@@ -6,6 +6,9 @@ declare module '*.vue' {
   export default component
 }
 
+// 全局变量声明Add commentMore actions
+declare const __APP_VERSION__: string // 版本号
+
 declare module 'nprogress'
 
 // 环境变量提示

@@ -7,10 +7,10 @@
 <script setup lang="ts">
   import { useUserStore } from './store/modules/user'
   import { getUserInfo } from './api/system/api'
-  import { systemUpgrade } from './utils/upgrade'
+  import { systemUpgrade } from './utils/sys'
   import { ApiStatus } from '@api/status'
   import { setThemeTransitionClass } from './utils/theme/animation'
-  import { checkStorageCompatibility } from './utils/storage/storage'
+  import { checkStorageCompatibility } from './utils/storage'
 
   const userStore = useUserStore()
 

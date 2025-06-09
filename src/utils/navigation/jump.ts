@@ -1,4 +1,4 @@
-import { MenuListType } from '@/types/menu'
+import { AppRouteRecord } from '@/types/router'
 import { router } from '@/router'
 
 // 打开外部链接
@@ -12,7 +12,7 @@ export const openExternalLink = (link: string) => {
  * @param jumpToFirst 是否跳转到第一个子菜单
  * @returns
  */
-export const handleMenuJump = (item: MenuListType, jumpToFirst: boolean = false) => {
+export const handleMenuJump = (item: AppRouteRecord, jumpToFirst: boolean = false) => {
   // 处理外部链接
   const { link, isIframe } = item.meta
   if (link && !isIframe) {
@@ -35,5 +35,3 @@ export const handleMenuJump = (item: MenuListType, jumpToFirst: boolean = false)
   // 跳转到子菜单路径
   router.push(firstChild.path)
 }
-
-// ... existing code ...

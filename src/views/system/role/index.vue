@@ -35,16 +35,12 @@
           @size-change="handleSizeChange"
         >
           <template #default>
-            <el-table-column
-              v-for="col in filteredColumns"
-              :key="col.prop || col.type"
-              v-bind="col"
-            >
+            <ElTableColumn v-for="col in filteredColumns" :key="col.prop || col.type" v-bind="col">
               <!-- 自定义状态列的渲染 -->
               <template #default="scope" v-if="col.prop === 'status'">
-                <el-tag :type="scope.row.status === 1 ? 'primary' : 'warning'">
+                <ElTag :type="scope.row.status === 1 ? 'primary' : 'warning'">
                   {{ scope.row.status === 1 ? '启用' : '禁用' }}
-                </el-tag>
+                </ElTag>
               </template>
 
               <!-- 自定义用户数量列的渲染 -->
@@ -61,40 +57,40 @@
                   />
                 </div>
               </template>
-            </el-table-column>
+            </ElTableColumn>
           </template>
         </ArtTable>
       </ElCard>
 
-      <el-dialog
+      <ElDialog
         v-model="dialogVisible"
         :title="dialogType === 'add' ? '新增角色' : '编辑角色'"
         width="500px"
         :close-on-click-modal="false"
         destroy-on-close
       >
-        <el-form ref="formRef" :model="form" :rules="rules" label-width="100px" @submit.prevent>
-          <el-form-item label="角色名称" prop="name">
-            <el-input v-model="form.name" placeholder="请输入角色名称" />
-          </el-form-item>
-          <el-form-item label="描述" prop="desc">
-            <el-input v-model="form.desc" type="textarea" :rows="3" placeholder="请输入角色描述" />
-          </el-form-item>
-          <el-form-item label="启用">
-            <el-switch v-model="form.status" />
-          </el-form-item>
-        </el-form>
+        <ElForm ref="formRef" :model="form" :rules="rules" label-width="100px" @submit.prevent>
+          <ElFormItem label="角色名称" prop="name">
+            <ElInput v-model="form.name" placeholder="请输入角色名称" />
+          </ElFormItem>
+          <ElFormItem label="描述" prop="desc">
+            <ElInput v-model="form.desc" type="textarea" :rows="3" placeholder="请输入角色描述" />
+          </ElFormItem>
+          <ElFormItem label="启用">
+            <ElSwitch v-model="form.status" />
+          </ElFormItem>
+        </ElForm>
         <template #footer>
           <div class="dialog-footer">
-            <el-button @click="dialogVisible = false">取消</el-button>
-            <el-button type="primary" @click="handleSubmit(formRef)" :loading="submitLoading"
-              >提交</el-button
+            <ElButton @click="dialogVisible = false">取消</ElButton>
+            <ElButton type="primary" @click="handleSubmit(formRef)" :loading="submitLoading"
+              >提交</ElButton
             >
           </div>
         </template>
-      </el-dialog>
+      </ElDialog>
 
-      <role-auth
+      <RoleAuth
         v-model:visible="permissionDrawer"
         :role-id="currentRoleId"
         @saved="handlePermissionSaved"
@@ -111,7 +107,7 @@
   import { getRoleList, addRole, updateRole, deleteRole } from '@/api/system/api'
   import RoleAuth from './auth.vue'
   import { useCheckedColumns } from '@/composables/useCheckedColumns'
-  import { SearchFormItem } from '@/types/search-form'
+  import { SearchFormItem } from '@/types'
 
   // 状态变量
   const dialogVisible = ref(false)

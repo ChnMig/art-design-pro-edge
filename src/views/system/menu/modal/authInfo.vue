@@ -1,5 +1,5 @@
 <template>
-  <el-dialog
+  <ElDialog
     v-model="dialogVisible"
     width="700px"
     align-center
@@ -9,68 +9,68 @@
     <template #header>
       <div class="dialog-title-with-help">
         <span>元素权限管理</span>
-        <el-tooltip effect="dark" :content="helpContent" placement="top">
-          <el-icon class="help-icon" @click="showHelp"><QuestionFilled /></el-icon>
-        </el-tooltip>
+        <ElTooltip effect="dark" :content="helpContent" placement="top">
+          <ElIcon class="help-icon" @click="showHelp"><QuestionFilled /></ElIcon>
+        </ElTooltip>
       </div>
     </template>
 
-    <el-button type="primary" style="margin-bottom: 15px" @click="addAuthPermission">
+    <ElButton type="primary" style="margin-bottom: 15px" @click="addAuthPermission">
       添加权限
-    </el-button>
+    </ElButton>
 
     <!-- 表格部分保持不变 -->
-    <el-table v-loading="loading" :data="tableData" style="width: 100%">
-      <el-table-column prop="title" label="权限名称" width="180" />
-      <el-table-column prop="mark" label="权限标识" width="180" />
-      <el-table-column label="操作">
+    <ElTable v-loading="loading" :data="tableData" style="width: 100%">
+      <ElTableColumn prop="title" label="权限名称" width="180" />
+      <ElTableColumn prop="mark" label="权限标识" width="180" />
+      <ElTableColumn label="操作">
         <template #default="scope">
-          <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="small" type="danger" @click="handleDelete(scope.row.id)">
+          <ElButton size="small" @click="handleEdit(scope.$index, scope.row)">编辑</ElButton>
+          <ElButton size="small" type="danger" @click="handleDelete(scope.row.id)">
             删除
-          </el-button>
+          </ElButton>
         </template>
-      </el-table-column>
-    </el-table>
+      </ElTableColumn>
+    </ElTable>
 
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="closeDialog">取消</el-button>
-        <el-button type="primary" @click="closeDialog">关闭</el-button>
+        <ElButton @click="closeDialog">取消</ElButton>
+        <ElButton type="primary" @click="closeDialog">关闭</ElButton>
       </div>
     </template>
-  </el-dialog>
+  </ElDialog>
 
   <!-- 添加/编辑权限的弹窗 -->
-  <el-dialog v-model="authFormVisible" width="500px" append-to-body :close-on-click-modal="false">
+  <ElDialog v-model="authFormVisible" width="500px" append-to-body :close-on-click-modal="false">
     <template #header>
       <div class="dialog-title-with-help">
         <span>{{ isEditingAuth ? '编辑权限' : '添加权限' }}</span>
-        <el-tooltip effect="dark" content="配置页面元素权限信息" placement="top">
-          <el-icon class="help-icon" @click="showAuthHelp"><QuestionFilled /></el-icon>
-        </el-tooltip>
+        <ElTooltip effect="dark" content="配置页面元素权限信息" placement="top">
+          <ElIcon class="help-icon" @click="showAuthHelp"><QuestionFilled /></ElIcon>
+        </ElTooltip>
       </div>
     </template>
 
-    <el-form ref="authFormRef" :model="authForm" :rules="authRules" label-width="100px">
-      <el-form-item label="权限名称" prop="title">
-        <el-input v-model="authForm.title" placeholder="请输入权限名称" />
-      </el-form-item>
-      <el-form-item label="权限标识" prop="mark">
-        <el-input v-model="authForm.mark" placeholder="请输入权限标识" />
-      </el-form-item>
-    </el-form>
+    <ElForm ref="authFormRef" :model="authForm" :rules="authRules" label-width="100px">
+      <ElFormItem label="权限名称" prop="title">
+        <ElInput v-model="authForm.title" placeholder="请输入权限名称" />
+      </ElFormItem>
+      <ElFormItem label="权限标识" prop="mark">
+        <ElInput v-model="authForm.mark" placeholder="请输入权限标识" />
+      </ElFormItem>
+    </ElForm>
 
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="authFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitAuthForm" :loading="submitLoading">提交</el-button>
+        <ElButton @click="authFormVisible = false">取消</ElButton>
+        <ElButton type="primary" @click="submitAuthForm" :loading="submitLoading">提交</ElButton>
       </div>
     </template>
-  </el-dialog>
+  </ElDialog>
 
   <!-- 帮助弹窗 -->
-  <el-dialog v-model="helpDialogVisible" title="元素权限管理帮助" width="600px" append-to-body>
+  <ElDialog v-model="helpDialogVisible" title="元素权限管理帮助" width="600px" append-to-body>
     <div class="help-content">
       <p>本功能用于管理页面内元素级权限，可以控制按钮等UI元素的显示和隐藏。</p>
       <p>权限标识的使用方法：</p>
@@ -83,10 +83,10 @@
         <li>可以在按钮、表单、表格等需要权限控制的地方应用</li>
       </ul>
     </div>
-  </el-dialog>
+  </ElDialog>
 
   <!-- 权限表单帮助弹窗 -->
-  <el-dialog v-model="authHelpDialogVisible" title="权限配置帮助" width="600px" append-to-body>
+  <ElDialog v-model="authHelpDialogVisible" title="权限配置帮助" width="600px" append-to-body>
     <div class="help-content">
       <p>权限名称：描述该权限的作用，例如"添加用户"、"删除角色"等</p>
       <p>权限标识：系统内使用的唯一标识，通常使用冒号分隔，例如：</p>
@@ -96,7 +96,7 @@
       </ul>
       <p>命名规范：建议使用 "模块:功能:操作" 的格式</p>
     </div>
-  </el-dialog>
+  </ElDialog>
 </template>
 
 <script lang="ts" setup>

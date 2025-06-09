@@ -261,11 +261,6 @@
     "useSupported": true,
     "useSwipe": true,
     "useTemplateRef": true,
-    "ElTableColumn": true,
-    "ElButton": true,
-    "ElPopconfirm": true,
-    "ElTag": true,
-    "ElPopover": true,
     "useTemplateRefsList": true,
     "useTextDirection": true,
     "useTextSelection": true,
@@ -313,8 +308,7 @@
     "watchTriggerable": true,
     "watchWithFilter": true,
     "whenever": true,
-    "ElLoading": true,
     "ElMessage": true,
-    "ElMessageBox": true
+    "ElTag": true
   }
 }

@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-  import { SearchFormItem } from '@/types/search-form'
+  import { SearchFormItem } from '@/types'
 
   // 定义组件值类型
   export type ValueVO = unknown

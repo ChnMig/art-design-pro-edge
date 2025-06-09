@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
   import { computed } from 'vue'
-  import { SearchFormItem } from '@/types/search-form'
+  import { SearchFormItem } from '@/types'
 
   // 组件名称
   defineOptions({

@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-  import { SearchFormItem } from '@/types/search-form'
+  import { SearchFormItem } from '@/types'
 
   export type ValueVO = unknown
 

@@ -3,16 +3,16 @@ import NProgress from 'nprogress'
 import { useSettingStore } from '@/store/modules/setting'
 import { useUserStore } from '@/store/modules/user'
 import { useMenuStore } from '@/store/modules/menu'
-import { setWorktab } from '@/utils/worktab'
+import { setWorktab } from '@/utils/navigation'
 import { setPageTitle, setSystemTheme } from '../utils/utils'
 import { getUserMenu } from '@/api/system/api'
 import { registerDynamicRoutes } from '../utils/registerRoutes'
 import { ApiStatus } from '@/api/status'
-import { MenuListType } from '@/types/menu'
+import { AppRouteRecord } from '@/types/router'
 import { RoutesAlias } from '../routesAlias'
 import { menuDataToRouter } from '../utils/menuToRouter'
 import { asyncRoutes } from '../routes/asyncRoutes'
-import { loadingService } from '@/utils/loading'
+import { loadingService } from '@/utils/ui'
 import { useCommon } from '@/composables/useCommon'
 import { useWorktabStore } from '@/store/modules/worktab'
 
@@ -181,7 +181,7 @@ async function processBackendMenu(router: Router): Promise<void> {
   }
   // 获取到的菜单数据
   const menuRes = Array.isArray(asyncRoutesData.data) ? asyncRoutesData.data : []
-  const menuList: MenuListType[] = menuRes.map((route: MenuListType) => menuDataToRouter(route))
+  const menuList: AppRouteRecord[] = menuRes.map((route: AppRouteRecord) => menuDataToRouter(route))
   await registerAndStoreMenu(router, menuList, closeLoading)
 }
 
@@ -190,7 +190,7 @@ async function processBackendMenu(router: Router): Promise<void> {
  */
 async function registerAndStoreMenu(
   router: Router,
-  menuList: MenuListType[],
+  menuList: AppRouteRecord[],
   closeLoading: () => void
 ): Promise<void> {
   if (!isValidMenuList(menuList)) {
@@ -218,8 +218,8 @@ function handleMenuError(error: unknown): void {
 /**
  * 根据角色过滤菜单
  */
-const filterMenuByRoles = (menu: MenuListType[], roles: string[]): MenuListType[] => {
-  return menu.reduce((acc: MenuListType[], item) => {
+const filterMenuByRoles = (menu: AppRouteRecord[], roles: string[]): AppRouteRecord[] => {
+  return menu.reduce((acc: AppRouteRecord[], item) => {
     const itemRoles = item.meta?.roles
     const hasPermission = !itemRoles || itemRoles.some((role) => roles?.includes(role))
 
@@ -238,7 +238,7 @@ const filterMenuByRoles = (menu: MenuListType[], roles: string[]): MenuListType[
 /**
  * 验证菜单列表是否有效
  */
-function isValidMenuList(menuList: MenuListType[]): boolean {
+function isValidMenuList(menuList: AppRouteRecord[]): boolean {
   return Array.isArray(menuList) && menuList.length > 0
 }
 

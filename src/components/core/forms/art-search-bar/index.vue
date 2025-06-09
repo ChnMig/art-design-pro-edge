@@ -1,8 +1,8 @@
 <template>
   <section class="search-bar art-custom-card">
-    <el-form :model="filter" :label-position="props.labelPosition">
-      <el-row class="search-form-row" :gutter="props.gutter">
-        <el-col
+    <ElForm :model="filter" :label-position="props.labelPosition">
+      <ElRow class="search-form-row" :gutter="props.gutter">
+        <ElCol
           v-for="item in useFormItemArr"
           :key="item.prop"
           :xs="24"
@@ -11,15 +11,15 @@
           :lg="item.elColSpan || props.elColSpan"
           :xl="item.elColSpan || props.elColSpan"
         >
-          <el-form-item :label="`${item.label}`" :prop="item.prop" :label-width="props.labelWidth">
+          <ElFormItem :label="`${item.label}`" :prop="item.prop" :label-width="props.labelWidth">
             <component
               :is="getComponent(item.type)"
               v-model:value="filter[item.prop]"
               :item="item"
             />
-          </el-form-item>
-        </el-col>
-        <el-col
+          </ElFormItem>
+        </ElCol>
+        <ElCol
           :xs="24"
           :sm="24"
           :md="props.elColSpan"
@@ -38,9 +38,9 @@
             }"
           >
             <div class="form-buttons">
-              <el-button class="reset-button" @click="$emit('reset')" v-ripple>重置</el-button>
-              <el-button type="primary" class="search-button" @click="$emit('search')" v-ripple
-                >搜索</el-button
+              <ElButton class="reset-button" @click="$emit('reset')" v-ripple>重置</ElButton>
+              <ElButton type="primary" class="search-button" @click="$emit('search')" v-ripple
+                >搜索</ElButton
               >
             </div>
             <div
@@ -50,16 +50,16 @@
             >
               <span>{{ isShow ? '收起' : '展开' }}</span>
               <div class="icon-wrapper">
-                <el-icon>
+                <ElIcon>
                   <ArrowUpBold v-if="isShow" />
                   <ArrowDownBold v-else />
-                </el-icon>
+                </ElIcon>
               </div>
             </div>
           </div>
-        </el-col>
-      </el-row>
-    </el-form>
+        </ElCol>
+      </ElRow>
+    </ElForm>
   </section>
 </template>
 
@@ -71,7 +71,8 @@
   import ArtSearchSelect from './widget/art-search-select/index.vue'
   import ArtSearchRadio from './widget/art-search-radio/index.vue'
   import ArtSearchDate from './widget/art-search-date/index.vue'
-  import { SearchComponentType, SearchFormItem } from '@/types/search-form'
+  import { SearchComponentType, SearchFormItem } from '@/types'
+  import { ElForm } from 'element-plus'
 
   const { width } = useWindowSize()
   const isMobile = computed(() => width.value < 500)

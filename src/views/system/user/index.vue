@@ -35,7 +35,7 @@
           @size-change="handleSizeChange"
         >
           <template #default>
-            <el-table-column
+            <ElTableColumn
               v-for="col in filteredColumns"
               :key="col.prop || col.type"
               v-bind="col"
@@ -56,20 +56,20 @@
 
               <!-- 自定义性别列的渲染 -->
               <template #default="scope" v-else-if="col.prop === 'User.gender'">
-                <el-tag v-if="scope.row.User?.gender === 1" type="success" effect="light"
-                  >男</el-tag
+                <ElTag v-if="scope.row.User?.gender === 1" type="success" effect="light"
+                  >男</ElTag
                 >
-                <el-tag v-else-if="scope.row.User?.gender === 2" type="danger" effect="light"
-                  >女</el-tag
+                <ElTag v-else-if="scope.row.User?.gender === 2" type="danger" effect="light"
+                  >女</ElTag
                 >
                 <span v-else>--</span>
               </template>
 
               <!-- 自定义状态列的渲染 -->
               <template #default="scope" v-else-if="col.prop === 'User.status'">
-                <el-tag :type="getTagType(scope.row.User?.status)">
+                <ElTag :type="getTagType(scope.row.User?.status)">
                   {{ buildTagText(scope.row.User?.status) }}
-                </el-tag>
+                </ElTag>
               </template>
 
               <!-- 自定义操作列的渲染 -->
@@ -79,114 +79,114 @@
                   <ArtButtonTable type="delete" @click="handleDeleteUser(scope.row)" />
                 </div>
               </template>
-            </el-table-column>
+            </ElTableColumn>
           </template>
         </ArtTable>
       </ElCard>
     </div>
 
-    <el-dialog
+    <ElDialog
       v-model="dialogVisible"
       :title="dialogType === 'add' ? '添加用户' : '编辑用户'"
       width="600px"
       align-center
       :close-on-click-modal="false"
     >
-      <el-form ref="formRef" :model="formData" :rules="computedRules" label-width="85px">
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="账号" prop="username">
-              <el-input
+      <ElForm ref="formRef" :model="formData" :rules="computedRules" label-width="85px">
+        <ElRow :gutter="20">
+          <ElCol :span="12">
+            <ElFormItem label="账号" prop="username">
+              <ElInput
                 v-model="formData.username"
                 :disabled="dialogType === 'edit'"
                 placeholder="请输入账号"
               />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="用户名" prop="name">
-              <el-input v-model="formData.name" placeholder="请输入用户名" />
-            </el-form-item>
-          </el-col>
-        </el-row>
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="12">
+            <ElFormItem label="用户名" prop="name">
+              <ElInput v-model="formData.name" placeholder="请输入用户名" />
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
 
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="密码" prop="password">
-              <el-input
+        <ElRow :gutter="20">
+          <ElCol :span="12">
+            <ElFormItem label="密码" prop="password">
+              <ElInput
                 v-model="formData.password"
                 type="password"
                 show-password
                 :placeholder="dialogType === 'add' ? '请输入密码' : '不填则不修改密码'"
               />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="手机号" prop="phone">
-              <el-input v-model="formData.phone" placeholder="请输入手机号" />
-            </el-form-item>
-          </el-col>
-        </el-row>
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="12">
+            <ElFormItem label="手机号" prop="phone">
+              <ElInput v-model="formData.phone" placeholder="请输入手机号" />
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
 
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="性别" prop="gender">
-              <el-select v-model="formData.gender" placeholder="请选择性别" style="width: 100%">
-                <el-option label="请选择" :value="undefined" disabled></el-option>
-                <el-option label="男" :value="1" />
-                <el-option label="女" :value="2" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="部门" prop="department_id">
-              <el-select
+        <ElRow :gutter="20">
+          <ElCol :span="12">
+            <ElFormItem label="性别" prop="gender">
+              <ElSelect v-model="formData.gender" placeholder="请选择性别" style="width: 100%">
+                <ElOption label="请选择" :value="undefined" disabled></ElOption>
+                <ElOption label="男" :value="1" />
+                <ElOption label="女" :value="2" />
+              </ElSelect>
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="12">
+            <ElFormItem label="部门" prop="department_id">
+              <ElSelect
                 v-model="formData.department_id"
                 placeholder="请选择部门"
                 style="width: 100%"
               >
-                <el-option label="请选择" :value="undefined" disabled></el-option>
-                <el-option
+                <ElOption label="请选择" :value="undefined" disabled></ElOption>
+                <ElOption
                   v-for="item in departmentList"
                   :key="item.id"
                   :label="item.name"
                   :value="item.id"
                   :disabled="item.status !== 1"
                 />
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="角色" prop="role_id">
-              <el-select v-model="formData.role_id" placeholder="请选择角色" style="width: 100%">
-                <el-option label="请选择" :value="undefined" disabled></el-option>
-                <el-option
+              </ElSelect>
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
+        <ElRow :gutter="20">
+          <ElCol :span="12">
+            <ElFormItem label="角色" prop="role_id">
+              <ElSelect v-model="formData.role_id" placeholder="请选择角色" style="width: 100%">
+                <ElOption label="请选择" :value="undefined" disabled></ElOption>
+                <ElOption
                   v-for="item in roleList"
                   :key="item.id"
                   :label="item.name"
                   :value="item.id"
                   :disabled="item.status !== 1"
                 />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="启用">
-              <el-switch v-model="formData.status" :active-value="1" :inactive-value="2" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
+              </ElSelect>
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="12">
+            <ElFormItem label="启用">
+              <ElSwitch v-model="formData.status" :active-value="1" :inactive-value="2" />
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
+      </ElForm>
 
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="handleSubmit">确 定</el-button>
+          <ElButton @click="dialogVisible = false">取 消</ElButton>
+          <ElButton type="primary" @click="handleSubmit">确 定</ElButton>
         </div>
       </template>
-    </el-dialog>
+    </ElDialog>
   </ArtTableFullScreen>
 </template>
 
@@ -205,7 +205,7 @@
   import type { FormRules } from 'element-plus'
   import { ApiStatus } from '@/api/status'
   import { useCheckedColumns } from '@/composables/useCheckedColumns'
-  import { SearchFormItem } from '@/types/search-form'
+  import { SearchFormItem } from '@/types'
 
   // 状态变量
   const dialogType = ref('add')

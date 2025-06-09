@@ -35,7 +35,7 @@
           @size-change="handleSizeChange"
         >
           <template #default>
-            <el-table-column
+            <ElTableColumn
               v-for="col in filteredColumns"
               :key="col.prop || col.type"
               v-bind="col"
@@ -47,9 +47,9 @@
 
               <!-- 自定义状态列的渲染 -->
               <template #default="scope" v-else-if="col.prop === 'status'">
-                <el-tag :type="scope.row.status === 1 ? 'primary' : 'warning'">
+                <ElTag :type="scope.row.status === 1 ? 'primary' : 'warning'">
                   {{ scope.row.status === 1 ? '启用' : '禁用' }}
-                </el-tag>
+                </ElTag>
               </template>
 
               <!-- 自定义操作列的渲染 -->
@@ -59,13 +59,13 @@
                   <ArtButtonTable type="delete" @click="deleteDepartment(scope.row.id)" />
                 </div>
               </template>
-            </el-table-column>
+            </ElTableColumn>
           </template>
         </ArtTable>
       </ElCard>
     </div>
 
-    <el-dialog
+    <ElDialog
       v-model="dialogVisible"
       :title="dialogType === 'add' ? '添加部门' : '编辑部门'"
       width="600px"
@@ -73,40 +73,40 @@
       :close-on-click-modal="false"
       @closed="resetForm"
     >
-      <el-form ref="formRef" :model="formData" :rules="rules" label-width="85px">
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="名称" prop="name">
-              <el-input v-model="formData.name" placeholder="请输入部门名称" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="排序" prop="sort">
-              <el-input-number
+      <ElForm ref="formRef" :model="formData" :rules="rules" label-width="85px">
+        <ElRow :gutter="20">
+          <ElCol :span="12">
+            <ElFormItem label="名称" prop="name">
+              <ElInput v-model="formData.name" placeholder="请输入部门名称" />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :span="12">
+            <ElFormItem label="排序" prop="sort">
+              <ElInputNumber
                 v-model="formData.sort"
                 style="width: 100%"
                 :min="1"
                 controls-position="right"
                 placeholder="请输入排序号"
               />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="启用" prop="status">
-              <el-switch v-model="formData.status" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
+        <ElRow :gutter="20">
+          <ElCol :span="12">
+            <ElFormItem label="启用" prop="status">
+              <ElSwitch v-model="formData.status" />
+            </ElFormItem>
+          </ElCol>
+        </ElRow>
+      </ElForm>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="submitForm" :loading="submitLoading">提交</el-button>
+          <ElButton @click="dialogVisible = false">取消</ElButton>
+          <ElButton type="primary" @click="submitForm" :loading="submitLoading">提交</ElButton>
         </div>
       </template>
-    </el-dialog>
+    </ElDialog>
   </ArtTableFullScreen>
 </template>
 
@@ -122,7 +122,7 @@
   } from '@/api/system/api'
   import { ApiStatus } from '@/api/status'
   import { useCheckedColumns } from '@/composables/useCheckedColumns'
-  import { SearchFormItem } from '@/types/search-form'
+  import { SearchFormItem } from '@/types'
 
   // 状态变量
   const dialogType = ref('add')

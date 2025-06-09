@@ -137,7 +137,7 @@
   import { useFullscreen } from '@vueuse/core'
   import { ElMessageBox } from 'element-plus'
   import { HOME_PAGE } from '@/router/routesAlias'
-  import mittBus from '@/utils/mittBus'
+  import { mittBus } from '@/utils/sys'
   import { useMenuStore } from '@/store/modules/menu'
   import AppConfig from '@/config'
   import { themeAnimation } from '@/utils/theme/animation'
