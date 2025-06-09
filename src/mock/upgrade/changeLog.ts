@@ -10,6 +10,30 @@ interface UpgradeLog {
 
 export const upgradeLogList = ref<UpgradeLog[]>([
   {
+    version: 'v2.4.1.1',
+    title: '修复bug，用户体验优化',
+    date: '2025-06-07',
+    detail: [
+      '修复菜单管理折叠 bug',
+      '优化角色管理页面代码',
+      '修复表格数据为空高度无限变大bug',
+      'el-dialog视觉效果优化，支持配置线条',
+      '系统主题模式从Light改成跟随系统模式'
+    ]
+  },
+  {
+    version: 'v2.4.1',
+    title: '优化菜单交互体验、Echarts 图表性能优化',
+    date: '2025-06-07',
+    detail: [
+      '提升菜单操作跟手感',
+      '页面入场动画时间减少0.04s',
+      '修复 Echarts 图表组件在弹窗中不显示的 bug',
+      'Echarts 图表性能优化，新增可视区域初始化、内存泄漏防护、防抖处理',
+      '锁屏状下禁止使用开发者工具破解锁屏'
+    ]
+  },
+  {
     version: 'v2.4.0',
     title: '代码重构与资源优化',
     date: '2025-06-06',
