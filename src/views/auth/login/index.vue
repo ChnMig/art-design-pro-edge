@@ -80,7 +80,7 @@
   import { ElForm, ElMessage, ElNotification } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
   import { HOME_PAGE } from '@/router/routesAlias'
-  import { ApiStatus } from '@api/status'
+  import { ApiStatus } from '@/utils/http/status'
   import { SystemThemeEnum } from '@/enums/appEnum'
   import { useSettingStore } from '@/store/modules/setting'
   import type { FormInstance, FormRules } from 'element-plus'

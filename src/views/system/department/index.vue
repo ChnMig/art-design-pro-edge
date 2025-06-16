@@ -120,7 +120,7 @@
     updateDepartment,
     deleteDepartment as apiDeleteDepartment
   } from '@/api/system/api'
-  import { ApiStatus } from '@/api/status'
+  import { ApiStatus } from '@/utils/http/status'
   import { useCheckedColumns } from '@/composables/useCheckedColumns'
   import { SearchFormItem } from '@/types'
 

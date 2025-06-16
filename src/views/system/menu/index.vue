@@ -81,7 +81,7 @@
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { formatMenuTitle } from '@/router/utils/utils'
   import { getAllMenu, deleteMenu } from '@/api/system/api'
-  import { ApiStatus } from '@/api/status'
+  import { ApiStatus } from '@/utils/http/status'
   import menuInfo from './modal/menuInfo.vue'
   import authInfo from './modal/authInfo.vue'
   import { useAuth } from '@/composables/useAuth'

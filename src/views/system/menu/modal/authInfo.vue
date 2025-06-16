@@ -104,7 +104,7 @@
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
   import { getAuthList, addAuth, updateAuth, deleteAuth } from '@/api/system/api'
-  import { ApiStatus } from '@/api/status'
+  import { ApiStatus } from '@/utils/http/status'
   import { QuestionFilled } from '@element-plus/icons-vue'
 
   const emit = defineEmits(['refresh'])

@@ -136,7 +136,7 @@
   import { ElMessage } from 'element-plus'
   import { IconTypeEnum } from '@/enums/appEnum'
   import { addMenu, updateMenu } from '@/api/system/api'
-  import { ApiStatus } from '@/api/status'
+  import { ApiStatus } from '@/utils/http/status'
   import { QuestionFilled } from '@element-plus/icons-vue'
 
   const dialogVisible = ref(false)
