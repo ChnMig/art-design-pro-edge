@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { router } from '@/router'
-import { UserInfo } from '@/types/store'
 import { useSettingStore } from './setting'
 import { useWorktabStore } from './worktab'
 import { AppRouteRecord } from '@/types/router'
+import { setPageTitle } from '@/router/utils/utils'
 import { resetRouterState } from '@/router/guards/beforeEach'
 import { RoutesAlias } from '@/router/routesAlias'
 
@@ -15,7 +15,7 @@ export const useUserStore = defineStore(
     const isLogin = ref(false)
     const isLock = ref(false)
     const lockPassword = ref('')
-    const info = ref<Partial<UserInfo>>({})
+    const info = ref<Partial<Api.User.UserInfo>>({})
     const searchHistory = ref<AppRouteRecord[]>([])
     const accessToken = ref('')
     const refreshToken = ref('')
@@ -24,7 +24,7 @@ export const useUserStore = defineStore(
     const getSettingState = computed(() => useSettingStore().$state)
     const getWorktabState = computed(() => useWorktabStore().$state)
 
-    const setUserInfo = (newInfo: UserInfo) => {
+    const setUserInfo = (newInfo: Api.User.UserInfo) => {
       info.value = newInfo
     }
 

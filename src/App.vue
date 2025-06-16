@@ -8,7 +8,6 @@
   import { useUserStore } from './store/modules/user'
   import { getUserInfo } from './api/system/api'
   import { systemUpgrade } from './utils/sys'
-  import { ApiStatus } from '@api/status'
   import { setThemeTransitionClass } from './utils/theme/animation'
   import { checkStorageCompatibility } from './utils/storage'
 
@@ -32,9 +31,11 @@
   // 获取用户信息
   const getUserInfoData = async () => {
     if (userStore.isLogin) {
-      const res = await getUserInfo()
-      if (res.code === ApiStatus.SUCCESS) {
+      try {
+        const res = await getUserInfo()
         userStore.setUserInfo(res.data)
+      } catch (error) {
+        console.error('获取用户信息失败', error)
       }
     }
   }
