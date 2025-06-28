@@ -1,11 +1,13 @@
 <!-- 系统logo -->
 <template>
   <div class="art-logo">
-    <img :style="logoStyle" src="@imgs/common/logo.png" alt="logo" />
+    <img :style="logoStyle" src="@imgs/common/logo.webp" alt="logo" />
   </div>
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'ArtLogo' })
+
   interface Props {
     /** logo 大小 */
     size?: number | string
