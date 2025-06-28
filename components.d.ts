@@ -7,7 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    ArtBackToTop: typeof import('./src/components/core/base/ArtBackToTop.vue')['default']
+    ArtBackToTop: typeof import('./src/components/core/base/art-back-to-top/index.vue')['default']
     ArtBreadcrumb: typeof import('./src/components/core/layouts/art-breadcrumb/index.vue')['default']
     ArtButtonMore: typeof import('./src/components/core/forms/ArtButtonMore.vue')['default']
     ArtButtonTable: typeof import('./src/components/core/forms/ArtButtonTable.vue')['default']
@@ -19,7 +19,7 @@ declare module 'vue' {
     ArtGlobalSearch: typeof import('./src/components/core/layouts/art-global-search/index.vue')['default']
     ArtHeaderBar: typeof import('./src/components/core/layouts/art-header-bar/index.vue')['default']
     ArtHorizontalMenu: typeof import('./src/components/core/layouts/art-menus/art-horizontal-menu/index.vue')['default']
-    ArtIconSelector: typeof import('./src/components/core/base/ArtIconSelector.vue')['default']
+    ArtIconSelector: typeof import('./src/components/core/base/art-icon-selector/index.vue')['default']
     ArtMenuRight: typeof import('./src/components/core/others/ArtMenuRight.vue')['default']
     ArtMixedMenu: typeof import('./src/components/core/layouts/art-menus/art-mixed-menu/index.vue')['default']
     ArtPageContent: typeof import('./src/components/core/layouts/art-page-content/index.vue')['default']
