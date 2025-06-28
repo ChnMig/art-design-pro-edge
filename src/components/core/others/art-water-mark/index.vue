@@ -1,8 +1,8 @@
-<!-- 全局水印组件 -->
+<!-- 水印组件 -->
 <template>
   <div v-if="watermarkVisible" class="layout-watermark" :style="{ zIndex: zIndex }">
     <el-watermark
-      :content="effectiveContent"
+      :content="content"
       :font="{ fontSize: fontSize, color: fontColor }"
       :rotate="rotate"
       :gap="[gapX, gapY]"
@@ -14,30 +14,40 @@
 </template>
 
 <script setup lang="ts">
+  import AppConfig from '@/config'
   import { useSettingStore } from '@/store/modules/setting'
+
+  defineOptions({ name: 'ArtWatermark' })
+
   const settingStore = useSettingStore()
   const { watermarkVisible } = storeToRefs(settingStore)
-  import { computed } from 'vue'
-  import { useUserStore } from '@/store/modules/user'
-  const userStore = useUserStore()
 
   interface WatermarkProps {
+    /** 水印内容 */
     content?: string
+    /** 水印是否可见 */
     visible?: boolean
+    /** 水印字体大小 */
     fontSize?: number
+    /** 水印字体颜色 */
     fontColor?: string
+    /** 水印旋转角度 */
     rotate?: number
+    /** 水印间距X */
     gapX?: number
+    /** 水印间距Y */
     gapY?: number
+    /** 水印偏移X */
     offsetX?: number
+    /** 水印偏移Y */
     offsetY?: number
+    /** 水印层级 */
     zIndex?: number
   }
 
-  // 定义组件属性，设置默认值
   withDefaults(defineProps<WatermarkProps>(), {
-    content: undefined,
-    visible: true,
+    content: AppConfig.systemInfo.name,
+    visible: false,
     fontSize: 16,
     fontColor: 'rgba(128, 128, 128, 0.2)',
     rotate: -22,
@@ -47,10 +57,6 @@
     offsetY: 50,
     zIndex: 3100
   })
-  // 添加计算属性处理默认值
-  const effectiveContent = computed(
-    () => userStore.getUserInfo.id + ' | ' + userStore.getUserInfo.username
-  )
 </script>
 
 <style lang="scss" scoped>
