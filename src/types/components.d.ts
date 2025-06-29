@@ -9,8 +9,8 @@ declare module 'vue' {
   export interface GlobalComponents {
     ArtBackToTop: typeof import('./../components/core/base/art-back-to-top/index.vue')['default']
     ArtBreadcrumb: typeof import('./../components/core/layouts/art-breadcrumb/index.vue')['default']
-    ArtButtonMore: typeof import('./../components/core/forms/ArtButtonMore.vue')['default']
-    ArtButtonTable: typeof import('./../components/core/forms/ArtButtonTable.vue')['default']
+    ArtButtonMore: typeof import('./../components/core/forms/art-button-more/index.vue')['default']
+    ArtButtonTable: typeof import('./../components/core/forms/art-button-table/index.vue')['default']
     ArtDragVerify: typeof import('./../components/core/forms/ArtDragVerify.vue')['default']
     ArtEditor: typeof import('./../components/core/forms/ArtEditor.vue')['default']
     ArtExcelExport: typeof import('./../components/core/forms/ArtExcelExport.vue')['default']
