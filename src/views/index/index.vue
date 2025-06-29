@@ -1,4 +1,5 @@
 <template>
+  <!-- 布局容器 -->
   <ArtLayouts>
     <!-- 顶栏、水平/混合菜单 -->
     <ArtHeaderBar />
@@ -12,12 +13,14 @@
     <ArtGlobalSearch />
     <!-- 屏幕锁定 -->
     <ArtScreenLock />
-    <!-- 编辑信息组件 -->
-    <EditInfo />
     <!-- 水印效果 -->
     <ArtWatermark />
   </ArtLayouts>
 </template>
+
+<script setup lang="ts">
+  defineOptions({ name: 'IndexLayout' })
+</script>
 
 <style lang="scss" scoped>
   @use './style';

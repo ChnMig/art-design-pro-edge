@@ -11,6 +11,3 @@ export enum RoutesAlias {
   Dashboard = '/dashboard/console', // 工作台
   Analysis = '/dashboard/analysis' // 分析页
 }
-
-// 主页路由
-export const HOME_PAGE = RoutesAlias.Dashboard

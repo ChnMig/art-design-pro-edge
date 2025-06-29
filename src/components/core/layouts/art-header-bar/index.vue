@@ -94,7 +94,13 @@
             popper-style="border: 1px solid var(--art-border-dashed-color); border-radius: calc(var(--custom-radius) / 2 + 4px); padding: 5px 16px; 5px 16px;"
           >
             <template #reference>
-              <img class="cover" :src="userInfo.avatar" ref="userAvatarRef" tabindex="-1" />
+              <img
+                class="cover"
+                :src="userInfo.avatar"
+                ref="userAvatarRef"
+                tabindex="-1"
+                alt="avatar"
+              />
             </template>
             <template #default>
               <div class="user-menu-box">
@@ -133,7 +139,6 @@
   import { useUserStore } from '@/store/modules/user'
   import { useFullscreen } from '@vueuse/core'
   import { ElMessageBox } from 'element-plus'
-  import { HOME_PAGE } from '@/router/routesAlias'
   import { mittBus } from '@/utils/sys'
   import { useMenuStore } from '@/store/modules/menu'
   import AppConfig from '@/config'
@@ -170,6 +175,8 @@
   const isDualMenu = computed(() => menuType.value === MenuTypeEnum.DUAL_MENU)
   const isTopMenu = computed(() => menuType.value === MenuTypeEnum.TOP)
   const isTopLeftMenu = computed(() => menuType.value === MenuTypeEnum.TOP_LEFT)
+
+  import { useCommon } from '@/composables/useCommon'
 
   const { width } = useWindowSize()
 
@@ -216,7 +223,7 @@
   }
 
   const toHome = () => {
-    router.push(HOME_PAGE)
+    router.push(useCommon().homePath.value)
   }
 
   const lockScreen = () => {

@@ -30,11 +30,9 @@
         >
           <div class="action-buttons-wrapper" :style="actionButtonsStyle">
             <div class="form-buttons">
-              <ElButton class="reset-button" @click="handleReset" v-ripple>
-                {{ t('table.searchBar.reset') }}
-              </ElButton>
+              <ElButton class="reset-button" @click="handleReset" v-ripple> 重置 </ElButton>
               <ElButton type="primary" class="search-button" @click="handleSearch" v-ripple>
-                {{ t('table.searchBar.search') }}
+                搜索
               </ElButton>
             </div>
             <div v-if="shouldShowExpandToggle" class="filter-toggle" @click="toggleExpand">
@@ -56,7 +54,6 @@
 <script setup lang="ts">
   import { ArrowUpBold, ArrowDownBold } from '@element-plus/icons-vue'
   import { useWindowSize } from '@vueuse/core'
-  import { useI18n } from 'vue-i18n'
   import { markRaw } from 'vue'
   import ArtSearchInput from './widget/art-search-input/index.vue'
   import ArtSearchSelect from './widget/art-search-select/index.vue'
@@ -68,7 +65,6 @@
   defineOptions({ name: 'ArtSearchBar' })
 
   const { width } = useWindowSize()
-  const { t } = useI18n()
   const isMobile = computed(() => width.value < 500)
 
   type FilterValue = string | number | undefined | null | unknown[]
@@ -174,7 +170,7 @@
    * 展开/收起按钮文本
    */
   const expandToggleText = computed(() => {
-    return isExpanded.value ? t('table.searchBar.collapse') : t('table.searchBar.expand')
+    return isExpanded.value ? '收起' : '展开'
   })
 
   /**

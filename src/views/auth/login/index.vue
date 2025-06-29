@@ -79,7 +79,6 @@
   import AppConfig from '@/config'
   import { ElForm, ElMessage, ElNotification } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
-  import { HOME_PAGE } from '@/router/routesAlias'
   import { ApiStatus } from '@/utils/http/status'
   import { SystemThemeEnum } from '@/enums/appEnum'
   import { useSettingStore } from '@/store/modules/setting'
@@ -151,7 +150,7 @@
             showLoginSuccessNotice()
             // 跳转首页
             console.log('登录成功，跳转首页')
-            router.push(HOME_PAGE)
+            router.push('/')
           } else {
             ElMessage.error(res.message)
             refreshCaptcha()
