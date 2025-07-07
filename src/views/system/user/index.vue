@@ -156,6 +156,7 @@ import type { FormRules } from 'element-plus'
 import { ApiStatus } from '@/utils/http/status'
 import { useTable } from '@/composables/useTable'
 import { SearchFormItem } from '@/types'
+import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
 
   // 状态变量
   const dialogType = ref('add')
@@ -227,11 +228,12 @@ import { SearchFormItem } from '@/types'
           fixed: 'right',
           formatter: (row: any) =>
             h('div', { class: 'operation-column-container' }, [
-              h(resolveComponent('ArtButtonTable'), {
+              h(ArtButtonTable, {
                 type: 'edit',
+                style: 'margin-right: 8px;',
                 onClick: () => showDialog('edit', row)
               }),
-              h(resolveComponent('ArtButtonTable'), {
+              h(ArtButtonTable, {
                 type: 'delete',
                 onClick: () => handleDeleteUser(row)
               })
