@@ -67,20 +67,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, h, resolveComponent, nextTick } from 'vue'
+  import { ref, reactive, h, resolveComponent, nextTick } from 'vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
   import { getRoleList, addRole, updateRole, deleteRole } from '@/api/system/api'
   import RoleAuth from './auth.vue'
-import { useTable } from '@/composables/useTable'
-import ArtButtonMore from '@/components/core/forms/art-button-more/index.vue'
-// 由于 ButtonMoreItem 仅为类型，需单独定义类型
-type ButtonMoreItem = {
-  key: string | number
-  label: string
-  disabled?: boolean
-  auth?: string
-}
+  import { useTable } from '@/composables/useTable'
+  import ArtButtonMore from '@/components/core/forms/art-button-more/index.vue'
+  // 由于 ButtonMoreItem 仅为类型，需单独定义类型
+  type ButtonMoreItem = {
+    key: string | number
+    label: string
+    disabled?: boolean
+    auth?: string
+  }
   import { SearchFormItem } from '@/types'
 
   // 搜索表单配置项
@@ -132,100 +132,100 @@ type ButtonMoreItem = {
     desc: [{ required: true, message: '请输入角色描述', trigger: 'blur' }]
   })
 
-// 操作按钮列表
-const actionButtons: ButtonMoreItem[] = [
-  { key: 'permission', label: '菜单权限' },
-  { key: 'edit', label: '编辑角色' },
-  { key: 'delete', label: '删除角色' }
-]
+  // 操作按钮列表
+  const actionButtons: ButtonMoreItem[] = [
+    { key: 'permission', label: '菜单权限' },
+    { key: 'edit', label: '编辑角色' },
+    { key: 'delete', label: '删除角色' }
+  ]
 
-// useTable 适配
-const {
-  columns,
-  columnChecks,
-  tableData: data,
-  isLoading: loading,
-  paginationState: pagination,
-  searchState: searchParams,
-  searchData: getDataByPage,
-  resetSearch: resetSearchParams,
-  onPageSizeChange: handleSizeChange,
-  onCurrentPageChange: handleCurrentChange,
-  refreshAll: refresh
-} = useTable<any>({
-  core: {
-    apiFn: getRoleList,
-    apiParams: {
-      page: 1,
-      pageSize: 10,
-      name: '',
-      status: undefined
+  // useTable 适配
+  const {
+    columns,
+    columnChecks,
+    tableData: data,
+    isLoading: loading,
+    paginationState: pagination,
+    searchState: searchParams,
+    searchData: getDataByPage,
+    resetSearch: resetSearchParams,
+    onPageSizeChange: handleSizeChange,
+    onCurrentPageChange: handleCurrentChange,
+    refreshAll: refresh
+  } = useTable<any>({
+    core: {
+      apiFn: getRoleList,
+      apiParams: {
+        page: 1,
+        pageSize: 10,
+        name: '',
+        status: undefined
+      },
+      columnsFactory: () => [
+        { type: 'index', width: 60, label: '序号' },
+        {
+          prop: 'name',
+          label: '角色名称',
+          align: 'center'
+        },
+        {
+          prop: 'desc',
+          label: '描述',
+          align: 'center',
+          showOverflowTooltip: true
+        },
+        {
+          prop: 'users',
+          label: '用户数量',
+          align: 'center',
+          formatter: (row: any) => (Array.isArray(row.users) ? row.users.length : 0)
+        },
+        {
+          prop: 'status',
+          label: '状态',
+          align: 'center',
+          formatter: (row: any) =>
+            h(
+              resolveComponent('ElTag'),
+              { type: row.status === 1 ? 'primary' : 'warning' },
+              { default: () => (row.status === 1 ? '启用' : '禁用') }
+            )
+        },
+        {
+          prop: 'operation',
+          label: '操作',
+          align: 'center',
+          width: 160,
+          fixed: 'right',
+          formatter: (row: any) =>
+            h('div', { class: 'operation-column-container' }, [
+              h(ArtButtonMore, {
+                list: actionButtons,
+                onClick: (item: ButtonMoreItem) => buttonMoreClick(item, row)
+              })
+            ])
+        }
+      ]
     },
-    columnsFactory: () => [
-      { type: 'index', width: 60, label: '序号' },
-      {
-        prop: 'name',
-        label: '角色名称',
-        align: 'center'
-      },
-      {
-        prop: 'desc',
-        label: '描述',
-        align: 'center',
-        showOverflowTooltip: true
-      },
-      {
-        prop: 'users',
-        label: '用户数量',
-        align: 'center',
-        formatter: (row: any) => (Array.isArray(row.users) ? row.users.length : 0)
-      },
-      {
-        prop: 'status',
-        label: '状态',
-        align: 'center',
-        formatter: (row: any) =>
-          h(
-            resolveComponent('ElTag'),
-            { type: row.status === 1 ? 'primary' : 'warning' },
-            { default: () => (row.status === 1 ? '启用' : '禁用') }
-          )
-      },
-      {
-        prop: 'operation',
-        label: '操作',
-        align: 'center',
-        width: 160,
-        fixed: 'right',
-        formatter: (row: any) =>
-          h('div', { class: 'operation-column-container' }, [
-            h(ArtButtonMore, {
-              list: actionButtons,
-              onClick: (item: ButtonMoreItem) => buttonMoreClick(item, row)
-            })
-          ])
-      }
-    ]
-  },
-  hooks: {
-    onError: (error) => ElMessage.error(error.message)
-  }
-})
+    hooks: {
+      onError: (error) => ElMessage.error(error.message)
+    }
+  })
 
-// 操作按钮点击事件
-const buttonMoreClick = (item: ButtonMoreItem, row: any) => {
-  switch (item.key) {
-    case 'permission':
-      showPermissionDrawer(row)
-      break
-    case 'edit':
-      showDialog('edit', row)
-      break
-    case 'delete':
-      deleteRoleAction(row.id)
-      break
+  // 操作按钮点击事件
+  const buttonMoreClick = (item: ButtonMoreItem, row: any) => {
+    switch (item.key) {
+      case 'permission':
+        showPermissionDrawer(row)
+        break
+      case 'edit':
+        showDialog('edit', row)
+        break
+      case 'delete':
+        deleteRoleAction(row.id)
+        break
+    }
   }
-}
 
   // 弹窗相关
   const showDialog = (type: string, row?: any) => {
