@@ -204,7 +204,7 @@
   import { ElMessageBox, ElMessage } from 'element-plus'
   import type { FormRules } from 'element-plus'
   import { ApiStatus } from '@/utils/http/status'
-  import { useCheckedColumns } from '@/composables/useCheckedColumns'
+  import { useCheckedColumns } from '@/composables/useTableColumns'
   import { SearchFormItem } from '@/types'
 
   // 状态变量

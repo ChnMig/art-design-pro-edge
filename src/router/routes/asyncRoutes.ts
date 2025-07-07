@@ -16,7 +16,7 @@ export const asyncRoutes: AppRouteRecord[] = [
     id: 1,
     name: 'Dashboard',
     path: '/dashboard',
-    component: RoutesAlias.Home,
+    component: RoutesAlias.Layout,
     meta: {
       title: '仪表盘',
       icon: '&#xe721;',

@@ -14,12 +14,12 @@
           <div :class="['sales-card art-custom-card']">
             <i class="iconfont-sys" :class="item.class" v-html="item.iconfont"></i>
             <h2>
-              <CountTo
+              <ArtCountTo
                 class="number box-title"
                 :endVal="item.value"
                 :duration="1000"
                 separator=""
-              ></CountTo>
+              ></ArtCountTo>
             </h2>
             <p>{{ item.label }}</p>
             <small>{{ item.change }} 较昨天</small>
@@ -32,7 +32,6 @@
 
 <script setup lang="ts">
   import { ref } from 'vue'
-  import { CountTo } from 'vue3-count-to'
 
   const salesData = ref([
     {

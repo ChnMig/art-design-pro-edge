@@ -34,6 +34,8 @@
   import ContainerSettings from './widget/ContainerSettings.vue'
   import BasicSettings from './widget/BasicSettings.vue'
 
+  defineOptions({ name: 'ArtSettingsPanel' })
+
   interface Props {
     open?: boolean
   }

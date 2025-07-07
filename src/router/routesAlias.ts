@@ -1,6 +1,6 @@
 // 路由别名
 export enum RoutesAlias {
-  Home = '/index/index', // 首页
+  Layout = '/index/index', // 首页
   Login = '/auth/login', // 登录
   ForgetPassword = '/auth/forget-password', // 忘记密码
   Exception403 = '/exception/403', // 403

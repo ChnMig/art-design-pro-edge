@@ -121,7 +121,7 @@
     deleteDepartment as apiDeleteDepartment
   } from '@/api/system/api'
   import { ApiStatus } from '@/utils/http/status'
-  import { useCheckedColumns } from '@/composables/useCheckedColumns'
+  import { useCheckedColumns } from '@/composables/useTableColumns'
   import { SearchFormItem } from '@/types'
 
   // 状态变量
