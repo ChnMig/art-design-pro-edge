@@ -78,6 +78,7 @@
 <script setup lang="ts">
   import { ref, reactive, h, resolveComponent } from 'vue'
   import { ElMessageBox, ElMessage } from 'element-plus'
+  import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   import type { FormInstance, FormRules } from 'element-plus'
   import {
     getDepartmentList,
@@ -201,11 +202,12 @@
           fixed: 'right',
           formatter: (row: any) =>
             h('div', { class: 'operation-column-container' }, [
-              h(resolveComponent('ArtButtonTable'), {
+              h(ArtButtonTable, {
                 type: 'edit',
+                style: 'margin-right: 8px;',
                 onClick: () => showDialog('edit', row)
               }),
-              h(resolveComponent('ArtButtonTable'), {
+              h(ArtButtonTable, {
                 type: 'delete',
                 onClick: () => deleteDepartment(row.id)
               })
