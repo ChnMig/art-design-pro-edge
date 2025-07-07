@@ -25,10 +25,10 @@
         <ArtBreadcrumb v-if="(showCrumbs && isLeftMenu) || (showCrumbs && isDualMenu)" />
 
         <!-- 顶部菜单 -->
-        <ArtHorizontalMenu v-if="isTopMenu" :list="menuList" :width="menuTopWidth" />
+        <ArtHorizontalMenu v-if="isTopMenu" :list="menuList" />
 
         <!-- 混合菜单-顶部 -->
-        <ArtMixedMenu v-if="isTopLeftMenu" :list="menuList" :width="menuTopWidth" />
+        <ArtMixedMenu v-if="isTopLeftMenu" :list="menuList" />
       </div>
 
       <div class="right">
@@ -59,7 +59,7 @@
 
         <!-- 设置 -->
         <div class="btn-box" @click="openSetting">
-          <el-popover :visible="showSettingGuide" placement="bottom-start" :width="190" :offset="0">
+          <ElPopover :visible="showSettingGuide" placement="bottom-start" :width="190" :offset="0">
             <template #reference>
               <div class="btn setting-btn">
                 <i class="iconfont-sys">&#xe6d0;</i>
@@ -71,7 +71,7 @@
                 <span :style="{ color: systemThemeColor }"> 开启顶栏菜单 </span>等更多配置
               </p>
             </template>
-          </el-popover>
+          </ElPopover>
         </div>
         <!-- 切换主题 -->
         <div class="btn-box" @click="themeAnimation">
@@ -82,7 +82,7 @@
 
         <!-- 用户头像、菜单 -->
         <div class="user">
-          <el-popover
+          <ElPopover
             ref="userMenuPopover"
             placement="bottom-end"
             :width="240"
@@ -125,7 +125,7 @@
                 </ul>
               </div>
             </template>
-          </el-popover>
+          </ElPopover>
         </div>
       </div>
     </div>
@@ -134,22 +134,29 @@
 </template>
 
 <script setup lang="ts">
+  import { useRouter } from 'vue-router'
+  import { ElMessageBox } from 'element-plus'
+  import { useFullscreen, useWindowSize } from '@vueuse/core'
+  import { mittBus } from '@/utils/sys'
+  import { themeAnimation } from '@/utils/theme/animation'
+  import { useCommon } from '@/composables/useCommon'
   import { MenuTypeEnum, MenuWidth } from '@/enums/appEnum'
   import { useSettingStore } from '@/store/modules/setting'
   import { useUserStore } from '@/store/modules/user'
-  import { useFullscreen } from '@vueuse/core'
-  import { ElMessageBox } from 'element-plus'
-  import { mittBus } from '@/utils/sys'
   import { useMenuStore } from '@/store/modules/menu'
   import AppConfig from '@/config'
-  import { themeAnimation } from '@/utils/theme/animation'
   import { nextTick, ref } from 'vue' // Ensure ref is imported
+
+  defineOptions({ name: 'ArtHeaderBar' })
 
   const isWindows = navigator.userAgent.includes('Windows')
 
+  const router = useRouter()
+  const { width } = useWindowSize()
+  const menuStore = useMenuStore()
+
   const settingStore = useSettingStore()
   const userStore = useUserStore()
-  const router = useRouter()
 
   const {
     showMenuButton,
@@ -165,7 +172,7 @@
 
   const { getUserInfo: userInfo } = storeToRefs(userStore)
 
-  const { menuList } = storeToRefs(useMenuStore())
+  const { menuList } = storeToRefs(menuStore)
 
   const showNotice = ref(false)
   const userMenuPopover = ref()
@@ -175,14 +182,6 @@
   const isDualMenu = computed(() => menuType.value === MenuTypeEnum.DUAL_MENU)
   const isTopMenu = computed(() => menuType.value === MenuTypeEnum.TOP)
   const isTopLeftMenu = computed(() => menuType.value === MenuTypeEnum.TOP_LEFT)
-
-  import { useCommon } from '@/composables/useCommon'
-
-  const { width } = useWindowSize()
-
-  const menuTopWidth = computed(() => {
-    return width.value * 0.5
-  })
 
   onMounted(() => {
     document.addEventListener('click', bodyCloseNotice)
@@ -194,7 +193,7 @@
 
   const { isFullscreen, toggle: toggleFullscreen } = useFullscreen()
 
-  const toggleFullScreen = () => {
+  const toggleFullScreen = (): void => {
     toggleFullscreen()
   }
 
@@ -218,20 +217,20 @@
     return isMenuOpen ? `calc(100% - ${getMenuOpenWidth})` : `calc(100% - ${MenuWidth.CLOSE})`
   }
 
-  const visibleMenu = () => {
+  const visibleMenu = (): void => {
     settingStore.setMenuOpen(!menuOpen.value)
   }
 
-  const toHome = () => {
+  const toHome = (): void => {
     router.push(useCommon().homePath.value)
   }
 
-  const lockScreen = () => {
+  const lockScreen = (): void => {
     console.log('lockScreen')
     mittBus.emit('openLockScreen')
   }
 
-  const openEditInfo = () => {
+  const openEditInfo = (): void => {
     closeUserMenu()
     nextTick(() => {
       // Explicitly move focus back to the avatar before opening the dialog
@@ -261,7 +260,7 @@
     }, time)
   }
 
-  const openSetting = () => {
+  const openSetting = (): void => {
     mittBus.emit('openSetting')
 
     // 隐藏设置引导
@@ -272,11 +271,11 @@
     // settingStore.openSettingGuide()
   }
 
-  const openSearchDialog = () => {
+  const openSearchDialog = (): void => {
     mittBus.emit('openSearchDialog')
   }
 
-  const bodyCloseNotice = (e: any) => {
+  const bodyCloseNotice = (e: any): void => {
     let { className } = e.target
 
     if (showNotice.value) {
@@ -290,7 +289,7 @@
     }
   }
 
-  const closeUserMenu = () => {
+  const closeUserMenu = (): void => {
     // Check if userMenuPopover.value exists and has a hide method
     if (userMenuPopover.value && typeof userMenuPopover.value.hide === 'function') {
       userMenuPopover.value.hide()

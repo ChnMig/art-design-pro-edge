@@ -51,7 +51,10 @@ export const setSystemTheme = (to: RouteLocationNormalized): void => {
  */
 export const formatMenuTitle = (title: string): string => {
   if (title) {
-    return title.startsWith('menus.') ? '标题' : title
+    if (title.startsWith('menus.')) {
+      return title.split('.').pop() || title
+    }
+    return title
   }
   return ''
 }

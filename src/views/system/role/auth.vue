@@ -187,7 +187,7 @@
         const authNodes = menuCopy.meta.authList.map((auth) => ({
           id: `auth_${menu.id}_${auth.id}`, // 创建唯一ID
           title: auth.title,
-          auth_mark: auth.auth_mark,
+          authMark: auth.authMark,
           originalAuthId: auth.id,
           parentMenuId: menu.id,
           isAuth: true, // 标记为权限节点
