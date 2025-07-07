@@ -3,11 +3,11 @@
     <div class="user-page" id="table-full-screen">
       <!-- 搜索栏 -->
       <ArtSearchBar
-        v-model:filter="searchForm"
+        v-model:filter="searchState"
         :items="searchItems"
         @reset="resetSearch"
-        @search="search"
-      ></ArtSearchBar>
+        @search="searchData"
+      />
 
       <ElCard shadow="never" class="art-table-card">
         <!-- 表格头部 -->
@@ -24,64 +24,14 @@
         <!-- 表格 -->
         <ArtTable
           :data="tableData"
-          :currentPage="pagination.currentPage"
-          :pageSize="pagination.pageSize"
-          :total="pagination.total"
-          :loading="loading"
-          :hideOnSinglePage="false"
-          :marginTop="10"
-          height="100%"
-          @current-change="handleCurrentChange"
-          @size-change="handleSizeChange"
-        >
-          <template #default>
-            <ElTableColumn
-              v-for="col in filteredColumns"
-              :key="col.prop || col.type"
-              v-bind="col"
-            >
-              <!-- 自定义用户名和账号列的渲染 -->
-              <template #default="scope" v-if="col.prop === 'User.name'">
-                {{ scope.row.User?.name || '--' }}
-              </template>
-
-              <template #default="scope" v-else-if="col.prop === 'User.username'">
-                {{ scope.row.User?.username || '--' }}
-              </template>
-
-              <!-- 自定义手机号列的渲染 -->
-              <template #default="scope" v-else-if="col.prop === 'User.phone'">
-                {{ scope.row.User?.phone || '--' }}
-              </template>
-
-              <!-- 自定义性别列的渲染 -->
-              <template #default="scope" v-else-if="col.prop === 'User.gender'">
-                <ElTag v-if="scope.row.User?.gender === 1" type="success" effect="light"
-                  >男</ElTag
-                >
-                <ElTag v-else-if="scope.row.User?.gender === 2" type="danger" effect="light"
-                  >女</ElTag
-                >
-                <span v-else>--</span>
-              </template>
-
-              <!-- 自定义状态列的渲染 -->
-              <template #default="scope" v-else-if="col.prop === 'User.status'">
-                <ElTag :type="getTagType(scope.row.User?.status)">
-                  {{ buildTagText(scope.row.User?.status) }}
-                </ElTag>
-              </template>
-
-              <!-- 自定义操作列的渲染 -->
-              <template #default="scope" v-else-if="col.prop === 'operation'">
-                <div class="operation-column-container">
-                  <ArtButtonTable type="edit" @click="showDialog('edit', scope.row)" />
-                  <ArtButtonTable type="delete" @click="handleDeleteUser(scope.row)" />
-                </div>
-              </template>
-            </ElTableColumn>
-          </template>
-        </ArtTable>
+          :columns="columns"
+          :pagination="paginationState"
+          :loading="isLoading"
+          :table-config="{ rowKey: 'User.id' }"
+          :layout="{ marginTop: 10 }"
+          @pagination:size-change="onPageSizeChange"
+          @pagination:current-change="onCurrentPageChange"
+        />
       </ElCard>
     </div>
 
@@ -191,32 +141,122 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, onMounted, nextTick, computed } from 'vue'
-  import {
-    getUserList,
-    addUser,
-    updateUser,
-    deleteUser as apiDeleteUser,
-    getDepartmentList,
-    getRoleList
-  } from '@/api/system/api'
-  import { FormInstance } from 'element-plus'
-  import { ElMessageBox, ElMessage } from 'element-plus'
-  import type { FormRules } from 'element-plus'
-  import { ApiStatus } from '@/utils/http/status'
-  import { useCheckedColumns } from '@/composables/useTableColumns'
-  import { SearchFormItem } from '@/types'
+import { ref, reactive, nextTick, computed, h, resolveComponent, onMounted } from 'vue'
+import {
+  getUserList,
+  addUser,
+  updateUser,
+  deleteUser as apiDeleteUser,
+  getDepartmentList,
+  getRoleList
+} from '@/api/system/api'
+import { FormInstance } from 'element-plus'
+import { ElMessageBox, ElMessage } from 'element-plus'
+import type { FormRules } from 'element-plus'
+import { ApiStatus } from '@/utils/http/status'
+import { useTable } from '@/composables/useTable'
+import { SearchFormItem } from '@/types'
 
   // 状态变量
   const dialogType = ref('add')
   const dialogVisible = ref(false)
-  const loading = ref(false)
-  const tableData = ref([])
-  const pagination = reactive({
-    currentPage: 1,
-    pageSize: 10,
-    total: 0
+  // useTable 适配
+  const tableApi = useTable<any>({
+    core: {
+      apiFn: getUserList,
+      apiParams: {
+        page: 1,
+        pageSize: 10,
+        name: '',
+        username: '',
+        phone: '',
+        department_id: undefined,
+        role_id: undefined
+      },
+      columnsFactory: () => [
+        { type: 'index', width: 60, label: '序号' },
+        {
+          prop: 'User.name',
+          label: '用户名',
+          align: 'center',
+          formatter: (row: any) => row.User?.name || '--'
+        },
+        {
+          prop: 'User.username',
+          label: '账号',
+          align: 'center',
+          formatter: (row: any) => row.User?.username || '--'
+        },
+        {
+          prop: 'User.phone',
+          label: '手机号',
+          align: 'center',
+          formatter: (row: any) => row.User?.phone || '--'
+        },
+        {
+          prop: 'User.gender',
+          label: '性别',
+          align: 'center',
+          formatter: (row: any) => {
+            if (row.User?.gender === 1) return h(resolveComponent('ElTag'), { type: 'success', effect: 'light' }, { default: () => '男' })
+            if (row.User?.gender === 2) return h(resolveComponent('ElTag'), { type: 'danger', effect: 'light' }, { default: () => '女' })
+            return '--'
+          }
+        },
+        {
+          prop: 'department_name',
+          label: '部门',
+          align: 'center'
+        },
+        {
+          prop: 'role_name',
+          label: '角色',
+          align: 'center'
+        },
+        {
+          prop: 'User.status',
+          label: '状态',
+          align: 'center',
+          formatter: (row: any) => h(resolveComponent('ElTag'), { type: getTagType(row.User?.status) }, { default: () => buildTagText(row.User?.status) })
+        },
+        {
+          prop: 'operation',
+          label: '操作',
+          align: 'center',
+          width: 120,
+          fixed: 'right',
+          formatter: (row: any) =>
+            h('div', { class: 'operation-column-container' }, [
+              h(resolveComponent('ArtButtonTable'), {
+                type: 'edit',
+                onClick: () => showDialog('edit', row)
+              }),
+              h(resolveComponent('ArtButtonTable'), {
+                type: 'delete',
+                onClick: () => handleDeleteUser(row)
+              })
+            ])
+        }
+      ]
+    },
+    hooks: {
+      onError: (error) => ElMessage.error(error.message)
+    }
   })
+
+  const {
+    tableData,
+    isLoading,
+    columns,
+    columnChecks,
+    paginationState,
+    searchState,
+    searchData,
+    resetSearch,
+    onPageSizeChange,
+    onCurrentPageChange
+  } = tableApi
+  const refreshAll = tableApi.refreshAll
 
   // 添加部门列表和角色列表的响应式数据
   const departmentList = ref<any[]>([])
@@ -320,54 +360,7 @@
     { label: '操作', prop: 'operation' }
   ]
 
-  // 动态列配置
-  const { columnChecks, columns } = useCheckedColumns(() => [
-    {
-      prop: 'User.name',
-      label: '用户名',
-      align: 'center'
-    },
-    {
-      prop: 'User.username',
-      label: '账号',
-      align: 'center'
-    },
-    {
-      prop: 'User.phone',
-      label: '手机号',
-      align: 'center'
-    },
-    {
-      prop: 'User.gender',
-      label: '性别',
-      align: 'center'
-    },
-    {
-      prop: 'department_name',
-      label: '部门',
-      align: 'center'
-    },
-    {
-      prop: 'role_name',
-      label: '角色',
-      align: 'center'
-    },
-    {
-      prop: 'User.status',
-      label: '状态',
-      align: 'center'
-    },
-    {
-      prop: 'operation',
-      label: '操作',
-      align: 'center'
-    }
-  ])
-
-  // 根据列选中状态筛选得到最终显示的列
-  const filteredColumns = computed(() => {
-    return columns.value
-  })
+  // 已由 useTable 管理
 
   // 表单实例引用
   const formRef = ref<FormInstance>()
@@ -375,59 +368,17 @@
 
   // 刷新表格数据
   const handleRefresh = () => {
-    tableData.value = []
-    loading.value = true
-    loadUserList()
+    refreshAll()
   }
 
-  // 加载用户列表数据
-  const loadUserList = async () => {
-    loading.value = true
-    try {
-      // 构建搜索参数，过滤掉undefined和空字符串
-      const params: any = {
-        page: pagination.currentPage,
-        pageSize: pagination.pageSize
-      }
-
-      // 只添加有值的搜索条件
-      if (searchForm.name) params.name = searchForm.name
-      if (searchForm.username) params.username = searchForm.username
-      if (searchForm.phone) params.phone = searchForm.phone
-      if (searchForm.department_id) params.department_id = searchForm.department_id
-      if (searchForm.role_id) params.role_id = searchForm.role_id
-
-      const res = await getUserList(params)
-      if (res.code === 200) {
-        tableData.value = res.data || []
-
-        // 使用返回值中的count字段作为总数
-        if (res.count !== undefined) {
-          pagination.total = res.count
-        } else if (res.meta && res.meta.count) {
-          pagination.total = res.meta.count
-        } else if (res.meta && res.meta.total) {
-          pagination.total = res.meta.total
-        } else {
-          pagination.total = res.data?.length || 0
-        }
-      } else {
-        ElMessage.error(res.message || '获取用户列表失败')
-      }
-    } catch (err) {
-      console.error('获取用户列表出错:', err)
-      ElMessage.error('获取用户列表失败')
-    } finally {
-      loading.value = false
-    }
-  }
+  // 用户列表数据已由 useTable 管理
 
   // 加载部门列表数据
   const loadDepartmentList = async () => {
     try {
       const res = await getDepartmentList()
       if (res.code === ApiStatus.success) {
-        departmentList.value = res.data || []
+        departmentList.value = res.data?.data || res.data || []
       } else {
         ElMessage.error(res.message || '获取部门列表失败')
       }
@@ -442,7 +393,7 @@
     try {
       const res = await getRoleList()
       if (res.code === ApiStatus.success) {
-        roleList.value = res.data || []
+        roleList.value = res.data?.data || res.data || []
       } else {
         ElMessage.error(res.message || '获取角色列表失败')
       }
@@ -452,35 +403,7 @@
     }
   }
 
-  // 页码变化处理
-  const handleCurrentChange = (page: number) => {
-    pagination.currentPage = page
-    loadUserList()
-  }
-
-  // 每页条数变化处理
-  const handleSizeChange = (size: number) => {
-    pagination.pageSize = size
-    pagination.currentPage = 1
-    loadUserList()
-  }
-
-  // 搜索处理
-  const search = () => {
-    pagination.currentPage = 1
-    loadUserList()
-  }
-
-  // 重置搜索
-  const resetSearch = () => {
-    searchForm.name = ''
-    searchForm.username = ''
-    searchForm.phone = ''
-    searchForm.department_id = undefined
-    searchForm.role_id = undefined
-    pagination.currentPage = 1
-    loadUserList()
-  }
+  // 分页、搜索、重置逻辑已由 useTable 管理
 
   // 显示对话框
   const showDialog = (type: string, row?: any) => {
@@ -542,7 +465,7 @@
           const res = await apiDeleteUser(userId)
           if (res.code === 200) {
             ElMessage.success('删除用户成功')
-            loadUserList()
+            refreshAll()
           } else {
             ElMessage.error(res.message || '删除用户失败')
           }
@@ -616,7 +539,7 @@
         password: [
           { required: false },
           {
-            validator: (rule, value, callback) => {
+            validator: (rule: any, value: any, callback: any) => {
               if (!value || value === '') {
                 callback()
               } else if (value.length < 6 || value.length > 20) {
@@ -643,7 +566,7 @@
 
           // 如果是编辑模式且密码为空，则删除密码字段
           if (dialogType.value === 'edit' && !submitData.password) {
-            delete submitData.password
+            ;(submitData as any).password = undefined
           }
 
           let res
@@ -656,7 +579,7 @@
           if (res.code === 200) {
             ElMessage.success(dialogType.value === 'add' ? '添加成功' : '更新成功')
             dialogVisible.value = false
-            loadUserList()
+            refreshAll()
           } else {
             ElMessage.error(res.message || (dialogType.value === 'add' ? '添加失败' : '更新失败'))
           }
@@ -668,10 +591,9 @@
     })
   }
 
-  // 初始化加载数据
-  onMounted(async () => {
-    // 并行加载所有数据
-    await Promise.all([loadUserList(), loadDepartmentList(), loadRoleList()])
+  // 初始化加载部门和角色数据
+onMounted(async () => {
+    await Promise.all([loadDepartmentList(), loadRoleList()])
   })
 </script>
 
