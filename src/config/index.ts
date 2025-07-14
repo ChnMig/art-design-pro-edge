@@ -1,10 +1,11 @@
 /**
  * 系统配置
- * 包含：系统信息、系统主题、菜单主题、菜单布局、系统主色、系统主色列表、系统主色、系统其他项默认配置
+ * 包含：系统信息、系统主题、菜单主题、菜单布局、系统主色、系统主色列表、系统主色、系统其他项默认配置、快速入口配置
  */
 import { MenuThemeEnum, MenuTypeEnum, SystemThemeEnum } from '@/enums/appEnum'
 import { SystemConfig } from '@/types/config'
 import { configImages } from './assets/images'
+import { headerBarConfig } from './headerBar'
 
 const appConfig: SystemConfig = {
   // 系统信息
@@ -130,7 +131,9 @@ const appConfig: SystemConfig = {
     defaultMenuWidth: 240, // 菜单宽度
     defaultCustomRadius: '0.75', // 自定义圆角
     defaultTabStyle: 'tab-default' // 标签样式
-  }
+  },
+  // 顶部栏功能配置
+  headerBar: headerBarConfig
 }
 
 export default Object.freeze(appConfig)

@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ArtWatermark: typeof import('./src/components/core/others/art-water-mark/index.vue')['default']
     ArtBackToTop: typeof import('./src/components/core/base/art-back-to-top/index.vue')['default']
     ArtBreadcrumb: typeof import('./src/components/core/layouts/art-breadcrumb/index.vue')['default']
     ArtButtonMore: typeof import('./src/components/core/forms/art-button-more/index.vue')['default']

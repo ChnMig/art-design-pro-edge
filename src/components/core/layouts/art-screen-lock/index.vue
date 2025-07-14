@@ -24,7 +24,7 @@
               <ElInput
                 v-model="formData.password"
                 type="password"
-                :placeholder="请输入密码"
+                placeholder="请输入密码"
                 :show-password="true"
                 ref="lockInputRef"
                 @keyup.enter="handleLock"
@@ -57,7 +57,7 @@
             <ElInput
               v-model="unlockForm.password"
               type="password"
-              :placeholder="请输入密码"
+              placeholder="请输入密码"
               :show-password="true"
               ref="unlockInputRef"
             >
@@ -117,7 +117,7 @@
     password: [
       {
         required: true,
-        message: t('lockScreen.lock.inputPlaceholder'),
+        message: '请输入密码',
         trigger: 'blur'
       }
     ]

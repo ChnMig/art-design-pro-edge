@@ -37,6 +37,8 @@ export const useSettingStore = defineStore(
     // 界面显示设置
     /** 是否显示菜单按钮 */
     const showMenuButton = ref(true)
+    /** 是否显示快速入口 */
+    const showFastEnter = ref(true)
     /** 是否显示刷新按钮 */
     const showRefreshButton = ref(true)
     /** 是否显示面包屑 */
@@ -52,7 +54,7 @@ export const useSettingStore = defineStore(
     /** 是否显示节日文本 */
     const showFestivalText = ref(false)
     /** 是否显示水印 */
-    const watermarkVisible = ref(false)
+    const watermarkVisible = ref(true)
 
     // 功能设置
     /** 是否自动关闭 */
@@ -114,6 +116,14 @@ export const useSettingStore = defineStore(
      */
     const getCustomRadius = computed((): string => {
       return customRadius.value + 'rem' || defaultCustomRadius + 'rem'
+    })
+
+    /**
+     * 是否显示烟花
+     * 根据当前日期和节日日期判断是否显示烟花效果
+     */
+    const isShowFireworks = computed((): boolean => {
+      return festivalDate.value === useCeremony().currentFestivalData.value?.date ? false : true
     })
 
     /**
@@ -186,6 +196,13 @@ export const useSettingStore = defineStore(
      */
     const setButton = () => {
       showMenuButton.value = !showMenuButton.value
+    }
+
+    /**
+     * 切换快速入口显示
+     */
+    const setFastEnter = () => {
+      showFastEnter.value = !showFastEnter.value
     }
 
     /**
@@ -344,6 +361,7 @@ export const useSettingStore = defineStore(
       boxBorderMode,
       uniqueOpened,
       showMenuButton,
+      showFastEnter,
       showRefreshButton,
       showCrumbs,
       autoClose,
@@ -367,6 +385,7 @@ export const useSettingStore = defineStore(
       isDark,
       getMenuOpenWidth,
       getCustomRadius,
+      isShowFireworks,
       switchMenuLayouts,
       setMenuOpenWidth,
       setGlopTheme,
@@ -376,6 +395,7 @@ export const useSettingStore = defineStore(
       setContainerWidth,
       setUniqueOpened,
       setButton,
+      setFastEnter,
       setAutoClose,
       setShowRefreshButton,
       setCrumbs,

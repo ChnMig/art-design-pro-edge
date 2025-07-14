@@ -1,8 +1,8 @@
 <!-- 水印组件 -->
 <template>
-  <div v-if="watermarkVisible" class="layout-watermark" :style="{ zIndex: zIndex }">
+  <div class="layout-watermark" :style="{ zIndex: zIndex }">
     <el-watermark
-      :content="content"
+      :content="effectiveContent"
       :font="{ fontSize: fontSize, color: fontColor }"
       :rotate="rotate"
       :gap="[gapX, gapY]"
@@ -16,6 +16,8 @@
 <script setup lang="ts">
   import AppConfig from '@/config'
   import { useSettingStore } from '@/store/modules/setting'
+  import { useUserStore } from '@/store/modules/user'
+  const userStore = useUserStore()
 
   defineOptions({ name: 'ArtWatermark' })
 
@@ -57,6 +59,11 @@
     offsetY: 50,
     zIndex: 3100
   })
+
+  // 添加计算属性处理默认值
+  const effectiveContent = computed(
+    () => userStore.getUserInfo.id + ' | ' + userStore.getUserInfo.username
+  )
 </script>
 
 <style lang="scss" scoped>

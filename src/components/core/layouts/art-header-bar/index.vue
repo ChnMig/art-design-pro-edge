@@ -9,20 +9,22 @@
         </div>
         <ArtLogo class="logo2" @click="toHome" />
         <!-- 菜单按钮 -->
-        <div class="btn-box" v-if="isLeftMenu && showMenuButton">
+        <div class="btn-box" v-if="isLeftMenu && shouldShowMenuButton">
           <div class="btn menu-btn">
             <i class="iconfont-sys" @click="visibleMenu">&#xe6ba;</i>
           </div>
         </div>
         <!-- 刷新按钮 -->
-        <div class="btn-box" v-if="showRefreshButton">
+        <div class="btn-box" v-if="shouldShowRefreshButton">
           <div class="btn refresh-btn" :style="{ marginLeft: !isLeftMenu ? '10px' : '0' }">
             <i class="iconfont-sys" @click="reload()"> &#xe6b3; </i>
           </div>
         </div>
 
         <!-- 面包屑 -->
-        <ArtBreadcrumb v-if="(showCrumbs && isLeftMenu) || (showCrumbs && isDualMenu)" />
+        <ArtBreadcrumb
+          v-if="(shouldShowBreadcrumb && isLeftMenu) || (shouldShowBreadcrumb && isDualMenu)"
+        />
 
         <!-- 顶部菜单 -->
         <ArtHorizontalMenu v-if="isTopMenu" :list="menuList" />
@@ -33,7 +35,7 @@
 
       <div class="right">
         <!-- 搜索 -->
-        <div class="search-wrap">
+        <div class="search-wrap" v-if="shouldShowGlobalSearch">
           <div class="search-input" @click="openSearchDialog">
             <div class="left">
               <i class="iconfont-sys">&#xe710;</i>
@@ -48,7 +50,7 @@
         </div>
 
         <!-- 全屏按钮 -->
-        <div class="btn-box screen-box" @click="toggleFullScreen">
+        <div class="btn-box screen-box" v-if="shouldShowFullscreen" @click="toggleFullScreen">
           <div
             class="btn"
             :class="{ 'full-screen-btn': !isFullscreen, 'exit-full-screen-btn': isFullscreen }"
@@ -58,7 +60,7 @@
         </div>
 
         <!-- 设置 -->
-        <div class="btn-box" @click="openSetting">
+        <div class="btn-box" v-if="shouldShowSettings" @click="openSetting">
           <ElPopover :visible="showSettingGuide" placement="bottom-start" :width="190" :offset="0">
             <template #reference>
               <div class="btn setting-btn">
@@ -74,7 +76,7 @@
           </ElPopover>
         </div>
         <!-- 切换主题 -->
-        <div class="btn-box" @click="themeAnimation">
+        <div class="btn-box" v-if="shouldShowThemeToggle" @click="themeAnimation">
           <div class="btn theme-btn">
             <i class="iconfont-sys">{{ isDark ? '&#xe6b5;' : '&#xe725;' }}</i>
           </div>
@@ -146,6 +148,7 @@
   import { useMenuStore } from '@/store/modules/menu'
   import AppConfig from '@/config'
   import { nextTick, ref } from 'vue' // Ensure ref is imported
+  import { useHeaderBar } from '@/composables/useHeaderBar'
 
   defineOptions({ name: 'ArtHeaderBar' })
 
@@ -159,16 +162,17 @@
   const userStore = useUserStore()
 
   const {
-    showMenuButton,
-    showRefreshButton,
-    menuOpen,
-    showCrumbs,
-    systemThemeColor,
-    showSettingGuide,
-    menuType,
-    isDark,
-    tabStyle
-  } = storeToRefs(settingStore)
+    shouldShowMenuButton,
+    shouldShowRefreshButton,
+    shouldShowBreadcrumb,
+    shouldShowGlobalSearch,
+    shouldShowFullscreen,
+    shouldShowSettings,
+    shouldShowThemeToggle
+  } = useHeaderBar()
+
+  const { menuOpen, systemThemeColor, showSettingGuide, menuType, isDark, tabStyle } =
+    storeToRefs(settingStore)
 
   const { getUserInfo: userInfo } = storeToRefs(userStore)
 
