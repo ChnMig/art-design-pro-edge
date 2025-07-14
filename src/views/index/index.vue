@@ -14,7 +14,7 @@
     <!-- 屏幕锁定 -->
     <ArtScreenLock />
     <!-- 水印效果 -->
-    <ArtWatermark />
+    <ArtWaterMark />
   </ArtLayouts>
 </template>
 

@@ -39,7 +39,6 @@ declare module 'vue' {
     ArtTableFullScreen: typeof import('./../components/core/tables/ArtTableFullScreen.vue')['default']
     ArtTableHeader: typeof import('./../components/core/tables/art-table-header/index.vue')['default']
     ArtWangEditor: typeof import('./../components/core/forms/ArtWangEditor.vue')['default']
-    ArtWatermark: typeof import('../components/core/others/art-water-mark/index.vue')['default']
     ArtWaterMark: typeof import('./../components/core/others/art-water-mark/index.vue')['default']
     ArtWorkTab: typeof import('./../components/core/layouts/art-work-tab/index.vue')['default']
     BasicSettings: typeof import('./../components/core/layouts/art-settings-panel/widget/BasicSettings.vue')['default']

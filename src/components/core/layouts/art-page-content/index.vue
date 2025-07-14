@@ -5,9 +5,6 @@
     :class="{ 'no-basic-layout': isFullPage }"
     :style="containerStyle"
   >
-    <!-- 节日滚动 -->
-    <ArtFestivalTextScroll v-if="!isFullPage" />
-
     <RouterView v-if="isRefresh" v-slot="{ Component, route }" :style="contentStyle">
       <!-- 路由信息调试 -->
       <div v-if="isOpenRouteInfo === 'true'" class="route-info">
