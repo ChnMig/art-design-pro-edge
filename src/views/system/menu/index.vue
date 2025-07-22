@@ -7,7 +7,12 @@
         >
       </el-col>
     </el-row>
-    <ArtTable :data="tableData" :pagination="false">
+    <el-table
+      :data="tableData"
+      row-key="id"
+      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+      :default-expand-all="isExpanded"
+    >
       <template #default>
         <el-table-column label="菜单名称" align="center">
           <template #default="scope">
@@ -48,7 +53,7 @@
           </template>
         </el-table-column>
       </template>
-    </ArtTable>
+    </el-table>
     <!-- 引用菜单弹窗组件 -->
     <menu-info ref="menuModalRef" @refresh="refreshMenuList" />
     <!-- 引用权限弹窗组件 -->
@@ -87,6 +92,7 @@
   import { useAuth } from '@/composables/useAuth'
   const { hasAuth } = useAuth()
   const tableData = ref<any[]>([])
+  const isExpanded = ref(true) // 默认全部展开，可根据需要切换
   const menuModalRef = ref()
   const authModalRef = ref()
   onMounted(async () => {
