@@ -15,6 +15,8 @@
     <ArtScreenLock />
     <!-- 水印效果 -->
     <ArtWaterMark />
+    <!-- 编辑信息 -->
+    <ArtEditInfo />
   </ArtLayouts>
 </template>
 

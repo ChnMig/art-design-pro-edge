@@ -13,6 +13,7 @@ declare module 'vue' {
     ArtButtonTable: typeof import('./../components/core/forms/art-button-table/index.vue')['default']
     ArtCountTo: typeof import('./../components/core/text-effect/art-count-to/index.vue')['default']
     ArtDragVerify: typeof import('./../components/core/forms/ArtDragVerify.vue')['default']
+    ArtEditInfo: typeof import('./../components/core/layouts/art-edit-info/index.vue')['default']
     ArtEditor: typeof import('./../components/core/forms/ArtEditor.vue')['default']
     ArtExcelExport: typeof import('./../components/core/forms/ArtExcelExport.vue')['default']
     ArtExcelImport: typeof import('./../components/core/forms/ArtExcelImport.vue')['default']
