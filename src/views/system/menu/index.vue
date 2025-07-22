@@ -1,122 +1,271 @@
 <template>
-  <div class="page-content">
-    <el-row :gutter="12">
-      <el-col :span="3" class="el-col2">
-        <el-button @click="showMenuModal('add-menu-levle1', null, true)" v-ripple
-          >添加菜单</el-button
-        >
-      </el-col>
-    </el-row>
-    <el-table
-      :data="tableData"
-      row-key="id"
-      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-      :default-expand-all="isExpanded"
-    >
-      <template #default>
-        <el-table-column label="菜单名称" align="center">
-          <template #default="scope">
-            {{ formatMenuTitle(scope.row.meta?.title) }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="path" label="路由" align="center" />
-        <el-table-column prop="meta.authList" label="元素权限">
-          <template #default="scope">
-            <el-badge
-              :value="scope.row.meta.authList?.length || 0"
-              class="item"
-              type="primary"
-              :show-zero="false"
-            >
-              <el-button
-                class="share-button"
-                icon="More"
-                size="small"
-                style="margin: 0; text-align: right"
-                @click="showAuthModal(scope.row)"
-              />
-            </el-badge>
-          </template>
-        </el-table-column>
-        <el-table-column label="状态" align="center">
-          <template #default="scope">
-            <el-tag :type="scope.row.meta.isEnable ? 'primary' : 'warning'">
-              {{ scope.row.meta.isEnable ? '启用' : '禁用' }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column fixed="right" label="操作" align="center">
-          <template #default="scope">
-            <ArtButtonTable type="add" @click="showMenuModal('add-menu-levle2', scope.row)" />
-            <ArtButtonTable type="edit" @click="handleEdit('edit', scope.row)" />
-            <ArtButtonTable type="delete" @click="delMenu(scope.row.id)" />
-          </template>
-        </el-table-column>
-      </template>
-    </el-table>
-    <!-- 引用菜单弹窗组件 -->
-    <menu-info ref="menuModalRef" @refresh="refreshMenuList" />
-    <!-- 引用权限弹窗组件 -->
-    <auth-info ref="authModalRef" @refresh="refreshMenuList" />
-    <el-dialog
-      :title="dialogTitle"
-      v-model="dialogVisible"
-      width="700px"
-      align-center
-      :close-on-click-modal="false"
-    >
-      <!-- 内容不变... -->
-    </el-dialog>
+  <ArtTableFullScreen>
+    <div class="page-content" id="table-full-screen">
+      <!-- 搜索栏 -->
+      <ArtSearchBar
+        v-model:filter="searchState"
+        :items="searchItems"
+        @reset="resetSearch"
+        @search="searchData"
+      />
 
-    <!-- 添加/编辑权限的弹窗 -->
-    <el-dialog
-      :title="isEditingAuth ? '编辑权限' : '添加权限'"
-      v-model="authFormVisible"
-      width="500px"
-      append-to-body
-      :close-on-click-modal="false"
-    >
-      <!-- 内容不变... -->
-    </el-dialog>
-  </div>
+      <ElCard shadow="never" class="art-table-card">
+        <!-- 表格头部 -->
+        <ArtTableHeader
+          :columnList="columnOptions"
+          v-model:columns="columnChecks"
+          @refresh="handleRefresh"
+        >
+          <template #left>
+            <ElButton @click="showMenuModal('add-menu-levle1', null, true)" v-ripple>
+              添加菜单
+            </ElButton>
+          </template>
+        </ArtTableHeader>
+
+        <!-- 表格 -->
+        <ArtTable
+          :data="tableData"
+          :columns="columns"
+          :loading="isLoading"
+          row-key="id"
+          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+          :default-expand-all="isExpanded"
+          :layout="{ marginTop: 10 }"
+          :show-pagination="false"
+        />
+      </ElCard>
+
+      <!-- 引用菜单弹窗组件 -->
+      <menu-info ref="menuModalRef" @refresh="refreshMenuList" />
+      <!-- 引用权限弹窗组件 -->
+      <auth-info ref="authModalRef" @refresh="refreshMenuList" />
+      <el-dialog
+        :title="dialogTitle"
+        v-model="dialogVisible"
+        width="700px"
+        align-center
+        :close-on-click-modal="false"
+      >
+        <!-- 内容不变... -->
+      </el-dialog>
+
+      <!-- 添加/编辑权限的弹窗 -->
+      <el-dialog
+        :title="isEditingAuth ? '编辑权限' : '添加权限'"
+        v-model="authFormVisible"
+        width="500px"
+        append-to-body
+        :close-on-click-modal="false"
+      >
+        <!-- 内容不变... -->
+      </el-dialog>
+    </div>
+  </ArtTableFullScreen>
 </template>
 
 <script setup lang="ts">
-  import { onMounted, ref } from 'vue'
+  import { onMounted, ref, computed, h, resolveComponent } from 'vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { formatMenuTitle } from '@/router/utils/utils'
   import { getAllMenu, deleteMenu } from '@/api/system/api'
   import { ApiStatus } from '@/utils/http/status'
+  import { useTable } from '@/composables/useTable'
+  import { SearchFormItem } from '@/types'
   import menuInfo from './modal/menuInfo.vue'
   import authInfo from './modal/authInfo.vue'
-  import { useAuth } from '@/composables/useAuth'
-  const { hasAuth } = useAuth()
-  const tableData = ref<any[]>([])
-  const isExpanded = ref(true) // 默认全部展开，可根据需要切换
+  import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
+  const isExpanded = ref(true) // 默认全部展开
   const menuModalRef = ref()
   const authModalRef = ref()
-  onMounted(async () => {
-    await refreshMenuList()
-  })
-  const refreshMenuList = async () => {
-    // 向后端查询数据
-    const menuRes = await getAllMenu()
-    if (menuRes.code === ApiStatus.success) {
-      tableData.value = menuRes.data
-    } else {
-      ElMessage.error('获取菜单列表失败')
-      tableData.value = []
+
+  // 使用 useTable 管理表格数据
+  const tableApi = useTable<any>({
+    core: {
+      apiFn: getAllMenu,
+      immediate: true,
+      columnsFactory: () => [
+        {
+          prop: 'meta.title',
+          label: '菜单名称',
+          align: 'center',
+          formatter: (row: any) => formatMenuTitle(row.meta?.title) || '--'
+        },
+        {
+          prop: 'path',
+          label: '路由',
+          align: 'center'
+        },
+        {
+          prop: 'meta.authList',
+          label: '元素权限',
+          align: 'center',
+          formatter: (row: any) =>
+            h('div', { class: 'auth-list-cell' }, [
+              h(
+                'el-badge',
+                {
+                  value: row.meta?.authList?.length || 0,
+                  type: 'primary',
+                  'show-zero': false
+                },
+                {
+                  default: () =>
+                    h('el-button', {
+                      class: 'share-button',
+                      icon: 'More',
+                      size: 'small',
+                      style: 'margin: 0; text-align: right',
+                      onClick: () => showAuthModal(row)
+                    })
+                }
+              )
+            ])
+        },
+        {
+          prop: 'meta.isEnable',
+          label: '状态',
+          align: 'center',
+          formatter: (row: any) =>
+            h(
+              resolveComponent('ElTag'),
+              {
+                type: row.meta?.isEnable ? 'primary' : 'warning'
+              },
+              {
+                default: () => (row.meta?.isEnable ? '启用' : '禁用')
+              }
+            )
+        },
+        {
+          prop: 'operation',
+          label: '操作',
+          align: 'center',
+          width: 180,
+          fixed: 'right',
+          formatter: (row: any) =>
+            h('div', { class: 'operation-column-container' }, [
+              h(ArtButtonTable, {
+                type: 'add',
+                style: 'margin-right: 8px;',
+                onClick: () => showMenuModal('add-menu-levle2', row)
+              }),
+              h(ArtButtonTable, {
+                type: 'edit',
+                style: 'margin-right: 8px;',
+                onClick: () => handleEdit('edit', row)
+              }),
+              h(ArtButtonTable, {
+                type: 'delete',
+                onClick: () => delMenu(row.id)
+              })
+            ])
+        }
+      ]
+    },
+    transform: {
+      responseAdapter: (response) => {
+        if (response.code === ApiStatus.success) {
+          return {
+            data: response.data || [],
+            total: response.data?.length || 0,
+            current: 1,
+            size: response.data?.length || 0
+          }
+        } else {
+          throw new Error(response.message || '获取菜单列表失败')
+        }
+      }
+    },
+    hooks: {
+      onError: (error) => ElMessage.error(error.message)
     }
+  })
+
+  const { tableData, isLoading, columns, columnChecks, refreshAll } = tableApi
+
+  // 单独创建搜索状态和相关方法
+  const searchState = ref<Record<string, any>>({})
+
+  // 搜索相关方法
+  const searchData = () => {
+    refreshAll()
   }
+
+  const resetSearch = () => {
+    searchState.value = {}
+    refreshAll()
+  }
+
+  // 搜索表单配置项
+  const searchItems: SearchFormItem[] = [
+    {
+      label: '菜单名称',
+      prop: 'title',
+      type: 'input',
+      elColSpan: 6,
+      config: {
+        clearable: true,
+        placeholder: '请输入菜单名称'
+      }
+    },
+    {
+      label: '路由',
+      prop: 'path',
+      type: 'input',
+      elColSpan: 6,
+      config: {
+        clearable: true,
+        placeholder: '请输入路由路径'
+      }
+    },
+    {
+      label: '状态',
+      prop: 'isEnable',
+      type: 'select',
+      elColSpan: 6,
+      config: {
+        clearable: true,
+        placeholder: '请选择状态'
+      },
+      options: () => [
+        { label: '启用', value: '1' },
+        { label: '禁用', value: '0' }
+      ]
+    }
+  ]
+
+  // 列配置选项
+  const columnOptions = [
+    { label: '菜单名称', prop: 'meta.title' },
+    { label: '路由', prop: 'path' },
+    { label: '元素权限', prop: 'meta.authList' },
+    { label: '状态', prop: 'meta.isEnable' },
+    { label: '操作', prop: 'operation' }
+  ]
+
+  // 刷新表格数据
+  const handleRefresh = () => {
+    refreshAll()
+  }
+
+  // 刷新菜单列表（兼容原有方法）
+  const refreshMenuList = async () => {
+    await refreshAll()
+  }
+
   const showMenuModal = (type: string, row?: any, lock: boolean = false) => {
     menuModalRef.value.showModal(type, row, lock)
   }
+
   const handleEdit = (type: string, row: any) => {
     showMenuModal('menu', row, true)
   }
+
   const showAuthModal = (row: any) => {
     authModalRef.value.showModal(row)
   }
+
   const delMenu = async (id: number) => {
     try {
       await ElMessageBox.confirm('确定要删除该菜单吗？删除后无法恢复', '提示', {
@@ -138,6 +287,16 @@
       }
     }
   }
+
+  // 兼容原有的 dialogVisible 等变量（如果弹窗组件需要）
+  const dialogVisible = ref(false)
+  const authFormVisible = ref(false)
+  const dialogTitle = computed(() => '菜单详情')
+  const isEditingAuth = ref(false)
+
+  onMounted(async () => {
+    // useTable 会自动加载数据，这里不需要手动调用
+  })
 </script>
 
 <style lang="scss" scoped>
@@ -154,6 +313,18 @@
       height: 30px !important;
       padding: 0 10px !important;
       font-size: 12px !important;
+    }
+
+    .auth-list-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .operation-column-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 
