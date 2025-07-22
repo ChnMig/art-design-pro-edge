@@ -1,14 +1,6 @@
 <template>
   <ArtTableFullScreen>
     <div class="page-content" id="table-full-screen">
-      <!-- 搜索栏 -->
-      <ArtSearchBar
-        v-model:filter="searchState"
-        :items="searchItems"
-        @reset="resetSearch"
-        @search="searchData"
-      />
-
       <ElCard shadow="never" class="art-table-card">
         <!-- 表格头部 -->
         <ArtTableHeader
@@ -71,11 +63,10 @@
   import { getAllMenu, deleteMenu } from '@/api/system/api'
   import { ApiStatus } from '@/utils/http/status'
   import { useTable } from '@/composables/useTable'
-  import { SearchFormItem } from '@/types'
   import menuInfo from './modal/menuInfo.vue'
   import authInfo from './modal/authInfo.vue'
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
-  const isExpanded = ref(true) // 默认全部展开
+  const isExpanded = ref(false) // 默认全部收起
   const menuModalRef = ref()
   const authModalRef = ref()
 
@@ -183,57 +174,6 @@
   })
 
   const { tableData, isLoading, columns, columnChecks, refreshAll } = tableApi
-
-  // 单独创建搜索状态和相关方法
-  const searchState = ref<Record<string, any>>({})
-
-  // 搜索相关方法
-  const searchData = () => {
-    refreshAll()
-  }
-
-  const resetSearch = () => {
-    searchState.value = {}
-    refreshAll()
-  }
-
-  // 搜索表单配置项
-  const searchItems: SearchFormItem[] = [
-    {
-      label: '菜单名称',
-      prop: 'title',
-      type: 'input',
-      elColSpan: 6,
-      config: {
-        clearable: true,
-        placeholder: '请输入菜单名称'
-      }
-    },
-    {
-      label: '路由',
-      prop: 'path',
-      type: 'input',
-      elColSpan: 6,
-      config: {
-        clearable: true,
-        placeholder: '请输入路由路径'
-      }
-    },
-    {
-      label: '状态',
-      prop: 'isEnable',
-      type: 'select',
-      elColSpan: 6,
-      config: {
-        clearable: true,
-        placeholder: '请选择状态'
-      },
-      options: () => [
-        { label: '启用', value: '1' },
-        { label: '禁用', value: '0' }
-      ]
-    }
-  ]
 
   // 列配置选项
   const columnOptions = [
