@@ -6,7 +6,6 @@
 
 <script setup lang="ts">
   import { useUserStore } from './store/modules/user'
-  import { getUserInfo } from './api/system/api'
   import { systemUpgrade } from './utils/sys'
   import { setThemeTransitionClass } from './utils/theme/animation'
   import { checkStorageCompatibility } from './utils/storage'
@@ -24,19 +23,5 @@
     setThemeTransitionClass(false)
     // 系统升级
     systemUpgrade()
-    // 获取用户信息
-    getUserInfo()
   })
-
-  // 获取用户信息
-  const getUserInfoData = async () => {
-    if (userStore.isLogin) {
-      try {
-        const res = await getUserInfo()
-        userStore.setUserInfo(res.data)
-      } catch (error) {
-        console.error('获取用户信息失败', error)
-      }
-    }
-  }
 </script>

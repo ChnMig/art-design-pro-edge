@@ -8,7 +8,6 @@ import { setWorktab } from '@/utils/navigation'
 import { setPageTitle, setSystemTheme } from '../utils/utils'
 import { getUserMenu } from '@/api/system/api'
 import { registerDynamicRoutes } from '../utils/registerRoutes'
-import { ApiStatus } from '@/utils/http/status'
 import { AppRouteRecord } from '@/types/router'
 import { RoutesAlias } from '../routesAlias'
 import { menuDataToRouter } from '../utils/menuToRouter'
@@ -16,15 +15,30 @@ import { asyncRoutes } from '../routes/asyncRoutes'
 import { loadingService } from '@/utils/ui'
 import { useCommon } from '@/composables/useCommon'
 import { useWorktabStore } from '@/store/modules/worktab'
+import { getUserInfo } from '@/api/system/api'
+import { useUserStore } from '@/store/modules/user'
+import { ApiStatus } from '@/utils/http/status'
 
 // 前端权限模式 loading 关闭延时，提升用户体验
-const LOADING_DELAY = 300
+const LOADING_DELAY = 100
 
 // 是否已注册动态路由
 const isRouteRegistered = ref(false)
 
 // 跟踪是否需要关闭 loading
 const pendingLoading = ref(false)
+
+// 获取用户信息
+const getUserInfoData = async () => {
+  if (userStore.isLogin) {
+    try {
+      const res = await getUserInfo()
+      userStore.setUserInfo(res.data)
+    } catch (error) {
+      console.error('获取用户信息失败', error)
+    }
+  }
+}
 
 /**
  * 设置路由全局前置守卫
@@ -97,7 +111,7 @@ async function handleRouteGuard(
 
   // 处理动态路由注册
   if (!isRouteRegistered.value && userStore.isLogin) {
-    await handleDynamicRoutes(to, router, next)
+    await handleDynamicRoutes(to, from, next, router)
     return
   }
 
@@ -116,7 +130,7 @@ async function handleRouteGuard(
 
   // 尝试刷新路由重新注册
   if (userStore.isLogin && !isRouteRegistered.value) {
-    await handleDynamicRoutes(to, router, next)
+    await handleDynamicRoutes(to, from, next, router)
     return
   }
 
@@ -145,13 +159,25 @@ async function handleLoginStatus(
  */
 async function handleDynamicRoutes(
   to: RouteLocationNormalized,
-  router: Router,
-  next: NavigationGuardNext
+  from: RouteLocationNormalized,
+  next: NavigationGuardNext,
+  router: Router
 ): Promise<void> {
   try {
     // 显示 loading 并标记 pending
     pendingLoading.value = true
     loadingService.showLoading()
+
+    // 获取用户信息
+    const userStore = useUserStore()
+    const isRefresh = from.path === '/'
+    if (isRefresh || !userStore.info || Object.keys(userStore.info).length === 0) {
+      try {
+        getUserInfoData()
+      } catch (error) {
+        console.error('获取用户信息失败', error)
+      }
+    }
 
     await getMenuData(router)
 
@@ -253,7 +279,9 @@ function filterEmptyMenus(menuList: AppRouteRecord[]): AppRouteRecord[] {
 
       // 过滤掉组件为空字符串且没有子菜单的项
       const isEmptyComponentMenu =
-        item.component === '' && (!item.children || item.children.length === 0)
+        item.component === '' &&
+        (!item.children || item.children.length === 0) &&
+        item.meta.isIframe !== true
 
       return !(isEmptyLayoutMenu || isEmptyComponentMenu)
     })
@@ -266,12 +294,9 @@ async function registerAndStoreMenu(router: Router, menuList: AppRouteRecord[]):
   if (!isValidMenuList(menuList)) {
     throw new Error('获取菜单列表失败，请重新登录')
   }
-
   const menuStore = useMenuStore()
-
   // 递归过滤掉为空的菜单项
   const list = filterEmptyMenus(menuList)
-
   menuStore.setMenuList(list)
   registerDynamicRoutes(router, list)
   isRouteRegistered.value = true

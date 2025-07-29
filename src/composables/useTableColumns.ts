@@ -32,7 +32,7 @@ const getColumnChecks = <T>(columns: ColumnOption<T>[]): ColumnOption<T>[] => {
     } else {
       checks.push({
         ...column,
-        checked: true
+        checked: column.checked ?? true
       })
     }
   })
