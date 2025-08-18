@@ -3,7 +3,7 @@
     <div class="user-page" id="table-full-screen">
       <!-- 搜索栏 -->
       <ArtSearchBar
-        v-model:filter="searchState"
+        v-model="searchState"
         :items="searchItems"
         @reset="resetSearch"
         @search="searchData"
@@ -82,7 +82,7 @@
           <ElCol :span="12">
             <ElFormItem label="性别" prop="gender">
               <ElSelect v-model="formData.gender" placeholder="请选择性别" style="width: 100%">
-                <ElOption label="请选择" :value="undefined" disabled></ElOption>
+                <ElOption label="请选择" value="" disabled></ElOption>
                 <ElOption label="男" :value="1" />
                 <ElOption label="女" :value="2" />
               </ElSelect>
@@ -95,7 +95,7 @@
                 placeholder="请选择部门"
                 style="width: 100%"
               >
-                <ElOption label="请选择" :value="undefined" disabled></ElOption>
+                <ElOption label="请选择" value="" disabled></ElOption>
                 <ElOption
                   v-for="item in departmentList"
                   :key="item.id"
@@ -111,7 +111,7 @@
           <ElCol :span="12">
             <ElFormItem label="角色" prop="role_id">
               <ElSelect v-model="formData.role_id" placeholder="请选择角色" style="width: 100%">
-                <ElOption label="请选择" :value="undefined" disabled></ElOption>
+                <ElOption label="请选择" value="" disabled></ElOption>
                 <ElOption
                   v-for="item in roleList"
                   :key="item.id"
@@ -152,7 +152,6 @@
   } from '@/api/system/api'
   import { FormInstance } from 'element-plus'
   import { ElMessageBox, ElMessage } from 'element-plus'
-  import type { FormRules } from 'element-plus'
   import { ApiStatus } from '@/utils/http/status'
   import { useTable } from '@/composables/useTable'
   import { SearchFormItem } from '@/types'
@@ -292,56 +291,39 @@
     role_id: undefined
   })
 
-  // 搜索表单
-  const searchForm = reactive({
-    name: '',
-    username: '',
-    phone: '',
-    department_id: undefined as undefined | number,
-    role_id: undefined as undefined | number
-  })
-
   // 搜索表单配置项
   const searchItems: SearchFormItem[] = [
     {
       label: '用户名',
-      prop: 'name',
+      key: 'name',
       type: 'input',
-      elColSpan: 6, // 从8改为6，缩短显示宽度
-      config: {
-        clearable: true,
-        placeholder: '请输入用户名'
-      }
+      span: 6,
+      clearable: true,
+      placeholder: '请输入用户名'
     },
     {
       label: '账号',
-      prop: 'username',
+      key: 'username',
       type: 'input',
-      elColSpan: 6, // 从8改为6，缩短显示宽度
-      config: {
-        clearable: true,
-        placeholder: '请输入账号'
-      }
+      span: 6,
+      clearable: true,
+      placeholder: '请输入账号'
     },
     {
       label: '手机号',
-      prop: 'phone',
+      key: 'phone',
       type: 'input',
-      elColSpan: 6, // 从8改为6，缩短显示宽度
-      config: {
-        clearable: true,
-        placeholder: '请输入手机号'
-      }
+      span: 6,
+      clearable: true,
+      placeholder: '请输入手机号'
     },
     {
       label: '部门',
-      prop: 'department_id',
+      key: 'department_id',
       type: 'select',
-      elColSpan: 6, // 从8改为6，缩短显示宽度
-      config: {
-        clearable: true,
-        placeholder: '请选择部门'
-      },
+      span: 6,
+      clearable: true,
+      placeholder: '请选择部门',
       options: () =>
         departmentList.value.map((item) => ({
           label: item.name,
@@ -350,13 +332,11 @@
     },
     {
       label: '角色',
-      prop: 'role_id',
+      key: 'role_id',
       type: 'select',
-      elColSpan: 6, // 从8改为6，缩短显示宽度
-      config: {
-        clearable: true,
-        placeholder: '请选择角色'
-      },
+      span: 6,
+      clearable: true,
+      placeholder: '请选择角色',
       options: () =>
         roleList.value.map((item) => ({
           label: item.name,
@@ -381,7 +361,6 @@
 
   // 表单实例引用
   const formRef = ref<FormInstance>()
-  const searchFormRef = ref<FormInstance>()
 
   // 刷新表格数据
   const handleRefresh = () => {
@@ -556,7 +535,7 @@
         password: [
           { required: false },
           {
-            validator: (rule: any, value: any, callback: any) => {
+            validator: (_rule: any, value: any, callback: any) => {
               if (!value || value === '') {
                 callback()
               } else if (value.length < 6 || value.length > 20) {

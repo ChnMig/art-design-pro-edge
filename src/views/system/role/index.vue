@@ -2,7 +2,7 @@
   <div class="role-page art-full-height" id="table-full-screen">
     <!-- 搜索栏 -->
     <ArtSearchBar
-      v-model:filter="searchParams"
+      v-model="searchParams"
       :items="searchItems"
       @reset="resetSearchParams"
       @search="getDataByPage"
@@ -87,21 +87,17 @@
   const searchItems: SearchFormItem[] = [
     {
       label: '角色名称',
-      prop: 'name',
+      key: 'name',
       type: 'input',
-      config: {
-        clearable: true,
-        placeholder: '请输入角色名称'
-      }
+      clearable: true,
+      placeholder: '请输入角色名称'
     },
     {
       label: '状态',
-      prop: 'status',
+      key: 'status',
       type: 'select',
-      config: {
-        clearable: true,
-        placeholder: '请选择状态'
-      },
+      clearable: true,
+      placeholder: '请选择状态',
       options: [
         { label: '启用', value: 1 },
         { label: '禁用', value: 2 }

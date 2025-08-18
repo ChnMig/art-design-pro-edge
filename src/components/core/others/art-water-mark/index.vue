@@ -15,13 +15,10 @@
 
 <script setup lang="ts">
   import AppConfig from '@/config'
-  import { useSettingStore } from '@/store/modules/setting'
   import { useUserStore } from '@/store/modules/user'
   const userStore = useUserStore()
 
   defineOptions({ name: 'ArtWatermark' })
-
-  const settingStore = useSettingStore()
 
   interface WatermarkProps {
     /** 水印内容 */
@@ -61,7 +58,7 @@
 
   // 添加计算属性处理默认值
   const effectiveContent = computed(
-    () => userStore.getUserInfo.id + ' | ' + userStore.getUserInfo.username
+    () => (userStore.getUserInfo.userId || '') + ' | ' + (userStore.getUserInfo.userName || '')
   )
 </script>
 

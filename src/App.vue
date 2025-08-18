@@ -5,12 +5,9 @@
 </template>
 
 <script setup lang="ts">
-  import { useUserStore } from './store/modules/user'
   import { systemUpgrade } from './utils/sys'
   import { setThemeTransitionClass } from './utils/theme/animation'
   import { checkStorageCompatibility } from './utils/storage'
-
-  const userStore = useUserStore()
 
   onBeforeMount(() => {
     setThemeTransitionClass(true)

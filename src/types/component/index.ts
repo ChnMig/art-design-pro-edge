@@ -7,12 +7,15 @@ import { Option } from '../common'
 // 搜索组件类型
 export type SearchComponentType =
   | 'input'
+  | 'number'
   | 'select'
-  | 'radio'
+  | 'switch'
   | 'checkbox'
+  | 'checkboxgroup'
+  | 'radiogroup'
   | 'date'
-  | 'datetime'
   | 'daterange'
+  | 'datetime'
   | 'datetimerange'
   | 'month'
   | 'monthrange'
@@ -21,37 +24,37 @@ export type SearchComponentType =
   | 'week'
   | 'time'
   | 'timerange'
+  | 'rate'
+  | 'slider'
+  | 'cascader'
+  | 'timepicker'
+  | 'timeselect'
+  | 'treeselect'
 
-// 搜索框值变化参数
-export interface SearchChangeParams {
-  prop: string
-  val: unknown
-}
-
-// 搜索表单项
+// 搜索表单项接口
 export interface SearchFormItem {
-  // 表单项标签
+  /** 表单项的唯一标识 */
+  key: string
+  /** 表单项的标签文本 */
   label: string
-  // 表单项属性名
-  prop: string
-  // 表单项类型
-  type: SearchComponentType
-  // 每列的宽度（基于 24 格布局）
-  elColSpan?: number
-  // select的选项
-  options?: Option[] | (() => Option[])
-  // 搜索框更改事件
-  onChange?: (changeParams: SearchChangeParams) => void
-  // 额外配置项
-  config?: Record<string, unknown>
-  // 默认值
-  defaultValue?: any
-  // 占位符
+  /** 表单项标签的宽度，会覆盖 Form 的 labelWidth */
+  labelWidth?: string | number
+  /** 表单项类型，可以是预定义的字符串类型或自定义组件 */
+  type: SearchComponentType | string | (() => any)
+  /** 是否隐藏该表单项 */
+  hidden?: boolean
+  /** 表单项占据的列宽，基于24格栅格系统 */
+  span?: number
+  /** 选项数据，用于 select、checkbox-group、radio-group 等 */
+  options?: Option[] | (() => Option[]) | Record<string, any>
+  /** 传递给表单项组件的属性 */
+  props?: Record<string, any>
+  /** 表单项的插槽配置 */
+  slots?: Record<string, (() => any) | undefined>
+  /** 表单项的占位符文本 */
   placeholder?: string
-  // 是否必填
-  required?: boolean
-  // 是否禁用
-  disabled?: boolean
+  /** 更多属性配置请参考 ElementPlus 官方文档 */
+  [key: string]: any
 }
 
 // 表格列配置接口

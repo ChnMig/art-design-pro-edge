@@ -2,7 +2,7 @@
   <div class="department-page art-full-height">
     <!-- 搜索栏 -->
     <ArtSearchBar
-      v-model:filter="searchParams"
+      v-model="searchParams"
       :items="searchItems"
       @reset="resetSearchParams"
       @search="getDataByPage"
@@ -94,23 +94,19 @@
   const searchItems: SearchFormItem[] = [
     {
       label: '部门名称',
-      prop: 'name',
+      key: 'name',
       type: 'input',
-      elColSpan: 6,
-      config: {
-        clearable: true,
-        placeholder: '请输入部门名称'
-      }
+      span: 6,
+      clearable: true,
+      placeholder: '请输入部门名称'
     },
     {
       label: '状态',
-      prop: 'status',
+      key: 'status',
       type: 'select',
-      elColSpan: 6,
-      config: {
-        clearable: true,
-        placeholder: '请选择状态'
-      },
+      span: 6,
+      clearable: true,
+      placeholder: '请选择状态',
       options: [
         { label: '启用', value: 1 },
         { label: '禁用', value: 2 }
