@@ -26,9 +26,7 @@
       <ElTableColumn label="操作">
         <template #default="scope">
           <ElButton size="small" @click="handleEdit(scope.$index, scope.row)">编辑</ElButton>
-          <ElButton size="small" type="danger" @click="handleDelete(scope.row.id)">
-            删除
-          </ElButton>
+          <ElButton size="small" type="danger" @click="handleDelete(scope.row.id)"> 删除 </ElButton>
         </template>
       </ElTableColumn>
     </ElTable>

@@ -141,22 +141,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, nextTick, computed, h, resolveComponent, onMounted } from 'vue'
-import {
-  getUserList,
-  addUser,
-  updateUser,
-  deleteUser as apiDeleteUser,
-  getDepartmentList,
-  getRoleList
-} from '@/api/system/api'
-import { FormInstance } from 'element-plus'
-import { ElMessageBox, ElMessage } from 'element-plus'
-import type { FormRules } from 'element-plus'
-import { ApiStatus } from '@/utils/http/status'
-import { useTable } from '@/composables/useTable'
-import { SearchFormItem } from '@/types'
-import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
+  import { ref, reactive, nextTick, computed, h, resolveComponent, onMounted } from 'vue'
+  import {
+    getUserList,
+    addUser,
+    updateUser,
+    deleteUser as apiDeleteUser,
+    getDepartmentList,
+    getRoleList
+  } from '@/api/system/api'
+  import { FormInstance } from 'element-plus'
+  import { ElMessageBox, ElMessage } from 'element-plus'
+  import type { FormRules } from 'element-plus'
+  import { ApiStatus } from '@/utils/http/status'
+  import { useTable } from '@/composables/useTable'
+  import { SearchFormItem } from '@/types'
+  import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
 
   // 状态变量
   const dialogType = ref('add')
@@ -199,8 +199,18 @@ import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
           label: '性别',
           align: 'center',
           formatter: (row: any) => {
-            if (row.User?.gender === 1) return h(resolveComponent('ElTag'), { type: 'success', effect: 'light' }, { default: () => '男' })
-            if (row.User?.gender === 2) return h(resolveComponent('ElTag'), { type: 'danger', effect: 'light' }, { default: () => '女' })
+            if (row.User?.gender === 1)
+              return h(
+                resolveComponent('ElTag'),
+                { type: 'success', effect: 'light' },
+                { default: () => '男' }
+              )
+            if (row.User?.gender === 2)
+              return h(
+                resolveComponent('ElTag'),
+                { type: 'danger', effect: 'light' },
+                { default: () => '女' }
+              )
             return '--'
           }
         },
@@ -218,7 +228,12 @@ import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
           prop: 'User.status',
           label: '状态',
           align: 'center',
-          formatter: (row: any) => h(resolveComponent('ElTag'), { type: getTagType(row.User?.status) }, { default: () => buildTagText(row.User?.status) })
+          formatter: (row: any) =>
+            h(
+              resolveComponent('ElTag'),
+              { type: getTagType(row.User?.status) },
+              { default: () => buildTagText(row.User?.status) }
+            )
         },
         {
           prop: 'operation',
@@ -594,7 +609,7 @@ import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   }
 
   // 初始化加载部门和角色数据
-onMounted(async () => {
+  onMounted(async () => {
     await Promise.all([loadDepartmentList(), loadRoleList()])
   })
 </script>

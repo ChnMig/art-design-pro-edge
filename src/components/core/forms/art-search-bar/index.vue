@@ -1,94 +1,47 @@
-<!-- 表格搜索组件 -->
-<!-- 支持常用表单组件、自定义组件、插槽、校验、隐藏表单项 -->
-<!-- 写法同 ElementPlus 官方文档组件，把属性写在 props 里面就可以了 -->
+<!-- 表格搜索栏 -->
 <template>
-  <section class="art-search-bar art-custom-card" :class="{ 'is-expanded': isExpanded }">
-    <ElForm
-      ref="formRef"
-      :model="modelValue"
-      :label-position="labelPosition"
-      v-bind="{ ...$attrs }"
-    >
+  <section class="search-bar art-custom-card" :class="{ 'is-expanded': isExpanded }">
+    <ElForm :model="filter" :label-position="labelPosition">
       <ElRow class="search-form-row" :gutter="gutter">
         <ElCol
           v-for="item in visibleFormItems"
-          :key="item.key"
+          :key="item.prop"
           :xs="24"
           :sm="12"
-          :md="8"
-          :lg="item.span || span"
-          :xl="item.span || span"
+          :md="item.elColSpan || elColSpan"
+          :lg="item.elColSpan || elColSpan"
+          :xl="item.elColSpan || elColSpan"
         >
-          <ElFormItem
-            :label="item.label"
-            :prop="item.key"
-            :label-width="item.labelWidth || labelWidth"
-          >
-            <slot :name="item.key" :item="item" :modelValue="modelValue">
-              <component
-                :is="getComponent(item)"
-                v-model="modelValue[item.key]"
-                v-bind="getProps(item)"
-              >
-                <!-- 下拉选择 -->
-                <template v-if="item.type === 'select' && getProps(item)?.options">
-                  <el-option
-                    v-for="option in getProps(item).options"
-                    v-bind="option"
-                    :key="option.value"
-                  />
-                </template>
-
-                <!-- 复选框组 -->
-                <template v-if="item.type === 'checkboxgroup' && getProps(item)?.options">
-                  <el-checkbox
-                    v-for="option in getProps(item).options"
-                    v-bind="option"
-                    :key="option.value"
-                  />
-                </template>
-
-                <!-- 单选框组 -->
-                <template v-if="item.type === 'radiogroup' && getProps(item)?.options">
-                  <el-radio
-                    v-for="option in getProps(item).options"
-                    v-bind="option"
-                    :key="option.value"
-                  />
-                </template>
-
-                <!-- 动态插槽支持 -->
-                <template v-for="(slotFn, slotName) in getSlots(item)" :key="slotName" #[slotName]>
-                  <component :is="slotFn" />
-                </template>
-              </component>
-            </slot>
+          <ElFormItem :label="item.label" :prop="item.prop" :label-width="labelWidth">
+            <component
+              :is="getComponent(item.type)"
+              v-model:value="filter[item.prop]"
+              :item="item"
+            />
           </ElFormItem>
         </ElCol>
-        <ElCol :xs="24" :sm="24" :md="span" :lg="span" :xl="span" class="action-column">
+        <ElCol
+          :xs="24"
+          :sm="24"
+          :md="elColSpan"
+          :lg="elColSpan"
+          :xl="elColSpan"
+          class="action-column"
+        >
           <div class="action-buttons-wrapper" :style="actionButtonsStyle">
             <div class="form-buttons">
-              <el-button v-if="showReset" class="reset-button" @click="handleReset" v-ripple>
-                重置
-              </el-button>
-              <el-button
-                v-if="showSearch"
-                type="primary"
-                class="search-button"
-                @click="handleSearch"
-                v-ripple
-                :disabled="disabledSearch"
-              >
+              <ElButton class="reset-button" @click="handleReset" v-ripple> 重置 </ElButton>
+              <ElButton type="primary" class="search-button" @click="handleSearch" v-ripple>
                 搜索
-              </el-button>
+              </ElButton>
             </div>
             <div v-if="shouldShowExpandToggle" class="filter-toggle" @click="toggleExpand">
               <span>{{ expandToggleText }}</span>
               <div class="icon-wrapper">
-                <el-icon>
+                <ElIcon>
                   <ArrowUpBold v-if="isExpanded" />
                   <ArrowDownBold v-else />
-                </el-icon>
+                </ElIcon>
               </div>
             </div>
           </div>
@@ -101,189 +54,115 @@
 <script setup lang="ts">
   import { ArrowUpBold, ArrowDownBold } from '@element-plus/icons-vue'
   import { useWindowSize } from '@vueuse/core'
-  import {
-    ElForm,
-    ElFormItem,
-    ElInput,
-    ElInputNumber,
-    ElSelect,
-    ElOption,
-    ElDatePicker,
-    ElSwitch,
-    ElCheckbox,
-    ElCheckboxGroup,
-    ElRadioGroup,
-    ElButton,
-    ElIcon,
-    FormInstance,
-    ElRate,
-    ElSlider,
-    ElRow,
-    ElCol,
-    ElCascader,
-    ElTimePicker,
-    ElTimeSelect,
-    ElTreeSelect
-  } from 'element-plus'
+  import { markRaw } from 'vue'
+  import ArtSearchInput from './widget/art-search-input/index.vue'
+  import ArtSearchSelect from './widget/art-search-select/index.vue'
+  import ArtSearchRadio from './widget/art-search-radio/index.vue'
+  import ArtSearchDate from './widget/art-search-date/index.vue'
+  import type { SearchComponentType, SearchFormItem } from '@/types'
+  import type { Component } from 'vue'
 
   defineOptions({ name: 'ArtSearchBar' })
-
-  const componentMap = {
-    input: ElInput, // 输入框
-    number: ElInputNumber, // 数字输入框
-    select: ElSelect, // 选择器
-    switch: ElSwitch, // 开关
-    checkbox: ElCheckbox, // 复选框
-    checkboxgroup: ElCheckboxGroup, // 复选框组
-    radiogroup: ElRadioGroup, // 单选框组
-    date: ElDatePicker, // 日期选择器
-    daterange: ElDatePicker, // 日期范围选择器
-    datetime: ElDatePicker, // 日期时间选择器
-    datetimerange: ElDatePicker, // 日期时间范围选择器
-    rate: ElRate, // 评分
-    slider: ElSlider, // 滑块
-    cascader: ElCascader, // 级联选择器
-    timepicker: ElTimePicker, // 时间选择器
-    timeselect: ElTimeSelect, // 时间选择
-    treeselect: ElTreeSelect // 树选择器
-  }
 
   const { width } = useWindowSize()
   const isMobile = computed(() => width.value < 500)
 
-  const formInstance = useTemplateRef<FormInstance>('formRef')
+  type FilterValue = string | number | undefined | null | unknown[]
+  type FilterData = Record<string, FilterValue>
 
-  // 表单项配置
-  export interface SearchFormItem {
-    /** 表单项的唯一标识 */
-    key: string
-    /** 表单项的标签文本 */
-    label: string
-    /** 表单项标签的宽度，会覆盖 Form 的 labelWidth */
-    labelWidth?: string | number
-    /** 表单项类型，可以是预定义的字符串类型或自定义组件 */
-    type: keyof typeof componentMap | string | (() => VNode)
-    /** 是否隐藏该表单项 */
-    hidden?: boolean
-    /** 表单项占据的列宽，基于24格栅格系统 */
-    span?: number
-    /** 选项数据，用于 select、checkbox-group、radio-group 等 */
-    options?: Record<string, any>
-    /** 传递给表单项组件的属性 */
-    props?: Record<string, any>
-    /** 表单项的插槽配置 */
-    slots?: Record<string, (() => any) | undefined>
-    /** 表单项的占位符文本 */
-    placeholder?: string
-    /** 更多属性配置请参考 ElementPlus 官方文档 */
-  }
-
-  // 表单配置
   interface SearchBarProps {
+    /** 查询参数 */
+    filter: FilterData
     /** 表单数据 */
     items: SearchFormItem[]
     /** 每列的宽度（基于 24 格布局） */
-    span?: number
+    elColSpan?: number
     /** 表单控件间隙 */
     gutter?: number
     /** 展开/收起 */
     isExpand?: boolean
-    /** 默认是否展开（仅在 showExpand 为 true 且 isExpand 为 false 时生效） */
-    defaultExpanded?: boolean
     /** 表单域标签的位置 */
-    labelPosition?: 'left' | 'right' | 'top'
+    labelPosition?: 'left' | 'right'
     /** 文字宽度 */
-    labelWidth?: string | number
+    labelWidth?: string
     /** 是否需要展示，收起 */
     showExpand?: boolean
     /** 按钮靠左对齐限制（表单项小于等于该值时） */
     buttonLeftLimit?: number
-    /** 是否显示重置按钮 */
-    showReset?: boolean
-    /** 是否显示搜索按钮 */
-    showSearch?: boolean
-    /** 是否禁用搜索按钮 */
-    disabledSearch?: boolean
   }
 
   const props = withDefaults(defineProps<SearchBarProps>(), {
-    items: () => [],
-    span: 6,
+    elColSpan: 6,
     gutter: 12,
     isExpand: false,
     labelPosition: 'right',
     labelWidth: '70px',
     showExpand: true,
-    defaultExpanded: false,
-    buttonLeftLimit: 2,
-    showReset: true,
-    showSearch: true,
-    disabledSearch: false
+    buttonLeftLimit: 2
   })
 
   interface SearchBarEmits {
+    'update:filter': [filter: FilterData]
     reset: []
     search: []
   }
 
   const emit = defineEmits<SearchBarEmits>()
 
-  const modelValue = defineModel<Record<string, any>>({ default: {} })
-
   /**
    * 是否展开状态
    */
-  const isExpanded = ref(props.defaultExpanded)
+  const isExpanded = ref(false)
 
-  const rootProps = ['label', 'labelWidth', 'key', 'type', 'hidden', 'span', 'slots']
-
-  const getProps = (item: SearchFormItem) => {
-    if (item.props) return item.props
-    const props = { ...item }
-    rootProps.forEach((key) => delete (props as Record<string, any>)[key])
-    return props
-  }
-
-  // 获取插槽
-  const getSlots = (item: SearchFormItem) => {
-    if (!item.slots) return {}
-    const validSlots: Record<string, () => any> = {}
-    Object.entries(item.slots).forEach(([key, slotFn]) => {
-      if (slotFn) {
-        validSlots[key] = slotFn
-      }
-    })
-    return validSlots
-  }
-
-  // 组件
-  const getComponent = (item: SearchFormItem) => {
-    const { type } = item
-    if (type && typeof item.type !== 'string') return type
-    // type不传递、默认使用 input
-    return componentMap[type as keyof typeof componentMap] || componentMap['input']
-  }
+  /**
+   * 组件映射表（使用 markRaw 优化性能）
+   */
+  const componentsMap = markRaw({
+    input: ArtSearchInput,
+    select: ArtSearchSelect,
+    radio: ArtSearchRadio,
+    checkbox: ArtSearchSelect, // 复用 select 组件
+    datetime: ArtSearchDate,
+    date: ArtSearchDate,
+    daterange: ArtSearchDate,
+    datetimerange: ArtSearchDate,
+    month: ArtSearchDate,
+    monthrange: ArtSearchDate,
+    year: ArtSearchDate,
+    yearrange: ArtSearchDate,
+    week: ArtSearchDate,
+    time: ArtSearchDate,
+    timerange: ArtSearchDate
+  } as const satisfies Record<SearchComponentType, Component>)
 
   /**
    * 可见的表单项
    */
   const visibleFormItems = computed(() => {
-    const filteredItems = props.items.filter((item) => !item.hidden)
     const shouldShowLess = !props.isExpand && !isExpanded.value
     if (shouldShowLess) {
-      const maxItemsPerRow = Math.floor(24 / props.span) - 1
-      return filteredItems.slice(0, maxItemsPerRow)
+      const maxItemsPerRow = Math.floor(24 / props.elColSpan) - 1
+      return props.items.slice(0, maxItemsPerRow)
     }
-    return filteredItems
+    return props.items
+  })
+
+  /**
+   * 查询参数的双向绑定
+   */
+  const filter = computed({
+    get: () => props.filter,
+    set: (value) => emit('update:filter', value)
   })
 
   /**
    * 是否应该显示展开/收起按钮
    */
   const shouldShowExpandToggle = computed(() => {
-    const filteredItems = props.items.filter((item) => !item.hidden)
     return (
-      !props.isExpand && props.showExpand && filteredItems.length > Math.floor(24 / props.span) - 1
+      !props.isExpand &&
+      props.showExpand &&
+      props.items.length > Math.floor(24 / props.elColSpan) - 1
     )
   })
 
@@ -300,121 +179,136 @@
   const actionButtonsStyle = computed(() => ({
     'justify-content': isMobile.value
       ? 'flex-end'
-      : props.items.filter((item) => !item.hidden).length <= props.buttonLeftLimit
+      : props.items.length <= props.buttonLeftLimit
         ? 'flex-start'
         : 'flex-end'
   }))
 
   /**
+   * 获取对应的组件
+   */
+  function getComponent(type: SearchComponentType): Component {
+    return componentsMap[type]
+  }
+
+  /**
    * 切换展开/收起状态
    */
-  const toggleExpand = () => {
+  function toggleExpand() {
     isExpanded.value = !isExpanded.value
   }
 
   /**
    * 处理重置事件
    */
-  const handleReset = () => {
-    // 重置表单字段（UI 层）
-    formInstance.value?.resetFields()
-
-    // 清空所有表单项值（包含隐藏项）
-    Object.assign(
-      modelValue.value,
-      Object.fromEntries(props.items.map(({ key }) => [key, undefined]))
-    )
-
-    // 触发 reset 事件
+  function handleReset() {
     emit('reset')
   }
 
   /**
    * 处理搜索事件
    */
-  const handleSearch = () => {
+  function handleSearch() {
     emit('search')
   }
 
-  defineExpose({
-    ref: formInstance,
-    validate: (...args: any[]) => formInstance.value?.validate(...args),
-    reset: handleReset
-  })
-
   // 解构 props 以便在模板中直接使用
-  const { span, gutter, labelPosition, labelWidth } = toRefs(props)
+  const { elColSpan, gutter, labelPosition, labelWidth } = toRefs(props)
 </script>
 
 <style lang="scss" scoped>
-  .art-search-bar {
+  .search-bar {
     padding: 15px 20px 0;
     background-color: var(--art-main-bg-color);
     border-radius: calc(var(--custom-radius) / 2 + 2px);
 
+    :deep(.el-form-item--default) {
+      margin-bottom: 15px;
+    }
+
+    &.is-expanded {
+      :deep(.el-form-item--default) {
+        margin-bottom: 18px;
+      }
+    }
+
+    :deep(.el-form-item__label) {
+      display: flex;
+      align-items: center;
+      line-height: 20px;
+    }
+
     .search-form-row {
       display: flex;
       flex-wrap: wrap;
-      align-items: flex-end;
     }
 
     .action-column {
-      display: flex;
-      align-items: flex-end;
-      height: fit-content;
-      padding-bottom: 18px;
-    }
+      flex: 1;
+      max-width: 100%;
 
-    .action-buttons-wrapper {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      gap: 10px;
-    }
-
-    .form-buttons {
-      display: flex;
-      gap: 10px;
-    }
-
-    .filter-toggle {
-      display: flex;
-      align-items: center;
-      margin-left: auto;
-      cursor: pointer;
-      color: var(--art-gray-600);
-      font-size: 14px;
-      transition: color 0.2s ease;
-
-      &:hover {
-        color: var(--ElColor-primary);
+      .action-buttons-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        margin-bottom: 12px;
       }
 
-      span {
-        user-select: none;
+      .form-buttons {
+        display: flex;
+        gap: 8px;
       }
 
-      .icon-wrapper {
-        margin-left: 4px;
+      .filter-toggle {
         display: flex;
         align-items: center;
-        font-size: 12px;
-        transition: transform 0.2s ease;
+        margin-left: 10px;
+        line-height: 32px;
+        color: var(--main-color);
+        cursor: pointer;
+        transition: color 0.2s ease;
+
+        &:hover {
+          color: var(--el-color-primary);
+        }
+
+        span {
+          font-size: 14px;
+          user-select: none;
+        }
+
+        .icon-wrapper {
+          display: flex;
+          align-items: center;
+          margin-left: 4px;
+          font-size: 14px;
+          transition: transform 0.2s ease;
+        }
       }
     }
   }
 
   // 响应式优化
   @media (width <= 768px) {
-    .art-search-bar {
+    .search-bar {
       padding: 16px 16px 0;
 
       .action-column {
-        padding-bottom: 16px;
-      }
+        .action-buttons-wrapper {
+          flex-direction: column;
+          gap: 8px;
+          align-items: stretch;
 
-      .action-buttons-wrapper {
-        justify-content: flex-end !important;
+          .form-buttons {
+            justify-content: center;
+          }
+
+          .filter-toggle {
+            justify-content: center;
+            margin-left: 0;
+          }
+        }
       }
     }
   }

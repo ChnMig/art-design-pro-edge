@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-  <LoginLeftView></LoginLeftView>
+    <LoginLeftView></LoginLeftView>
     <div class="right-wrap">
       <div class="top-right-wrap">
         <div class="btn theme-btn" @click="toggleTheme">

@@ -22,7 +22,6 @@
   defineOptions({ name: 'ArtWatermark' })
 
   const settingStore = useSettingStore()
-  const { watermarkVisible } = storeToRefs(settingStore)
 
   interface WatermarkProps {
     /** 水印内容 */
