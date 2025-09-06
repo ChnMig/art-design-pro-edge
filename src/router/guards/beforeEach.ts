@@ -34,7 +34,9 @@ const getUserInfoData = async () => {
   if (userStore.isLogin) {
     try {
       const res = await getUserInfo()
-      userStore.setUserInfo(res.data)
+      if (res) {
+        userStore.setUserInfo(res)
+      }
     } catch (error) {
       console.error('获取用户信息失败', error)
     }
