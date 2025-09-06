@@ -159,18 +159,10 @@
           // 处理登录过程中的异常
           console.error('登录过程发生错误:', error)
 
-          // 根据错误类型提供更具体的错误信息
+          // 直接显示API返回的错误消息，如果有的话
           if (error instanceof Error) {
-            // 检查是否是网络错误
-            if (error.message.includes('网络') || error.message.includes('Network')) {
-              ElMessage.error('网络连接失败，请检查网络后重试')
-            } else if (error.message.includes('401') || error.message.includes('认证')) {
-              ElMessage.error('用户名或密码错误，请重试')
-            } else if (error.message.includes('验证码')) {
-              ElMessage.error('验证码错误，请重新输入')
-            } else {
-              ElMessage.error('登录失败，请重试')
-            }
+            // 直接显示错误消息，这个消息现在包含了API返回的真实错误信息
+            ElMessage.error(error.message || '登录失败，请重试')
           } else {
             ElMessage.error('登录失败，请重试')
           }

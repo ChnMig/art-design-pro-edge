@@ -11,10 +11,16 @@ declare namespace Http {
   interface BaseResponse<T = any> {
     // 状态码
     code: number
-    // 消息
-    msg: string
+    // 状态描述
+    status?: string
+    // 消息（API实际返回字段）
+    message?: string
+    // 消息（兼容旧格式）
+    msg?: string
+    // 时间戳
+    timestamp?: number
     // 数据
-    data: T
+    data?: T
   }
 }
 
@@ -25,10 +31,16 @@ declare namespace Api {
     interface BaseResponse<T = any> {
       // 状态码
       code: number
-      // 消息
-      msg: string
+      // 状态描述
+      status?: string
+      // 消息（API实际返回字段）
+      message?: string
+      // 消息（兼容旧格式）
+      msg?: string
+      // 时间戳
+      timestamp?: number
       // 数据
-      data: T
+      data?: T
     }
   }
 
