@@ -86,7 +86,6 @@
     updateDepartment,
     deleteDepartment as apiDeleteDepartment
   } from '@/api/system/api'
-  import { ApiStatus } from '@/utils/http/status'
   import { useTable } from '@/composables/useTable'
   import { SearchFormItem } from '@/types'
 
@@ -247,13 +246,10 @@
       .then(async () => {
         loading.value = true
         try {
-          const res = await apiDeleteDepartment(id)
-          if (res.code === ApiStatus.success) {
-            ElMessage.success('删除部门成功')
-            await refresh()
-          } else {
-            ElMessage.error(`删除部门失败: ${res.message}`)
-          }
+          await apiDeleteDepartment(id)
+          // HTTP client returns data directly on success
+          ElMessage.success('删除部门成功')
+          await refresh()
         } catch (err) {
           console.error('删除部门出错:', err)
           ElMessage.error('删除部门失败')
@@ -281,23 +277,17 @@
               ElMessage.error('部门ID无效')
               return
             }
-            const res = await updateDepartment({ ...params, id: currentId.value })
-            if (res.code === ApiStatus.success) {
-              ElMessage.success('修改部门成功')
-              dialogVisible.value = false
-              await refresh()
-            } else {
-              ElMessage.error(`修改部门失败: ${res.message}`)
-            }
+            await updateDepartment({ ...params, id: currentId.value })
+            // HTTP client returns data directly on success
+            ElMessage.success('修改部门成功')
+            dialogVisible.value = false
+            await refresh()
           } else {
-            const res = await addDepartment(params)
-            if (res.code === ApiStatus.success) {
-              ElMessage.success('添加部门成功')
-              dialogVisible.value = false
-              await refresh()
-            } else {
-              ElMessage.error(`添加部门失败: ${res.message}`)
-            }
+            await addDepartment(params)
+            // HTTP client returns data directly on success
+            ElMessage.success('添加部门成功')
+            dialogVisible.value = false
+            await refresh()
           }
         } catch (err) {
           console.error('提交表单出错:', err)

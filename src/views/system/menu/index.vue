@@ -59,7 +59,6 @@
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { formatMenuTitle } from '@/router/utils/utils'
   import { getAllMenu, deleteMenu } from '@/api/system/api'
-  import { ApiStatus } from '@/utils/http/status'
   import { useTable } from '@/composables/useTable'
   import menuInfo from './modal/menuInfo.vue'
   import authInfo from './modal/authInfo.vue'
@@ -153,16 +152,14 @@
       ]
     },
     transform: {
-      responseAdapter: (response) => {
-        if (response.code === ApiStatus.success) {
-          return {
-            data: response.data || [],
-            total: response.data?.length || 0,
-            current: 1,
-            size: response.data?.length || 0
-          }
-        } else {
-          throw new Error(response.message || '获取菜单列表失败')
+      responseAdapter: (data) => {
+        // HTTP client now returns data directly, no need to check response.code
+        const menuData = Array.isArray(data) ? data : []
+        return {
+          data: menuData,
+          total: menuData.length,
+          current: 1,
+          size: menuData.length
         }
       }
     },

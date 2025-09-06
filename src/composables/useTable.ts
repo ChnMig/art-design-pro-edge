@@ -563,10 +563,8 @@ export function useTable<T = unknown, P extends BaseRequestParams = BaseRequestP
   onUnmounted(() => {
     cancelRequest()
     if (cache) {
-      cache.clear()
-    }
-    if (cacheCleanupTimer) {
-      clearInterval(cacheCleanupTimer)
+      // 优化：调用destroy方法，正确清理资源
+      cache.destroy()
     }
   })
 

@@ -152,7 +152,6 @@
   } from '@/api/system/api'
   import { FormInstance } from 'element-plus'
   import { ElMessageBox, ElMessage } from 'element-plus'
-  import { ApiStatus } from '@/utils/http/status'
   import { useTable } from '@/composables/useTable'
   import { SearchFormItem } from '@/types'
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
@@ -372,12 +371,9 @@
   // 加载部门列表数据
   const loadDepartmentList = async () => {
     try {
-      const res = await getDepartmentList()
-      if (res.code === ApiStatus.success) {
-        departmentList.value = res.data?.data || res.data || []
-      } else {
-        ElMessage.error(res.message || '获取部门列表失败')
-      }
+      const data = await getDepartmentList()
+      // HTTP client now returns data directly
+      departmentList.value = Array.isArray(data) ? data : []
     } catch (err) {
       console.error('获取部门列表出错:', err)
       ElMessage.error('获取部门列表失败')
@@ -387,12 +383,9 @@
   // 加载角色列表数据
   const loadRoleList = async () => {
     try {
-      const res = await getRoleList()
-      if (res.code === ApiStatus.success) {
-        roleList.value = res.data?.data || res.data || []
-      } else {
-        ElMessage.error(res.message || '获取角色列表失败')
-      }
+      const data = await getRoleList()
+      // HTTP client now returns data directly
+      roleList.value = Array.isArray(data) ? data : []
     } catch (err) {
       console.error('获取角色列表出错:', err)
       ElMessage.error('获取角色列表失败')

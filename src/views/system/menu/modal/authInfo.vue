@@ -102,7 +102,6 @@
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
   import { getAuthList, addAuth, updateAuth, deleteAuth } from '@/api/system/api'
-  import { ApiStatus } from '@/utils/http/status'
   import { QuestionFilled } from '@element-plus/icons-vue'
 
   const emit = defineEmits(['refresh'])
@@ -144,14 +143,9 @@
     loading.value = true
 
     try {
-      // 向后端请求当前菜单的权限列表
-      const response = await getAuthList(row.id)
-      if (response.code === ApiStatus.success) {
-        tableData.value = response.data || []
-      } else {
-        ElMessage.error(`获取权限列表失败: ${response.message}`)
-        tableData.value = []
-      }
+      // 向后端请求当前菜单的权限列表 - HTTP client returns data directly
+      const data = await getAuthList(row.id)
+      tableData.value = Array.isArray(data) ? data : []
     } catch (error) {
       console.error('获取权限列表出错:', error)
       ElMessage.error('获取权限列表失败，请检查网络连接')
@@ -213,15 +207,11 @@
       })
 
       loading.value = true
-      const res = await deleteAuth(id)
-
-      if (res.code === ApiStatus.success) {
-        ElMessage.success('删除成功')
-        // 重新加载数据
-        await showModal(currentMenu.value)
-      } else {
-        ElMessage.error(`删除失败: ${res.message}`)
-      }
+      await deleteAuth(id)
+      // HTTP client returns data directly on success
+      ElMessage.success('删除成功')
+      // 重新加载数据
+      await showModal(currentMenu.value)
     } catch (error) {
       if (error !== 'cancel') {
         console.error('删除权限出错:', error)
@@ -242,24 +232,20 @@
       submitLoading.value = true
       try {
         const formData = { ...authForm }
-        let res
 
         if (isEditingAuth.value && formData.id) {
           // 编辑权限
-          res = await updateAuth(formData)
+          await updateAuth(formData)
         } else {
           // 添加权限
-          res = await addAuth(formData)
+          await addAuth(formData)
         }
 
-        if (res.code === ApiStatus.success) {
-          ElMessage.success(`${isEditingAuth.value ? '编辑' : '添加'}权限成功`)
-          authFormVisible.value = false
-          // 重新加载数据
-          await showModal(currentMenu.value)
-        } else {
-          ElMessage.error(`${isEditingAuth.value ? '编辑' : '添加'}权限失败: ${res.message}`)
-        }
+        // HTTP client returns data directly on success
+        ElMessage.success(`${isEditingAuth.value ? '编辑' : '添加'}权限成功`)
+        authFormVisible.value = false
+        // 重新加载数据
+        await showModal(currentMenu.value)
       } catch (error) {
         console.error('提交权限表单出错:', error)
         ElMessage.error(`${isEditingAuth.value ? '编辑' : '添加'}权限失败`)

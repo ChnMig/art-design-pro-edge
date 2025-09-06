@@ -136,7 +136,6 @@
   import { ElMessage } from 'element-plus'
   import { IconTypeEnum } from '@/enums/appEnum'
   import { addMenu, updateMenu } from '@/api/system/api'
-  import { ApiStatus } from '@/utils/http/status'
   import { QuestionFilled } from '@element-plus/icons-vue'
 
   const dialogVisible = ref(false)
@@ -290,16 +289,12 @@
           formData.isHideTab = form.isHideTab ? 1 : 2
           formData.isIframe = form.isIframe ? 1 : 2
           formData.isFirstLevel = form.isFirstLevel ? 1 : 2
-          const res = await updateMenu(formData)
-          if (res.code === ApiStatus.success) {
-            ElMessage.success(`${isEdit.value ? '编辑' : '新增'}成功`)
-            dialogVisible.value = false
-            // 触发父组件刷新列表
-            emit('refresh')
-          } else {
-            ElMessage.error(`${isEdit.value ? '编辑' : '新增'}失败: ${res.message}`)
-            console.log('更新菜单失败', res.message)
-          }
+          await updateMenu(formData)
+          // HTTP client returns data directly on success
+          ElMessage.success(`${isEdit.value ? '编辑' : '新增'}成功`)
+          dialogVisible.value = false
+          // 触发父组件刷新列表
+          emit('refresh')
         } else {
           const formData = { ...form }
           formData.status = form.isEnable ? 1 : 2
@@ -308,18 +303,13 @@
           formData.isHideTab = form.isHideTab ? 1 : 2
           formData.isIframe = form.isIframe ? 1 : 2
           formData.isFirstLevel = form.isFirstLevel ? 1 : 2
-          const res = await addMenu(formData)
-          if (res.code === ApiStatus.success) {
-            ElMessage.success(`${isEdit.value ? '编辑' : '新增'}成功`)
-            dialogVisible.value = false
-            // 触发父组件刷新列表
-            emit('refresh')
-          } else {
-            ElMessage.error(`${isEdit.value ? '编辑' : '新增'}失败: ${res.message}`)
-            console.log('新增菜单失败', res.message)
-          }
+          await addMenu(formData)
+          // HTTP client returns data directly on success
+          ElMessage.success(`${isEdit.value ? '编辑' : '新增'}成功`)
+          dialogVisible.value = false
+          // 触发父组件刷新列表
+          emit('refresh')
         }
-        dialogVisible.value = false
       } catch {
         ElMessage.error(`${isEdit.value ? '编辑' : '新增'}失败`)
       }
