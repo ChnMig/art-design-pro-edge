@@ -48,7 +48,21 @@
                   />
                 </ElCol>
                 <ElCol :push="1" :span="8">
-                  <img :src="captchaImageUrl" @click="refreshCaptcha" class="captcha-image" />
+                  <img 
+                    :src="captchaImageUrl" 
+                    @click="refreshCaptcha" 
+                    class="captcha-image" 
+                    alt="验证码图片"
+                    v-if="captchaImageUrl"
+                    @error="handleImageError"
+                  />
+                  <div 
+                    v-else 
+                    class="captcha-loading"
+                    @click="refreshCaptcha"
+                  >
+                    加载中...
+                  </div>
                 </ElCol>
               </ElRow>
             </ElFormItem>
@@ -188,12 +202,27 @@
   const refreshCaptcha = async () => {
     try {
       const captchaData = await getCaptcha(80, 240)
-      captchaImageUrl.value = captchaData.data.image
-      captchaImageID.value = captchaData.data.id
+      console.log('验证码数据:', captchaData) // 调试日志
+      
+      // 检查数据结构并正确赋值
+      if (captchaData && captchaData.id && captchaData.image) {
+        captchaImageUrl.value = captchaData.image
+        captchaImageID.value = captchaData.id
+        console.log('验证码图片URL:', captchaImageUrl.value)
+        console.log('验证码ID:', captchaImageID.value)
+      } else {
+        console.error('验证码数据结构异常:', captchaData)
+        ElMessage.error('验证码数据格式错误')
+      }
     } catch (error) {
       console.error('Error refreshing captcha:', error)
       ElMessage.error('验证码获取失败')
     }
+  }
+
+  const handleImageError = () => {
+    console.error('验证码图片加载失败')
+    ElMessage.error('验证码图片加载失败，请点击刷新')
   }
 
   onMounted(() => {

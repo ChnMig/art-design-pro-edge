@@ -8,6 +8,36 @@
 
   .captcha-image {
     width: 100%;
+    height: 40px;
+    border: 1px solid #dcdfe6;
+    border-radius: 4px;
+    cursor: pointer;
+    display: block;
+    object-fit: cover;
+    background-color: #f5f7fa;
+    
+    &:hover {
+      border-color: #409eff;
+    }
+  }
+
+  .captcha-loading {
+    width: 100%;
+    height: 40px;
+    border: 1px solid #dcdfe6;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f7fa;
+    color: #909399;
+    font-size: 12px;
+    
+    &:hover {
+      border-color: #409eff;
+      background-color: #ecf5ff;
+    }
   }
 
   .el-input__inner {
