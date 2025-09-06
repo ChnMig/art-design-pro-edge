@@ -33,7 +33,9 @@ export interface AsyncComponentOptions {
 }
 
 /** 默认配置 */
-const DEFAULT_OPTIONS: Required<Omit<AsyncComponentOptions, 'loadingComponent' | 'errorComponent' | 'cacheKey'>> = {
+const DEFAULT_OPTIONS: Required<
+  Omit<AsyncComponentOptions, 'loadingComponent' | 'errorComponent' | 'cacheKey'>
+> = {
   delay: 200,
   timeout: 30000,
   retryable: true,
@@ -105,24 +107,24 @@ function createRetryableLoader(
     try {
       loadingStatus.set(cacheKey, 'loading')
       const component = await originalLoader()
-      
+
       // 加载成功，重置重试计数
       retryCount.delete(cacheKey)
       loadingStatus.set(cacheKey, 'loaded')
-      
+
       return component
     } catch (error) {
       loadingStatus.set(cacheKey, 'error')
-      
+
       if (config.retryable && currentRetry < config.maxRetries) {
         // 增加重试计数
         retryCount.set(cacheKey, currentRetry + 1)
-        
+
         // 延迟后重试
-        await new Promise(resolve => setTimeout(resolve, config.retryDelay))
-        
+        await new Promise((resolve) => setTimeout(resolve, config.retryDelay))
+
         console.warn(`组件加载失败，正在重试... (${currentRetry + 1}/${config.maxRetries})`, error)
-        
+
         // 递归重试
         return createRetryableLoader(originalLoader, config, cacheKey)()
       } else {
@@ -174,7 +176,7 @@ function generateCacheKey(loaderString: string): string {
   let hash = 0
   for (let i = 0; i < loaderString.length; i++) {
     const char = loaderString.charCodeAt(i)
-    hash = ((hash << 5) - hash) + char
+    hash = (hash << 5) - hash + char
     hash = hash & hash // 转为32位整数
   }
   return `async_component_${Math.abs(hash)}`
@@ -303,15 +305,17 @@ export function preloadComponent(
 
   // 开始预加载
   loadingStatus.set(key, 'loading')
-  
-  return loader().then(component => {
-    componentCache.set(key, component)
-    loadingStatus.set(key, 'loaded')
-    return component
-  }).catch(error => {
-    loadingStatus.delete(key)
-    throw error
-  })
+
+  return loader()
+    .then((component) => {
+      componentCache.set(key, component)
+      loadingStatus.set(key, 'loaded')
+      return component
+    })
+    .catch((error) => {
+      loadingStatus.delete(key)
+      throw error
+    })
 }
 
 /**
@@ -320,9 +324,7 @@ export function preloadComponent(
 export function preloadComponents(
   loaders: { loader: AsyncComponentLoader; cacheKey?: string }[]
 ): Promise<Component[]> {
-  return Promise.all(
-    loaders.map(({ loader, cacheKey }) => preloadComponent(loader, cacheKey))
-  )
+  return Promise.all(loaders.map(({ loader, cacheKey }) => preloadComponent(loader, cacheKey)))
 }
 
 /**
@@ -346,9 +348,10 @@ export function clearComponentCache(cacheKey?: string) {
 export function getCacheStats() {
   return {
     cacheSize: componentCache.size,
-    loadingCount: Array.from(loadingStatus.values()).filter(status => status === 'loading').length,
-    loadedCount: Array.from(loadingStatus.values()).filter(status => status === 'loaded').length,
-    errorCount: Array.from(loadingStatus.values()).filter(status => status === 'error').length
+    loadingCount: Array.from(loadingStatus.values()).filter((status) => status === 'loading')
+      .length,
+    loadedCount: Array.from(loadingStatus.values()).filter((status) => status === 'loaded').length,
+    errorCount: Array.from(loadingStatus.values()).filter((status) => status === 'error').length
   }
 }
 

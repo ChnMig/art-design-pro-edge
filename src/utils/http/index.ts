@@ -50,11 +50,11 @@ const axiosInstance = axios.create({
 // 请求拦截器
 axiosInstance.interceptors.request.use(
   (request: InternalAxiosRequestConfig) => {
-    const { accessToken } = useUserStore()
+    const userStore = useUserStore()
 
-    // 设置 token
-    if (accessToken) {
-      request.headers.set('Authorization', accessToken)
+    // 设置 token - 获取当前最新的accessToken值
+    if (userStore.accessToken) {
+      request.headers.set('Authorization', userStore.accessToken)
     }
 
     // 根据请求数据类型设置 Content-Type

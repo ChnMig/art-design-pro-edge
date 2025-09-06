@@ -4,11 +4,11 @@
  */
 
 import type { App } from 'vue'
-import { 
-  createAsyncComponent, 
-  createAsyncPage, 
+import {
+  createAsyncComponent,
+  createAsyncPage,
   preloadComponents,
-  type AsyncComponentOptions 
+  type AsyncComponentOptions
 } from '@/utils/components/async-loader'
 
 /** 全局异步组件配置 */
@@ -47,7 +47,7 @@ export function setupAsyncComponents(app: App, config: AsyncComponentsConfig = {
   }
 
   // ============ 表格相关组件 ============
-  
+
   /** ArtTable 异步组件 */
   const ArtTable = createAsyncComponent(
     () => import('@/components/core/tables/art-table/index.vue'),
@@ -61,7 +61,7 @@ export function setupAsyncComponents(app: App, config: AsyncComponentsConfig = {
   )
 
   // ============ 表单相关组件 ============
-  
+
   /** ArtSearchBar 异步组件 */
   const ArtSearchBar = createAsyncComponent(
     () => import('@/components/core/forms/art-search-bar/index.vue'),
@@ -75,7 +75,7 @@ export function setupAsyncComponents(app: App, config: AsyncComponentsConfig = {
   )
 
   // ============ 视图组件 ============
-  
+
   /** ArtWaterMark 异步组件 */
   const ArtWaterMark = createAsyncComponent(
     () => import('@/components/core/others/art-water-mark/index.vue'),
@@ -83,72 +83,90 @@ export function setupAsyncComponents(app: App, config: AsyncComponentsConfig = {
   )
 
   // ============ 页面异步组件 ============
-  
+
   /** 用户管理页面 */
-  const UserManagePage = createAsyncPage(
-    () => import('@/views/system/user/index.vue'),
-    { ...baseOptions, cacheKey: 'UserManagePage', timeout: 15000 }
-  )
+  const UserManagePage = createAsyncPage(() => import('@/views/system/user/index.vue'), {
+    ...baseOptions,
+    cacheKey: 'UserManagePage',
+    timeout: 15000
+  })
 
   /** 角色管理页面 */
-  const RoleManagePage = createAsyncPage(
-    () => import('@/views/system/role/index.vue'),
-    { ...baseOptions, cacheKey: 'RoleManagePage', timeout: 15000 }
-  )
+  const RoleManagePage = createAsyncPage(() => import('@/views/system/role/index.vue'), {
+    ...baseOptions,
+    cacheKey: 'RoleManagePage',
+    timeout: 15000
+  })
 
   /** 菜单管理页面 */
-  const MenuManagePage = createAsyncPage(
-    () => import('@/views/system/menu/index.vue'),
-    { ...baseOptions, cacheKey: 'MenuManagePage', timeout: 15000 }
-  )
+  const MenuManagePage = createAsyncPage(() => import('@/views/system/menu/index.vue'), {
+    ...baseOptions,
+    cacheKey: 'MenuManagePage',
+    timeout: 15000
+  })
 
   // ============ 注册全局组件 ============
-  
+
   // 表格相关组件
   app.component('ArtTable', ArtTable)
   app.component('ArtTableHeader', ArtTableHeader)
-  
+
   // 表单相关组件
   app.component('ArtSearchBar', ArtSearchBar)
   app.component('ArtButtonMore', ArtButtonMore)
-  
+
   // 视图组件
   app.component('ArtWaterMark', ArtWaterMark)
 
   // ============ 预加载组件 ============
-  
+
   const preloadTasks: Array<{ loader: () => Promise<any>; cacheKey: string }> = []
 
   // 核心组件预加载
   if (preloadCore) {
-    preloadTasks.push(
-      { loader: () => import('@/components/core/others/art-water-mark/index.vue'), cacheKey: 'ArtWaterMark' }
-    )
+    preloadTasks.push({
+      loader: () => import('@/components/core/others/art-water-mark/index.vue'),
+      cacheKey: 'ArtWaterMark'
+    })
   }
 
   // 表格组件预加载
   if (preloadTable) {
     preloadTasks.push(
-      { loader: () => import('@/components/core/tables/art-table/index.vue'), cacheKey: 'ArtTable' },
-      { loader: () => import('@/components/core/tables/art-table-header/index.vue'), cacheKey: 'ArtTableHeader' }
+      {
+        loader: () => import('@/components/core/tables/art-table/index.vue'),
+        cacheKey: 'ArtTable'
+      },
+      {
+        loader: () => import('@/components/core/tables/art-table-header/index.vue'),
+        cacheKey: 'ArtTableHeader'
+      }
     )
   }
 
   // 表单组件预加载
   if (preloadForm) {
     preloadTasks.push(
-      { loader: () => import('@/components/core/forms/art-search-bar/index.vue'), cacheKey: 'ArtSearchBar' },
-      { loader: () => import('@/components/core/forms/art-button-more/index.vue'), cacheKey: 'ArtButtonMore' }
+      {
+        loader: () => import('@/components/core/forms/art-search-bar/index.vue'),
+        cacheKey: 'ArtSearchBar'
+      },
+      {
+        loader: () => import('@/components/core/forms/art-button-more/index.vue'),
+        cacheKey: 'ArtButtonMore'
+      }
     )
   }
 
   // 执行预加载
   if (preloadTasks.length > 0) {
-    preloadComponents(preloadTasks).then(() => {
-      console.log(`✅ 预加载完成 ${preloadTasks.length} 个组件`)
-    }).catch(error => {
-      console.warn('⚠️  部分组件预加载失败:', error)
-    })
+    preloadComponents(preloadTasks)
+      .then(() => {
+        console.log(`✅ 预加载完成 ${preloadTasks.length} 个组件`)
+      })
+      .catch((error) => {
+        console.warn('⚠️  部分组件预加载失败:', error)
+      })
   }
 
   console.log('✅ 全局异步组件已注册')

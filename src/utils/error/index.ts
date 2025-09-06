@@ -280,11 +280,7 @@ export function handleError(
 /**
  * 处理网络错误
  */
-export function handleNetworkError(
-  error: any,
-  url?: string,
-  additionalInfo?: Partial<ErrorInfo>
-) {
+export function handleNetworkError(error: any, url?: string, additionalInfo?: Partial<ErrorInfo>) {
   return handleError(error, ErrorLevel.ERROR, ErrorType.NETWORK, {
     url,
     ...additionalInfo
@@ -294,11 +290,7 @@ export function handleNetworkError(
 /**
  * 处理API错误
  */
-export function handleApiError(
-  error: any,
-  url?: string,
-  additionalInfo?: Partial<ErrorInfo>
-) {
+export function handleApiError(error: any, url?: string, additionalInfo?: Partial<ErrorInfo>) {
   return handleError(error, ErrorLevel.ERROR, ErrorType.API, {
     url,
     ...additionalInfo
@@ -308,11 +300,7 @@ export function handleApiError(
 /**
  * 处理权限错误
  */
-export function handleAuthError(
-  error: any,
-  url?: string,
-  additionalInfo?: Partial<ErrorInfo>
-) {
+export function handleAuthError(error: any, url?: string, additionalInfo?: Partial<ErrorInfo>) {
   return handleError(error, ErrorLevel.ERROR, ErrorType.AUTH, {
     url,
     ...additionalInfo
@@ -322,41 +310,28 @@ export function handleAuthError(
 /**
  * 处理验证错误
  */
-export function handleValidationError(
-  error: any,
-  additionalInfo?: Partial<ErrorInfo>
-) {
+export function handleValidationError(error: any, additionalInfo?: Partial<ErrorInfo>) {
   return handleError(error, ErrorLevel.WARN, ErrorType.VALIDATION, additionalInfo)
 }
 
 /**
  * 处理业务错误
  */
-export function handleBusinessError(
-  error: any,
-  additionalInfo?: Partial<ErrorInfo>
-) {
+export function handleBusinessError(error: any, additionalInfo?: Partial<ErrorInfo>) {
   return handleError(error, ErrorLevel.ERROR, ErrorType.BUSINESS, additionalInfo)
 }
 
 /**
  * 处理系统错误
  */
-export function handleSystemError(
-  error: any,
-  additionalInfo?: Partial<ErrorInfo>
-) {
+export function handleSystemError(error: any, additionalInfo?: Partial<ErrorInfo>) {
   return handleError(error, ErrorLevel.FATAL, ErrorType.SYSTEM, additionalInfo)
 }
 
 /**
  * 获取错误历史
  */
-export function getErrorHistory(
-  limit?: number,
-  level?: ErrorLevel,
-  type?: ErrorType
-): ErrorInfo[] {
+export function getErrorHistory(limit?: number, level?: ErrorLevel, type?: ErrorType): ErrorInfo[] {
   let filtered = errorCache
 
   if (level) {
@@ -394,7 +369,7 @@ export function withErrorBoundary<T extends (...args: any[]) => any>(
   return ((...args: any[]) => {
     try {
       const result = fn(...args)
-      
+
       // 如果返回Promise，处理async错误
       if (result instanceof Promise) {
         return result.catch((error) => {
@@ -405,7 +380,7 @@ export function withErrorBoundary<T extends (...args: any[]) => any>(
           throw error
         })
       }
-      
+
       return result
     } catch (error) {
       const errorInfo = handleError(error, level, type)

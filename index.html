@@ -11,14 +11,15 @@
     <link rel="shortcut icon" type="image/x-icon" href="src/assets/img/favicon.ico" />
     <script>
       // Theme detection and application
-      (function() {
-        const theme = localStorage.getItem('theme') || 
-                     (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        document.documentElement.setAttribute('data-theme', theme);
+      ;(function () {
+        const theme =
+          localStorage.getItem('theme') ||
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        document.documentElement.setAttribute('data-theme', theme)
         if (theme === 'dark') {
-          document.documentElement.classList.add('dark');
+          document.documentElement.classList.add('dark')
         }
-      })();
+      })()
     </script>
   </head>
 

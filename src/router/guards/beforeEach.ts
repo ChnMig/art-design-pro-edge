@@ -16,8 +16,8 @@ import { loadingService } from '@/utils/ui'
 import { useCommon } from '@/composables/useCommon'
 import { useWorktabStore } from '@/store/modules/worktab'
 import { getUserInfo } from '@/api/system/api'
-import { useUserStore } from '@/store/modules/user'
 import { ApiStatus } from '@/utils/http/status'
+import { ElMessage } from 'element-plus'
 
 // 前端权限模式 loading 关闭延时，提升用户体验
 const LOADING_DELAY = 100
@@ -30,6 +30,7 @@ const pendingLoading = ref(false)
 
 // 获取用户信息
 const getUserInfoData = async () => {
+  const userStore = useUserStore()
   if (userStore.isLogin) {
     try {
       const res = await getUserInfo()
@@ -237,23 +238,51 @@ async function processFrontendMenu(router: Router): Promise<void> {
 /**
  * 处理后端控制模式的菜单逻辑
  */
-async function processBackendMenu(router: Router): Promise<() => void> {
-  const closeLoading = loadingService.showLoading()
-  // 获取菜单列表
-  console.log('获取用户菜单...')
-  const asyncRoutesData = await getUserMenu()
-  if (asyncRoutesData.code === ApiStatus.success) {
-    console.log('获取用户菜单成功:', asyncRoutesData.data)
-  } else {
-    ElMessage.error(asyncRoutesData.message)
-    console.error('获取用户菜单失败:', asyncRoutesData.message)
-    asyncRoutesData.data = []
+async function processBackendMenu(router: Router): Promise<void> {
+  try {
+    // 获取菜单列表
+    console.log('获取用户菜单...')
+    const asyncRoutesData = await getUserMenu()
+    console.log('菜单API完整响应:', asyncRoutesData)
+    
+    if (asyncRoutesData.code === ApiStatus.success) {
+      console.log('获取用户菜单成功:', asyncRoutesData.data)
+      // 获取到的菜单数据
+      const menuRes = Array.isArray(asyncRoutesData.data) ? asyncRoutesData.data : []
+      const menuList: AppRouteRecord[] = menuRes.map((route: AppRouteRecord) => menuDataToRouter(route))
+      await registerAndStoreMenu(router, menuList)
+    } else {
+      // API调用成功但返回错误状态
+      const errorMsg = asyncRoutesData.message || asyncRoutesData.msg || '获取菜单失败'
+      console.error('获取用户菜单失败:', errorMsg)
+      
+      // 检查是否是认证错误
+      if (asyncRoutesData.code === 401 || asyncRoutesData.code === ApiStatus.unauthorized) {
+        // 认证失败，重新登录
+        const userStore = useUserStore()
+        userStore.logOut()
+        ElMessage.error('登录已过期，请重新登录')
+        return
+      } else {
+        // 其他错误，显示具体错误信息
+        ElMessage.error(errorMsg)
+        throw new Error(errorMsg)
+      }
+    }
+  } catch (error) {
+    console.error('菜单API调用异常:', error)
+    // 检查是否是网络错误或API调用异常
+    if (error instanceof Error) {
+      if (error.message.includes('401') || error.message.includes('unauthorized')) {
+        const userStore = useUserStore()
+        userStore.logOut()
+        ElMessage.error('登录已过期，请重新登录')
+        return
+      }
+      ElMessage.error('获取菜单失败，请检查网络连接')
+    }
+    throw error
   }
-  // 获取到的菜单数据
-  const menuRes = Array.isArray(asyncRoutesData.data) ? asyncRoutesData.data : []
-  const menuList: AppRouteRecord[] = menuRes.map((route: AppRouteRecord) => menuDataToRouter(route))
-  await registerAndStoreMenu(router, menuList, closeLoading)
-  return closeLoading
 }
 
 /**
@@ -308,6 +337,15 @@ async function registerAndStoreMenu(router: Router, menuList: AppRouteRecord[]):
  */
 function handleMenuError(error: unknown): void {
   console.error('菜单处理失败:', error)
+  
+  // 如果错误已经在processBackendMenu中处理过了(认证错误或网络错误)，就不需要再处理
+  if (error instanceof Error && 
+      (error.message.includes('登录已过期') || error.message.includes('网络连接'))) {
+    return // 已经显示过用户消息，不需要重复处理
+  }
+  
+  // 其他未处理的错误，显示通用错误并登出
+  ElMessage.error('系统错误，请重新登录')
   useUserStore().logOut()
   throw error instanceof Error ? error : new Error('获取菜单列表失败，请重新登录')
 }

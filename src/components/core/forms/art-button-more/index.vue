@@ -2,11 +2,11 @@
 <template>
   <div class="btn-more">
     <ElDropdown v-if="hasAnyAuthItem">
-      <ArtButtonTable 
-        type="more" 
+      <ArtButtonTable
+        type="more"
         :icon="props.icon"
         :iconColor="props.color"
-        :iconBgColor="!hasBackground ? 'transparent' : ''" 
+        :iconBgColor="!hasBackground ? 'transparent' : ''"
       />
       <template #dropdown>
         <ElDropdownMenu>
@@ -17,7 +17,7 @@
               @click="handleClick(item)"
               :style="{ color: item.color }"
             >
-              <i v-if="item.icon" :class="item.icon" style="margin-right: 6px;"></i>
+              <i v-if="item.icon" :class="item.icon" style="margin-right: 6px"></i>
               {{ item.label }}
             </ElDropdownItem>
           </template>

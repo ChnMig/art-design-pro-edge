@@ -439,9 +439,7 @@ export function createPaginationParams(current = 1, size = 10): PaginationParams
 }
 
 /** 创建搜索参数 */
-export function createSearchParams(
-  params: Partial<SearchParams> = {}
-): Required<SearchParams> {
+export function createSearchParams(params: Partial<SearchParams> = {}): Required<SearchParams> {
   return {
     current: 1,
     size: 10,
@@ -452,41 +450,42 @@ export function createSearchParams(
 }
 
 /** 创建时间范围参数 */
-export function createTimeRangeParams(
-  startTime?: string,
-  endTime?: string
-): TimeRangeParams {
+export function createTimeRangeParams(startTime?: string, endTime?: string): TimeRangeParams {
   return { startTime, endTime }
 }
 
 // ============ 类型守卫 ============
 
 /** 检查是否为分页响应 */
-export function isPaginationResponse<T>(
-  data: any
-): data is PaginationResponse<T> {
-  return data && 
-         typeof data === 'object' &&
-         Array.isArray(data.records) &&
-         typeof data.current === 'number' &&
-         typeof data.size === 'number' &&
-         typeof data.total === 'number'
+export function isPaginationResponse<T>(data: any): data is PaginationResponse<T> {
+  return (
+    data &&
+    typeof data === 'object' &&
+    Array.isArray(data.records) &&
+    typeof data.current === 'number' &&
+    typeof data.size === 'number' &&
+    typeof data.total === 'number'
+  )
 }
 
 /** 检查是否为用户信息 */
 export function isUserInfo(data: any): data is UserInfo {
-  return data &&
-         typeof data === 'object' &&
-         typeof data.id === 'number' &&
-         typeof data.username === 'string' &&
-         Array.isArray(data.roles)
+  return (
+    data &&
+    typeof data === 'object' &&
+    typeof data.id === 'number' &&
+    typeof data.username === 'string' &&
+    Array.isArray(data.roles)
+  )
 }
 
 /** 检查是否为菜单信息 */
 export function isMenuInfo(data: any): data is MenuInfo {
-  return data &&
-         typeof data === 'object' &&
-         typeof data.id === 'number' &&
-         typeof data.name === 'string' &&
-         typeof data.type === 'number'
+  return (
+    data &&
+    typeof data === 'object' &&
+    typeof data.id === 'number' &&
+    typeof data.name === 'string' &&
+    typeof data.type === 'number'
+  )
 }

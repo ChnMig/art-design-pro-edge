@@ -34,20 +34,24 @@ export function setupErrorHandler(app: App) {
   window.addEventListener('error', createGlobalErrorHandler())
 
   // 资源加载错误处理
-  window.addEventListener('error', (event) => {
-    // 只处理资源加载错误
-    if (event.target !== window && (event.target as any)?.tagName) {
-      const target = event.target as HTMLElement
-      const tagName = target.tagName.toLowerCase()
-      const src = (target as any).src || (target as any).href
-      
-      console.error(`资源加载失败: ${tagName}`, {
-        src,
-        tagName,
-        message: event.message || `${tagName} 资源加载失败`
-      })
-    }
-  }, true) // 使用捕获阶段
+  window.addEventListener(
+    'error',
+    (event) => {
+      // 只处理资源加载错误
+      if (event.target !== window && (event.target as any)?.tagName) {
+        const target = event.target as HTMLElement
+        const tagName = target.tagName.toLowerCase()
+        const src = (target as any).src || (target as any).href
+
+        console.error(`资源加载失败: ${tagName}`, {
+          src,
+          tagName,
+          message: event.message || `${tagName} 资源加载失败`
+        })
+      }
+    },
+    true
+  ) // 使用捕获阶段
 
   console.log('✅ 全局错误处理已初始化')
 }

@@ -155,6 +155,11 @@
             ElMessage.error('登录失败')
             refreshCaptcha()
           }
+        } catch (error) {
+          // 处理登录过程中的异常
+          console.error('登录过程发生错误:', error)
+          ElMessage.error('登录失败，请重试')
+          refreshCaptcha()
         } finally {
           await delay(1000)
           loading.value = false

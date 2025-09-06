@@ -60,18 +60,19 @@
   const effectiveContent = computed(() => {
     const userInfo = userStore.getUserInfo
     console.log('Water mark user info:', userInfo)
-    
+
     // 尝试多种字段名组合，兼容不同后端数据格式
     const userId = userInfo.userId || userInfo.id || userInfo.user_id || ''
-    const userName = userInfo.userName || userInfo.username || userInfo.name || userInfo.user_name || ''
-    
+    const userName =
+      userInfo.userName || userInfo.username || userInfo.name || userInfo.user_name || ''
+
     console.log('Water mark userId:', userId, 'userName:', userName)
-    
+
     // 如果没有用户信息，显示默认内容
     if (!userId && !userName) {
       return props.content || AppConfig.systemInfo.name
     }
-    
+
     return `${userId} | ${userName}`
   })
 </script>

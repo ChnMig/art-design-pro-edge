@@ -52,10 +52,7 @@ export interface UseApiOptions extends ApiRequestConfig {
 /**
  * 通用API操作hook
  */
-export function useApi<T = any>(
-  apiCall: () => Promise<T>,
-  options: UseApiOptions = {}
-) {
+export function useApi<T = any>(apiCall: () => Promise<T>, options: UseApiOptions = {}) {
   const state = reactive<ApiState<T>>({
     data: null,
     loading: false,
@@ -176,16 +173,14 @@ export function usePaginationApi<T = any>(
 
   let loadingInstance: LoadingInstance | null = null
 
-  const {
-    immediate = false,
-    resetOnExecute = true,
-    fullscreenLoading = false
-  } = options
+  const { immediate = false, resetOnExecute = true, fullscreenLoading = false } = options
 
   /**
    * 执行查询
    */
-  const execute = async (params: Partial<SearchParams> = {}): Promise<PaginationResponse<T> | null> => {
+  const execute = async (
+    params: Partial<SearchParams> = {}
+  ): Promise<PaginationResponse<T> | null> => {
     try {
       if (resetOnExecute) {
         state.error = null
@@ -209,7 +204,7 @@ export function usePaginationApi<T = any>(
       }
 
       const result = await apiCall(finalParams)
-      
+
       state.data = result
       state.current = result.current
       state.size = result.size
@@ -273,7 +268,7 @@ export function usePaginationApi<T = any>(
     state.current = 1
     state.total = 0
     state.records = []
-    
+
     // 重置搜索参数
     Object.assign(searchParams, {
       current: 1,
@@ -310,30 +305,23 @@ export function usePaginationApi<T = any>(
 /**
  * RESTful API操作hook
  */
-export function useRestfulApi<T = any>(
-  client: RestfulClient<T>,
-  options: UseApiOptions = {}
-) {
-  const listState = usePaginationApi<T>(
-    (params) => client.list(params),
-    {},
-    options
-  )
+export function useRestfulApi<T = any>(client: RestfulClient<T>, options: UseApiOptions = {}) {
+  const listState = usePaginationApi<T>((params) => client.list(params), {}, options)
 
-  const createState = useApi<T>(
-    () => Promise.resolve(null as any),
-    { ...options, immediate: false }
-  )
+  const createState = useApi<T>(() => Promise.resolve(null as any), {
+    ...options,
+    immediate: false
+  })
 
-  const updateState = useApi<T>(
-    () => Promise.resolve(null as any),
-    { ...options, immediate: false }
-  )
+  const updateState = useApi<T>(() => Promise.resolve(null as any), {
+    ...options,
+    immediate: false
+  })
 
-  const deleteState = useApi<void>(
-    () => Promise.resolve(undefined as any),
-    { ...options, immediate: false }
-  )
+  const deleteState = useApi<void>(() => Promise.resolve(undefined as any), {
+    ...options,
+    immediate: false
+  })
 
   /**
    * 创建记录

@@ -1,11 +1,7 @@
 import { AxiosError } from 'axios'
 import { ElMessage } from 'element-plus'
 import { ApiStatus } from './status'
-import { 
-  handleError as globalHandleError,
-  handleNetworkError,
-  handleApiError
-} from '@/utils/error'
+import { handleError as globalHandleError, handleNetworkError, handleApiError } from '@/utils/error'
 
 // 错误响应接口
 export interface ErrorResponse {
@@ -101,12 +97,15 @@ export function handleError(error: AxiosError<ErrorResponse>): never {
   const errorMessage = error.response?.data?.msg || error.message
   const requestConfig = error.config
 
-  // 使用全局错误处理框架记录和处理错误
-  try {
-    globalHandleError(error)
-  } catch (globalError) {
-    // 全局错误处理可能抛出错误，这里忽略继续使用原有逻辑
-  }
+  // 记录错误日志但不使用全局错误处理的用户通知（避免重复提示）
+  // 这里只记录控制台日志，用户通知由HTTP错误处理统一管理
+  console.error('[HTTP Request Error]', {
+    message: errorMessage,
+    code: error.code,
+    url: requestConfig?.url,
+    method: requestConfig?.method,
+    timestamp: new Date().toISOString()
+  })
 
   // 处理网络错误
   if (!error.response) {
@@ -114,12 +113,9 @@ export function handleError(error: AxiosError<ErrorResponse>): never {
       url: requestConfig?.url,
       method: requestConfig?.method?.toUpperCase()
     })
-    
-    // 使用全局框架记录网络错误
-    handleNetworkError(error, requestConfig?.url, {
-      details: httpError.toLogData()
-    })
-    
+
+    // 记录网络错误日志（已在上方统一记录，这里不需要重复处理）
+
     throw httpError
   }
 
@@ -131,18 +127,7 @@ export function handleError(error: AxiosError<ErrorResponse>): never {
     method: requestConfig?.method?.toUpperCase()
   })
 
-  // 根据状态码使用相应的全局错误处理
-  if (statusCode === 401 || statusCode === 403) {
-    // 权限错误
-    handleApiError(error, requestConfig?.url, {
-      details: httpError.toLogData()
-    })
-  } else {
-    // API错误
-    handleApiError(error, requestConfig?.url, {
-      details: httpError.toLogData()
-    })
-  }
+  // API错误日志已在上方统一记录，这里不需要重复处理全局错误框架
 
   throw httpError
 }

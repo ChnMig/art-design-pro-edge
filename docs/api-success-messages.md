@@ -23,15 +23,12 @@ const config = withSuccessMessage({ url: '/api/users', method: 'post' })
 api.post(config)
 
 // 显示自定义成功消息
-const config = withSuccessMessage(
-  { url: '/api/users', method: 'post' }, 
-  '用户创建成功'
-)
+const config = withSuccessMessage({ url: '/api/users', method: 'post' }, '用户创建成功')
 api.post(config)
 
 // 布尔值控制是否显示
 const config = withSuccessMessage(
-  { url: '/api/users', method: 'post' }, 
+  { url: '/api/users', method: 'post' },
   true // 显示默认消息
 )
 api.post(config)
@@ -40,17 +37,17 @@ api.post(config)
 ### 2. 预设操作消息
 
 ```typescript
-import { 
+import {
   withCreateSuccess,
   withUpdateSuccess,
   withDeleteSuccess,
-  withSaveSuccess 
+  withSaveSuccess
 } from '@/utils/http/success'
 
 // 创建操作 - 显示"创建成功"
 const createConfig = withCreateSuccess({ url: '/api/users', method: 'post' })
 
-// 更新操作 - 显示"更新成功"  
+// 更新操作 - 显示"更新成功"
 const updateConfig = withUpdateSuccess({ url: '/api/users/1', method: 'put' })
 
 // 删除操作 - 显示"删除成功"
@@ -66,9 +63,9 @@ const saveConfig = withSaveSuccess({ url: '/api/settings', method: 'post' })
 import { withAutoSuccess } from '@/utils/http/success'
 
 // 根据方法和URL自动检测操作类型
-const config1 = withAutoSuccess({ url: '/api/users', method: 'post' })        // "创建成功"
-const config2 = withAutoSuccess({ url: '/api/users/1', method: 'put' })       // "更新成功"
-const config3 = withAutoSuccess({ url: '/api/users/1', method: 'delete' })    // "删除成功"
+const config1 = withAutoSuccess({ url: '/api/users', method: 'post' }) // "创建成功"
+const config2 = withAutoSuccess({ url: '/api/users/1', method: 'put' }) // "更新成功"
+const config3 = withAutoSuccess({ url: '/api/users/1', method: 'delete' }) // "删除成功"
 const config4 = withAutoSuccess({ url: '/api/files/upload', method: 'post' }) // "上传成功"
 ```
 
@@ -97,7 +94,7 @@ const enableConfig = withStatusChangeSuccess(
   'enable'
 )
 
-// 禁用用户  
+// 禁用用户
 const disableConfig = withStatusChangeSuccess(
   { url: '/api/users/1/disable', method: 'put' },
   'disable'
@@ -151,25 +148,25 @@ const userClient = new RestfulClient('users', {
 })
 
 // 使用时会自动显示相应的成功消息
-await userClient.create(userData)     // "创建成功"
-await userClient.update(1, userData)  // "更新成功" 
-await userClient.remove(1)           // "删除成功"
+await userClient.create(userData) // "创建成功"
+await userClient.update(1, userData) // "更新成功"
+await userClient.remove(1) // "删除成功"
 ```
 
 ## 内置操作消息
 
-| 操作类型 | 默认消息 | 触发条件 |
-|---------|---------|----------|
-| create | 创建成功 | POST方法 |
-| update | 更新成功 | PUT/PATCH方法 |
-| delete | 删除成功 | DELETE方法 |
-| save | 保存成功 | 包含save的URL |
-| upload | 上传成功 | 包含upload的URL |
+| 操作类型 | 默认消息 | 触发条件          |
+| -------- | -------- | ----------------- |
+| create   | 创建成功 | POST方法          |
+| update   | 更新成功 | PUT/PATCH方法     |
+| delete   | 删除成功 | DELETE方法        |
+| save     | 保存成功 | 包含save的URL     |
+| upload   | 上传成功 | 包含upload的URL   |
 | download | 下载成功 | 包含download的URL |
-| enable | 启用成功 | 包含enable的URL |
-| disable | 禁用成功 | 包含disable的URL |
-| import | 导入成功 | 包含import的URL |
-| export | 导出成功 | 包含export的URL |
+| enable   | 启用成功 | 包含enable的URL   |
+| disable  | 禁用成功 | 包含disable的URL  |
+| import   | 导入成功 | 包含import的URL   |
+| export   | 导出成功 | 包含export的URL   |
 
 ## 高级配置
 
@@ -179,7 +176,7 @@ await userClient.remove(1)           // "删除成功"
 interface SuccessMessageConfig {
   /** 是否显示成功消息 */
   show: boolean
-  /** 成功消息文本 */  
+  /** 成功消息文本 */
   message?: string
   /** 消息显示时长（毫秒） */
   duration?: number
@@ -196,7 +193,7 @@ import { SuccessConfigs } from '@/utils/http/success'
 // 使用预设配置
 const config = {
   ...requestConfig,
-  ...SuccessConfigs.CREATE  // { show: true, message: '创建成功' }
+  ...SuccessConfigs.CREATE // { show: true, message: '创建成功' }
 }
 ```
 
@@ -221,30 +218,24 @@ const config = withoutSuccessMessage(requestConfig)
 
 ```typescript
 // 用户管理
-await api.post(withCreateSuccess(
-  { url: '/api/users', data: userForm }, 
-  '用户添加成功'
-))
+await api.post(withCreateSuccess({ url: '/api/users', data: userForm }, '用户添加成功'))
 
 // 批量删除
-await api.delete(withBatchSuccess(
-  { url: '/api/users/batch', data: { ids: [1,2,3] } },
-  'delete',
-  3
-))
+await api.delete(
+  withBatchSuccess({ url: '/api/users/batch', data: { ids: [1, 2, 3] } }, 'delete', 3)
+)
 
 // 文件上传
-await api.post(withUploadSuccess(
-  { url: '/api/files/upload', data: formData },
-  '文件上传完成'
-))
+await api.post(withUploadSuccess({ url: '/api/files/upload', data: formData }, '文件上传完成'))
 
 // 状态切换
-await api.put(withStatusChangeSuccess(
-  { url: '/api/users/1/status', data: { status: 'active' } },
-  'enable',
-  '用户已激活'
-))
+await api.put(
+  withStatusChangeSuccess(
+    { url: '/api/users/1/status', data: { status: 'active' } },
+    'enable',
+    '用户已激活'
+  )
+)
 ```
 
 通过这套成功消息系统，可以为用户提供更好的操作反馈体验，提升应用的易用性。

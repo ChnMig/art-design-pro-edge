@@ -5,7 +5,10 @@ import { ApiResponse } from '@/api/client'
 // 确保 request 对象类型正确
 const httpClient = request as unknown as HttpClient
 
-export const getCaptcha = (height: number, width: number): Promise<{id: string, image: string}> => {
+export const getCaptcha = (
+  height: number,
+  width: number
+): Promise<{ id: string; image: string }> => {
   return httpClient.get({ url: '/system/user/login/captcha', params: { height, width } })
 }
 
@@ -14,7 +17,7 @@ export const userLogin = (data: {
   password: string
   captcha: string
   captcha_id: string
-}): Promise<{access_token: string, refresh_token?: string}> => {
+}): Promise<{ access_token: string; refresh_token?: string }> => {
   return httpClient.post({ url: '/system/user/login', data })
 }
 
