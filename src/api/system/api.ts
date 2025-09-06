@@ -9,7 +9,11 @@ export const getCaptcha = (
   height: number,
   width: number
 ): Promise<{ id: string; image: string }> => {
-  return httpClient.get({ url: '/system/user/login/captcha', params: { height, width } })
+  return httpClient.get({
+    url: '/system/user/login/captcha',
+    params: { height, width },
+    showErrorMessage: false
+  })
 }
 
 export const userLogin = (data: {
@@ -18,11 +22,11 @@ export const userLogin = (data: {
   captcha: string
   captcha_id: string
 }): Promise<{ access_token: string; refresh_token?: string }> => {
-  return httpClient.post({ url: '/system/user/login', data })
+  return httpClient.post({ url: '/system/user/login', data, showErrorMessage: false })
 }
 
 export const getUserInfo = (): Promise<any> => {
-  return httpClient.get({ url: '/system/user/info' })
+  return httpClient.get({ url: '/system/user/info', showErrorMessage: false })
 }
 
 export const updateUserInfo = (data: any): Promise<ApiResponse<ApiResponse>> => {
@@ -30,7 +34,7 @@ export const updateUserInfo = (data: any): Promise<ApiResponse<ApiResponse>> => 
 }
 
 export const getUserMenu = (): Promise<ApiResponse<ApiResponse>> => {
-  return httpClient.get({ url: '/system/user/menu' })
+  return httpClient.get({ url: '/system/user/menu', showErrorMessage: false })
 }
 
 export const getAllMenu = (): Promise<ApiResponse<ApiResponse>> => {
