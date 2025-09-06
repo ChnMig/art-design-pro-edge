@@ -39,32 +39,18 @@
               />
             </ElFormItem>
             <ElFormItem prop="captcha">
-              <ElRow :gutter="8">
-                <ElCol :span="16">
-                  <ElInput
-                    placeholder="请输入验证码"
-                    size="large"
-                    v-model.trim="formData.captcha"
-                  />
-                </ElCol>
-                <ElCol :span="8">
-                  <img
-                    :src="captchaImageUrl"
-                    @click="refreshCaptcha"
-                    class="captcha-image"
-                    alt="验证码图片"
-                    v-if="captchaImageUrl"
-                    @error="handleImageError"
-                  />
-                  <div
-                    v-else
-                    class="captcha-loading"
-                    @click="refreshCaptcha"
-                  >
-                    加载中...
-                  </div>
-                </ElCol>
-              </ElRow>
+              <div class="captcha-wrap">
+                <ElInput placeholder="请输入验证码" size="large" v-model.trim="formData.captcha" />
+                <img
+                  :src="captchaImageUrl"
+                  @click="refreshCaptcha"
+                  class="captcha-image"
+                  alt="验证码图片"
+                  v-if="captchaImageUrl"
+                  @error="handleImageError"
+                />
+                <div v-else class="captcha-loading" @click="refreshCaptcha">加载中...</div>
+              </div>
             </ElFormItem>
             <div class="forget-password">
               <ElCheckbox v-model="formData.rememberPassword">记住密码</ElCheckbox>
