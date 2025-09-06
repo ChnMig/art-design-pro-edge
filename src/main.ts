@@ -16,6 +16,8 @@ import '@icons/system/iconfont.css'                 // 系统图标
 import '@utils/sys/console.ts'                      // 控制台输出内容
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import { setupGlobDirectives } from './directives'
+import { setupErrorHandler } from './plugins/error-handler'
+import { setupAsyncComponents } from './plugins/async-components'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import ElementPlus from 'element-plus'
 
@@ -32,6 +34,12 @@ app.use(ElementPlus, {
 initStore(app)
 initRouter(app)
 setupGlobDirectives(app)
+setupErrorHandler(app)
+setupAsyncComponents(app, {
+  preloadCore: true,
+  preloadTable: false, // 按需加载表格组件
+  preloadForm: false   // 按需加载表单组件
+})
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)

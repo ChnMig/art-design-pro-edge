@@ -2,7 +2,12 @@
 <template>
   <div class="btn-more">
     <ElDropdown v-if="hasAnyAuthItem">
-      <ArtButtonTable type="more" :iconBgColor="!hasBackground ? 'transparent' : ''" />
+      <ArtButtonTable 
+        type="more" 
+        :icon="props.icon"
+        :iconColor="props.color"
+        :iconBgColor="!hasBackground ? 'transparent' : ''" 
+      />
       <template #dropdown>
         <ElDropdownMenu>
           <template v-for="item in list" :key="item.key">
@@ -10,7 +15,9 @@
               v-if="!item.auth || hasAuth(item.auth)"
               :disabled="item.disabled"
               @click="handleClick(item)"
+              :style="{ color: item.color }"
             >
+              <i v-if="item.icon" :class="item.icon" style="margin-right: 6px;"></i>
               {{ item.label }}
             </ElDropdownItem>
           </template>
@@ -36,6 +43,10 @@
     disabled?: boolean
     /** 权限标识 */
     auth?: string
+    /** 图标 */
+    icon?: string
+    /** 颜色 */
+    color?: string
   }
 
   interface Props {
@@ -45,6 +56,10 @@
     auth?: string
     /** 是否显示背景 */
     hasBackground?: boolean
+    /** 自定义图标 */
+    icon?: string
+    /** 自定义颜色 */
+    color?: string
   }
 
   const props = withDefaults(defineProps<Props>(), {

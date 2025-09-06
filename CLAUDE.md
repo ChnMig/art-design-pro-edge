@@ -114,7 +114,7 @@
 
 - **权限模式**: `VITE_ACCESS_MODE = backend` (强制后端模式)
 - **API地址**: `VITE_API_URL = http://127.0.0.1:8080/api/v1/admin/`
-- **版本同步**: 当前版本 `2.5.4`，同步原项目 commit `ea1b10208375448cc6876d57c4633ac4be347538`
+- **版本同步**: 当前版本 `2.5.6`，同步原项目 commit `d2d01bf5cf819d736add622df952783fbcb3ec02`
 
 #### 14. 配套后端项目
 
@@ -595,7 +595,7 @@ src/
 
 - **项目地址** - [art-design-pro-edge-go-server](https://github.com/ChnMig/art-design-pro-edge-go-server)
 - **技术栈** - Golang + Gin + Gorm + PostgreSQL + Redis
-- **API版本同步** - 当前同步版本 `ea1b10208375448cc6876d57c4633ac4be347538`
+- **API版本同步** - 当前同步版本 `d2d01bf5cf819d736add622df952783fbcb3ec02`
 
 ## 项目特色
 

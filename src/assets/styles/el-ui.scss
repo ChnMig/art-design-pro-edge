@@ -214,6 +214,11 @@ html.dark .el-card {
   .el-picker-panel__sidebar + .el-picker-panel__body {
     margin-left: 0;
   }
+
+  // 移动端侧边栏边框优化
+  .layout-sidebar {
+    border-right: none !important;
+  }
 }
 
 // 修改el-button样式

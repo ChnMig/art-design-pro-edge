@@ -9,6 +9,18 @@ interface UpgradeLog {
 
 export const upgradeLogList = ref<UpgradeLog[]>([
   {
+    version: 'v2.5.6',
+    title: '主题优化、响应式设计改进',
+    date: '2025-01-06',
+    detail: [
+      '添加页面初始主题检测脚本，提升首次加载体验',
+      '优化移动端侧边栏边框显示效果',
+      '改进暗色模式兼容性',
+      '优化响应式设计，提升移动端用户体验',
+      '同步上游项目优化改进，版本号更新至 2.5.6'
+    ]
+  },
+  {
     version: 'v2.5.5',
     title: 'bug修复、优化用户体验',
     date: '2025-08-17',

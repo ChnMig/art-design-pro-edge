@@ -1,9 +1,23 @@
 /**
- * namespace: Api
+ * namespace: Http & Api
  *
  * 所有接口相关类型定义
- * 在.vue文件使用会报错，需要在 eslint.config.mjs 中配置 globals: { Api: 'readonly' }
+ * 在.vue文件使用会报错，需要在 eslint.config.mjs 中配置 globals: { Api: 'readonly', Http: 'readonly' }
  */
+
+/** 全局 HTTP 类型命名空间（与原项目保持一致） */
+declare namespace Http {
+  /** 基础响应 */
+  interface BaseResponse<T = any> {
+    // 状态码
+    code: number
+    // 消息
+    msg: string
+    // 数据
+    data: T
+  }
+}
+
 declare namespace Api {
   /** 基础类型 */
   namespace Http {

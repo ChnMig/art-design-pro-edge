@@ -1,6 +1,11 @@
 import { AxiosError } from 'axios'
 import { ElMessage } from 'element-plus'
 import { ApiStatus } from './status'
+import { 
+  handleError as globalHandleError,
+  handleNetworkError,
+  handleApiError
+} from '@/utils/error'
 
 // 错误响应接口
 export interface ErrorResponse {
@@ -66,18 +71,18 @@ export class HttpError extends Error {
  */
 const getErrorMessage = (status: number): string => {
   const errorMap: Record<number, string> = {
-    [ApiStatus.unauthorized]: 'httpMsg.unauthorized',
-    [ApiStatus.forbidden]: 'httpMsg.forbidden',
-    [ApiStatus.notFound]: 'httpMsg.notFound',
-    [ApiStatus.methodNotAllowed]: 'httpMsg.methodNotAllowed',
-    [ApiStatus.requestTimeout]: 'httpMsg.requestTimeout',
-    [ApiStatus.internalServerError]: 'httpMsg.internalServerError',
-    [ApiStatus.badGateway]: 'httpMsg.badGateway',
-    [ApiStatus.serviceUnavailable]: 'httpMsg.serviceUnavailable',
-    [ApiStatus.gatewayTimeout]: 'httpMsg.gatewayTimeout'
+    [ApiStatus.unauthorized]: '未授权，请重新登录',
+    [ApiStatus.forbidden]: '拒绝访问',
+    [ApiStatus.notFound]: '请求的资源不存在',
+    [ApiStatus.methodNotAllowed]: '请求方法不被允许',
+    [ApiStatus.requestTimeout]: '请求超时',
+    [ApiStatus.internalServerError]: '服务器内部错误',
+    [ApiStatus.badGateway]: '网关错误',
+    [ApiStatus.serviceUnavailable]: '服务不可用',
+    [ApiStatus.gatewayTimeout]: '网关超时'
   }
 
-  return $t(errorMap[status] || 'httpMsg.internalServerError')
+  return errorMap[status] || '请求失败'
 }
 
 /**
@@ -96,21 +101,50 @@ export function handleError(error: AxiosError<ErrorResponse>): never {
   const errorMessage = error.response?.data?.msg || error.message
   const requestConfig = error.config
 
+  // 使用全局错误处理框架记录和处理错误
+  try {
+    globalHandleError(error)
+  } catch (globalError) {
+    // 全局错误处理可能抛出错误，这里忽略继续使用原有逻辑
+  }
+
   // 处理网络错误
   if (!error.response) {
-    throw new HttpError('网络错误', ApiStatus.error, {
+    const httpError = new HttpError('网络错误', ApiStatus.error, {
       url: requestConfig?.url,
       method: requestConfig?.method?.toUpperCase()
     })
+    
+    // 使用全局框架记录网络错误
+    handleNetworkError(error, requestConfig?.url, {
+      details: httpError.toLogData()
+    })
+    
+    throw httpError
   }
 
   // 处理 HTTP 状态码错误
   const message = statusCode ? getErrorMessage(statusCode) : errorMessage || '请求失败'
-  throw new HttpError(message, statusCode || ApiStatus.error, {
+  const httpError = new HttpError(message, statusCode || ApiStatus.error, {
     data: error.response.data,
     url: requestConfig?.url,
     method: requestConfig?.method?.toUpperCase()
   })
+
+  // 根据状态码使用相应的全局错误处理
+  if (statusCode === 401 || statusCode === 403) {
+    // 权限错误
+    handleApiError(error, requestConfig?.url, {
+      details: httpError.toLogData()
+    })
+  } else {
+    // API错误
+    handleApiError(error, requestConfig?.url, {
+      details: httpError.toLogData()
+    })
+  }
+
+  throw httpError
 }
 
 /**

@@ -22,7 +22,7 @@
           <ElFormItem
             :label="item.label"
             :prop="item.key"
-            :label-width="item.labelWidth || labelWidth"
+            :label-width="item.label ? (item.labelWidth || labelWidth) : '0'"
           >
             <slot :name="item.key" :item="item" :modelValue="modelValue">
               <component

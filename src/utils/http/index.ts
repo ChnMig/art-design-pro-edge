@@ -10,8 +10,19 @@ const MAX_RETRIES = 2 // 最大重试次数
 const RETRY_DELAY = 1000 // 重试延迟时间(毫秒)
 
 // 扩展 AxiosRequestConfig 类型
-interface ExtendedAxiosRequestConfig extends AxiosRequestConfig {
+export interface ExtendedAxiosRequestConfig extends AxiosRequestConfig {
   showErrorMessage?: boolean
+  showSuccessMessage?: boolean
+  successMessage?: string
+}
+
+// HTTP 客户端接口类型定义
+export interface HttpClient {
+  get<T>(config: ExtendedAxiosRequestConfig): Promise<T>
+  post<T>(config: ExtendedAxiosRequestConfig): Promise<T>
+  put<T>(config: ExtendedAxiosRequestConfig): Promise<T>
+  del<T>(config: ExtendedAxiosRequestConfig): Promise<T>
+  request<T>(config: ExtendedAxiosRequestConfig): Promise<T>
 }
 
 const { VITE_API_URL, VITE_WITH_CREDENTIALS } = import.meta.env
@@ -64,9 +75,16 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse<Api.Http.BaseResponse>) => {
     const { code, msg } = response.data
+    const config = response.config as ExtendedAxiosRequestConfig
 
     switch (code) {
       case ApiStatus.success:
+        // 显示成功消息
+        if (config.showSuccessMessage) {
+          const { ElMessage } = require('element-plus')
+          const successMsg = config.successMessage || msg || '操作成功'
+          ElMessage.success(successMsg)
+        }
         return response
       case ApiStatus.unauthorized:
         logOut()
@@ -86,7 +104,7 @@ async function retryRequest<T>(
   retries: number = MAX_RETRIES
 ): Promise<T> {
   try {
-    return await request<T>(config)
+    return await makeRequest<T>(config)
   } catch (error) {
     if (retries > 0 && error instanceof HttpError && shouldRetry(error.code)) {
       await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY))
@@ -108,7 +126,7 @@ function shouldRetry(statusCode: number): boolean {
 }
 
 // 请求函数
-async function request<T = any>(config: ExtendedAxiosRequestConfig): Promise<T> {
+async function makeRequest<T = any>(config: ExtendedAxiosRequestConfig): Promise<T> {
   // 对 POST | PUT 请求特殊处理
   if (config.method?.toUpperCase() === 'POST' || config.method?.toUpperCase() === 'PUT') {
     if (config.params && !config.data) {
@@ -130,8 +148,8 @@ async function request<T = any>(config: ExtendedAxiosRequestConfig): Promise<T> 
   }
 }
 
-// API 方法集合
-const api = {
+// API 方法集合 - 与原项目保持一致的结构
+const request: HttpClient = {
   get<T>(config: ExtendedAxiosRequestConfig): Promise<T> {
     return retryRequest<T>({ ...config, method: 'GET' })
   },
@@ -156,4 +174,7 @@ const logOut = (): void => {
   }, LOGOUT_DELAY)
 }
 
-export default api
+// 向后兼容性导出
+export const api = request
+
+export default request

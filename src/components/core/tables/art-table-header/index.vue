@@ -5,6 +5,9 @@
       <slot name="left"></slot>
     </div>
     <div class="right">
+      <div v-if="shouldShow('search')" class="btn" @click="toggleSearch">
+        <i class="iconfont-sys">&#xe692;</i>
+      </div>
       <div v-if="shouldShow('refresh')" class="btn" @click="refresh">
         <i class="iconfont-sys">&#xe614;</i>
       </div>
@@ -108,6 +111,7 @@
 
   const emit = defineEmits<{
     (e: 'refresh'): void
+    (e: 'toggle-search'): void
   }>()
 
   // ========== 数据和状态 ==========
@@ -145,6 +149,11 @@
   /** 刷新事件处理 */
   const refresh = () => {
     emit('refresh')
+  }
+
+  /** 切换搜索栏显示状态 */
+  const toggleSearch = () => {
+    emit('toggle-search')
   }
 
   /**
