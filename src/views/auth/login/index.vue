@@ -39,7 +39,7 @@
               />
             </ElFormItem>
             <ElFormItem prop="captcha">
-              <ElRow :gutter="5">
+              <ElRow :gutter="8">
                 <ElCol :span="16">
                   <ElInput
                     placeholder="请输入验证码"
@@ -47,17 +47,17 @@
                     v-model.trim="formData.captcha"
                   />
                 </ElCol>
-                <ElCol :push="1" :span="8">
-                  <img 
-                    :src="captchaImageUrl" 
-                    @click="refreshCaptcha" 
-                    class="captcha-image" 
+                <ElCol :span="8">
+                  <img
+                    :src="captchaImageUrl"
+                    @click="refreshCaptcha"
+                    class="captcha-image"
                     alt="验证码图片"
                     v-if="captchaImageUrl"
                     @error="handleImageError"
                   />
-                  <div 
-                    v-else 
+                  <div
+                    v-else
                     class="captcha-loading"
                     @click="refreshCaptcha"
                   >
@@ -142,19 +142,19 @@
             captcha: formData.captcha,
             captcha_id: captchaImageID.value
           })
-          if (res.code === ApiStatus.success && res.data) {
+          if (res.access_token) {
             // 设置 token
-            userStore.setToken(res.data.access_token)
+            userStore.setToken(res.access_token)
             // 获取用户信息
             const userRes = await getUserInfo()
-            if (userRes.code === ApiStatus.success) {
-              console.log('获取用户信息成功:', userRes.data)
+            if (userRes) {
+              console.log('获取用户信息成功:', userRes)
               // 使用导入的图片路径
-              userRes.data.avatar = defaultAvatar
-              userStore.setUserInfo(userRes.data)
+              userRes.avatar = defaultAvatar
+              userStore.setUserInfo(userRes)
             } else {
-              ElMessage.error(userRes.message)
-              console.error('获取用户信息失败:', userRes.message)
+              ElMessage.error('获取用户信息失败')
+              console.error('获取用户信息失败:', userRes)
             }
             // 设置登录状态
             userStore.setLoginStatus(true)
@@ -166,7 +166,7 @@
             console.log('登录成功，跳转首页')
             router.push('/')
           } else {
-            ElMessage.error(res.message)
+            ElMessage.error('登录失败')
             refreshCaptcha()
           }
         } finally {
@@ -203,7 +203,7 @@
     try {
       const captchaData = await getCaptcha(80, 240)
       console.log('验证码数据:', captchaData) // 调试日志
-      
+
       // 检查数据结构并正确赋值
       if (captchaData && captchaData.id && captchaData.image) {
         captchaImageUrl.value = captchaData.image

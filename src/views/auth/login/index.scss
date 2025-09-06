@@ -6,6 +6,17 @@
   width: 100%;
   height: 100vh;
 
+  // 验证码行样式
+  .el-form-item[prop="captcha"] {
+    .el-form-item__content {
+      width: 100%; // 确保验证码行容器完全宽度
+    }
+    
+    .el-row {
+      width: 100%; // 确保行占满宽度
+    }
+  }
+
   .captcha-image {
     width: 100%;
     height: 40px;
