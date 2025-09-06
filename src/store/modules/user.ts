@@ -46,7 +46,14 @@ export const useUserStore = defineStore(
      * @param newInfo 新的用户信息
      */
     const setUserInfo = (newInfo: Api.User.UserInfo) => {
-      info.value = newInfo
+      // 为avatar设置默认值（如果接口没返回的话）
+      const defaultAvatar = '/src/assets/img/user/avatar.png'
+
+      info.value = {
+        ...newInfo,
+        // 如果avatar为空或undefined，使用默认头像
+        avatar: newInfo.avatar || defaultAvatar
+      }
     }
 
     /**
