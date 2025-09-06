@@ -74,28 +74,8 @@ export function setupAsyncComponents(app: App, config: AsyncComponentsConfig = {
     { ...baseOptions, cacheKey: 'ArtButtonMore' }
   )
 
-  // ============ 基础组件 ============
-  
-  /** ArtIcon 异步组件 */
-  const ArtIcon = createAsyncComponent(
-    () => import('@/components/core/base/art-icon/index.vue'),
-    { ...baseOptions, cacheKey: 'ArtIcon' }
-  )
-
-  /** ArtSvgIcon 异步组件 */
-  const ArtSvgIcon = createAsyncComponent(
-    () => import('@/components/core/base/art-svg-icon/index.vue'),
-    { ...baseOptions, cacheKey: 'ArtSvgIcon' }
-  )
-
   // ============ 视图组件 ============
   
-  /** ArtCard 异步组件 */
-  const ArtCard = createAsyncComponent(
-    () => import('@/components/core/views/art-card/index.vue'),
-    { ...baseOptions, cacheKey: 'ArtCard' }
-  )
-
   /** ArtWaterMark 异步组件 */
   const ArtWaterMark = createAsyncComponent(
     () => import('@/components/core/others/art-water-mark/index.vue'),
@@ -132,12 +112,7 @@ export function setupAsyncComponents(app: App, config: AsyncComponentsConfig = {
   app.component('ArtSearchBar', ArtSearchBar)
   app.component('ArtButtonMore', ArtButtonMore)
   
-  // 基础组件
-  app.component('ArtIcon', ArtIcon)
-  app.component('ArtSvgIcon', ArtSvgIcon)
-  
   // 视图组件
-  app.component('ArtCard', ArtCard)
   app.component('ArtWaterMark', ArtWaterMark)
 
   // ============ 预加载组件 ============
@@ -147,9 +122,6 @@ export function setupAsyncComponents(app: App, config: AsyncComponentsConfig = {
   // 核心组件预加载
   if (preloadCore) {
     preloadTasks.push(
-      { loader: () => import('@/components/core/base/art-icon/index.vue'), cacheKey: 'ArtIcon' },
-      { loader: () => import('@/components/core/base/art-svg-icon/index.vue'), cacheKey: 'ArtSvgIcon' },
-      { loader: () => import('@/components/core/views/art-card/index.vue'), cacheKey: 'ArtCard' },
       { loader: () => import('@/components/core/others/art-water-mark/index.vue'), cacheKey: 'ArtWaterMark' }
     )
   }
