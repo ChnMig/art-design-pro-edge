@@ -1,14 +1,12 @@
 import { AxiosError } from 'axios'
 import { ElMessage } from 'element-plus'
 import { ApiStatus } from './status'
-import { handleError as globalHandleError, handleNetworkError, handleApiError } from '@/utils/error'
 
 // 错误响应接口
 export interface ErrorResponse {
   code: number
   status?: string
-  message?: string  // API实际返回的错误消息字段
-  msg?: string      // 兼容旧格式
+  message: string // API返回的错误消息字段
   data?: unknown
   timestamp?: number
 }
@@ -97,8 +95,8 @@ export function handleError(error: AxiosError<ErrorResponse>): never {
   }
 
   const statusCode = error.response?.status
-  // 优先使用API返回的message字段，然后是msg字段，最后才是axios的error.message
-  const errorMessage = error.response?.data?.message || error.response?.data?.msg || error.message
+  // 使用API返回的message字段，如果没有则使用axios的error.message
+  const errorMessage = error.response?.data?.message || error.message
   const requestConfig = error.config
 
   // 记录错误日志但不使用全局错误处理的用户通知（避免重复提示）

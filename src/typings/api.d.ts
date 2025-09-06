@@ -5,7 +5,7 @@
  * 在.vue文件使用会报错，需要在 eslint.config.mjs 中配置 globals: { Api: 'readonly', Http: 'readonly' }
  */
 
-/** 全局 HTTP 类型命名空间（与原项目保持一致） */
+/** 全局 HTTP 类型命名空间 */
 declare namespace Http {
   /** 基础响应 */
   interface BaseResponse<T = any> {
@@ -13,10 +13,8 @@ declare namespace Http {
     code: number
     // 状态描述
     status?: string
-    // 消息（API实际返回字段）
+    // 消息
     message?: string
-    // 消息（兼容旧格式）
-    msg?: string
     // 时间戳
     timestamp?: number
     // 数据
@@ -33,10 +31,8 @@ declare namespace Api {
       code: number
       // 状态描述
       status?: string
-      // 消息（API实际返回字段）
+      // 消息
       message?: string
-      // 消息（兼容旧格式）
-      msg?: string
       // 时间戳
       timestamp?: number
       // 数据

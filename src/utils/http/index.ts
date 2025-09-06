@@ -74,25 +74,24 @@ axiosInstance.interceptors.request.use(
 // 响应拦截器
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse<Api.Http.BaseResponse>) => {
-    const { code, message, msg } = response.data
+    const { code, message } = response.data
     const config = response.config as ExtendedAxiosRequestConfig
-    // 优先使用message字段，兼容msg字段
-    const errorMsg = message || msg
 
     switch (code) {
       case ApiStatus.success:
         // 显示成功消息
         if (config.showSuccessMessage) {
-          const { ElMessage } = require('element-plus')
-          const successMsg = config.successMessage || errorMsg || '操作成功'
-          ElMessage.success(successMsg)
+          import('element-plus').then(({ ElMessage }) => {
+            const successMsg = config.successMessage || message || '操作成功'
+            ElMessage.success(successMsg)
+          })
         }
         return response
       case ApiStatus.unauthorized:
         logOut()
-        throw new HttpError(errorMsg || '未授权', ApiStatus.unauthorized)
+        throw new HttpError(message || '未授权', ApiStatus.unauthorized)
       default:
-        throw new HttpError(errorMsg || '请求失败', code)
+        throw new HttpError(message || '请求失败', code)
     }
   },
   (error) => {
