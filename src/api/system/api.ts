@@ -79,7 +79,7 @@ export const getDepartmentList = (params?: any): Promise<any> => {
   return httpClient.get({
     url: '/system/department',
     params,
-    keepFullResponse: true // 保持完整响应，包含count等分页信息
+    keepFullResponse: true // 保持完整响应，包含total等分页信息
   })
 }
 
@@ -99,7 +99,7 @@ export const getRoleList = (params?: any): Promise<any> => {
   return httpClient.get({
     url: '/system/role',
     params,
-    keepFullResponse: true // 保持完整响应，包含count等分页信息
+    keepFullResponse: true // 保持完整响应，包含total等分页信息
   })
 }
 
@@ -127,7 +127,7 @@ export const getUserList = (params: any): Promise<any> => {
   return httpClient.get({
     url: '/system/user',
     params,
-    keepFullResponse: true // 保持完整响应，包含count等分页信息
+    keepFullResponse: true // 保持完整响应，包含total等分页信息
   })
 }
 
