@@ -90,6 +90,18 @@ export const defaultResponseAdapter = <T>(response: unknown): ApiResponse<T> => 
   let total = 0
   let pagination: Pick<ApiResponse<unknown>, 'current' | 'size'> | undefined
 
+  // 处理我们的后端API格式：{ code, status, message, data: [], count, timestamp }
+  if ('data' in res && Array.isArray(res.data) && 'count' in res) {
+    records = res.data as T[]
+    total = (res.count as number) || 0
+    pagination = extractPagination(res)
+    const result: ApiResponse<T> = { records, total }
+    if (pagination) {
+      Object.assign(result, pagination)
+    }
+    return result
+  }
+
   // 处理标准格式或直接列表
   const recordFields = ['records', 'data', 'list', 'items', 'result']
   records = extractRecords(res, recordFields)

@@ -150,8 +150,8 @@
   })
 
   const LAYOUT = {
-    MOBILE: 'prev, pager, next, sizes, jumper, total',
-    IPAD: 'prev, pager, next, jumper, total',
+    MOBILE: 'total, prev, pager, next, sizes',
+    IPAD: 'total, prev, pager, next, sizes, jumper',
     DESKTOP: 'total, prev, pager, next, sizes, jumper'
   }
 
@@ -166,19 +166,19 @@
   })
 
   // 默认分页常量
-  const DEFAULT_PAGINATION_OPTIONS: PaginationOptions = {
+  const DEFAULT_PAGINATION_OPTIONS: Partial<PaginationOptions> = {
     pageSizes: [10, 20, 30, 50, 100],
     align: 'center',
     background: true,
-    layout: layout.value,
     hideOnSinglePage: false,
-    size: 'default',
-    pagerCount: width.value > 1200 ? 7 : 5
+    size: 'default'
   }
 
   // 合并分页配置
   const mergedPaginationOptions = computed(() => ({
     ...DEFAULT_PAGINATION_OPTIONS,
+    layout: layout.value,
+    pagerCount: width.value > 1200 ? 7 : 5,
     ...props.paginationOptions
   }))
 

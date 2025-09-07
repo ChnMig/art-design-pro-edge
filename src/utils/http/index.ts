@@ -14,6 +14,7 @@ export interface ExtendedAxiosRequestConfig extends AxiosRequestConfig {
   showErrorMessage?: boolean
   showSuccessMessage?: boolean
   successMessage?: string
+  keepFullResponse?: boolean // 新增：保持完整响应，不自动解包
 }
 
 // HTTP 客户端接口类型定义
@@ -138,6 +139,13 @@ async function makeRequest<T = any>(config: ExtendedAxiosRequestConfig): Promise
 
   try {
     const res = await axiosInstance.request<Api.Http.BaseResponse<T>>(config)
+
+    // 如果配置要求保持完整响应，则返回整个data对象
+    if (config.keepFullResponse) {
+      return res.data as T
+    }
+
+    // 否则保持原有的自动解包行为
     return res.data.data as T
   } catch (error) {
     if (error instanceof HttpError) {

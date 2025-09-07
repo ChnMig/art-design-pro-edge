@@ -76,7 +76,11 @@ export const getAuthList = (menuID: number): Promise<any> => {
 }
 
 export const getDepartmentList = (params?: any): Promise<any> => {
-  return httpClient.get({ url: '/system/department', params })
+  return httpClient.get({
+    url: '/system/department',
+    params,
+    keepFullResponse: true // 保持完整响应，包含count等分页信息
+  })
 }
 
 export const addDepartment = (data: any): Promise<any> => {
@@ -92,7 +96,11 @@ export const deleteDepartment = (id: number): Promise<any> => {
 }
 
 export const getRoleList = (params?: any): Promise<any> => {
-  return httpClient.get({ url: '/system/role', params })
+  return httpClient.get({
+    url: '/system/role',
+    params,
+    keepFullResponse: true // 保持完整响应，包含count等分页信息
+  })
 }
 
 export const addRole = (data: any): Promise<any> => {
@@ -116,7 +124,11 @@ export const saveRolePermission = (data: any): Promise<any> => {
 }
 
 export const getUserList = (params: any): Promise<any> => {
-  return httpClient.get({ url: '/system/user', params })
+  return httpClient.get({
+    url: '/system/user',
+    params,
+    keepFullResponse: true // 保持完整响应，包含count等分页信息
+  })
 }
 
 export const addUser = (data: any): Promise<any> => {

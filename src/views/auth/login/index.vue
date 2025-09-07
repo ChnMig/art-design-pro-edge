@@ -79,7 +79,7 @@
   import AppConfig from '@/config'
   import { ElForm, ElMessage, ElNotification } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
-    import { SystemThemeEnum } from '@/enums/appEnum'
+  import { SystemThemeEnum } from '@/enums/appEnum'
   import { useSettingStore } from '@/store/modules/setting'
   import type { FormInstance, FormRules } from 'element-plus'
   import { onMounted, ref, reactive, computed } from 'vue'
