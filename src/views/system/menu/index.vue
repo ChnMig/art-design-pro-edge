@@ -1,57 +1,55 @@
 <template>
-  <ArtTableFullScreen>
-    <div class="page-content" id="table-full-screen">
-      <!-- 表格头部 -->
-      <ArtTableHeader
-        :columnList="columnOptions"
-        v-model:columns="columnChecks"
-        @refresh="handleRefresh"
-      >
-        <template #left>
-          <ElButton @click="showMenuModal('add-menu-levle1', null, true)" v-ripple>
-            添加菜单
-          </ElButton>
-        </template>
-      </ArtTableHeader>
+  <div class="page-content art-full-height">
+    <!-- 表格头部 -->
+    <ArtTableHeader
+      :columnList="columnOptions"
+      v-model:columns="columnChecks"
+      @refresh="handleRefresh"
+    >
+      <template #left>
+        <ElButton @click="showMenuModal('add-menu-levle1', null, true)" v-ripple>
+          添加菜单
+        </ElButton>
+      </template>
+    </ArtTableHeader>
 
-      <!-- 表格 -->
-      <ArtTable
-        :data="tableData"
-        :columns="columns"
-        :loading="isLoading"
-        row-key="id"
-        :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-        :default-expand-all="isExpanded"
-        :layout="{ marginTop: 10 }"
-        :show-pagination="false"
-      />
+    <!-- 表格 -->
+    <ArtTable
+      :data="tableData"
+      :columns="columns"
+      :loading="isLoading"
+      row-key="id"
+      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+      :default-expand-all="isExpanded"
+      :layout="{ marginTop: 10 }"
+      :show-pagination="false"
+    />
 
-      <!-- 引用菜单弹窗组件 -->
-      <menu-info ref="menuModalRef" @refresh="refreshMenuList" />
-      <!-- 引用权限弹窗组件 -->
-      <auth-info ref="authModalRef" @refresh="refreshMenuList" />
-      <el-dialog
-        :title="dialogTitle"
-        v-model="dialogVisible"
-        width="700px"
-        align-center
-        :close-on-click-modal="false"
-      >
-        <!-- 内容不变... -->
-      </el-dialog>
+    <!-- 引用菜单弹窗组件 -->
+    <menu-info ref="menuModalRef" @refresh="refreshMenuList" />
+    <!-- 引用权限弹窗组件 -->
+    <auth-info ref="authModalRef" @refresh="refreshMenuList" />
+    <el-dialog
+      :title="dialogTitle"
+      v-model="dialogVisible"
+      width="700px"
+      align-center
+      :close-on-click-modal="false"
+    >
+      <!-- 内容不变... -->
+    </el-dialog>
 
-      <!-- 添加/编辑权限的弹窗 -->
-      <el-dialog
-        :title="isEditingAuth ? '编辑权限' : '添加权限'"
-        v-model="authFormVisible"
-        width="500px"
-        append-to-body
-        :close-on-click-modal="false"
-      >
-        <!-- 内容不变... -->
-      </el-dialog>
-    </div>
-  </ArtTableFullScreen>
+    <!-- 添加/编辑权限的弹窗 -->
+    <el-dialog
+      :title="isEditingAuth ? '编辑权限' : '添加权限'"
+      v-model="authFormVisible"
+      width="500px"
+      append-to-body
+      :close-on-click-modal="false"
+    >
+      <!-- 内容不变... -->
+    </el-dialog>
+  </div>
 </template>
 
 <script setup lang="ts">

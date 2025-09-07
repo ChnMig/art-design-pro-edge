@@ -1,39 +1,37 @@
 <template>
-  <ArtTableFullScreen>
-    <div class="user-page" id="table-full-screen">
-      <!-- 搜索栏 -->
-      <ArtSearchBar
-        v-model="searchState"
-        :items="searchItems"
-        @reset="resetSearch"
-        @search="searchData"
+  <div class="user-page art-full-height">
+    <!-- 搜索栏 -->
+    <ArtSearchBar
+      v-model="searchState"
+      :items="searchItems"
+      @reset="resetSearch"
+      @search="searchData"
+    />
+
+    <ElCard shadow="never" class="art-table-card">
+      <!-- 表格头部 -->
+      <ArtTableHeader
+        :columnList="columnOptions"
+        v-model:columns="columnChecks"
+        @refresh="handleRefresh"
+      >
+        <template #left>
+          <ElButton @click="showDialog('add')" v-ripple>添加用户</ElButton>
+        </template>
+      </ArtTableHeader>
+
+      <!-- 表格 -->
+      <ArtTable
+        :data="tableData"
+        :columns="columns"
+        :pagination="paginationState"
+        :loading="isLoading"
+        :table-config="{ rowKey: 'User.id' }"
+        :layout="{ marginTop: 10 }"
+        @pagination:size-change="onPageSizeChange"
+        @pagination:current-change="onCurrentPageChange"
       />
-
-      <ElCard shadow="never" class="art-table-card">
-        <!-- 表格头部 -->
-        <ArtTableHeader
-          :columnList="columnOptions"
-          v-model:columns="columnChecks"
-          @refresh="handleRefresh"
-        >
-          <template #left>
-            <ElButton @click="showDialog('add')" v-ripple>添加用户</ElButton>
-          </template>
-        </ArtTableHeader>
-
-        <!-- 表格 -->
-        <ArtTable
-          :data="tableData"
-          :columns="columns"
-          :pagination="paginationState"
-          :loading="isLoading"
-          :table-config="{ rowKey: 'User.id' }"
-          :layout="{ marginTop: 10 }"
-          @pagination:size-change="onPageSizeChange"
-          @pagination:current-change="onCurrentPageChange"
-        />
-      </ElCard>
-    </div>
+    </ElCard>
 
     <ElDialog
       v-model="dialogVisible"
@@ -137,7 +135,7 @@
         </div>
       </template>
     </ElDialog>
-  </ArtTableFullScreen>
+  </div>
 </template>
 
 <script setup lang="ts">
