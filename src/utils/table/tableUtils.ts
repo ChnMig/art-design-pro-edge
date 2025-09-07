@@ -90,10 +90,10 @@ export const defaultResponseAdapter = <T>(response: unknown): ApiResponse<T> => 
   let total = 0
   let pagination: Pick<ApiResponse<unknown>, 'current' | 'size'> | undefined
 
-  // 处理我们的后端API格式：{ code, status, message, data: [], count, timestamp }
-  if ('data' in res && Array.isArray(res.data) && 'count' in res) {
+  // 处理我们的后端API格式：{ code, status, message, data: [], total, timestamp }
+  if ('data' in res && Array.isArray(res.data) && 'total' in res) {
     records = res.data as T[]
-    total = (res.count as number) || 0
+    total = (res.total as number) || 0
     pagination = extractPagination(res)
     const result: ApiResponse<T> = { records, total }
     if (pagination) {
