@@ -24,8 +24,8 @@
             @keyup.enter="handleSubmit"
             style="margin-top: 25px"
           >
-            <ElFormItem prop="username">
-              <ElInput placeholder="请输入账号" size="large" v-model.trim="formData.username" />
+            <ElFormItem prop="account">
+              <ElInput placeholder="请输入账号" size="large" v-model.trim="formData.account" />
             </ElFormItem>
             <ElFormItem prop="password">
               <ElInput
@@ -95,14 +95,14 @@
   const systemName = AppConfig.systemInfo.name
   const formRef = ref<FormInstance>()
   const formData = reactive({
-    username: '',
+    account: '',
     password: '',
     rememberPassword: true,
     captcha: ''
   })
 
   const rules = computed<FormRules>(() => ({
-    username: [{ required: true, message: '请输入账号', trigger: 'blur' }],
+    account: [{ required: true, message: '请输入账号', trigger: 'blur' }],
     password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
     captcha: [{ required: true, message: '请输入验证码', trigger: 'blur' }]
   }))
@@ -122,7 +122,7 @@
         const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
         try {
           const res = await userLogin({
-            username: formData.username,
+            account: formData.account,
             password: formData.password,
             captcha: formData.captcha,
             captcha_id: captchaImageID.value

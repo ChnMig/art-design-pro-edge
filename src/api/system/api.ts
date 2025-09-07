@@ -16,7 +16,7 @@ export const getCaptcha = (
 }
 
 export const userLogin = (data: {
-  username: string
+  account: string
   password: string
   captcha: string
   captcha_id: string

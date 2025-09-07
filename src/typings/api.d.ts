@@ -80,6 +80,7 @@ declare namespace Api {
     interface UserInfo {
       userId: number
       userName: string
+      username: string
       roles: string[]
       buttons: string[]
       avatar?: string

@@ -105,8 +105,8 @@ export interface SortParams {
 
 /** 登录请求参数 */
 export interface LoginRequest {
-  /** 用户名 */
-  username: string
+  /** 账号 */
+  account: string
   /** 密码 */
   password: string
   /** 验证码 */
