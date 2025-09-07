@@ -173,6 +173,62 @@ export interface UserInfo {
   updated_at: string
 }
 
+/** 用户管理 - 用户详情 */
+export interface UserDetail {
+  /** 登录账号 */
+  account: string
+  /** 创建时间（时间戳） */
+  created_at: number
+  /** 部门ID */
+  department_id: number
+  /** 性别 */
+  gender: number
+  /** 用户ID */
+  id: number
+  /** 用户名称 */
+  name: string
+  /** 密码 */
+  password: string
+  /** 手机号 */
+  phone: string
+  /** 角色ID */
+  role_id: number
+  /** 状态 */
+  status: number
+  /** 更新时间（时间戳） */
+  updated_at: number
+  /** 用户名 */
+  username: string
+}
+
+/** 用户管理 - 用户列表项 */
+export interface UserListItem {
+  /** 用户基本信息 */
+  User: UserDetail
+  /** 部门名称 */
+  department_name: string
+  /** 角色描述 */
+  role_desc: string
+  /** 角色名称 */
+  role_name: string
+}
+
+/** 用户管理 - 列表响应 */
+export interface UserListResponse {
+  /** 状态码 */
+  code: number
+  /** 状态 */
+  status: string
+  /** 消息 */
+  message: string
+  /** 数据列表 */
+  data: UserListItem[]
+  /** 时间戳 */
+  timestamp: number
+  /** 总数 */
+  total: number
+}
+
 /** 用户列表查询参数 */
 export interface UserListParams extends SearchParams, TimeRangeParams {
   /** 用户名 */
