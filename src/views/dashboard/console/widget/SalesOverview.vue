@@ -11,9 +11,9 @@
 </template>
 
 <script setup lang="ts">
-  import * as echarts from 'echarts'
   import { hexToRgba, getCssVar } from '@/utils/ui'
-  import { EChartsOption } from 'echarts'
+  import { graphic } from '@/utils/echarts'
+  import type { EChartsOption } from 'echarts'
   import { useChart } from '@/composables/useChart'
 
   const {
@@ -104,7 +104,7 @@
             width: 2.2
           },
           areaStyle: {
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            color: new graphic.LinearGradient(0, 0, 0, 1, [
               {
                 offset: 0,
                 color: hexToRgba(getCssVar('--el-color-primary'), 0.15).rgba

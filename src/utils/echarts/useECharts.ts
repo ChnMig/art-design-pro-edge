@@ -1,7 +1,7 @@
 // src/utils/echarts/useECharts.ts
 import { unref, Ref, nextTick } from 'vue'
 import { EChartsOption } from 'echarts'
-import echarts from '@/plugins/echarts'
+import * as echarts from 'echarts'
 import { defaultOpstions } from './defaultOpstions'
 
 export function useECharts(

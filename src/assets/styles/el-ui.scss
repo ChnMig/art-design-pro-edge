@@ -1,5 +1,10 @@
 // 优化 Element Plus 组件库默认样式
 
+// 优化 el-form-item 标签高度
+.el-form-item__label {
+  line-height: 1.2;
+}
+
 :root {
   // 系统主色
   --main-color: var(--el-color-primary);

@@ -16,10 +16,10 @@
 </template>
 
 <script setup lang="ts">
-  import * as echarts from 'echarts'
   import { getCssVar } from '@/utils/ui'
   import { useChart } from '@/composables/useChart'
-  import { EChartsOption } from 'echarts'
+  import { graphic } from '@/utils/echarts'
+  import type { EChartsOption } from 'echarts'
 
   const {
     chartRef,
@@ -68,7 +68,7 @@
           type: 'bar',
           itemStyle: {
             borderRadius: 4,
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            color: new graphic.LinearGradient(0, 0, 0, 1, [
               {
                 offset: 0,
                 color: getCssVar('--el-color-primary-light-4')
