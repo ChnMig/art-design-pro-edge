@@ -14,6 +14,7 @@ declare module 'vue' {
     ArtCountTo: typeof import('./../components/core/text-effect/art-count-to/index.vue')['default']
     ArtEditInfo: typeof import('./../components/core/layouts/art-edit-info/index.vue')['default']
     ArtException: typeof import('./../components/core/views/exception/ArtException.vue')['default']
+    ArtForm: typeof import('./../components/core/forms/art-form/index.vue')['default']
     ArtGlobalSearch: typeof import('./../components/core/layouts/art-global-search/index.vue')['default']
     ArtHeaderBar: typeof import('./../components/core/layouts/art-header-bar/index.vue')['default']
     ArtHorizontalMenu: typeof import('./../components/core/layouts/art-menus/art-horizontal-menu/index.vue')['default']
