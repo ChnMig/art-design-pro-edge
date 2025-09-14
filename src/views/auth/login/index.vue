@@ -24,6 +24,9 @@
             @keyup.enter="handleSubmit"
             style="margin-top: 25px"
           >
+            <ElFormItem prop="tenant_code">
+              <ElInput placeholder="请输入租户编码" size="large" v-model.trim="formData.tenant_code" />
+            </ElFormItem>
             <ElFormItem prop="account">
               <ElInput placeholder="请输入账号" size="large" v-model.trim="formData.account" />
             </ElFormItem>
@@ -95,6 +98,7 @@
   const systemName = AppConfig.systemInfo.name
   const formRef = ref<FormInstance>()
   const formData = reactive({
+    tenant_code: 'default',
     account: '',
     password: '',
     rememberPassword: true,
@@ -102,6 +106,7 @@
   })
 
   const rules = computed<FormRules>(() => ({
+    tenant_code: [{ required: true, message: '请输入租户编码', trigger: 'blur' }],
     account: [{ required: true, message: '请输入账号', trigger: 'blur' }],
     password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
     captcha: [{ required: true, message: '请输入验证码', trigger: 'blur' }]
@@ -122,6 +127,7 @@
         const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
         try {
           const res = await userLogin({
+            tenant_code: formData.tenant_code,
             account: formData.account,
             password: formData.password,
             captcha: formData.captcha,
@@ -130,6 +136,8 @@
           if (res.access_token) {
             // 设置 token
             userStore.setToken(res.access_token)
+            // 设置当前租户编码
+            userStore.setCurrentTenantCode(formData.tenant_code)
             // 获取用户信息
             const userRes = await getUserInfo()
             if (userRes) {

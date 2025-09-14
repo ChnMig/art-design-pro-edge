@@ -16,6 +16,7 @@ export const getCaptcha = (
 }
 
 export const userLogin = (data: {
+  tenant_code: string
   account: string
   password: string
   captcha: string
@@ -141,4 +142,49 @@ export const updateUser = (data: any): Promise<any> => {
 
 export const deleteUser = (id: number): Promise<any> => {
   return httpClient.del({ url: `/system/user?id=${id}` })
+}
+
+// 租户管理 API - 需要超级管理员权限
+
+export const getTenantList = (params?: any): Promise<any> => {
+  return httpClient.get({
+    url: '/system/tenant',
+    params,
+    keepFullResponse: true // 保持完整响应，包含total等分页信息
+  })
+}
+
+export const addTenant = (data: {
+  code: string
+  name: string
+  description: string
+  status: number
+  expires_at?: number
+}): Promise<any> => {
+  return httpClient.post({ url: '/system/tenant', data })
+}
+
+export const updateTenant = (data: {
+  id: number
+  code: string
+  name: string
+  description: string
+  status: number
+  expires_at?: number
+}): Promise<any> => {
+  return httpClient.put({ url: '/system/tenant', data })
+}
+
+export const deleteTenant = (id: number): Promise<any> => {
+  return httpClient.del({ url: `/system/tenant?id=${id}` })
+}
+
+// 登录日志 API
+
+export const getLoginLogList = (params?: any): Promise<any> => {
+  return httpClient.get({
+    url: '/system/login/log',
+    params,
+    keepFullResponse: true
+  })
 }

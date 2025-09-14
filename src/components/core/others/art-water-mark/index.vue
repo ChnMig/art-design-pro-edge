@@ -59,21 +59,28 @@
   // 添加计算属性处理默认值
   const effectiveContent = computed(() => {
     const userInfo = userStore.getUserInfo
+    const tenantInfo = userStore.getTenantInfo
+    const tenantCode = userStore.getCurrentTenantCode
     console.log('Water mark user info:', userInfo)
+    console.log('Water mark tenant info:', tenantInfo)
 
     // 尝试多种字段名组合，兼容不同后端数据格式
     const userId = userInfo.userId || userInfo.id || userInfo.user_id || ''
     const userName =
       userInfo.userName || userInfo.username || userInfo.name || userInfo.user_name || ''
 
-    console.log('Water mark userId:', userId, 'userName:', userName)
+    // 租户信息
+    const currentTenant = tenantInfo.name || tenantCode || 'default'
+
+    console.log('Water mark userId:', userId, 'userName:', userName, 'tenant:', currentTenant)
 
     // 如果没有用户信息，显示默认内容
     if (!userId && !userName) {
       return props.content || AppConfig.systemInfo.name
     }
 
-    return `${userId} | ${userName}`
+    // 包含租户信息的水印格式：租户 | 用户ID | 用户名
+    return `${currentTenant} | ${userId} | ${userName}`
   })
 </script>
 

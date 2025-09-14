@@ -27,6 +27,17 @@ export const useUserStore = defineStore(
     const lockPassword = ref('')
     // 用户信息
     const info = ref<Partial<Api.User.UserInfo>>({})
+    // 租户信息
+    const tenantInfo = ref<{
+      id?: number
+      code?: string
+      name?: string
+      description?: string
+      status?: number
+      expires_at?: number
+    }>({})
+    // 当前登录的租户编码
+    const currentTenantCode = ref('')
     // 搜索历史记录
     const searchHistory = ref<AppRouteRecord[]>([])
     // 访问令牌
@@ -36,6 +47,10 @@ export const useUserStore = defineStore(
 
     // 计算属性：获取用户信息
     const getUserInfo = computed(() => info.value)
+    // 计算属性：获取租户信息
+    const getTenantInfo = computed(() => tenantInfo.value)
+    // 计算属性：获取当前租户编码
+    const getCurrentTenantCode = computed(() => currentTenantCode.value)
     // 计算属性：获取设置状态
     const getSettingState = computed(() => useSettingStore().$state)
     // 计算属性：获取工作台状态
@@ -98,6 +113,25 @@ export const useUserStore = defineStore(
     }
 
     /**
+     * 设置租户信息
+     * @param newTenantInfo 新的租户信息
+     */
+    const setTenantInfo = (newTenantInfo: typeof tenantInfo.value) => {
+      tenantInfo.value = newTenantInfo
+      if (newTenantInfo.code) {
+        currentTenantCode.value = newTenantInfo.code
+      }
+    }
+
+    /**
+     * 设置当前租户编码
+     * @param tenantCode 租户编码
+     */
+    const setCurrentTenantCode = (tenantCode: string) => {
+      currentTenantCode.value = tenantCode
+    }
+
+    /**
      * 设置令牌
      * @param newAccessToken 访问令牌
      * @param newRefreshToken 刷新令牌（可选）
@@ -116,6 +150,10 @@ export const useUserStore = defineStore(
     const logOut = () => {
       // 清空用户信息
       info.value = {}
+      // 清空租户信息
+      tenantInfo.value = {}
+      // 清空当前租户编码
+      currentTenantCode.value = ''
       // 重置登录状态
       isLogin.value = false
       // 重置锁屏状态
@@ -144,13 +182,19 @@ export const useUserStore = defineStore(
       isLock,
       lockPassword,
       info,
+      tenantInfo,
+      currentTenantCode,
       searchHistory,
       accessToken,
       refreshToken,
       getUserInfo,
+      getTenantInfo,
+      getCurrentTenantCode,
       getSettingState,
       getWorktabState,
       setUserInfo,
+      setTenantInfo,
+      setCurrentTenantCode,
       setLoginStatus,
       setLanguage,
       setSearchHistory,

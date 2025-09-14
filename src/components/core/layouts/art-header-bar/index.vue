@@ -110,6 +110,9 @@
                   <img class="cover" :src="userInfo.avatar" style="float: left" />
                   <div class="user-wrap">
                     <span class="name">{{ userInfo.username }}</span>
+                    <span class="tenant" v-if="currentTenantCode">
+                      <i class="iconfont-sys">&#xe604;</i> {{ currentTenantName || currentTenantCode }}
+                    </span>
                     <span class="email" v-if="userInfo.email">{{ userInfo.email }}</span>
                   </div>
                 </div>
@@ -174,9 +177,14 @@
   const { menuOpen, systemThemeColor, showSettingGuide, menuType, isDark, tabStyle } =
     storeToRefs(settingStore)
 
-  const { getUserInfo: userInfo } = storeToRefs(userStore)
+  const { getUserInfo: userInfo, getCurrentTenantCode: currentTenantCode, getTenantInfo: tenantInfo } = storeToRefs(userStore)
 
   const { menuList } = storeToRefs(menuStore)
+
+  // 计算租户显示名称
+  const currentTenantName = computed(() => {
+    return tenantInfo.value?.name || ''
+  })
 
   const showNotice = ref(false)
   const userMenuPopover = ref()

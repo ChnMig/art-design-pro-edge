@@ -9,5 +9,7 @@ export enum RoutesAlias {
   Success = '/result/success', // 成功
   Fail = '/result/fail', // 失败
   Dashboard = '/dashboard/console', // 工作台
-  Analysis = '/dashboard/analysis' // 分析页
+  Analysis = '/dashboard/analysis', // 分析页
+  // 系统管理
+  SystemTenant = '/system/tenant' // 租户管理
 }

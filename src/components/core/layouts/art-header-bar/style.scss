@@ -37,6 +37,19 @@
           @include ellipsis();
         }
 
+        .tenant {
+          margin-top: 3px;
+          font-size: 12px;
+          color: var(--art-primary-color);
+
+          i {
+            font-size: 10px;
+            margin-right: 3px;
+          }
+
+          @include ellipsis();
+        }
+
         .email {
           margin-top: 3px;
           font-size: 12px;
