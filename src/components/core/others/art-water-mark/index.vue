@@ -14,6 +14,7 @@
 </template>
 
 <script setup lang="ts">
+  import { computed } from 'vue'
   import AppConfig from '@/config'
   import { useUserStore } from '@/store/modules/user'
   const userStore = useUserStore()
@@ -64,10 +65,9 @@
     console.log('Water mark user info:', userInfo)
     console.log('Water mark tenant info:', tenantInfo)
 
-    // 尝试多种字段名组合，兼容不同后端数据格式
-    const userId = userInfo.userId || userInfo.id || userInfo.user_id || ''
-    const userName =
-      userInfo.userName || userInfo.username || userInfo.name || userInfo.user_name || ''
+    // 根据实际API类型定义获取用户信息
+    const userId = userInfo.userId || ''
+    const userName = userInfo.userName || userInfo.username || ''
 
     // 租户信息
     const currentTenant = tenantInfo.name || tenantCode || 'default'

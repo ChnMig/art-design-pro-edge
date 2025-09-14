@@ -25,7 +25,11 @@
             style="margin-top: 25px"
           >
             <ElFormItem prop="tenant_code">
-              <ElInput placeholder="请输入租户编码" size="large" v-model.trim="formData.tenant_code" />
+              <ElInput
+                placeholder="请输入租户编码"
+                size="large"
+                v-model.trim="formData.tenant_code"
+              />
             </ElFormItem>
             <ElFormItem prop="account">
               <ElInput placeholder="请输入账号" size="large" v-model.trim="formData.account" />
