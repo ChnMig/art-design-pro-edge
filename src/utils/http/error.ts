@@ -1,13 +1,14 @@
 import { AxiosError } from 'axios'
 import { ElMessage } from 'element-plus'
 import { ApiStatus } from './status'
-import { $t } from '@/locales'
 
 // 错误响应接口
 export interface ErrorResponse {
   code: number
-  msg: string
+  status?: string
+  message: string
   data?: unknown
+  timestamp?: number
 }
 
 // 错误日志数据接口
@@ -60,91 +61,71 @@ export class HttpError extends Error {
   }
 }
 
-/**
- * 获取错误消息
- * @param status 错误状态码
- * @returns 错误消息
- */
 const getErrorMessage = (status: number): string => {
   const errorMap: Record<number, string> = {
-    [ApiStatus.unauthorized]: 'httpMsg.unauthorized',
-    [ApiStatus.forbidden]: 'httpMsg.forbidden',
-    [ApiStatus.notFound]: 'httpMsg.notFound',
-    [ApiStatus.methodNotAllowed]: 'httpMsg.methodNotAllowed',
-    [ApiStatus.requestTimeout]: 'httpMsg.requestTimeout',
-    [ApiStatus.internalServerError]: 'httpMsg.internalServerError',
-    [ApiStatus.badGateway]: 'httpMsg.badGateway',
-    [ApiStatus.serviceUnavailable]: 'httpMsg.serviceUnavailable',
-    [ApiStatus.gatewayTimeout]: 'httpMsg.gatewayTimeout'
+    [ApiStatus.unauthorized]: '未授权，请重新登录',
+    [ApiStatus.forbidden]: '拒绝访问',
+    [ApiStatus.notFound]: '请求的资源不存在',
+    [ApiStatus.methodNotAllowed]: '请求方法不被允许',
+    [ApiStatus.requestTimeout]: '请求超时',
+    [ApiStatus.internalServerError]: '服务器内部错误',
+    [ApiStatus.badGateway]: '网关错误',
+    [ApiStatus.serviceUnavailable]: '服务不可用',
+    [ApiStatus.gatewayTimeout]: '网关超时'
   }
 
-  return $t(errorMap[status] || 'httpMsg.internalServerError')
+  return errorMap[status] || '请求失败'
 }
 
-/**
- * 处理错误
- * @param error 错误对象
- * @returns 错误对象
- */
 export function handleError(error: AxiosError<ErrorResponse>): never {
-  // 处理取消的请求
   if (error.code === 'ERR_CANCELED') {
     console.warn('Request cancelled:', error.message)
-    throw new HttpError($t('httpMsg.requestCancelled'), ApiStatus.error)
+    throw new HttpError('请求已取消', ApiStatus.error)
   }
 
   const statusCode = error.response?.status
-  const errorMessage = error.response?.data?.msg || error.message
+  const errorMessage = error.response?.data?.message || error.message
   const requestConfig = error.config
 
-  // 处理网络错误
+  console.error('[HTTP Request Error]', {
+    message: errorMessage,
+    code: error.code,
+    url: requestConfig?.url,
+    method: requestConfig?.method,
+    timestamp: new Date().toISOString()
+  })
+
   if (!error.response) {
-    throw new HttpError($t('httpMsg.networkError'), ApiStatus.error, {
+    const httpError = new HttpError('网络错误', ApiStatus.error, {
       url: requestConfig?.url,
       method: requestConfig?.method?.toUpperCase()
     })
+
+    throw httpError
   }
 
-  // 处理 HTTP 状态码错误
-  const message = statusCode
-    ? getErrorMessage(statusCode)
-    : errorMessage || $t('httpMsg.requestFailed')
-  throw new HttpError(message, statusCode || ApiStatus.error, {
+  const message = errorMessage || (statusCode ? getErrorMessage(statusCode) : '请求失败')
+  const httpError = new HttpError(message, statusCode || ApiStatus.error, {
     data: error.response.data,
     url: requestConfig?.url,
     method: requestConfig?.method?.toUpperCase()
   })
+
+  throw httpError
 }
 
-/**
- * 显示错误消息
- * @param error 错误对象
- * @param showMessage 是否显示错误消息
- */
 export function showError(error: HttpError, showMessage: boolean = true): void {
   if (showMessage) {
     ElMessage.error(error.message)
   }
-  // 记录错误日志
   console.error('[HTTP Error]', error.toLogData())
 }
 
-/**
- * 显示成功消息
- * @param message 成功消息
- * @param showMessage 是否显示消息
- */
-export function showSuccess(message: string, showMessage: boolean = true): void {
-  if (showMessage) {
-    ElMessage.success(message)
-  }
+export function showSuccess(message: string): void {
+  if (!message) return
+  ElMessage.success(message)
 }
 
-/**
- * 判断是否为 HttpError 类型
- * @param error 错误对象
- * @returns 是否为 HttpError 类型
- */
 export const isHttpError = (error: unknown): error is HttpError => {
   return error instanceof HttpError
 }

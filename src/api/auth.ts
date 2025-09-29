@@ -1,29 +1,33 @@
 import request from '@/utils/http'
 
 /**
+ * 获取验证码
+ */
+export function fetchCaptcha(height: number, width: number) {
+  return request.get<{ id: string; image: string }>({
+    url: '/system/user/login/captcha',
+    params: { height, width },
+    showErrorMessage: false
+  })
+}
+
+/**
  * 登录
- * @param params 登录参数
- * @returns 登录响应
  */
 export function fetchLogin(params: Api.Auth.LoginParams) {
   return request.post<Api.Auth.LoginResponse>({
-    url: '/api/auth/login',
-    params
-    // showSuccessMessage: true // 显示成功消息
-    // showErrorMessage: false // 不显示错误消息
+    url: '/system/user/login',
+    data: params,
+    showErrorMessage: false
   })
 }
 
 /**
  * 获取用户信息
- * @returns 用户信息
  */
 export function fetchGetUserInfo() {
   return request.get<Api.Auth.UserInfo>({
-    url: '/api/user/info'
-    // 自定义请求头
-    // headers: {
-    //   'X-Custom-Header': 'your-custom-value'
-    // }
+    url: '/system/user/info',
+    showErrorMessage: false
   })
 }

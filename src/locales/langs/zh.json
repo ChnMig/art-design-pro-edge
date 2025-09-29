@@ -143,7 +143,13 @@
     "success": {
       "title": "登录成功",
       "message": "欢迎回来"
-    }
+    },
+    "tenantCodePlaceholder": "请输入租户编码",
+    "captchaPlaceholder": "请输入验证码",
+    "captchaLoading": "加载中...",
+    "captchaLoadFailed": "验证码获取失败",
+    "captchaImageError": "验证码加载失败，请点击刷新",
+    "failedText": "登录失败，请稍后重试"
   },
   "forgetPassword": {
     "title": "忘记密码？",
@@ -285,7 +291,8 @@
       "menu3": "菜单3",
       "menu31": "菜单3-1",
       "menu32": "菜单3-2",
-      "menu321": "菜单3-2-1"
+      "menu321": "菜单3-2-1",
+      "tenant": "租户管理"
     },
     "safeguard": {
       "title": "运维管理",

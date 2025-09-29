@@ -453,6 +453,16 @@ export const asyncRoutes: AppRouteRecord[] = [
         }
       },
       {
+        path: 'tenant',
+        name: 'Tenant',
+        component: RoutesAlias.Tenant,
+        meta: {
+          title: 'menus.system.tenant',
+          keepAlive: true,
+          roles: ['R_SUPER']
+        }
+      },
+      {
         path: 'user-center',
         name: 'UserCenter',
         component: RoutesAlias.UserCenter,

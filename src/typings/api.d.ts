@@ -37,24 +37,32 @@ declare namespace Api {
   namespace Auth {
     /** 登录参数 */
     interface LoginParams {
-      userName: string
+      tenant_code: string
+      account: string
       password: string
+      captcha: string
+      captcha_id: string
     }
 
     /** 登录响应 */
     interface LoginResponse {
-      token: string
-      refreshToken: string
+      access_token: string
+      refresh_token?: string
     }
 
     /** 用户信息 */
     interface UserInfo {
-      buttons: string[]
-      roles: string[]
-      userId: number
-      userName: string
-      email: string
+      userId?: number
+      userName?: string
+      username?: string
+      account?: string
+      nickName?: string
+      email?: string
       avatar?: string
+      roles?: string[]
+      buttons?: string[]
+      tenantCode?: string
+      [key: string]: any
     }
   }
 
@@ -104,5 +112,36 @@ declare namespace Api {
       Pick<RoleListItem, 'roleId' | 'roleName' | 'roleCode' | 'description' | 'enabled'> &
         Api.Common.CommonSearchParams
     >
+  }
+
+  /** 多租户管理 */
+  namespace SystemTenant {
+    interface TenantItem {
+      id: number
+      code: string
+      name: string
+      description?: string
+      status: number
+      expires_at?: number | null
+      created_at?: number
+      [key: string]: unknown
+    }
+
+    interface TenantSearchParams {
+      page?: number
+      page_size?: number
+      code?: string
+      name?: string
+      status?: number
+    }
+
+    interface TenantPayload {
+      id?: number
+      code: string
+      name: string
+      description?: string
+      status: number
+      expires_at?: number
+    }
   }
 }

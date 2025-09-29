@@ -147,7 +147,13 @@
     "success": {
       "title": "Login successful",
       "message": "Welcome back"
-    }
+    },
+    "tenantCodePlaceholder": "Enter tenant code",
+    "captchaPlaceholder": "Enter captcha",
+    "captchaLoading": "Loading...",
+    "captchaLoadFailed": "Failed to load captcha",
+    "captchaImageError": "Captcha image failed to load, click to refresh",
+    "failedText": "Login failed, please try again later"
   },
   "forgetPassword": {
     "title": "Forgot password?",
@@ -280,7 +286,6 @@
         "pageVisibility": "Super Admin Visibility"
       }
     },
-
     "system": {
       "title": "System Settings",
       "user": "User Manage",
@@ -294,7 +299,8 @@
       "menu3": "Menu 3",
       "menu31": "Menu 3-1",
       "menu32": "Menu 3-2",
-      "menu321": "Menu 3-2-1"
+      "menu321": "Menu 3-2-1",
+      "tenant": "Tenant Management"
     },
     "safeguard": {
       "title": "Safeguard",

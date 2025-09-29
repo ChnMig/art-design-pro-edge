@@ -98,47 +98,42 @@
           }
         }
 
-        .account-select :deep(.el-select__wrapper),
         .el-input,
         .login-btn {
           height: 40px !important;
         }
 
-        .drag-verify {
-          position: relative;
-          width: 100%;
-          padding-bottom: 20px;
-          margin-top: 25px;
+        .captcha-wrap {
+          display: flex;
+          gap: 12px;
+          align-items: center;
 
-          .drag-verify-content {
-            position: relative;
-            z-index: 2;
-            box-sizing: border-box;
-            width: 100%;
-            overflow: hidden;
-            user-select: none;
-            border: 1px solid transparent;
-            border-radius: 8px;
-            transition: all 0.3s;
-
-            &.error {
-              border-color: #ff4d4f;
-            }
+          .el-input {
+            flex: 1;
           }
 
-          .error-text {
-            position: absolute;
-            top: 0;
-            z-index: 1;
-            padding: 0 1px;
-            margin-top: 10px;
-            font-size: 13px;
-            color: #f56c6c;
-            transition: all 0.3s;
+          .captcha-image,
+          .captcha-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 120px;
+            height: 40px;
+            cursor: pointer;
+            user-select: none;
+            background: var(--art-main-bg-color);
+            border: 1px solid rgba(var(--art-gray-300-rgb), 0.6);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+          }
 
-            &.show-error-text {
-              transform: translateY(40px);
-            }
+          .captcha-image {
+            object-fit: cover;
+          }
+
+          .captcha-loading {
+            font-size: 13px;
+            color: var(--art-text-gray-500);
           }
         }
 

@@ -47,24 +47,15 @@
             @keyup.enter="handleSubmit"
             style="margin-top: 25px"
           >
-            <ElFormItem prop="account">
-              <ElSelect v-model="formData.account" @change="setupAccount" class="account-select">
-                <ElOption
-                  v-for="account in accounts"
-                  :key="account.key"
-                  :label="account.label"
-                  :value="account.key"
-                >
-                  <span>{{ account.label }}</span>
-                </ElOption>
-              </ElSelect>
+            <ElFormItem prop="tenant_code">
+              <ElInput v-model.trim="formData.tenant_code" :placeholder="tenantPlaceholder" />
             </ElFormItem>
-            <ElFormItem prop="username">
-              <ElInput :placeholder="$t('login.placeholder[0]')" v-model.trim="formData.username" />
+            <ElFormItem prop="account">
+              <ElInput v-model.trim="formData.account" :placeholder="accountPlaceholder" />
             </ElFormItem>
             <ElFormItem prop="password">
               <ElInput
-                :placeholder="$t('login.placeholder[1]')"
+                :placeholder="passwordPlaceholder"
                 v-model.trim="formData.password"
                 type="password"
                 radius="8px"
@@ -72,23 +63,22 @@
                 show-password
               />
             </ElFormItem>
-            <div class="drag-verify">
-              <div class="drag-verify-content" :class="{ error: !isPassing && isClickPass }">
-                <ArtDragVerify
-                  ref="dragVerify"
-                  v-model:value="isPassing"
-                  :text="$t('login.sliderText')"
-                  textColor="var(--art-gray-800)"
-                  :successText="$t('login.sliderSuccessText')"
-                  :progressBarBg="getCssVar('--el-color-primary')"
-                  background="var(--art-gray-200)"
-                  handlerBg="var(--art-main-bg-color)"
+            <ElFormItem prop="captcha">
+              <div class="captcha-wrap">
+                <ElInput v-model.trim="formData.captcha" :placeholder="captchaPlaceholder" />
+                <img
+                  v-if="captchaImageUrl"
+                  :src="captchaImageUrl"
+                  class="captcha-image"
+                  alt="captcha"
+                  @click="refreshCaptcha"
+                  @error="handleImageError"
                 />
+                <div v-else class="captcha-loading" @click="refreshCaptcha">
+                  {{ captchaLoadingText }}
+                </div>
               </div>
-              <p class="error-text" :class="{ 'show-error-text': !isPassing && isClickPass }">{{
-                $t('login.placeholder[2]')
-              }}</p>
-            </div>
+            </ElFormItem>
 
             <div class="forget-password">
               <ElCheckbox v-model="formData.rememberPassword">{{
@@ -123,179 +113,148 @@
 </template>
 
 <script setup lang="ts">
+  import { computed, onMounted, reactive, ref } from 'vue'
+  import { useRouter } from 'vue-router'
+  import { storeToRefs } from 'pinia'
   import AppConfig from '@/config'
   import { RoutesAlias } from '@/router/routesAlias'
   import { ElNotification, ElMessage } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
-  import { getCssVar } from '@/utils/ui'
   import { languageOptions } from '@/locales'
   import { LanguageEnum } from '@/enums/appEnum'
   import { useI18n } from 'vue-i18n'
-  import { HttpError } from '@/utils/http/error'
   import { themeAnimation } from '@/utils/theme/animation'
-  import { fetchLogin, fetchGetUserInfo } from '@/api/auth'
+  import { fetchLogin, fetchGetUserInfo, fetchCaptcha } from '@/api/auth'
   import { useHeaderBar } from '@/composables/useHeaderBar'
-
-  defineOptions({ name: 'Login' })
-
-  const { t } = useI18n()
   import { useSettingStore } from '@/store/modules/setting'
   import type { FormInstance, FormRules } from 'element-plus'
 
-  type AccountKey = 'super' | 'admin' | 'user'
+  defineOptions({ name: 'Login' })
 
-  export interface Account {
-    key: AccountKey
-    label: string
-    userName: string
-    password: string
-    roles: string[]
-  }
-
-  const accounts = computed<Account[]>(() => [
-    {
-      key: 'super',
-      label: t('login.roles.super'),
-      userName: 'Super',
-      password: '123456',
-      roles: ['R_SUPER']
-    },
-    {
-      key: 'admin',
-      label: t('login.roles.admin'),
-      userName: 'Admin',
-      password: '123456',
-      roles: ['R_ADMIN']
-    },
-    {
-      key: 'user',
-      label: t('login.roles.user'),
-      userName: 'User',
-      password: '123456',
-      roles: ['R_USER']
-    }
-  ])
+  const { t, locale } = useI18n()
 
   const settingStore = useSettingStore()
   const { isDark } = storeToRefs(settingStore)
   const { shouldShowThemeToggle, shouldShowLanguage } = useHeaderBar()
 
-  const dragVerify = ref()
-
   const userStore = useUserStore()
   const router = useRouter()
-  const isPassing = ref(false)
-  const isClickPass = ref(false)
 
   const systemName = AppConfig.systemInfo.name
   const formRef = ref<FormInstance>()
 
   const formData = reactive({
+    tenant_code: 'default',
     account: '',
-    username: '',
     password: '',
+    captcha: '',
     rememberPassword: true
   })
 
+  const tenantPlaceholder = computed(() => t('login.tenantCodePlaceholder') || '请输入租户编码')
+  const accountPlaceholder = computed(() => t('login.placeholder[0]') || '请输入账号')
+  const passwordPlaceholder = computed(() => t('login.placeholder[1]') || '请输入密码')
+  const captchaPlaceholder = computed(() => t('login.captchaPlaceholder') || '请输入验证码')
+  const captchaLoadingText = computed(() => t('login.captchaLoading') || '加载中...')
+
   const rules = computed<FormRules>(() => ({
-    username: [{ required: true, message: t('login.placeholder[0]'), trigger: 'blur' }],
-    password: [{ required: true, message: t('login.placeholder[1]'), trigger: 'blur' }]
+    tenant_code: [{ required: true, message: tenantPlaceholder.value, trigger: 'blur' }],
+    account: [{ required: true, message: accountPlaceholder.value, trigger: 'blur' }],
+    password: [{ required: true, message: passwordPlaceholder.value, trigger: 'blur' }],
+    captcha: [{ required: true, message: captchaPlaceholder.value, trigger: 'blur' }]
   }))
 
   const loading = ref(false)
+  const captchaImageUrl = ref('')
+  const captchaId = ref('')
 
-  onMounted(() => {
-    setupAccount('super')
-  })
-
-  // 设置账号
-  const setupAccount = (key: AccountKey) => {
-    const selectedAccount = accounts.value.find((account: Account) => account.key === key)
-    formData.account = key
-    formData.username = selectedAccount?.userName ?? ''
-    formData.password = selectedAccount?.password ?? ''
-  }
-
-  // 登录
-  const handleSubmit = async () => {
-    if (!formRef.value) return
-
+  const refreshCaptcha = async () => {
     try {
-      // 表单验证
-      const valid = await formRef.value.validate()
-      if (!valid) return
-
-      // 拖拽验证
-      if (!isPassing.value) {
-        isClickPass.value = true
-        return
-      }
-
-      loading.value = true
-
-      // 登录请求
-      const { username, password } = formData
-
-      const { token, refreshToken } = await fetchLogin({
-        userName: username,
-        password
-      })
-
-      // 验证token
-      if (!token) {
-        throw new Error('Login failed - no token received')
-      }
-
-      // 存储token和用户信息
-      userStore.setToken(token, refreshToken)
-      const userInfo = await fetchGetUserInfo()
-      userStore.setUserInfo(userInfo)
-      userStore.setLoginStatus(true)
-
-      // 登录成功处理
-      showLoginSuccessNotice()
-      router.push('/')
+      const captcha = await fetchCaptcha(80, 240)
+      captchaImageUrl.value = captcha.image
+      captchaId.value = captcha.id
     } catch (error) {
-      // 处理 HttpError
-      if (error instanceof HttpError) {
-        // console.log(error.code)
-      } else {
-        // 处理非 HttpError
-        ElMessage.error('登录失败，请稍后重试')
-        console.error('[Login] Unexpected error:', error)
-      }
-    } finally {
-      loading.value = false
-      resetDragVerify()
+      console.error('[Login] refreshCaptcha error:', error)
+      ElMessage.error(t('login.captchaLoadFailed') || '验证码获取失败')
     }
   }
 
-  // 重置拖拽验证
-  const resetDragVerify = () => {
-    dragVerify.value.reset()
+  const handleImageError = () => {
+    ElMessage.error(t('login.captchaImageError') || '验证码加载失败，请点击刷新')
+    captchaImageUrl.value = ''
   }
 
-  // 登录成功提示
+  const handleSubmit = async () => {
+    if (!formRef.value) return
+
+    const valid = await formRef.value.validate().catch(() => false)
+    if (!valid) return
+
+    loading.value = true
+    try {
+      const loginRes = await fetchLogin({
+        tenant_code: formData.tenant_code,
+        account: formData.account,
+        password: formData.password,
+        captcha: formData.captcha,
+        captcha_id: captchaId.value
+      })
+
+      if (!loginRes.access_token) {
+        throw new Error(t('login.failedText') || '登录失败，请稍后重试')
+      }
+
+      userStore.setToken(loginRes.access_token, loginRes.refresh_token)
+      userStore.setCurrentTenantCode(formData.tenant_code)
+      userStore.setLoginStatus(true)
+
+      const userInfo = await fetchGetUserInfo().catch((error) => {
+        console.error('[Login] fetch user info error:', error)
+        return undefined
+      })
+
+      if (userInfo) {
+        userStore.setUserInfo(userInfo)
+        if (userInfo.tenant) {
+          userStore.setTenantInfo(userInfo.tenant as Record<string, any>)
+        }
+        if (userInfo.tenantCode) {
+          userStore.setCurrentTenantCode(userInfo.tenantCode)
+        }
+      }
+
+      showLoginSuccessNotice()
+      router.push('/')
+    } catch (error) {
+      const message = error instanceof Error ? error.message : ''
+      ElMessage.error(message || t('login.failedText') || '登录失败，请稍后重试')
+      await refreshCaptcha()
+    } finally {
+      loading.value = false
+    }
+  }
+
   const showLoginSuccessNotice = () => {
     setTimeout(() => {
       ElNotification({
-        title: t('login.success.title'),
+        title: t('login.success.title') || '登录成功',
         type: 'success',
         duration: 2500,
         zIndex: 10000,
-        message: `${t('login.success.message')}, ${systemName}!`
+        message: `${t('login.success.message') || '欢迎回来'}, ${systemName}!`
       })
     }, 150)
   }
-
-  // 切换语言
-  const { locale } = useI18n()
 
   const changeLanguage = (lang: LanguageEnum) => {
     if (locale.value === lang) return
     locale.value = lang
     userStore.setLanguage(lang)
   }
+
+  onMounted(() => {
+    refreshCaptcha()
+  })
 </script>
 
 <style lang="scss" scoped>

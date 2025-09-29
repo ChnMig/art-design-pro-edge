@@ -42,6 +42,7 @@ export enum RoutesAlias {
   ArticlePublish = '/article/publish', // 文章发布
   User = '/system/user', // 账户
   Role = '/system/role', // 角色
+  Tenant = '/system/tenant', // 租户
   UserCenter = '/system/user-center', // 用户中心
   Menu = '/system/menu', // 菜单
   NestedMenu1 = '/system/nested/menu1', // 嵌套菜单1
