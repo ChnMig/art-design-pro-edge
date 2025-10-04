@@ -72,6 +72,65 @@ pnpm dev
 pnpm build
 ```
 
+## Project Customizations
+
+This fork syncs upstream while preserving and enhancing the following features:
+
+- Multi-tenant login with image captcha
+
+  - Login page keeps tenant code and image captcha input; captcha can be refreshed by clicking the image.
+  - APIs:
+    - Get captcha: `GET /system/user/login/captcha` (fn: `src/api/auth.ts:fetchCaptcha`)
+    - Login: `POST /system/user/login` (fn: `src/api/auth.ts:fetchLogin`)
+    - User info: `GET /system/user/info` (fn: `src/api/auth.ts:fetchGetUserInfo`)
+  - Token fields: `access_token`, `refresh_token`.
+  - Store enhancements: `src/store/modules/user.ts` keeps `tenantInfo` and `currentTenantCode` for multi-tenant.
+
+- Tenant management
+
+  - Page: `src/views/system/tenant/index.vue`
+  - APIs: `src/api/tenant.ts`
+  - Types: `Api.SystemTenant.*` in `src/typings/api.d.ts`
+
+- Build & theme
+
+  - Enabled `unplugin-element-plus` with `useSource: true`; theme variables are injected via Vite `css.preprocessorOptions.scss.additionalData` (see `vite.config.ts`).
+  - Light theme variables from `@styles/el-light.scss`, dark theme via `@styles/el-dark.scss` and `@assets/styles/dark.scss`.
+
+- Components & styles synced from upstream
+  - ArtSearchBar API normalized:
+    - `show-reset-button` → `show-reset`
+    - `show-search-button` → `show-search`
+    - `disabled-search-button` → `disabled-search`
+    - Example updated: `src/views/examples/tables/index.vue`
+  - ArtStatsCard supports count = 0: use `v-if="count !== undefined"`
+    - File: `src/components/core/cards/art-stats-card/index.vue`
+  - Login style: align ElSelect height with inputs
+    - File: `src/views/auth/login/index.scss`
+  - Layout stacking: header `z-index` adjusted to 50
+    - File: `src/views/index/style.scss`
+
+## Upgrade Notes (2025-10)
+
+If you are upgrading from an older version:
+
+1. ArtSearchBar props renamed
+
+   - Replace any usage of `show-reset-button` / `show-search-button` / `disabled-search-button` with the new props. See `src/views/examples/tables/index.vue`.
+
+2. ArtStatsCard zero values
+
+   - Change `v-if="count"` to `v-if="count !== undefined"` to properly render 0.
+
+3. Login API and multi-tenant
+
+   - This project keeps backend contract: `access_token`/`refresh_token` and captcha + tenant fields.
+   - For other backends, adjust endpoints/mapping in `src/api/auth.ts`.
+
+4. Theme and on-demand styles
+   - We no longer import ElementPlus styles globally. They are enabled via `unplugin-element-plus` and SCSS variables.
+   - Remove any extra manual imports of `el-light.scss` to avoid duplication.
+
 ## Technical Support
 
 QQ Group: <a href="https://qm.qq.com/cgi-bin/qm/qr?k=Gg6yzZLFaNgmRhK0T5Qcjf7-XcAFWWXm&jump_from=webapi&authKey=YpRKVJQyFKYbGTiKw0GJ/YQXnNF+GdXNZC5beQQqnGZTvuLlXoMO7nw5fNXvmVhA">821834289</a> (Click the link to join the group chat)

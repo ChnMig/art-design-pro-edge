@@ -77,6 +77,66 @@ pnpm dev
 pnpm build
 ```
 
+## 项目定制
+
+本仓库在同步上游的同时，保留并增强了以下业务能力：
+
+- 多租户与图形验证码登录
+
+  - 登录页保留租户编码与图形验证码输入，支持点击图片刷新验证码。
+  - 接口：
+    - 获取验证码：`GET /system/user/login/captcha`（函数：`src/api/auth.ts:fetchCaptcha`）
+    - 登录：`POST /system/user/login`（函数：`src/api/auth.ts:fetchLogin`）
+    - 用户信息：`GET /system/user/info`（函数：`src/api/auth.ts:fetchGetUserInfo`）
+  - Token 字段：`access_token`、`refresh_token`。
+  - Store 增强：在 `src/store/modules/user.ts` 中保留 `tenantInfo`、`currentTenantCode` 等字段，便于多租户场景使用。
+
+- 多租户管理页面
+
+  - 页面：`src/views/system/tenant/index.vue`
+  - 接口：`src/api/tenant.ts`
+  - 类型：`src/typings/api.d.ts` 中 `Api.SystemTenant.*`
+
+- 构建与主题
+
+  - 已启用 `unplugin-element-plus` 的 `useSource: true` 按需样式方案，主题变量通过 Vite 的 `css.preprocessorOptions.scss.additionalData` 注入（见 `vite.config.ts`）。
+  - 亮色主题变量来自 `@styles/el-light.scss`，暗黑主题通过 `@styles/el-dark.scss` 与 `@assets/styles/dark.scss` 协同。
+
+- 组件和样式同步要点（与上游同步）
+  - 搜索条组件 ArtSearchBar API 统一：
+    - `show-reset-button` → `show-reset`
+    - `show-search-button` → `show-search`
+    - `disabled-search-button` → `disabled-search`
+    - 示例已更新：`src/views/examples/tables/index.vue`
+  - 统计卡片 ArtStatsCard 兼容计数为 0：`v-if="count !== undefined"`
+    - 文件：`src/components/core/cards/art-stats-card/index.vue`
+  - 登录页样式：选择器高度与输入框统一
+    - 文件：`src/views/auth/login/index.scss`
+  - 布局层级：顶栏 `z-index` 调整为 50（更合理的层级关系）
+    - 文件：`src/views/index/style.scss`
+
+## 升级说明（2025-10）
+
+如果你从旧版本升级到当前版本，请注意：
+
+1. 搜索条属性重命名
+
+   - 全局搜索 `show-reset-button` / `show-search-button` / `disabled-search-button` 已重命名。
+   - 项目中可通过检索定位并替换（示例已更新，参考 `src/views/examples/tables/index.vue`）。
+
+2. 统计卡片显示 0 值
+
+   - 若你在自定义卡片中使用了 `v-if="count"`，请改为 `v-if="count !== undefined"` 以正确显示 0。
+
+3. 登录接口与多租户
+
+   - 本项目保留自有后台契约：登录返回 `access_token`、`refresh_token`，并保留验证码与租户字段。
+   - 如需对接其他后台，请在 `src/api/auth.ts` 中调整端点与参数映射即可。
+
+4. 主题与按需样式
+   - 不再手动全量引入 ElementPlus 样式，已通过 `unplugin-element-plus` + SCSS 变量按需生效。
+   - 若你额外手动引入了 `el-light.scss`，可移除重复引入，避免体积增大。
+
 ## 技术支持
 
 QQ群：<a href="https://qm.qq.com/cgi-bin/qm/qr?k=Gg6yzZLFaNgmRhK0T5Qcjf7-XcAFWWXm&jump_from=webapi&authKey=YpRKVJQyFKYbGTiKw0GJ/YQXnNF+GdXNZC5beQQqnGZTvuLlXoMO7nw5fNXvmVhA">821834289</a>（点击链接加入群聊）
