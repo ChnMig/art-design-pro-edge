@@ -137,6 +137,10 @@
     "sliderSuccessText": "验证成功",
     "rememberPwd": "记住密码",
     "forgetPwd": "忘记密码",
+    "contactAdmin": "联系管理员",
+    "scanQrcode": "扫描二维码联系管理员",
+    "noAccountContactAdmin": "还没有账号？请联系管理员开通",
+    "forgotPwdContactAdmin": "忘记密码？联系管理员",
     "btnText": "登录",
     "noAccount": "还没有账号？",
     "register": "注册",
@@ -202,12 +206,6 @@
   "menus": {
     "login": {
       "title": "登录"
-    },
-    "register": {
-      "title": "注册"
-    },
-    "forgetPassword": {
-      "title": "忘记密码"
     },
     "outside": {
       "title": "内嵌页面"

@@ -141,6 +141,10 @@
     "sliderSuccessText": "Verification successful",
     "rememberPwd": "Remember password",
     "forgetPwd": "Forgot password",
+    "contactAdmin": "Contact Admin",
+    "scanQrcode": "Scan the QR code to contact the administrator",
+    "noAccountContactAdmin": "No account? Please contact the administrator",
+    "forgotPwdContactAdmin": "Forgot password? Contact admin",
     "btnText": "Login",
     "noAccount": "No account yet?",
     "register": "Register",
@@ -210,12 +214,6 @@
   "menus": {
     "login": {
       "title": "Login"
-    },
-    "register": {
-      "title": "Register"
-    },
-    "forgetPassword": {
-      "title": "Forget Password"
     },
     "outside": {
       "title": "Outside"

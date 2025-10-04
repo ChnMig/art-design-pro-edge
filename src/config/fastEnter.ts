@@ -92,35 +92,24 @@ const fastEnterConfig: FastEnterConfig = {
       enabled: true,
       order: 1
     },
-    {
-      name: '注册',
-      path: RoutesAlias.Register,
-      enabled: true,
-      order: 2
-    },
-    {
-      name: '忘记密码',
-      path: RoutesAlias.ForgetPassword,
-      enabled: true,
-      order: 3
-    },
+    // 已移除注册与忘记密码，统一以“二维码联系管理员”处理
     {
       name: '定价',
       path: RoutesAlias.Pricing,
       enabled: true,
-      order: 4
+      order: 2
     },
     {
       name: '个人中心',
       path: RoutesAlias.UserCenter,
       enabled: true,
-      order: 5
+      order: 3
     },
     {
       name: '留言管理',
       path: RoutesAlias.Comment,
       enabled: true,
-      order: 6
+      order: 4
     }
   ]
 }
