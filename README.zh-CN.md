@@ -77,6 +77,13 @@ pnpm dev
 pnpm build
 ```
 
+## 同步来源与版本
+
+- 上游项目：Daymychen/art-design-pro
+- 同步分支：upstream/main
+- 同步提交：89fbed0ed61bfce5cea983d14693e2a463c53958（build: core dependency upgrade）
+- 同步时间：见本仓库最近一次同步提交（分支：merge/upstream-sync-202502）
+
 ## 项目定制
 
 本仓库在同步上游的同时，保留并增强了以下业务能力：
@@ -103,6 +110,7 @@ pnpm build
   - 亮色主题变量来自 `@styles/el-light.scss`，暗黑主题通过 `@styles/el-dark.scss` 与 `@assets/styles/dark.scss` 协同。
 
 - 组件和样式同步要点（与上游同步）
+
   - 搜索条组件 ArtSearchBar API 统一：
     - `show-reset-button` → `show-reset`
     - `show-search-button` → `show-search`
@@ -114,6 +122,11 @@ pnpm build
     - 文件：`src/views/auth/login/index.scss`
   - 布局层级：顶栏 `z-index` 调整为 50（更合理的层级关系）
     - 文件：`src/views/index/style.scss`
+
+- 认证流程精简
+  - 移除“注册/忘记密码”页面，统一改为“二维码联系管理员”。
+  - 登录页提供“联系管理员”入口，点击弹出二维码。
+  - 二维码内容支持环境变量配置：`VITE_ADMIN_QRCODE_URL`。
 
 ## 升级说明（2025-10）
 
@@ -134,8 +147,13 @@ pnpm build
    - 如需对接其他后台，请在 `src/api/auth.ts` 中调整端点与参数映射即可。
 
 4. 主题与按需样式
+
    - 不再手动全量引入 ElementPlus 样式，已通过 `unplugin-element-plus` + SCSS 变量按需生效。
    - 若你额外手动引入了 `el-light.scss`，可移除重复引入，避免体积增大。
+
+5. 忘记密码/注册流程
+   - 已移除注册与忘记密码页面；请使用登录页“联系管理员”二维码。
+   - 可在环境变量中设置 `VITE_ADMIN_QRCODE_URL` 指向你的客服/工单/企业微信链接。
 
 ## 技术支持
 

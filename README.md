@@ -72,6 +72,13 @@ pnpm dev
 pnpm build
 ```
 
+## Upstream Version
+
+- Upstream repo: Daymychen/art-design-pro
+- Branch: upstream/main
+- Commit: 89fbed0ed61bfce5cea983d14693e2a463c53958 (build: core dependency upgrade)
+- Sync time: see this repo’s latest sync commit (branch: merge/upstream-sync-202502)
+
 ## Project Customizations
 
 This fork syncs upstream while preserving and enhancing the following features:
@@ -98,6 +105,7 @@ This fork syncs upstream while preserving and enhancing the following features:
   - Light theme variables from `@styles/el-light.scss`, dark theme via `@styles/el-dark.scss` and `@assets/styles/dark.scss`.
 
 - Components & styles synced from upstream
+
   - ArtSearchBar API normalized:
     - `show-reset-button` → `show-reset`
     - `show-search-button` → `show-search`
@@ -109,6 +117,10 @@ This fork syncs upstream while preserving and enhancing the following features:
     - File: `src/views/auth/login/index.scss`
   - Layout stacking: header `z-index` adjusted to 50
     - File: `src/views/index/style.scss`
+
+- Auth flow simplification
+  - Removed Register/Forgot Password pages in favor of a single “Contact Admin via QR code” flow.
+  - Login page includes a QR modal; content is configurable via `VITE_ADMIN_QRCODE_URL`.
 
 ## Upgrade Notes (2025-10)
 
