@@ -169,7 +169,7 @@
     try {
       const captcha = await fetchCaptcha(80, 240)
       captchaImageUrl.value = captcha.image
-      captchaId.value = captcha.id
+      captchaId.value = (captcha as any).captcha_id || ''
     } catch (error) {
       console.error('[Login] refreshCaptcha error:', error)
       ElMessage.error(t('login.captchaLoadFailed') || '验证码获取失败')
@@ -197,11 +197,11 @@
         captcha_id: captchaId.value
       })
 
-      if (!loginRes.access_token) {
+      if (!loginRes.token) {
         throw new Error(t('login.failedText') || '登录失败，请稍后重试')
       }
 
-      userStore.setToken(loginRes.access_token, loginRes.refresh_token)
+      userStore.setToken(loginRes.token)
       userStore.setCurrentTenantCode(formData.tenant_code)
       userStore.setLoginStatus(true)
 

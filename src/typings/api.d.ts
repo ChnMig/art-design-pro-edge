@@ -44,10 +44,10 @@ declare namespace Api {
       captcha_id: string
     }
 
-    /** 登录响应 */
+    /** 登录响应（后端返回 data.token、data.expires） */
     interface LoginResponse {
-      access_token: string
-      refresh_token?: string
+      token: string
+      expires?: number
     }
 
     /** 用户信息 */

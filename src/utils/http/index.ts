@@ -57,7 +57,11 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (request: InternalAxiosRequestConfig) => {
     const { accessToken } = useUserStore()
-    if (accessToken) request.headers.set('Authorization', accessToken)
+    if (accessToken) {
+      const hasBearer = /^Bearer\s+/i.test(accessToken)
+      const token = hasBearer ? accessToken : `Bearer ${accessToken}`
+      request.headers.set('Authorization', token)
+    }
 
     if (request.data && !(request.data instanceof FormData) && !request.headers['Content-Type']) {
       request.headers.set('Content-Type', 'application/json')
