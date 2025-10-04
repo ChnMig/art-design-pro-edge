@@ -98,6 +98,8 @@
           }
         }
 
+        // 选择器高度与输入框保持一致
+        .account-select :deep(.el-select__wrapper),
         .el-input,
         .login-btn {
           height: 40px !important;

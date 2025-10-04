@@ -129,9 +129,9 @@
       :rules="rules"
       :is-expand="false"
       :show-expand="true"
-      :show-reset-button="true"
-      :show-search-button="true"
-      :disabled-search-button="false"
+      :show-reset="true"
+      :show-search="true"
+      :disabled-search="false"
       @search="handleSearch"
       @reset="handleReset"
     />
