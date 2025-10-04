@@ -207,6 +207,9 @@
     "login": {
       "title": "登录"
     },
+    "forgetPassword": {
+      "title": "忘记密码"
+    },
     "outside": {
       "title": "内嵌页面"
     },

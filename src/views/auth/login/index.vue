@@ -84,9 +84,7 @@
               <ElCheckbox v-model="formData.rememberPassword">{{
                 $t('login.rememberPwd')
               }}</ElCheckbox>
-              <ElLink type="primary" @click="openQrcodeDialog">{{
-                $t('login.forgotPwdContactAdmin')
-              }}</ElLink>
+              <RouterLink :to="RoutesAlias.ForgetPassword">{{ $t('login.forgetPwd') }}</RouterLink>
             </div>
 
             <div style="margin-top: 30px">
@@ -101,35 +99,11 @@
               </ElButton>
             </div>
 
-            <div class="footer">
-              <p>{{ $t('login.noAccountContactAdmin') }}</p>
-              <ElButton link type="primary" @click="openQrcodeDialog">{{
-                $t('login.contactAdmin')
-              }}</ElButton>
-            </div>
+            <!-- 内部系统不提供注册提示，移除“还没有账号？请联系管理员开通” -->
           </ElForm>
         </div>
       </div>
-      <!-- 二维码弹窗 -->
-      <ElDialog
-        v-model="qrcodeVisible"
-        :title="$t('login.contactAdmin')"
-        width="360px"
-        align-center
-      >
-        <div
-          style="
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: center;
-            padding: 10px 0;
-          "
-        >
-          <QrcodeVue :value="adminQrcodeValue" :size="180" :level="'M'" />
-          <ElText type="info" size="small">{{ $t('login.scanQrcode') }}</ElText>
-        </div>
-      </ElDialog>
+      <!-- 登录页不提供二维码弹窗入口（忘记密码页提供二维码） -->
     </div>
   </div>
 </template>
@@ -139,7 +113,7 @@
   import { useRouter } from 'vue-router'
   import { storeToRefs } from 'pinia'
   import AppConfig from '@/config'
-  // import { RoutesAlias } from '@/router/routesAlias'
+  import { RoutesAlias } from '@/router/routesAlias'
   import { ElNotification, ElMessage } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
   import { languageOptions } from '@/locales'
@@ -150,7 +124,6 @@
   import { useHeaderBar } from '@/composables/useHeaderBar'
   import { useSettingStore } from '@/store/modules/setting'
   import type { FormInstance, FormRules } from 'element-plus'
-  import QrcodeVue from 'qrcode.vue'
 
   defineOptions({ name: 'Login' })
 
@@ -190,11 +163,7 @@
   const loading = ref(false)
   const captchaImageUrl = ref('')
   const captchaId = ref('')
-  const qrcodeVisible = ref(false)
-  const adminQrcodeValue = computed(() => import.meta.env.VITE_ADMIN_QRCODE_URL || location.origin)
-  const openQrcodeDialog = () => {
-    qrcodeVisible.value = true
-  }
+  // 登录页不再提供二维码弹窗逻辑（忘记密码页提供二维码联系管理员）
 
   const refreshCaptcha = async () => {
     try {

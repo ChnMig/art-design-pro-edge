@@ -215,6 +215,9 @@
     "login": {
       "title": "Login"
     },
+    "forgetPassword": {
+      "title": "Forget Password"
+    },
     "outside": {
       "title": "Outside"
     },
