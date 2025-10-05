@@ -95,7 +95,7 @@ git show upstream/main:path/to/file
 - 顶部栏模块
 
   - 通知中心与在线对话入口已移除：`src/components/core/layouts/art-header-bar/index.vue` 不再渲染对应按钮，也删除了 `ArtNotification` 弹层及 `mittBus.emit('openChat')` 等逻辑。
-  - 上游若重新加入 `notice` / `chat` 相关代码，合并时请同步清理，确保顶部栏仅保留刷新、全屏、设置、主题等按钮。
+  - 上游若重新加入 `notice` / `chat` 相关代码，合并时请同步清理，确保顶部栏仅保留刷新、全屏、设置、主题等按钮；同步移除全局组件配置中的 `chat-window`（`src/config/component.ts`），避免重新加载 `ArtChatWindow` 组件。
   - 用户头像区保持与上游一致：使用 `userInfo.avatar` 作为头像来源，并仅保留“锁定屏幕 / 修改个人信息 / 退出登录”三项菜单，禁止回退到自定义静态头像或增加额外入口；同时确保默认头像文件 `src/assets/img/user/avatar.webp` 保留（供 `setUserInfo` 兜底）。
 
 - 快速入口（彻底精简移除）
