@@ -135,7 +135,7 @@
   import { LanguageEnum } from '@/enums/appEnum'
   import { useI18n } from 'vue-i18n'
   import { themeAnimation } from '@/utils/theme/animation'
-  import { fetchLogin, fetchGetUserInfo, fetchCaptcha, searchTenant } from '@/api/auth'
+  import { fetchLogin, fetchGetUserInfo, fetchCaptcha } from '@/api/auth'
   import { useHeaderBar } from '@/composables/useHeaderBar'
   import { useSettingStore } from '@/store/modules/setting'
   import type { FormInstance, FormRules } from 'element-plus'
@@ -187,6 +187,7 @@
     }
     tenantLoading.value = true
     try {
+      const { searchTenant } = await import('@/api/auth')
       const list = await searchTenant(query.trim())
       tenantOptions.value = Array.isArray(list) ? list : []
     } catch (error) {
