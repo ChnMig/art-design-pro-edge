@@ -166,7 +166,7 @@ Authorization: Bearer {your_jwt_token}
     "tenant_info": {
       "tenant_id": 1,
       "tenant_code": "system",
-      "tenant_name": "默认企业"
+      "tenant_name": "平台管理"
     },
     "user_info": {
       "user_id": 1,
@@ -189,7 +189,7 @@ Authorization: Bearer {your_jwt_token}
 
 **请求参数：**
 
-- `code` (必填) - 用户输入的租户编码片段，长度必须大于系统配置的最小长度（默认 3）。
+- `code` (必填) - 用户输入的租户编码片段，长度必须大于或等于系统配置的最小长度（默认 3）。
 
 **响应示例：**
 
@@ -198,7 +198,7 @@ Authorization: Bearer {your_jwt_token}
   "code": 200,
   "status": "OK",
   "message": "请求成功",
-  "data": [{ "id": 1, "code": "system", "name": "默认企业" }],
+  "data": [{ "id": 1, "code": "system", "name": "平台管理" }],
   "timestamp": 1640995200
 }
 ```
@@ -253,12 +253,17 @@ Authorization: Bearer {your_jwt_token}
 
 ```json
 {
-  "name": "新姓名",
+  "username": "新昵称",
   "phone": "13900139000",
   "gender": 1,
   "password": "可选，若传则更新"
 }
 ```
+
+- `username` - 用户昵称，支持修改
+- `phone` - 手机号
+- `gender` - 性别 (1 男 / 2 女)
+- `password` - 可选，提供则更新密码
 
 #### 2.3 获取用户列表
 
@@ -824,7 +829,7 @@ Authorization: Bearer {your_jwt_token}
     {
       "id": 1,
       "code": "system",
-      "name": "默认企业",
+      "name": "平台管理",
       "contact": "",
       "phone": "",
       "email": "",

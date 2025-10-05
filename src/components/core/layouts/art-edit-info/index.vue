@@ -14,11 +14,8 @@
       status-icon
       @submit.prevent
     >
-      <ElFormItem label="用户名">
-        <ElInput v-model="userForm.username" disabled />
-      </ElFormItem>
-      <ElFormItem label="姓名" prop="name">
-        <ElInput v-model="userForm.name" />
+      <ElFormItem label="用户名" prop="username">
+        <ElInput v-model="userForm.username" />
       </ElFormItem>
       <ElFormItem label="密码" prop="password">
         <ElInput
@@ -60,7 +57,6 @@
   interface EditInfoForm {
     id: number | string
     username: string
-    name: string
     password: string
     phone: string
     gender: number
@@ -72,14 +68,13 @@
   const userForm = reactive<EditInfoForm>({
     id: 0,
     username: '',
-    name: '',
     password: '',
     phone: '',
     gender: 1
   })
 
   const rules: FormRules<EditInfoForm> = {
-    name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
+    username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
     phone: [
       {
         pattern: /^1[3-9]\d{9}$/,
@@ -113,8 +108,8 @@
           data.account ||
           data.userName ||
           data.nickName ||
+          data.name ||
           '') as string
-        userForm.name = (data.name || data.nickName || userForm.username) as string
         userForm.phone = (data.phone || data.userPhone || '') as string
         userForm.gender = Number(data.gender ?? data.userGender ?? userForm.gender) as 1 | 2
         userForm.password = ''
@@ -138,7 +133,7 @@
     try {
       const payload = {
         id: userForm.id,
-        name: userForm.name,
+        username: userForm.username,
         phone: userForm.phone || undefined,
         gender: userForm.gender,
         password: userForm.password || undefined

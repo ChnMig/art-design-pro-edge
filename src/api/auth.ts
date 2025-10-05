@@ -56,7 +56,8 @@ export function fetchGetUserInfo() {
 export function fetchUpdateUserInfo(
   data: Partial<Api.Auth.UserInfo> & {
     id?: number | string
-    name?: string
+    username?: string
+    userName?: string
     phone?: string
     gender?: number
     password?: string
