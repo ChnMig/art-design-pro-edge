@@ -58,7 +58,7 @@ export const useUserStore = defineStore(
      * @param newInfo 新的用户信息
      */
     const setUserInfo = (newInfo: Api.Auth.UserInfo) => {
-      const defaultAvatar = '/src/assets/img/user/avatar.png'
+      const defaultAvatar = '/src/assets/img/user/avatar.webp'
 
       info.value = {
         ...newInfo,
