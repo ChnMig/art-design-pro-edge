@@ -44,12 +44,12 @@
 
 **响应字段说明：**
 
-- `code` - HTTP状态码
-- `status` - 状态标识
+- `code` - 业务状态码（HTTP 始终为 200）
+- `status` - 字符串状态标识
 - `message` - 响应消息
 - `data` - 响应数据
-- `timestamp` - 响应时间戳
-- `total` - 数据总数（分页接口）
+- `timestamp` - 响应时间戳（秒）
+- `total` - 数据总数（仅分页接口返回）
 
 ### 通用状态码
 
@@ -71,7 +71,7 @@
 | 500    | INTERNAL            | 服务器内部错误               |
 | 501    | NOT_IMPLEMENTED     | API不存在                    |
 | 503    | UNAVAILABLE         | 服务不可用                   |
-| 504    | DEADLINE_EXCEED     | 请求超时                     |
+| 504    | DEALINE_EXCEED      | 请求超时                     |
 
 ### 认证机制
 
@@ -86,7 +86,7 @@ Authorization: Bearer {your_jwt_token}
 支持分页的接口通用参数：
 
 - `page` - 页码，从1开始，默认1
-- `page_size` - 每页数量，默认10
+- `pageSize` - 每页数量，默认20
 
 ### 多租户支持
 
@@ -106,7 +106,10 @@ Authorization: Bearer {your_jwt_token}
 
 **请求路径：** `/api/v1/admin/system/user/login/captcha`
 
-**请求参数：** 无
+**请求参数：**
+
+- `width` (必填) - 图片宽度
+- `height` (必填) - 图片高度
 
 **响应示例：**
 
@@ -116,7 +119,7 @@ Authorization: Bearer {your_jwt_token}
   "status": "OK",
   "message": "请求成功",
   "data": {
-    "captcha_id": "Nz0z0L7c5t9GxOXLiVWV",
+    "id": "Nz0z0L7c5t9GxOXLiVWV",
     "image": "data:image/png;base64,iVBORw0KGgoAAAANSU..."
   },
   "timestamp": 1640995200
@@ -157,10 +160,20 @@ Authorization: Bearer {your_jwt_token}
 {
   "code": 200,
   "status": "OK",
-  "message": "登录成功",
+  "message": "请求成功",
   "data": {
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-    "expires": 1640995200
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "tenant_info": {
+      "tenant_id": 1,
+      "tenant_code": "default",
+      "tenant_name": "默认企业"
+    },
+    "user_info": {
+      "user_id": 1,
+      "name": "超级管理员",
+      "username": "admin",
+      "account": "admin"
+    }
   },
   "timestamp": 1640995200
 }
@@ -186,11 +199,14 @@ Authorization: Bearer {your_jwt_token}
   "status": "OK",
   "data": {
     "id": 1,
+    "tenant_id": 1,
+    "department_id": 1,
+    "role_id": 1,
+    "name": "超级管理员",
     "username": "admin",
-    "name": "管理员",
-    "email": "admin@example.com",
+    "account": "admin",
     "phone": "13800138000",
-    "avatar": "/static/avatar/default.png",
+    "gender": 1,
     "status": 1,
     "created_at": 1640995200,
     "updated_at": 1640995200
@@ -213,10 +229,10 @@ Authorization: Bearer {your_jwt_token}
 
 ```json
 {
-  "name": "新用户名",
-  "email": "newemail@example.com",
+  "name": "新姓名",
   "phone": "13900139000",
-  "avatar": "/static/avatar/new.png"
+  "gender": 1,
+  "password": "可选，若传则更新"
 }
 ```
 
@@ -234,9 +250,11 @@ Authorization: Bearer {your_jwt_token}
 
 - `username` - 用户名（可选）
 - `name` - 姓名（可选）
-- `status` - 状态（可选）
+- `phone` - 手机号（可选）
+- `department_id` - 部门ID（可选）
+- `role_id` - 角色ID（可选）
 - `page` - 页码
-- `page_size` - 每页数量
+- `pageSize` - 每页数量
 
 **响应示例：**
 
@@ -247,11 +265,20 @@ Authorization: Bearer {your_jwt_token}
   "data": [
     {
       "id": 1,
+      "tenant_id": 1,
+      "department_id": 1,
+      "department_name": "管理中心",
+      "role_id": 1,
+      "role_name": "超级管理员",
+      "role_desc": "拥有所有权限",
       "username": "admin",
-      "name": "管理员",
-      "email": "admin@example.com",
+      "name": "超级管理员",
+      "account": "admin",
+      "phone": "13800138000",
+      "gender": 1,
       "status": 1,
-      "created_at": 1640995200
+      "created_at": 1640995200,
+      "updated_at": 1640995200
     }
   ],
   "total": 1,
@@ -275,7 +302,7 @@ Authorization: Bearer {your_jwt_token}
 - `name` - 姓名（可选）
 - `id` - 用户ID（获取单个用户信息）
 - `page` - 页码
-- `page_size` - 每页数量
+- `pageSize` - 每页数量
 
 #### 2.5 新增用户
 
@@ -291,14 +318,15 @@ Authorization: Bearer {your_jwt_token}
 
 ```json
 {
-  "username": "newuser",
   "name": "新用户",
+  "username": "newuser",
+  "account": "newuser",
   "password": "123456",
-  "email": "newuser@example.com",
   "phone": "13800138001",
+  "gender": 1,
+  "status": 1,
   "role_id": 2,
-  "department_id": 1,
-  "status": 1
+  "department_id": 1
 }
 ```
 
@@ -317,9 +345,15 @@ Authorization: Bearer {your_jwt_token}
 ```json
 {
   "id": 1,
-  "name": "更新后用户名",
-  "email": "updated@example.com",
-  "status": 1
+  "name": "更新后姓名",
+  "username": "admin",
+  "account": "admin",
+  "phone": "13800138000",
+  "gender": 1,
+  "status": 1,
+  "role_id": 1,
+  "department_id": 1,
+  "password": "可选"
 }
 ```
 
@@ -405,13 +439,22 @@ Authorization: Bearer {your_jwt_token}
 
 ```json
 {
-  "parent_id": 0,
-  "name": "菜单名称",
-  "path": "/menu/path",
-  "icon": "menu-icon",
-  "type": 1,
-  "sort": 1,
-  "status": 1
+  "path": "/system/user",
+  "name": "SystemUser",
+  "component": "/system/user/index",
+  "title": "用户管理",
+  "icon": "",
+  "showBadge": 2,
+  "showTextBadge": "",
+  "isHide": 2,
+  "isHideTab": 2,
+  "link": "",
+  "isIframe": 2,
+  "keepAlive": 2,
+  "isFirstLevel": 2,
+  "status": 1,
+  "parentId": 2,
+  "sort": 66
 }
 ```
 
@@ -455,6 +498,10 @@ Authorization: Bearer {your_jwt_token}
 
 **请求头：** `Authorization: Bearer {token}`
 
+**请求参数：**
+
+- `menu_id` - 菜单ID（必填）
+
 #### 4.2 新增菜单权限
 
 **接口描述：** 添加菜单权限
@@ -464,6 +511,16 @@ Authorization: Bearer {your_jwt_token}
 **请求路径：** `/api/v1/admin/system/menu/auth`
 
 **请求头：** `Authorization: Bearer {token}`
+
+**请求参数：**
+
+```json
+{
+  "menu_id": 6,
+  "mark": "system:user:read",
+  "title": "查看"
+}
+```
 
 #### 4.3 更新菜单权限
 
@@ -475,6 +532,17 @@ Authorization: Bearer {your_jwt_token}
 
 **请求头：** `Authorization: Bearer {token}`
 
+**请求参数：**
+
+```json
+{
+  "id": 1,
+  "title": "查看",
+  "mark": "system:user:read",
+  "menu_id": 6
+}
+```
+
 #### 4.4 删除菜单权限
 
 **接口描述：** 删除菜单权限
@@ -484,6 +552,14 @@ Authorization: Bearer {your_jwt_token}
 **请求路径：** `/api/v1/admin/system/menu/auth`
 
 **请求头：** `Authorization: Bearer {token}`
+
+**请求参数：**
+
+```json
+{
+  "id": 1
+}
+```
 
 #### 4.5 根据角色获取菜单
 
@@ -509,6 +585,15 @@ Authorization: Bearer {your_jwt_token}
 
 **请求头：** `Authorization: Bearer {token}`
 
+**请求参数：**
+
+```json
+{
+  "role_id": 2,
+  "menu_data": "[ { \"id\":6, \"hasPermission\":true, \"meta\":{ \"authList\":[{ \"id\":1, \"authMark\":\"system:user:read\", \"hasPermission\":true }] } } ]"
+}
+```
+
 ### 5. 部门管理
 
 #### 5.1 获取部门列表
@@ -521,6 +606,13 @@ Authorization: Bearer {your_jwt_token}
 
 **请求头：** `Authorization: Bearer {token}`
 
+**请求参数：**
+
+- `name` - 部门名称（可选）
+- `status` - 状态（可选，1启用/2禁用）
+- `page` - 页码
+- `pageSize` - 每页数量
+
 **响应示例：**
 
 ```json
@@ -530,15 +622,11 @@ Authorization: Bearer {your_jwt_token}
   "data": [
     {
       "id": 1,
-      "parent_id": 0,
-      "name": "技术部",
-      "code": "tech",
-      "leader": "张三",
-      "phone": "13800138000",
-      "email": "tech@example.com",
+      "name": "管理中心",
       "status": 1,
       "sort": 1,
-      "children": []
+      "created_at": 1640995200,
+      "updated_at": 1640995200
     }
   ],
   "timestamp": 1640995200
@@ -559,12 +647,7 @@ Authorization: Bearer {your_jwt_token}
 
 ```json
 {
-  "parent_id": 0,
   "name": "部门名称",
-  "code": "dept_code",
-  "leader": "部门负责人",
-  "phone": "联系电话",
-  "email": "dept@example.com",
   "status": 1,
   "sort": 1
 }
@@ -615,7 +698,7 @@ Authorization: Bearer {your_jwt_token}
 - `name` - 角色名称（可选）
 - `status` - 状态（可选）
 - `page` - 页码
-- `page_size` - 每页数量
+- `pageSize` - 每页数量
 
 **响应示例：**
 
@@ -627,8 +710,7 @@ Authorization: Bearer {your_jwt_token}
     {
       "id": 1,
       "name": "超级管理员",
-      "code": "super_admin",
-      "description": "系统超级管理员",
+      "desc": "拥有所有权限",
       "status": 1,
       "created_at": 1640995200
     }
@@ -653,8 +735,7 @@ Authorization: Bearer {your_jwt_token}
 ```json
 {
   "name": "角色名称",
-  "code": "role_code",
-  "description": "角色描述",
+  "desc": "角色描述",
   "status": 1
 }
 ```
@@ -707,7 +788,7 @@ Authorization: Bearer {your_jwt_token}
 - `name` - 租户名称（可选）
 - `status` - 状态（可选）
 - `page` - 页码
-- `page_size` - 每页数量
+- `pageSize` - 每页数量
 
 **响应示例：**
 
@@ -719,11 +800,16 @@ Authorization: Bearer {your_jwt_token}
     {
       "id": 1,
       "code": "default",
-      "name": "默认租户",
-      "description": "系统默认租户",
+      "name": "默认企业",
+      "contact": "",
+      "phone": "",
+      "email": "",
+      "address": "",
       "status": 1,
+      "expired_at": null,
+      "max_users": 100,
       "created_at": 1640995200,
-      "expires_at": 1672531200
+      "updated_at": 1640995200
     }
   ],
   "total": 1,
@@ -747,9 +833,13 @@ Authorization: Bearer {your_jwt_token}
 {
   "code": "tenant_code",
   "name": "租户名称",
-  "description": "租户描述",
+  "contact": "联系人",
+  "phone": "联系电话",
+  "email": "邮箱",
+  "address": "地址",
   "status": 1,
-  "expires_at": 1672531200
+  "expired_at": null,
+  "max_users": 100
 }
 ```
 
@@ -795,12 +885,10 @@ Authorization: Bearer {your_jwt_token}
 
 **请求参数：**
 
+- `ip` - IP地址（可选）
 - `username` - 用户名（可选）
-- `status` - 登录状态（可选）
-- `start_time` - 开始时间（可选）
-- `end_time` - 结束时间（可选）
 - `page` - 页码
-- `page_size` - 每页数量
+- `pageSize` - 每页数量
 
 **响应示例：**
 
@@ -812,10 +900,9 @@ Authorization: Bearer {your_jwt_token}
     {
       "id": 1,
       "tenant_code": "default",
-      "username": "admin",
+      "user_name": "admin",
       "ip": "192.168.1.100",
       "login_status": "success",
-      "user_agent": "Mozilla/5.0...",
       "created_at": 1640995200
     }
   ],
@@ -897,8 +984,23 @@ Authorization: Bearer {your_jwt_token}
 ### 2. JWT 认证中间件
 
 - 验证 Authorization Header
-- 解析 JWT Token
-- 设置用户上下文信息
+- 解析 JWT Token（HS256）
+- 设置用户上下文信息（`tenant_id`、`user_id`、`account`）
+- Token Claims 示例：
+  ```json
+  {
+    "user_id": 1,
+    "tenant_id": 1,
+    "account": "admin",
+    "exp": 1710000000,
+    "iss": "server",
+    "sub": "token",
+    "aud": ["client"],
+    "nbf": 1709000000,
+    "iat": 1709000000,
+    "jti": "<随机ID>"
+  }
+  ```
 
 ### 3. 超级管理员验证中间件
 
@@ -907,8 +1009,13 @@ Authorization: Bearer {your_jwt_token}
 
 ### 4. 限流中间件
 
-- 登录接口限流保护
+- 登录接口限流保护（基于IP）
 - 防止暴力破解攻击
+- 默认值可通过 `config.yaml` 配置：
+  - `rate_limit.login_rate_per_minute`（默认 5）
+  - `rate_limit.login_burst_size`（默认 10）
+  - `rate_limit.general_rate_per_sec`（默认 100）
+  - `rate_limit.general_burst_size`（默认 200）
 
 ### 5. 分页中间件
 
@@ -924,16 +1031,16 @@ Authorization: Bearer {your_jwt_token}
 ```go
 type SystemUser struct {
     gorm.Model
-    TenantID      uint   `json:"tenant_id"`
-    Username      string `json:"username"`
-    Name          string `json:"name"`
-    Password      string `json:"-"`
-    Email         string `json:"email"`
-    Phone         string `json:"phone"`
-    Avatar        string `json:"avatar"`
-    Status        uint   `json:"status"`
-    RoleID        uint   `json:"role_id"`
-    DepartmentID  uint   `json:"department_id"`
+    TenantID     uint   `json:"tenant_id"`
+    DepartmentID uint   `json:"department_id"`
+    RoleID       uint   `json:"role_id"`
+    Name         string `json:"name"`
+    Username     string `json:"username"`
+    Account      string `json:"account"`
+    Password     string `json:"-"`
+    Phone        string `json:"phone"`
+    Gender       uint   `json:"gender"`
+    Status       uint   `json:"status"`
 }
 ```
 
@@ -942,11 +1049,15 @@ type SystemUser struct {
 ```go
 type SystemTenant struct {
     gorm.Model
-    Code        string    `json:"code"`
-    Name        string    `json:"name"`
-    Description string    `json:"description"`
-    Status      uint      `json:"status"`
-    ExpiresAt   time.Time `json:"expires_at"`
+    Code      string     `json:"code"`
+    Name      string     `json:"name"`
+    Contact   string     `json:"contact"`
+    Phone     string     `json:"phone"`
+    Email     string     `json:"email"`
+    Address   string     `json:"address"`
+    Status    uint       `json:"status"`
+    ExpiredAt *time.Time `json:"expired_at"`
+    MaxUsers  uint       `json:"max_users"`
 }
 ```
 
@@ -955,10 +1066,10 @@ type SystemTenant struct {
 ```go
 type SystemRole struct {
     gorm.Model
-    Name        string `json:"name"`
-    Code        string `json:"code"`
-    Description string `json:"description"`
-    Status      uint   `json:"status"`
+    TenantID uint   `json:"tenant_id"`
+    Name     string `json:"name"`
+    Desc     string `json:"desc"`
+    Status   uint   `json:"status"`
 }
 ```
 
@@ -967,13 +1078,23 @@ type SystemRole struct {
 ```go
 type SystemMenu struct {
     gorm.Model
-    ParentID uint   `json:"parent_id"`
-    Name     string `json:"name"`
-    Path     string `json:"path"`
-    Icon     string `json:"icon"`
-    Type     uint   `json:"type"`
-    Sort     uint   `json:"sort"`
-    Status   uint   `json:"status"`
+    Path          string `json:"path"`
+    Name          string `json:"name"`
+    Component     string `json:"component"`
+    Title         string `json:"title"`
+    Icon          string `json:"icon"`
+    ShowBadge     uint   `json:"show_badge"`
+    ShowTextBadge string `json:"show_text_badge"`
+    IsHide        uint   `json:"is_hide"`
+    IsHideTab     uint   `json:"is_hide_tab"`
+    Link          string `json:"link"`
+    IsIframe      uint   `json:"is_iframe"`
+    KeepAlive     uint   `json:"keep_alive"`
+    IsFirstLevel  uint   `json:"is_in_main_container"`
+    Status        uint   `json:"status"`
+    Level         uint   `json:"level"`
+    ParentID      uint   `json:"parent_id"`
+    Sort          uint   `json:"sort"`
 }
 ```
 
@@ -991,13 +1112,20 @@ type SystemMenu struct {
 
 配置文件位置：`./config.yaml`
 
-**重要配置项：**
+**主要配置项：**
 
-- `JWT_KEY` - JWT密钥（必须修改）
-- `ADMIN_PASSWORD` - 默认管理员密码（必须修改）
-- `PWD_SALT` - 密码盐值（必须修改）
-- `REDIS_PASSWORD` - Redis密码（生产环境必须设置）
-- `PGSQL_DSN` - PostgreSQL连接字符串
+- `server.port` - 服务端口（默认 8080）
+- `jwt.key` - JWT 密钥（必须修改）
+- `jwt.expiration` - Token 过期时间（如 `12h`）
+- `redis.host` - Redis 地址
+- `redis.password` - Redis 密码（生产必须设置）
+- `postgres.*` - PostgreSQL 连接参数（host/user/password/dbname/port/sslmode/timezone）
+- `admin.password` - 默认管理员密码（必须修改）
+- `admin.salt` - 密码盐（必须修改）
+- `rate_limit.login_rate_per_minute` - 登录每分钟限流
+- `rate_limit.login_burst_size` - 登录突发请求数
+- `rate_limit.general_rate_per_sec` - 通用接口每秒限流
+- `rate_limit.general_burst_size` - 通用接口突发请求数
 
 ### 启动命令
 
@@ -1042,7 +1170,7 @@ docker-compose -f docker/docker-compose.yml up -d
 
 - ✅ 多租户架构支持
 - ✅ JWT 身份认证
-- ✅ RBAC 权限控制
+- ✅ RBAC 模型（菜单/按钮权限）
 - ✅ 用户、角色、部门管理
 - ✅ 菜单权限管理
 - ✅ 登录日志记录

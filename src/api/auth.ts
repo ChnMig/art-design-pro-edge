@@ -19,12 +19,17 @@ export function fetchCaptcha(height?: number, width?: number) {
  * 登录
  * 新接口：POST /api/v1/admin/system/user/login
  */
-export function fetchLogin(params: Api.Auth.LoginParams) {
-  return request.post<Api.Auth.LoginResponse>({
+export async function fetchLogin(params: Api.Auth.LoginParams): Promise<Api.Auth.LoginResponse> {
+  const res = await request.post<any>({
     url: '/api/v1/admin/system/user/login',
     data: params,
     showErrorMessage: false
   })
+
+  // 后端返回可能为 access_token，做兼容映射
+  const token = res?.access_token ?? res?.token ?? ''
+  const expires = res?.expires ?? res?.expires_in
+  return { token, expires }
 }
 
 /**

@@ -25,17 +25,27 @@ interface MenuResponse {
 
 // 获取菜单数据（模拟）
 // 当前使用本地模拟路由数据，实际项目中请求接口返回 asyncRoutes.ts 文件的数据
-export async function fetchGetMenuList(delay = 300): Promise<MenuResponse> {
+export async function fetchGetMenuList(): Promise<MenuResponse> {
   try {
-    // 模拟接口返回的菜单数据
-    const menuData = asyncRoutes
-    // 处理菜单数据
-    const menuList = menuData.map((route) => menuDataToRouter(route))
-    // 模拟接口延迟
-    await new Promise((resolve) => setTimeout(resolve, delay))
+    // 后端控制模式：优先请求后端菜单
+    const backendMenu = await request.get<AppRouteRecord[]>({
+      url: '/api/v1/admin/system/user/menu',
+      showErrorMessage: false
+    })
 
-    return { menuList }
+    const menuList = Array.isArray(backendMenu)
+      ? backendMenu.map((route) => menuDataToRouter(route))
+      : []
+
+    if (menuList.length > 0) {
+      return { menuList }
+    }
   } catch (error) {
-    throw error instanceof Error ? error : new Error('获取菜单失败')
+    // 降级到本地 asyncRoutes（前端控制模式或后端异常时）
+    console.warn('[menu] 使用本地路由数据，后端菜单获取失败或为空', error)
   }
+
+  // 前端控制模式：使用本地路由
+  const localMenu = asyncRoutes.map((route) => menuDataToRouter(route))
+  return { menuList: localMenu }
 }
