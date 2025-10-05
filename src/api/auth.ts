@@ -5,14 +5,20 @@ import request from '@/utils/http'
  * 新接口：GET /api/v1/admin/system/user/login/captcha
  * 可选的 height/width 将作为查询参数传递（若后端忽略也无副作用）
  */
-export function fetchCaptcha(height?: number, width?: number) {
+export async function fetchCaptcha(
+  height?: number,
+  width?: number
+): Promise<{ captcha_id: string; image: string }> {
   const params =
     typeof height === 'number' && typeof width === 'number' ? { height, width } : undefined
-  return request.get<{ captcha_id: string; image: string }>({
+  const data = await request.get<any>({
     url: '/api/v1/admin/system/user/login/captcha',
     params,
     showErrorMessage: false
   })
+  const captcha_id: string = data?.captcha_id ?? data?.id ?? data?.captchaId ?? ''
+  const image: string = data?.image ?? data?.img ?? ''
+  return { captcha_id, image }
 }
 
 /**
