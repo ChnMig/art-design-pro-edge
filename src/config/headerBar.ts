@@ -31,14 +31,6 @@ export const headerBarConfig: HeaderBarFeatureConfig = {
     enabled: true,
     description: '全屏切换功能'
   },
-  notification: {
-    enabled: true,
-    description: '通知中心，显示系统通知和消息'
-  },
-  chat: {
-    enabled: true,
-    description: '聊天功能，提供实时沟通'
-  },
   settings: {
     enabled: true,
     description: '系统设置面板'

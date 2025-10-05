@@ -92,6 +92,11 @@ git show upstream/main:path/to/file
 
 - 关闭快速入口：`src/config/headerBar.ts` -> `fastEnter.enabled = false`，并将 `src/store/modules/setting.ts` 中 `showFastEnter` 默认设为 `false`
 
+- 顶部栏模块
+
+  - 通知中心与在线对话入口已移除：`src/components/core/layouts/art-header-bar/index.vue` 不再渲染对应按钮，也删除了 `ArtNotification` 弹层及 `mittBus.emit('openChat')` 等逻辑。
+  - 上游若重新加入 `notice` / `chat` 相关代码，合并时请同步清理，确保顶部栏仅保留刷新、全屏、设置、主题等按钮。
+
 - 快速入口（彻底精简移除）
   - 移除组件与配置，避免后续同步误引入：
     1. 删除组件目录：`src/components/core/layouts/art-fast-enter/`

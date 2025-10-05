@@ -61,20 +61,6 @@
             <i class="iconfont-sys">{{ isFullscreen ? '&#xe62d;' : '&#xe8ce;' }}</i>
           </div>
         </div>
-        <!-- 通知 -->
-        <div class="btn-box notice-btn" v-if="shouldShowNotification" @click="visibleNotice">
-          <div class="btn notice-button">
-            <i class="iconfont-sys notice-btn">&#xe6c2;</i>
-            <span class="count notice-btn"></span>
-          </div>
-        </div>
-        <!-- 聊天 -->
-        <div class="btn-box chat-btn" v-if="shouldShowChat" @click="openChat">
-          <div class="btn chat-button">
-            <i class="iconfont-sys">&#xe89a;</i>
-            <span class="dot"></span>
-          </div>
-        </div>
         <!-- 设置 -->
         <div class="btn-box" v-if="shouldShowSettings" @click="openSetting">
           <ElPopover :visible="showSettingGuide" placement="bottom-start" :width="190" :offset="0">
@@ -154,8 +140,6 @@
       </div>
     </div>
     <ArtWorkTab />
-
-    <ArtNotification v-model:value="showNotice" ref="notice" />
   </div>
 </template>
 
@@ -193,8 +177,6 @@
     shouldShowBreadcrumb,
     shouldShowGlobalSearch,
     shouldShowFullscreen,
-    shouldShowNotification,
-    shouldShowChat,
     shouldShowSettings,
     shouldShowThemeToggle
   } = useHeaderBar()
@@ -204,9 +186,6 @@
 
   const { getUserInfo: userInfo } = storeToRefs(userStore)
   const { menuList } = storeToRefs(menuStore)
-
-  const showNotice = ref(false)
-  const notice = ref(null)
   const userMenuPopover = ref()
 
   // 菜单类型判断
@@ -216,14 +195,6 @@
   const isTopLeftMenu = computed(() => menuType.value === MenuTypeEnum.TOP_LEFT)
 
   const { isFullscreen, toggle: toggleFullscreen } = useFullscreen()
-
-  onMounted(() => {
-    document.addEventListener('click', bodyCloseNotice)
-  })
-
-  onUnmounted(() => {
-    document.removeEventListener('click', bodyCloseNotice)
-  })
 
   /**
    * 切换全屏状态
@@ -311,38 +282,6 @@
    */
   const openSearchDialog = (): void => {
     mittBus.emit('openSearchDialog')
-  }
-
-  /**
-   * 点击页面其他区域关闭通知面板
-   * @param {Event} e - 点击事件对象
-   */
-  const bodyCloseNotice = (e: any): void => {
-    let { className } = e.target
-
-    if (showNotice.value) {
-      if (typeof className === 'object') {
-        showNotice.value = false
-        return
-      }
-      if (className.indexOf('notice-btn') === -1) {
-        showNotice.value = false
-      }
-    }
-  }
-
-  /**
-   * 切换通知面板显示状态
-   */
-  const visibleNotice = (): void => {
-    showNotice.value = !showNotice.value
-  }
-
-  /**
-   * 打开聊天窗口
-   */
-  const openChat = (): void => {
-    mittBus.emit('openChat')
   }
 
   /**

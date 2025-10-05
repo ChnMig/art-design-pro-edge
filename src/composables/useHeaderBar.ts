@@ -70,16 +70,6 @@ export function useHeaderBar() {
     return isFeatureEnabled('fullscreen')
   })
 
-  // 检查通知中心是否显示
-  const shouldShowNotification = computed(() => {
-    return isFeatureEnabled('notification')
-  })
-
-  // 检查聊天功能是否显示
-  const shouldShowChat = computed(() => {
-    return isFeatureEnabled('chat')
-  })
-
   // 检查设置面板是否显示
   const shouldShowSettings = computed(() => {
     return isFeatureEnabled('settings')
@@ -161,8 +151,6 @@ export function useHeaderBar() {
     shouldShowBreadcrumb, // 是否显示面包屑
     shouldShowGlobalSearch, // 是否显示全局搜索
     shouldShowFullscreen, // 是否显示全屏按钮
-    shouldShowNotification, // 是否显示通知中心
-    shouldShowChat, // 是否显示聊天功能
     shouldShowSettings, // 是否显示设置面板
     shouldShowThemeToggle, // 是否显示主题切换
 
