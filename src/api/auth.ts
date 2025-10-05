@@ -50,6 +50,26 @@ export function fetchGetUserInfo() {
 }
 
 /**
+ * 更新用户信息
+ * PUT /api/v1/admin/system/user/info
+ */
+export function fetchUpdateUserInfo(
+  data: Partial<Api.Auth.UserInfo> & {
+    id?: number | string
+    name?: string
+    phone?: string
+    gender?: number
+    password?: string
+  }
+) {
+  return request.put<void>({
+    url: '/api/v1/admin/system/user/info',
+    data,
+    showSuccessMessage: false
+  })
+}
+
+/**
  * 登录页租户编码模糊查询
  * GET /api/v1/admin/system/user/login/tenant?code=xxx
  */

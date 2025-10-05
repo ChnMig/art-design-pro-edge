@@ -31,6 +31,14 @@ export const globalComponentsConfig: GlobalComponentConfig[] = [
     enabled: true
   },
   {
+    name: '修改个人信息',
+    key: 'edit-info',
+    component: defineAsyncComponent(
+      () => import('@/components/core/layouts/art-edit-info/index.vue')
+    ),
+    enabled: true
+  },
+  {
     name: '礼花效果',
     key: 'fireworks-effect',
     component: defineAsyncComponent(
