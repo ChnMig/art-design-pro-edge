@@ -151,4 +151,31 @@ declare namespace Api {
       expires_at?: number
     }
   }
+
+  /** 部门管理 */
+  namespace SystemDepartment {
+    interface DepartmentItem {
+      id: number
+      name: string
+      status: number // 1 启用 / 2 禁用（后端定义）
+      sort?: number
+      created_at?: number
+      updated_at?: number
+    }
+
+    interface DepartmentSearchParams {
+      page?: number
+      page_size?: number
+      pageSize?: number
+      name?: string
+      status?: number
+    }
+
+    interface DepartmentPayload {
+      id?: number
+      name: string
+      status: number
+      sort?: number
+    }
+  }
 }
