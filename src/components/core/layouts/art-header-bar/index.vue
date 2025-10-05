@@ -114,10 +114,7 @@
                   <img class="cover" :src="userInfo.avatar" style="float: left" />
                   <div class="user-wrap">
                     <span class="name">{{ displayName }}</span>
-                    <span class="tenant" v-if="currentTenantCode">
-                      <i class="iconfont-sys">&#xe604;</i>
-                      {{ currentTenantName || currentTenantCode }}
-                    </span>
+                    <span class="tenant" v-if="tenantDisplay">{{ tenantDisplay }}</span>
                     <span class="email" v-if="userInfo.email">{{ userInfo.email }}</span>
                   </div>
                 </div>
@@ -195,6 +192,12 @@
   const userAvatarRef = ref<HTMLImageElement | null>(null)
 
   const currentTenantName = computed(() => tenantInfo.value?.name || '')
+  const tenantDisplay = computed(() => {
+    const code = currentTenantCode.value
+    if (!code) return ''
+    const name = currentTenantName.value
+    return name ? `${code} - ${name}` : code
+  })
   const displayName = computed(
     () =>
       (userInfo.value?.userName ||
