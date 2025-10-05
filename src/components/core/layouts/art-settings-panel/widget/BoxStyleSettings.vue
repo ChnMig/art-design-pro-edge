@@ -1,6 +1,6 @@
 <template>
   <div class="box-style-settings">
-    <SectionTitle :title="$t('setting.box.title')" :style="{ marginTop: '40px' }" />
+    <SectionTitle :title="'盒子样式'" :style="{ marginTop: '40px' }" />
     <div class="box-style">
       <div
         v-for="option in boxStyleOptions"

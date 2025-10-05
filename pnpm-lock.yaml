@@ -61,9 +61,6 @@ importers:
       vue-draggable-plus:
         specifier: ^0.6.0
         version: 0.6.0(@types/sortablejs@1.15.8)
-      vue-i18n:
-        specifier: ^9.14.0
-        version: 9.14.1(vue@3.5.22(typescript@5.6.3))
       vue-router:
         specifier: ^4.5.1
         version: 4.5.1(vue@3.5.22(typescript@5.6.3))
@@ -6261,16 +6258,6 @@ packages:
     engines: { node: ^14.17.0 || >=16.0.0 }
     peerDependencies:
       eslint: '>=6.0.0'
-
-  vue-i18n@9.14.1:
-    resolution:
-      {
-        integrity: sha512-xjxV0LYc1xQ8TbAVfIyZiOSS8qoU1R0YwV7V5I8I6Fd64+zvsTsdPgtylPsie3Vdt9wekeYhr+smKDeaK6RBuA==
-      }
-    engines: { node: '>= 16' }
-    peerDependencies:
-      vue: ^3.0.0
-
   vue-img-cutter@3.0.7:
     resolution:
       {

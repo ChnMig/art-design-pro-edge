@@ -39,10 +39,6 @@ export const headerBarConfig: HeaderBarFeatureConfig = {
     enabled: true,
     description: '聊天功能，提供实时沟通'
   },
-  language: {
-    enabled: false,
-    description: '多语言切换功能'
-  },
   settings: {
     enabled: true,
     description: '系统设置面板'

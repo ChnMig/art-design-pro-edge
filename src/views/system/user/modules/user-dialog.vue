@@ -1,24 +1,24 @@
 <template>
   <ElDialog
     v-model="dialogVisible"
-    :title="dialogType === 'add' ? t('pages.user.add') : t('pages.user.edit')"
+    :title="dialogType === 'add' ? '新增用户' : '编辑用户'"
     width="30%"
     align-center
   >
     <ElForm ref="formRef" :model="formData" :rules="rules" label-width="80px">
-      <ElFormItem :label="t('pages.user.username')" prop="username">
+      <ElFormItem :label="'用户名'" prop="username">
         <ElInput v-model="formData.username" />
       </ElFormItem>
-      <ElFormItem :label="t('pages.user.phone')" prop="phone">
+      <ElFormItem :label="'手机号'" prop="phone">
         <ElInput v-model="formData.phone" />
       </ElFormItem>
-      <ElFormItem :label="t('pages.user.gender')" prop="gender">
+      <ElFormItem :label="'性别'" prop="gender">
         <ElSelect v-model="formData.gender">
-          <ElOption :label="t('pages.user.genderMale')" value="男" />
-          <ElOption :label="t('pages.user.genderFemale')" value="女" />
+          <ElOption :label="'男'" value="男" />
+          <ElOption :label="'女'" value="女" />
         </ElSelect>
       </ElFormItem>
-      <ElFormItem :label="t('pages.user.role')" prop="role">
+      <ElFormItem :label="'角色'" prop="role">
         <ElSelect v-model="formData.role" multiple>
           <ElOption
             v-for="role in roleList"
@@ -31,10 +31,8 @@
     </ElForm>
     <template #footer>
       <div class="dialog-footer">
-        <ElButton @click="dialogVisible = false">{{ t('common.cancel') }}</ElButton>
-        <ElButton type="primary" @click="handleSubmit">
-          {{ t('common.submit') || t('common.confirm') }}
-        </ElButton>
+        <ElButton @click="dialogVisible = false">{{ '取消' }}</ElButton>
+        <ElButton type="primary" @click="handleSubmit">{{ '确定' }}</ElButton>
       </div>
     </template>
   </ElDialog>
@@ -42,7 +40,6 @@
 
 <script setup lang="ts">
   import { ROLE_LIST_DATA } from '@/mock/temp/formData'
-  import { useI18n } from 'vue-i18n'
   import type { FormInstance, FormRules } from 'element-plus'
   import { ElMessage } from 'element-plus'
 
@@ -62,8 +59,6 @@
 
   // 角色列表数据
   const roleList = ref(ROLE_LIST_DATA)
-  const { t } = useI18n()
-
   // 对话框显示控制
   const dialogVisible = computed({
     get: () => props.visible,
@@ -86,15 +81,15 @@
   // 表单验证规则
   const rules: FormRules = {
     username: [
-      { required: true, message: t('pages.user.rules.usernameRequired'), trigger: 'blur' },
-      { min: 2, max: 20, message: t('pages.user.rules.usernameLength'), trigger: 'blur' }
+      { required: true, message: '请输入用户名', trigger: 'blur' },
+      { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
     ],
     phone: [
-      { required: true, message: t('pages.user.rules.phoneRequired'), trigger: 'blur' },
-      { pattern: /^1[3-9]\d{9}$/, message: t('pages.user.rules.phoneFormat'), trigger: 'blur' }
+      { required: true, message: '请输入手机号', trigger: 'blur' },
+      { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号格式', trigger: 'blur' }
     ],
-    gender: [{ required: true, message: t('pages.user.rules.genderRequired'), trigger: 'blur' }],
-    role: [{ required: true, message: t('pages.user.rules.roleRequired'), trigger: 'blur' }]
+    gender: [{ required: true, message: '请选择性别', trigger: 'blur' }],
+    role: [{ required: true, message: '请选择角色', trigger: 'blur' }]
   }
 
   // 初始化表单数据
@@ -130,9 +125,7 @@
 
     await formRef.value.validate((valid) => {
       if (valid) {
-        ElMessage.success(
-          dialogType.value === 'add' ? t('pages.user.success.add') : t('pages.user.success.edit')
-        )
+        ElMessage.success(dialogType.value === 'add' ? '新增成功' : '更新成功')
         dialogVisible.value = false
         emit('submit')
       }

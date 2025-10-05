@@ -1,5 +1,4 @@
 import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { ContainerWidthEnum } from '@/enums/appEnum'
 import AppConfig from '@/config'
 import { headerBarConfig } from '@/config/headerBar'
@@ -8,21 +7,19 @@ import { headerBarConfig } from '@/config/headerBar'
  * 设置项配置选项管理
  */
 export function useSettingsConfig() {
-  const { t } = useI18n()
-
   // 标签页风格选项
   const tabStyleOptions = computed(() => [
     {
       value: 'tab-default',
-      label: t('setting.tabStyle.default')
+      label: '默认'
     },
     {
       value: 'tab-card',
-      label: t('setting.tabStyle.card')
+      label: '卡片'
     },
     {
       value: 'tab-google',
-      label: t('setting.tabStyle.google')
+      label: '谷歌'
     }
   ])
 
@@ -30,23 +27,23 @@ export function useSettingsConfig() {
   const pageTransitionOptions = computed(() => [
     {
       value: '',
-      label: t('setting.transition.list.none')
+      label: '无动画'
     },
     {
       value: 'fade',
-      label: t('setting.transition.list.fade')
+      label: '淡入淡出'
     },
     {
       value: 'slide-left',
-      label: t('setting.transition.list.slideLeft')
+      label: '左侧滑入'
     },
     {
       value: 'slide-bottom',
-      label: t('setting.transition.list.slideBottom')
+      label: '下方滑入'
     },
     {
       value: 'slide-top',
-      label: t('setting.transition.list.slideTop')
+      label: '上方滑入'
     }
   ])
 
@@ -63,12 +60,12 @@ export function useSettingsConfig() {
   const containerWidthOptions = computed(() => [
     {
       value: ContainerWidthEnum.FULL,
-      label: t('setting.container.list[0]'),
+      label: '铺满',
       icon: '&#xe694;'
     },
     {
       value: ContainerWidthEnum.BOXED,
-      label: t('setting.container.list[1]'),
+      label: '定宽',
       icon: '&#xe6de;'
     }
   ])
@@ -77,12 +74,12 @@ export function useSettingsConfig() {
   const boxStyleOptions = computed(() => [
     {
       value: 'border-mode',
-      label: t('setting.box.list[0]'),
+      label: '边框',
       type: 'border-mode' as const
     },
     {
       value: 'shadow-mode',
-      label: t('setting.box.list[1]'),
+      label: '阴影',
       type: 'shadow-mode' as const
     }
   ])
@@ -105,78 +102,71 @@ export function useSettingsConfig() {
     const allSettings = [
       {
         key: 'showWorkTab',
-        label: t('setting.basics.list.multiTab'),
+        label: '开启多标签栏',
         type: 'switch' as const,
         handler: 'workTab',
         headerBarKey: null // 不依赖headerBar配置
       },
       {
         key: 'uniqueOpened',
-        label: t('setting.basics.list.accordion'),
+        label: '侧边栏开启手风琴模式',
         type: 'switch' as const,
         handler: 'uniqueOpened',
         headerBarKey: null // 不依赖headerBar配置
       },
       {
         key: 'showMenuButton',
-        label: t('setting.basics.list.collapseSidebar'),
+        label: '显示折叠侧边栏按钮',
         type: 'switch' as const,
         handler: 'menuButton',
         headerBarKey: 'menuButton' as const
       },
       {
         key: 'showFastEnter',
-        label: t('setting.basics.list.fastEnter'),
+        label: '显示快速入口',
         type: 'switch' as const,
         handler: 'fastEnter',
         headerBarKey: 'fastEnter' as const
       },
       {
         key: 'showRefreshButton',
-        label: t('setting.basics.list.reloadPage'),
+        label: '显示重载页面按钮',
         type: 'switch' as const,
         handler: 'refreshButton',
         headerBarKey: 'refreshButton' as const
       },
       {
         key: 'showCrumbs',
-        label: t('setting.basics.list.breadcrumb'),
+        label: '显示全局面包屑导航',
         type: 'switch' as const,
         handler: 'crumbs',
         mobileHide: true,
         headerBarKey: 'breadcrumb' as const
       },
       {
-        key: 'showLanguage',
-        label: t('setting.basics.list.language'),
-        type: 'switch' as const,
-        handler: 'language',
-        headerBarKey: 'language' as const
-      },
-      {
         key: 'showNprogress',
-        label: t('setting.basics.list.progressBar'),
+        label: '显示顶部进度条',
         type: 'switch' as const,
         handler: 'nprogress',
         headerBarKey: null // 不依赖headerBar配置
       },
       {
         key: 'colorWeak',
-        label: t('setting.basics.list.weakMode'),
+        label: '色弱模式',
         type: 'switch' as const,
         handler: 'colorWeak',
         headerBarKey: null // 不依赖headerBar配置
       },
       {
         key: 'watermarkVisible',
-        label: t('setting.basics.list.watermark'),
+        label: '全局水印',
         type: 'switch' as const,
         handler: 'watermark',
         headerBarKey: null // 不依赖headerBar配置
       },
       {
         key: 'menuOpenWidth',
-        label: t('setting.basics.list.menuWidth'),
+        label: '菜单宽度',
         type: 'input-number' as const,
         handler: 'menuOpenWidth',
         min: 180,
@@ -188,7 +178,7 @@ export function useSettingsConfig() {
       },
       {
         key: 'tabStyle',
-        label: t('setting.basics.list.tabStyle'),
+        label: '标签页风格',
         type: 'select' as const,
         handler: 'tabStyle',
         options: tabStyleOptions.value,
@@ -197,7 +187,7 @@ export function useSettingsConfig() {
       },
       {
         key: 'pageTransition',
-        label: t('setting.basics.list.pageTransition'),
+        label: '页面切换动画',
         type: 'select' as const,
         handler: 'pageTransition',
         options: pageTransitionOptions.value,
@@ -206,7 +196,7 @@ export function useSettingsConfig() {
       },
       {
         key: 'customRadius',
-        label: t('setting.basics.list.borderRadius'),
+        label: '自定义圆角',
         type: 'select' as const,
         handler: 'customRadius',
         options: customRadiusOptions,

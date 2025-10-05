@@ -2,7 +2,7 @@
   <div class="button-auth-page">
     <!-- 页面头部 -->
     <div class="page-header">
-      <h2>{{ $t('menus.examples.permission.buttonAuth') }}</h2>
+      <h2>{{ '按钮权限演示' }}</h2>
       <p class="description">
         此页面演示按钮级别的权限控制，不同用户身份下可见的按钮会有所不同。权限控制基于用户角色和权限码实现。
       </p>

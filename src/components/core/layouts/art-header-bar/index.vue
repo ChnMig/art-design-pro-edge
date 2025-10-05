@@ -42,7 +42,7 @@
           <div class="search-input" @click="openSearchDialog">
             <div class="left">
               <i class="iconfont-sys">&#xe710;</i>
-              <span>{{ $t('topBar.search.title') }}</span>
+              <span>{{ '搜索' }}</span>
             </div>
             <div class="search-keydown">
               <i class="iconfont-sys" v-if="isWindows">&#xeeac;</i>
@@ -75,27 +75,6 @@
             <span class="dot"></span>
           </div>
         </div>
-        <!-- 语言 -->
-        <div class="btn-box" v-if="shouldShowLanguage">
-          <ElDropdown @command="changeLanguage" popper-class="langDropDownStyle">
-            <div class="btn language-btn">
-              <i class="iconfont-sys">&#xe611;</i>
-            </div>
-            <template #dropdown>
-              <ElDropdownMenu>
-                <div v-for="item in languageOptions" :key="item.value" class="lang-btn-item">
-                  <ElDropdownItem
-                    :command="item.value"
-                    :class="{ 'is-selected': locale === item.value }"
-                  >
-                    <span class="menu-txt">{{ item.label }}</span>
-                    <i v-if="locale === item.value" class="iconfont-sys">&#xe621;</i>
-                  </ElDropdownItem>
-                </div>
-              </ElDropdownMenu>
-            </template>
-          </ElDropdown>
-        </div>
         <!-- 设置 -->
         <div class="btn-box" v-if="shouldShowSettings" @click="openSetting">
           <ElPopover :visible="showSettingGuide" placement="bottom-start" :width="190" :offset="0">
@@ -106,10 +85,10 @@
             </template>
             <template #default>
               <p
-                >{{ $t('topBar.guide.title')
-                }}<span :style="{ color: systemThemeColor }"> {{ $t('topBar.guide.theme') }} </span
-                >、 <span :style="{ color: systemThemeColor }"> {{ $t('topBar.guide.menu') }} </span
-                >{{ $t('topBar.guide.description') }}
+                >{{ '点击这里查看'
+                }}<span :style="{ color: systemThemeColor }"> {{ '主题风格' }} </span>、
+                <span :style="{ color: systemThemeColor }"> {{ '开启顶栏菜单' }} </span
+                >{{ '等更多配置' }}
               </p>
             </template>
           </ElPopover>
@@ -149,23 +128,23 @@
                 <ul class="user-menu">
                   <li @click="goPage('/system/user-center')">
                     <i class="menu-icon iconfont-sys">&#xe734;</i>
-                    <span class="menu-txt">{{ $t('topBar.user.userCenter') }}</span>
+                    <span class="menu-txt">{{ '个人中心' }}</span>
                   </li>
                   <li @click="toDocs()">
                     <i class="menu-icon iconfont-sys" style="font-size: 15px">&#xe828;</i>
-                    <span class="menu-txt">{{ $t('topBar.user.docs') }}</span>
+                    <span class="menu-txt">{{ '使用文档' }}</span>
                   </li>
                   <li @click="toGithub()">
                     <i class="menu-icon iconfont-sys">&#xe8d6;</i>
-                    <span class="menu-txt">{{ $t('topBar.user.github') }}</span>
+                    <span class="menu-txt">{{ 'Github' }}</span>
                   </li>
                   <li @click="lockScreen()">
                     <i class="menu-icon iconfont-sys">&#xe817;</i>
-                    <span class="menu-txt">{{ $t('topBar.user.lockScreen') }}</span>
+                    <span class="menu-txt">{{ '锁定屏幕' }}</span>
                   </li>
                   <div class="line"></div>
                   <div class="logout-btn" @click="loginOut">
-                    {{ $t('topBar.user.logout') }}
+                    {{ '退出登录' }}
                   </div>
                 </ul>
               </div>
@@ -181,16 +160,14 @@
 </template>
 
 <script setup lang="ts">
-  import { useI18n } from 'vue-i18n'
   import { useRouter } from 'vue-router'
   import { ElMessageBox } from 'element-plus'
   import { useFullscreen, useWindowSize } from '@vueuse/core'
-  import { LanguageEnum, MenuTypeEnum } from '@/enums/appEnum'
+  import { MenuTypeEnum } from '@/enums/appEnum'
   import { useSettingStore } from '@/store/modules/setting'
   import { useUserStore } from '@/store/modules/user'
   import { useMenuStore } from '@/store/modules/menu'
   import AppConfig from '@/config'
-  import { languageOptions } from '@/locales'
   import { WEB_LINKS } from '@/utils/constants'
   import { mittBus } from '@/utils/sys'
   import { themeAnimation } from '@/utils/theme/animation'
@@ -203,7 +180,6 @@
   const isWindows = navigator.userAgent.includes('Windows')
 
   const router = useRouter()
-  const { locale, t } = useI18n()
   const { width } = useWindowSize()
 
   const settingStore = useSettingStore()
@@ -219,7 +195,6 @@
     shouldShowFullscreen,
     shouldShowNotification,
     shouldShowChat,
-    shouldShowLanguage,
     shouldShowSettings,
     shouldShowThemeToggle
   } = useHeaderBar()
@@ -227,7 +202,7 @@
   const { menuOpen, systemThemeColor, showSettingGuide, menuType, isDark, tabStyle } =
     storeToRefs(settingStore)
 
-  const { language, getUserInfo: userInfo } = storeToRefs(userStore)
+  const { getUserInfo: userInfo } = storeToRefs(userStore)
   const { menuList } = storeToRefs(menuStore)
 
   const showNotice = ref(false)
@@ -243,7 +218,6 @@
   const { isFullscreen, toggle: toggleFullscreen } = useFullscreen()
 
   onMounted(() => {
-    initLanguage()
     document.addEventListener('click', bodyCloseNotice)
   })
 
@@ -300,9 +274,9 @@
   const loginOut = (): void => {
     closeUserMenu()
     setTimeout(() => {
-      ElMessageBox.confirm(t('common.logOutTips'), t('common.tips'), {
-        confirmButtonText: t('common.confirm'),
-        cancelButtonText: t('common.cancel'),
+      ElMessageBox.confirm('您是否要退出登录?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
         customClass: 'login-out-dialog'
       }).then(() => {
         userStore.logOut()
@@ -318,24 +292,6 @@
     setTimeout(() => {
       useCommon().refresh()
     }, time)
-  }
-
-  /**
-   * 初始化语言设置
-   */
-  const initLanguage = (): void => {
-    locale.value = language.value
-  }
-
-  /**
-   * 切换系统语言
-   * @param {LanguageEnum} lang - 目标语言类型
-   */
-  const changeLanguage = (lang: LanguageEnum): void => {
-    if (locale.value === lang) return
-    locale.value = lang
-    userStore.setLanguage(lang)
-    reload(50)
   }
 
   /**

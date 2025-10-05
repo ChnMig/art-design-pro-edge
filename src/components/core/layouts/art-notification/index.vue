@@ -10,8 +10,8 @@
     @click.stop=""
   >
     <div class="header">
-      <span class="text">{{ $t('notice.title') }}</span>
-      <span class="btn">{{ $t('notice.btnRead') }}</span>
+      <span class="text">{{ '通知' }}</span>
+      <span class="btn">{{ '标为已读' }}</span>
     </div>
 
     <ul class="bar">
@@ -72,13 +72,13 @@
         <!-- 空状态 -->
         <div class="empty-tips" v-show="currentTabIsEmpty">
           <i class="iconfont-sys">&#xe8d7;</i>
-          <p>{{ $t('notice.text[0]') }}{{ barList[barActiveIndex].name }}</p>
+          <p>{{ '暂无' }}{{ barList[barActiveIndex].name }}</p>
         </div>
       </div>
 
       <div class="btn-wrapper">
         <el-button class="view-all" @click="handleViewAll" v-ripple>
-          {{ $t('notice.viewAll') }}
+          {{ '查看全部' }}
         </el-button>
       </div>
     </div>
@@ -89,7 +89,6 @@
 
 <script setup lang="ts">
   import { computed, ref, watch, type Ref, type ComputedRef } from 'vue'
-  import { useI18n } from 'vue-i18n'
   import AppConfig from '@/config'
 
   // 导入头像图片
@@ -144,8 +143,6 @@
   }
 
   type NoticeType = 'email' | 'message' | 'collection' | 'user' | 'notice'
-
-  const { t } = useI18n()
 
   const props = defineProps<{
     value: boolean
@@ -230,15 +227,15 @@
     // 标签栏数据
     const barList = computed<BarItem[]>(() => [
       {
-        name: computed(() => t('notice.bar[0]')),
+        name: computed(() => '通知'),
         num: noticeList.value.length
       },
       {
-        name: computed(() => t('notice.bar[1]')),
+        name: computed(() => '消息'),
         num: msgList.value.length
       },
       {
-        name: computed(() => t('notice.bar[2]')),
+        name: computed(() => '代办'),
         num: pendingList.value.length
       }
     ])

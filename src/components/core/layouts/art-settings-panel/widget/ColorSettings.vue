@@ -1,6 +1,6 @@
 <template>
   <div class="color-settings">
-    <SectionTitle :title="$t('setting.color.title')" style="margin-top: 40px" />
+    <SectionTitle :title="'系统主题色'" style="margin-top: 40px" />
     <div class="main-color-wrap">
       <div class="offset">
         <div

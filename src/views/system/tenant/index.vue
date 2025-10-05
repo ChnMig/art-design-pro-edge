@@ -10,9 +10,7 @@
     <ElCard shadow="never" class="art-table-card">
       <ArtTableHeader v-model:columns="columnChecks" @refresh="handleRefresh">
         <template #left>
-          <ElButton type="primary" @click="showDialog('add')" v-ripple>{{
-            t('pages.tenant.add')
-          }}</ElButton>
+          <ElButton type="primary" @click="showDialog('add')" v-ripple>{{ '新增租户' }}</ElButton>
         </template>
       </ArtTableHeader>
 
@@ -30,41 +28,41 @@
 
     <ElDialog
       v-model="dialogVisible"
-      :title="dialogType === 'add' ? t('pages.tenant.add') : t('pages.tenant.edit')"
+      :title="dialogType === 'add' ? '新增租户' : '编辑租户'"
       width="600px"
       align-center
       :close-on-click-modal="false"
     >
       <ElForm ref="formRef" :model="formData" :rules="formRules" label-width="100px">
-        <ElFormItem :label="t('pages.tenant.code')" prop="code">
+        <ElFormItem :label="'租户编码'" prop="code">
           <ElInput
             v-model="formData.code"
             :disabled="dialogType === 'edit'"
-            :placeholder="t('pages.tenant.placeholder.code')"
+            :placeholder="'请输入租户编码'"
           />
         </ElFormItem>
-        <ElFormItem :label="t('pages.tenant.name')" prop="name">
-          <ElInput v-model="formData.name" :placeholder="t('pages.tenant.placeholder.name')" />
+        <ElFormItem :label="'租户名称'" prop="name">
+          <ElInput v-model="formData.name" :placeholder="'请输入租户名称'" />
         </ElFormItem>
-        <ElFormItem :label="t('pages.tenant.description')" prop="description">
+        <ElFormItem :label="'描述'" prop="description">
           <ElInput
             v-model="formData.description"
             type="textarea"
-            :placeholder="t('pages.tenant.placeholder.description')"
+            :placeholder="'请输入描述'"
             :rows="3"
           />
         </ElFormItem>
-        <ElFormItem :label="t('pages.tenant.status')" prop="status">
+        <ElFormItem :label="'状态'" prop="status">
           <ElRadioGroup v-model="formData.status">
-            <ElRadio :label="1">{{ t('pages.tenant.enabled') }}</ElRadio>
-            <ElRadio :label="0">{{ t('pages.tenant.disabled') }}</ElRadio>
+            <ElRadio :label="1">{{ '启用' }}</ElRadio>
+            <ElRadio :label="0">{{ '禁用' }}</ElRadio>
           </ElRadioGroup>
         </ElFormItem>
-        <ElFormItem :label="t('pages.tenant.expiresAt')" prop="expires_at">
+        <ElFormItem :label="'到期时间'" prop="expires_at">
           <ElDatePicker
             v-model="formData.expires_at"
             type="datetime"
-            :placeholder="t('pages.tenant.placeholder.expiresAt')"
+            :placeholder="'选择到期时间'"
             format="YYYY-MM-DD HH:mm:ss"
             value-format="X"
             style="width: 100%"
@@ -73,8 +71,8 @@
       </ElForm>
       <template #footer>
         <div class="dialog-footer">
-          <ElButton @click="dialogVisible = false">{{ t('common.cancel') }}</ElButton>
-          <ElButton type="primary" @click="handleSubmit">{{ t('common.confirm') }}</ElButton>
+          <ElButton @click="dialogVisible = false">{{ '取消' }}</ElButton>
+          <ElButton type="primary" @click="handleSubmit">{{ '确定' }}</ElButton>
         </div>
       </template>
     </ElDialog>
@@ -83,7 +81,6 @@
 
 <script setup lang="ts">
   import { computed, h, nextTick, reactive, ref, resolveComponent } from 'vue'
-  import { useI18n } from 'vue-i18n'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
   import { fetchTenantList, createTenant, updateTenant, removeTenant } from '@/api/tenant'
@@ -92,8 +89,6 @@
   import { SearchFormItem } from '@/components/core/forms/art-search-bar/index.vue'
 
   defineOptions({ name: 'SystemTenant' })
-  const { t } = useI18n()
-
   const dialogType = ref<'add' | 'edit'>('add')
   const dialogVisible = ref(false)
 
@@ -112,18 +107,18 @@
         size: 'page_size'
       },
       columnsFactory: () => [
-        { type: 'index', width: 80, label: t('table.column.index') },
-        { prop: 'code', label: t('pages.tenant.code'), align: 'center', width: 150 },
-        { prop: 'name', label: t('pages.tenant.name'), align: 'center', width: 200 },
+        { type: 'index', width: 80, label: '序号' },
+        { prop: 'code', label: '租户编码', align: 'center', width: 150 },
+        { prop: 'name', label: '租户名称', align: 'center', width: 200 },
         {
           prop: 'description',
-          label: t('pages.tenant.description'),
+          label: '描述',
           align: 'center',
           showOverflowTooltip: true
         },
         {
           prop: 'status',
-          label: t('pages.tenant.status'),
+          label: '状态',
           align: 'center',
           width: 100,
           formatter: (row: Api.SystemTenant.TenantItem) =>
@@ -131,28 +126,27 @@
               resolveComponent('ElTag'),
               { type: row.status === 1 ? 'success' : 'danger' },
               {
-                default: () =>
-                  row.status === 1 ? t('pages.tenant.enabled') : t('pages.tenant.disabled')
+                default: () => (row.status === 1 ? '启用' : '禁用')
               }
             )
         },
         {
           prop: 'expires_at',
-          label: t('pages.tenant.expiresAt'),
+          label: '到期时间',
           align: 'center',
           width: 180,
           formatter: (row: Api.SystemTenant.TenantItem) => formatDate(row.expires_at)
         },
         {
           prop: 'created_at',
-          label: t('pages.tenant.createdAt'),
+          label: '创建时间',
           align: 'center',
           width: 180,
           formatter: (row: Api.SystemTenant.TenantItem) => formatDate(row.created_at)
         },
         {
           prop: 'operation',
-          label: t('table.column.operation') || '操作',
+          label: '操作',
           align: 'center',
           width: 140,
           fixed: 'right',
@@ -213,26 +207,26 @@
   const searchItems = computed<SearchFormItem[]>(() => [
     {
       key: 'code',
-      label: t('pages.tenant.code'),
+      label: '租户编码',
       type: 'input',
-      placeholder: t('pages.tenant.placeholder.code')
+      placeholder: '请输入租户编码'
     },
     {
       key: 'name',
-      label: t('pages.tenant.name'),
+      label: '租户名称',
       type: 'input',
-      placeholder: t('pages.tenant.placeholder.name')
+      placeholder: '请输入租户名称'
     },
     {
       key: 'status',
-      label: t('pages.tenant.status'),
+      label: '状态',
       type: 'select',
       props: {
         clearable: true,
         options: [
-          { label: t('pages.tenant.all'), value: undefined },
-          { label: t('pages.tenant.enabled'), value: 1 },
-          { label: t('pages.tenant.disabled'), value: 0 }
+          { label: '全部', value: undefined },
+          { label: '启用', value: 1 },
+          { label: '禁用', value: 0 }
         ]
       }
     }
@@ -249,15 +243,15 @@
 
   const formRules: FormRules = {
     code: [
-      { required: true, message: t('pages.tenant.rules.codeRequired'), trigger: 'blur' },
-      { min: 2, max: 50, message: t('pages.tenant.rules.codeLength'), trigger: 'blur' }
+      { required: true, message: '请输入租户编码', trigger: 'blur' },
+      { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
     ],
     name: [
-      { required: true, message: t('pages.tenant.rules.nameRequired'), trigger: 'blur' },
-      { min: 2, max: 100, message: t('pages.tenant.rules.nameLength'), trigger: 'blur' }
+      { required: true, message: '请输入租户名称', trigger: 'blur' },
+      { min: 2, max: 100, message: '长度在 2 到 100 个字符', trigger: 'blur' }
     ],
-    description: [{ max: 255, message: t('pages.tenant.rules.descMax'), trigger: 'blur' }],
-    status: [{ required: true, message: t('pages.tenant.rules.statusRequired'), trigger: 'change' }]
+    description: [{ max: 255, message: '长度不能超过 255 个字符', trigger: 'blur' }],
+    status: [{ required: true, message: '请选择状态', trigger: 'change' }]
   }
 
   const formRef = ref<FormInstance>()
@@ -297,28 +291,24 @@
 
   const handleDelete = async (row: Api.SystemTenant.TenantItem) => {
     if (row.code === 'default') {
-      ElMessage.warning(t('pages.tenant.error.defaultTenantDelete'))
+      ElMessage.warning('默认租户不能删除')
       return
     }
 
     try {
-      await ElMessageBox.confirm(
-        t('pages.tenant.confirmDelete', { name: row.name }),
-        t('common.tips'),
-        {
-          confirmButtonText: t('common.confirm'),
-          cancelButtonText: t('common.cancel'),
-          type: 'warning'
-        }
-      )
+      await ElMessageBox.confirm(`确认删除租户 "${row.name}" 吗？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
 
       await removeTenant(row.id)
-      ElMessage.success(t('pages.tenant.success.delete'))
+      ElMessage.success('删除成功')
       refreshAll()
     } catch (error) {
       if (error !== 'cancel') {
         console.error('删除租户失败:', error)
-        ElMessage.error(t('pages.tenant.error.delete'))
+        ElMessage.error('删除失败')
       }
     }
   }
@@ -336,17 +326,17 @@
 
       if (dialogType.value === 'edit' && formData.id) {
         await updateTenant(payload as Required<Api.SystemTenant.TenantPayload>)
-        ElMessage.success(t('pages.tenant.success.edit'))
+        ElMessage.success('更新成功')
       } else {
         await createTenant(payload)
-        ElMessage.success(t('pages.tenant.success.add'))
+        ElMessage.success('新增成功')
       }
 
       dialogVisible.value = false
       refreshAll()
     } catch (error) {
       console.error('提交失败:', error)
-      ElMessage.error(t('pages.tenant.error.submit'))
+      ElMessage.error('提交失败')
     }
   }
 

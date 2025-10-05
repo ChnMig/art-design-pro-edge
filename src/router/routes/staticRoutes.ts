@@ -15,19 +15,19 @@ export const staticRoutes: AppRouteRecordRaw[] = [
   //   path: '/welcome',
   //   name: 'WelcomeStatic',
   //   component: () => import('@views/dashboard/console/index.vue'),
-  //   meta: { title: 'menus.dashboard.title', noLogin: true }
+  //   meta: { title: '仪表盘', noLogin: true }
   // },
   {
     path: RoutesAlias.Login,
     name: 'Login',
     component: () => import('@views/auth/login/index.vue'),
-    meta: { title: 'menus.login.title', isHideTab: true, setTheme: true }
+    meta: { title: '登录', isHideTab: true, setTheme: true }
   },
   {
     path: RoutesAlias.ForgetPassword,
     name: 'ForgetPassword',
     component: () => import('@views/auth/forget-password/index.vue'),
-    meta: { title: 'menus.forgetPassword.title', isHideTab: true, noLogin: true, setTheme: true }
+    meta: { title: '忘记密码', isHideTab: true, noLogin: true, setTheme: true }
   },
   {
     path: '/403',
@@ -51,7 +51,7 @@ export const staticRoutes: AppRouteRecordRaw[] = [
     path: '/outside',
     component: () => import('@views/index/index.vue'),
     name: 'Outside',
-    meta: { title: 'menus.outside.title' },
+    meta: { title: '内嵌页面' },
     children: [
       {
         path: '/outside/iframe/:path',

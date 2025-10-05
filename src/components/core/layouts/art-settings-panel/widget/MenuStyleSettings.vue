@@ -1,5 +1,5 @@
 <template>
-  <SectionTitle :title="$t('setting.menu.title')" />
+  <SectionTitle :title="'菜单风格'" />
   <div class="setting-box-wrap">
     <div
       class="setting-item"

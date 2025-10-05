@@ -9,28 +9,6 @@
             {{ isDark ? '&#xe6b5;' : '&#xe725;' }}
           </i>
         </div>
-        <ElDropdown
-          v-if="shouldShowLanguage"
-          @command="changeLanguage"
-          popper-class="langDropDownStyle"
-        >
-          <div class="btn language-btn">
-            <i class="iconfont-sys icon-language">&#xe611;</i>
-          </div>
-          <template #dropdown>
-            <ElDropdownMenu>
-              <div v-for="lang in languageOptions" :key="lang.value" class="lang-btn-item">
-                <ElDropdownItem
-                  :command="lang.value"
-                  :class="{ 'is-selected': locale === lang.value }"
-                >
-                  <span class="menu-txt">{{ lang.label }}</span>
-                  <i v-if="locale === lang.value" class="iconfont-sys icon-check">&#xe621;</i>
-                </ElDropdownItem>
-              </div>
-            </ElDropdownMenu>
-          </template>
-        </ElDropdown>
       </div>
       <div class="header">
         <ArtLogo class="icon" />
@@ -38,8 +16,8 @@
       </div>
       <div class="login-wrap">
         <div class="form">
-          <h3 class="title">{{ $t('login.title') }}</h3>
-          <p class="sub-title">{{ $t('login.subTitle') }}</p>
+          <h3 class="title">{{ '欢迎回来' }}</h3>
+          <p class="sub-title">{{ '输入您的账号和密码登录' }}</p>
           <ElForm
             ref="formRef"
             :model="formData"
@@ -97,10 +75,8 @@
             </ElFormItem>
 
             <div class="forget-password">
-              <ElCheckbox v-model="formData.rememberPassword">{{
-                $t('login.rememberPwd')
-              }}</ElCheckbox>
-              <RouterLink :to="RoutesAlias.ForgetPassword">{{ $t('login.forgetPwd') }}</RouterLink>
+              <ElCheckbox v-model="formData.rememberPassword">{{ '记住密码' }}</ElCheckbox>
+              <RouterLink :to="RoutesAlias.ForgetPassword">{{ '忘记密码' }}</RouterLink>
             </div>
 
             <div style="margin-top: 30px">
@@ -111,7 +87,7 @@
                 :loading="loading"
                 v-ripple
               >
-                {{ $t('login.btnText') }}
+                {{ '登录' }}
               </ElButton>
             </div>
 
@@ -132,9 +108,6 @@
   import { RoutesAlias } from '@/router/routesAlias'
   import { ElNotification, ElMessage } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
-  import { languageOptions } from '@/locales'
-  import { LanguageEnum } from '@/enums/appEnum'
-  import { useI18n } from 'vue-i18n'
   import { themeAnimation } from '@/utils/theme/animation'
   import { fetchLogin, fetchGetUserInfo, fetchCaptcha } from '@/api/auth'
   import { useHeaderBar } from '@/composables/useHeaderBar'
@@ -143,11 +116,9 @@
 
   defineOptions({ name: 'Login' })
 
-  const { t, locale } = useI18n()
-
   const settingStore = useSettingStore()
   const { isDark } = storeToRefs(settingStore)
-  const { shouldShowThemeToggle, shouldShowLanguage } = useHeaderBar()
+  const { shouldShowThemeToggle } = useHeaderBar()
 
   const userStore = useUserStore()
   const router = useRouter()
@@ -165,11 +136,11 @@
     rememberPassword: true
   })
 
-  const tenantPlaceholder = computed(() => t('login.tenantCodePlaceholder') || '请输入租户编码')
-  const accountPlaceholder = computed(() => t('login.placeholder[0]') || '请输入账号')
-  const passwordPlaceholder = computed(() => t('login.placeholder[1]') || '请输入密码')
-  const captchaPlaceholder = computed(() => t('login.captchaPlaceholder') || '请输入验证码')
-  const captchaLoadingText = computed(() => t('login.captchaLoading') || '加载中...')
+  const tenantPlaceholder = computed(() => '请输入租户编码')
+  const accountPlaceholder = computed(() => '请输入账号')
+  const passwordPlaceholder = computed(() => '请输入密码')
+  const captchaPlaceholder = computed(() => '请输入验证码')
+  const captchaLoadingText = computed(() => '加载中...')
 
   const rules = computed<FormRules>(() => ({
     tenant_code: [{ required: true, message: tenantPlaceholder.value, trigger: 'change' }],
@@ -216,12 +187,12 @@
       captchaId.value = (captcha as any).captcha_id || ''
     } catch (error) {
       console.error('[Login] refreshCaptcha error:', error)
-      ElMessage.error(t('login.captchaLoadFailed') || '验证码获取失败')
+      ElMessage.error('验证码获取失败')
     }
   }
 
   const handleImageError = () => {
-    ElMessage.error(t('login.captchaImageError') || '验证码加载失败，请点击刷新')
+    ElMessage.error('验证码加载失败，请点击刷新')
     captchaImageUrl.value = ''
   }
 
@@ -242,7 +213,7 @@
       })
 
       if (!loginRes.token) {
-        throw new Error(t('login.failedText') || '登录失败，请稍后重试')
+        throw new Error('登录失败，请稍后重试')
       }
 
       userStore.setToken(loginRes.token)
@@ -268,7 +239,7 @@
       router.push('/')
     } catch (error) {
       const message = error instanceof Error ? error.message : ''
-      ElMessage.error(message || t('login.failedText') || '登录失败，请稍后重试')
+      ElMessage.error(message || '登录失败，请稍后重试')
       await refreshCaptcha()
     } finally {
       loading.value = false
@@ -278,19 +249,13 @@
   const showLoginSuccessNotice = () => {
     setTimeout(() => {
       ElNotification({
-        title: t('login.success.title') || '登录成功',
+        title: '登录成功',
         type: 'success',
         duration: 2500,
         zIndex: 10000,
-        message: `${t('login.success.message') || '欢迎回来'}, ${systemName}!`
+        message: `欢迎回来, ${systemName}!`
       })
     }, 150)
-  }
-
-  const changeLanguage = (lang: LanguageEnum) => {
-    if (locale.value === lang) return
-    locale.value = lang
-    userStore.setLanguage(lang)
   }
 
   onMounted(async () => {

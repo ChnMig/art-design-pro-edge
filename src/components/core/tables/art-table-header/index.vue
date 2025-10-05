@@ -68,7 +68,7 @@
                 <i class="iconfont-sys">{{ item.fixed ? '&#xe648;' : '&#xe648;' }}</i>
               </div>
               <ElCheckbox v-model="item.checked" :disabled="item.disabled">{{
-                item.label || (item.type === 'selection' ? t('table.selection') : '')
+                item.label || (item.type === 'selection' ? '选择' : '')
               }}</ElCheckbox>
             </div>
           </VueDraggable>
@@ -82,14 +82,10 @@
           </div>
         </template>
         <div>
-          <ElCheckbox v-if="showZebra" v-model="isZebra" :value="true">{{
-            t('table.zebra')
-          }}</ElCheckbox>
-          <ElCheckbox v-if="showBorder" v-model="isBorder" :value="true">{{
-            t('table.border')
-          }}</ElCheckbox>
+          <ElCheckbox v-if="showZebra" v-model="isZebra" :value="true">{{ '斑马纹' }}</ElCheckbox>
+          <ElCheckbox v-if="showBorder" v-model="isBorder" :value="true">{{ '边框' }}</ElCheckbox>
           <ElCheckbox v-if="showHeaderBackground" v-model="isHeaderBackground" :value="true">{{
-            t('table.headerBackground')
+            '表头背景'
           }}</ElCheckbox>
         </div>
       </ElPopover>
@@ -104,12 +100,9 @@
   import { TableSizeEnum } from '@/enums/formEnum'
   import { useTableStore } from '@/store/modules/table'
   import { VueDraggable } from 'vue-draggable-plus'
-  import { useI18n } from 'vue-i18n'
   import type { ColumnOption } from '@/types/component'
 
   defineOptions({ name: 'ArtTableHeader' })
-
-  const { t } = useI18n()
 
   interface Props {
     /** 斑马纹 */
@@ -150,9 +143,9 @@
 
   /** 表格大小选项配置 */
   const tableSizeOptions = [
-    { value: TableSizeEnum.SMALL, label: t('table.sizeOptions.small') },
-    { value: TableSizeEnum.DEFAULT, label: t('table.sizeOptions.default') },
-    { value: TableSizeEnum.LARGE, label: t('table.sizeOptions.large') }
+    { value: TableSizeEnum.SMALL, label: '紧凑' },
+    { value: TableSizeEnum.DEFAULT, label: '默认' },
+    { value: TableSizeEnum.LARGE, label: '宽松' }
   ]
 
   const tableStore = useTableStore()

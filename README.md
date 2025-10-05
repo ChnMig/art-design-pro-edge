@@ -154,7 +154,6 @@ If my project has been helpful to you, donations are welcome! Your support will 
 
 - Internationalization removed (Chinese only)
 
-  - The language switcher is hidden and the app defaults to Simplified Chinese.
-  - Header language feature is disabled via `src/config/headerBar.ts` (set `language.enabled = false`).
-  - Settings panel language toggle is hidden accordingly; runtime locale remains Chinese.
-  - i18n runtime is still present to avoid breaking existing `$t()` usage, but switching is disabled.
+  - All `$t()` usages were replaced by static Simplified Chinese strings; `vue-i18n` is no longer bundled.
+  - Header and settings panel language controls were deleted; the application always renders Chinese text.
+  - When merging upstream, convert any reintroduced i18n keys to plain strings to keep the UI single-language.

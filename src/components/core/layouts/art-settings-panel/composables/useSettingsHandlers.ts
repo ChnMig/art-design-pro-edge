@@ -78,9 +78,6 @@ export function useSettingsHandlers() {
     // 显示面包屑
     crumbs: createToggleHandler(() => settingStore.setCrumbs()),
 
-    // 显示语言切换
-    language: createToggleHandler(() => settingStore.setLanguage()),
-
     // 显示进度条
     nprogress: createToggleHandler(() => settingStore.setNprogress()),
 

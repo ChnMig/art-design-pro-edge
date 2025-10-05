@@ -2,8 +2,8 @@
   <ArtException
     :data="{
       title: '404',
-      desc: $t('exceptionPage.404'),
-      btnText: $t('exceptionPage.gohome'),
+      desc: '抱歉，您访问的页面不存在',
+      btnText: '返回首页',
       imgUrl
     }"
   />

@@ -1,6 +1,6 @@
 <template>
   <div class="basic-settings">
-    <SectionTitle :title="$t('setting.basics.title')" :style="{ marginTop: '40px' }" />
+    <SectionTitle :title="'基础配置'" :style="{ marginTop: '40px' }" />
     <div class="basic-box">
       <SettingItem
         v-for="config in basicSettingsConfig"
@@ -33,7 +33,6 @@
     showRefreshButton,
     showCrumbs,
     showWorkTab,
-    showLanguage,
     showNprogress,
     colorWeak,
     watermarkVisible,
@@ -51,7 +50,6 @@
     showRefreshButton,
     showCrumbs,
     showWorkTab,
-    showLanguage,
     showNprogress,
     colorWeak,
     watermarkVisible,

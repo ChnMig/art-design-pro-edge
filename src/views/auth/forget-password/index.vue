@@ -8,19 +8,17 @@
       </div>
       <div class="login-wrap">
         <div class="form">
-          <h3 class="title">{{ $t('forgetPassword.title') }}</h3>
-          <p class="sub-title">{{ $t('login.scanQrcode') }}</p>
+          <h3 class="title">{{ '忘记密码？' }}</h3>
+          <p class="sub-title">{{ '扫描二维码联系管理员' }}</p>
 
           <div class="qrcode-wrapper">
             <QrcodeVue :value="adminQrcodeValue" :size="200" :level="'M'" />
-            <ElText type="info" size="small" style="margin-top: 10px">{{
-              $t('login.contactAdmin')
-            }}</ElText>
+            <ElText type="info" size="small" style="margin-top: 10px">{{ '联系管理员' }}</ElText>
           </div>
 
           <div style="margin-top: 15px">
             <ElButton class="back-btn" plain @click="toLogin">
-              {{ $t('forgetPassword.backBtnText') }}
+              {{ '返回' }}
             </ElButton>
           </div>
         </div>

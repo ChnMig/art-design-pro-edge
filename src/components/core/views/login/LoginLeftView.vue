@@ -11,8 +11,8 @@
     </div>
 
     <div class="text-wrap">
-      <h1> {{ $t('login.leftView.title') }} </h1>
-      <p> {{ $t('login.leftView.subTitle') }} </p>
+      <h1> {{ '专注于用户体验的后台管理系统模版' }} </h1>
+      <p> {{ '美观实用的界面，经过视觉优化，确保卓越的用户体验' }} </p>
     </div>
 
     <!-- 几何装饰元素 -->

@@ -1,12 +1,9 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { LanguageEnum } from '@/enums/appEnum'
-import i18n from '@/locales'
 import { router } from '@/router'
 import { useSettingStore } from './setting'
 import { useWorktabStore } from './worktab'
 import { AppRouteRecord } from '@/types/router'
-import { setPageTitle } from '@/router/utils/utils'
 import { resetRouterState } from '@/router/guards/beforeEach'
 import { RoutesAlias } from '@/router/routesAlias'
 import { useMenuStore } from './menu'
@@ -18,8 +15,6 @@ import { useMenuStore } from './menu'
 export const useUserStore = defineStore(
   'userStore',
   () => {
-    // 语言设置
-    const language = ref(LanguageEnum.ZH)
     // 登录状态
     const isLogin = ref(false)
     // 锁屏状态
@@ -77,21 +72,6 @@ export const useUserStore = defineStore(
      */
     const setLoginStatus = (status: boolean) => {
       isLogin.value = status
-    }
-
-    /**
-     * 设置语言
-     * @param lang 语言枚举值
-     */
-    const setLanguage = (lang: LanguageEnum) => {
-      setPageTitle(router.currentRoute.value)
-      language.value = lang
-      // 同步更新全局国际化语言，确保各处切换都生效
-      try {
-        ;(i18n.global as any).locale.value = lang
-      } catch (e) {
-        void e
-      }
     }
 
     /**
@@ -182,7 +162,6 @@ export const useUserStore = defineStore(
     }
 
     return {
-      language,
       isLogin,
       isLock,
       lockPassword,
@@ -199,7 +178,6 @@ export const useUserStore = defineStore(
       getWorktabState,
       setUserInfo,
       setLoginStatus,
-      setLanguage,
       setSearchHistory,
       setLockStatus,
       setLockPassword,

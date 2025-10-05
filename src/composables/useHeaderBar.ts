@@ -20,8 +20,7 @@ export function useHeaderBar() {
   const headerBarConfigRef = computed<HeaderBarFeatureConfig>(() => headerBarConfig)
 
   // 从store中获取相关状态
-  const { showMenuButton, showFastEnter, showRefreshButton, showCrumbs, showLanguage } =
-    storeToRefs(settingStore)
+  const { showMenuButton, showFastEnter, showRefreshButton, showCrumbs } = storeToRefs(settingStore)
 
   /**
    * 检查特定功能是否启用
@@ -79,11 +78,6 @@ export function useHeaderBar() {
   // 检查聊天功能是否显示
   const shouldShowChat = computed(() => {
     return isFeatureEnabled('chat')
-  })
-
-  // 检查语言切换是否显示
-  const shouldShowLanguage = computed(() => {
-    return isFeatureEnabled('language') && showLanguage.value
   })
 
   // 检查设置面板是否显示
@@ -169,7 +163,6 @@ export function useHeaderBar() {
     shouldShowFullscreen, // 是否显示全屏按钮
     shouldShowNotification, // 是否显示通知中心
     shouldShowChat, // 是否显示聊天功能
-    shouldShowLanguage, // 是否显示语言切换
     shouldShowSettings, // 是否显示设置面板
     shouldShowThemeToggle, // 是否显示主题切换
 

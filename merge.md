@@ -80,14 +80,15 @@ git show upstream/main:path/to/file
   - 移除 注册/忘记密码 页面与路由；登录页改为“二维码联系管理员”。
   - 快速入口配置文件 `src/config/fastEnter.ts` 已删除（不再保留该功能）。
 
-- 国际化
+- 国际化（已彻底移除，需保持中文单语界面）
 
-  - 本分支去除国际化开关，默认仅中文：
-    1. 顶部栏关闭语言切换：`src/config/headerBar.ts` -> `language.enabled = false`
-    2. 设置面板默认不显示语言切换：`src/store/modules/setting.ts` -> `showLanguage` 默认 `false`
-    3. 运行时仍保留 i18n 以兼容 `$t()` 用法，但不提供任何切换入口；默认语言为简体中文
-    4. Element Plus 组件语言跟随用户状态中的 `language`，默认 `zh`，不提供切换
-  - 关闭快速入口：`src/config/headerBar.ts` -> `fastEnter.enabled = false`，并将 `src/store/modules/setting.ts` 中 `showFastEnter` 默认设为 `false`
+  1. 删除上游新增的 `vue-i18n` 依赖、`src/locales/*` 文件以及 `app.use(i18n)` 相关调用。
+  2. 发现 `$t()` / `useI18n()` / `languageOptions` 等语句，一律改写为中文静态文案并移除对应导入。
+  3. 路由、菜单等 meta.title 只能写中文字符串；如上游仍返回 `menus.xxx`，请手动改为中文。
+  4. 保持顶栏、设置面板中不会重新出现语言切换相关的 state / handler / UI（参考 `src/components/core/layouts/art-header-bar/index.vue` 与 `src/store/modules/setting.ts` 的现状）。
+  5. `src/App.vue` 中的 `ElConfigProvider` 固定使用中文 locale；Element Plus 无需额外同步用户语言。
+
+- 关闭快速入口：`src/config/headerBar.ts` -> `fastEnter.enabled = false`，并将 `src/store/modules/setting.ts` 中 `showFastEnter` 默认设为 `false`
 
 - 快速入口（彻底精简移除）
   - 移除组件与配置，避免后续同步误引入：

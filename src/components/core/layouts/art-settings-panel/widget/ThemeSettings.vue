@@ -1,5 +1,5 @@
 <template>
-  <SectionTitle :title="$t('setting.theme.title')" />
+  <SectionTitle :title="'主题风格'" />
   <div class="setting-box-wrap">
     <div
       class="setting-item"
@@ -10,7 +10,7 @@
       <div class="box" :class="{ 'is-active': item.theme === systemThemeMode }">
         <img :src="item.img" />
       </div>
-      <p class="name">{{ $t(`setting.theme.list[${index}]`) }}</p>
+      <p class="name">{{ themeLabels[item.name] || `主题 ${index + 1}` }}</p>
     </div>
   </div>
 </template>
@@ -25,4 +25,10 @@
   const { systemThemeMode } = storeToRefs(settingStore)
   const { configOptions } = useSettingsConfig()
   const { switchThemeStyles } = useTheme()
+
+  const themeLabels: Record<string, string> = {
+    Light: '明亮模式',
+    Dark: '暗黑模式',
+    System: '跟随系统'
+  }
 </script>

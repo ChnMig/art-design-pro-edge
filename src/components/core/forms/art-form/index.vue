@@ -69,7 +69,7 @@
           <div class="action-buttons-wrapper" :style="actionButtonsStyle">
             <div class="form-buttons">
               <ElButton v-if="showReset" class="reset-button" @click="handleReset" v-ripple>
-                {{ t('table.form.reset') }}
+                {{ '重置' }}
               </ElButton>
               <ElButton
                 v-if="showSubmit"
@@ -79,7 +79,7 @@
                 v-ripple
                 :disabled="disabledSubmit"
               >
-                {{ t('table.form.submit') }}
+                {{ '提交' }}
               </ElButton>
             </div>
           </div>
@@ -91,8 +91,23 @@
 
 <script setup lang="ts">
   import { useWindowSize } from '@vueuse/core'
-  import { useI18n } from 'vue-i18n'
   import type { FormInstance } from 'element-plus'
+  import {
+    ElInput,
+    ElInputNumber,
+    ElSelect,
+    ElSwitch,
+    ElCheckbox,
+    ElCheckboxGroup,
+    ElRadioGroup,
+    ElDatePicker,
+    ElRate,
+    ElSlider,
+    ElCascader,
+    ElTimePicker,
+    ElTimeSelect,
+    ElTreeSelect
+  } from 'element-plus'
 
   defineOptions({ name: 'ArtForm' })
 
@@ -117,7 +132,6 @@
   }
 
   const { width } = useWindowSize()
-  const { t } = useI18n()
   const isMobile = computed(() => width.value < 500)
 
   const formInstance = useTemplateRef<FormInstance>('formRef')

@@ -15,7 +15,7 @@
             <ElTooltip
               class="box-item"
               effect="dark"
-              :content="$t(menu.meta.title)"
+              :content="formatTitle(menu.meta.title)"
               placement="right"
               :offset="25"
               :hide-after="0"
@@ -41,7 +41,7 @@
                   }"
                 />
                 <span v-if="dualMenuShowText">
-                  {{ $t(menu.meta.title) }}
+                  {{ formatTitle(menu.meta.title) }}
                 </span>
                 <div v-if="menu.meta.showBadge" class="art-badge art-badge-dual" />
               </div>
@@ -122,6 +122,7 @@
   import { useMenuStore } from '@/store/modules/menu'
   import { isIframe } from '@/utils/navigation'
   import { handleMenuJump } from '@/utils/navigation'
+  import { formatMenuTitle } from '@/router/utils/utils'
   import SidebarSubmenu from './widget/SidebarSubmenu.vue'
   import { useCommon } from '@/composables/useCommon'
 
@@ -137,6 +138,8 @@
 
   const { getMenuOpenWidth, menuType, uniqueOpened, dualMenuShowText, menuOpen, getMenuTheme } =
     storeToRefs(settingStore)
+
+  const formatTitle = (title?: string) => formatMenuTitle(title || '')
 
   // 组件内部状态
   const defaultOpenedMenus = ref<string[]>([])

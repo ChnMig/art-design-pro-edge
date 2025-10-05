@@ -47,8 +47,6 @@ export const useSettingStore = defineStore(
     const showCrumbs = ref(true)
     /** 是否显示工作台标签 */
     const showWorkTab = ref(true)
-    /** 是否显示语言切换（已关闭国际化，默认不显示） */
-    const showLanguage = ref(false)
     /** 是否显示进度条 */
     const showNprogress = ref(true)
     /** 是否显示设置引导 */
@@ -238,13 +236,6 @@ export const useSettingStore = defineStore(
     }
 
     /**
-     * 切换语言切换显示
-     */
-    const setLanguage = () => {
-      showLanguage.value = !showLanguage.value
-    }
-
-    /**
      * 切换进度条显示
      */
     const setNprogress = () => {
@@ -369,7 +360,6 @@ export const useSettingStore = defineStore(
       showCrumbs,
       autoClose,
       showWorkTab,
-      showLanguage,
       showNprogress,
       colorWeak,
       showSettingGuide,
@@ -403,7 +393,6 @@ export const useSettingStore = defineStore(
       setShowRefreshButton,
       setCrumbs,
       setWorkTab,
-      setLanguage,
       setNprogress,
       setColorWeak,
       hideSettingGuide,

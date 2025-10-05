@@ -1,14 +1,13 @@
 import { ref, computed, watch } from 'vue'
-import { $t } from '@/locales'
 import type { ColumnOption } from '@/types/component'
 
 /**
  * 特殊列类型
  */
 const SPECIAL_COLUMNS: Record<string, { prop: string; label: string }> = {
-  selection: { prop: '__selection__', label: $t('table.column.selection') },
-  expand: { prop: '__expand__', label: $t('table.column.expand') },
-  index: { prop: '__index__', label: $t('table.column.index') }
+  selection: { prop: '__selection__', label: '勾选' },
+  expand: { prop: '__expand__', label: '展开' },
+  index: { prop: '__index__', label: '序号' }
 }
 
 /**

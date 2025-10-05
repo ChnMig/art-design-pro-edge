@@ -40,7 +40,6 @@ export interface SettingState {
   showCrumbs: boolean
   autoClose: boolean
   showWorkTab: boolean
-  showLanguage: boolean
   showNprogress: boolean
   themeModel: string
 }
@@ -72,7 +71,6 @@ export interface SettingStoreState extends SettingState {
   // 额外的设置状态
   collapsed: boolean
   device: 'desktop' | 'mobile'
-  language: string
 }
 
 // 工作标签页Store状态

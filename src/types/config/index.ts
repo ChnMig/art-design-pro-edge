@@ -174,8 +174,6 @@ export interface HeaderBarFeatureConfig {
   notification: FeatureConfigItem
   /** 聊天功能 */
   chat: FeatureConfigItem
-  /** 多语言切换 */
-  language: FeatureConfigItem
   /** 设置面板 */
   settings: FeatureConfigItem
   /** 主题切换 */

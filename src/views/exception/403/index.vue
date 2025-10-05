@@ -2,8 +2,8 @@
   <ArtException
     :data="{
       title: '403',
-      desc: $t('exceptionPage.403'),
-      btnText: $t('exceptionPage.gohome'),
+      desc: '抱歉，您无权访问该页面',
+      btnText: '返回首页',
       imgUrl
     }"
   />

@@ -1,6 +1,6 @@
 <template>
   <div class="container-settings">
-    <SectionTitle :title="$t('setting.container.title')" :style="{ marginTop: '50px' }" />
+    <SectionTitle :title="'容器宽度'" :style="{ marginTop: '50px' }" />
     <div class="container-width">
       <div
         v-for="option in containerWidthOptions"

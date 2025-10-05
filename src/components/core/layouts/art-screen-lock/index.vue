@@ -25,7 +25,7 @@
               <ElInput
                 v-model="formData.password"
                 type="password"
-                :placeholder="$t('lockScreen.lock.inputPlaceholder')"
+                :placeholder="'请输入锁屏密码'"
                 :show-password="true"
                 ref="lockInputRef"
                 @keyup.enter="handleLock"
@@ -38,7 +38,7 @@
               </ElInput>
             </ElFormItem>
             <ElButton type="primary" class="lock-btn" @click="handleLock" v-ripple>
-              {{ $t('lockScreen.lock.btnText') }}
+              {{ '锁定' }}
             </ElButton>
           </ElForm>
         </div>
@@ -60,7 +60,7 @@
             <ElInput
               v-model="unlockForm.password"
               type="password"
-              :placeholder="$t('lockScreen.unlock.inputPlaceholder')"
+              :placeholder="'请输入解锁密码'"
               :show-password="true"
               ref="unlockInputRef"
             >
@@ -73,10 +73,10 @@
           </ElFormItem>
 
           <ElButton type="primary" class="unlock-btn" @click="handleUnlock" v-ripple>
-            {{ $t('lockScreen.unlock.btnText') }}
+            {{ '解锁' }}
           </ElButton>
           <ElButton text class="login-btn" @click="toLogin">
-            {{ $t('lockScreen.unlock.backBtnText') }}
+            {{ '返回登录' }}
           </ElButton>
         </ElForm>
       </div>
@@ -88,13 +88,9 @@
   import { Lock, Unlock } from '@element-plus/icons-vue'
   import { ElMessage } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
-  import { useI18n } from 'vue-i18n'
   import CryptoJS from 'crypto-js'
   import { useUserStore } from '@/store/modules/user'
   import { mittBus } from '@/utils/sys'
-
-  // 国际化
-  const { t } = useI18n()
 
   // 环境变量
   const ENCRYPT_KEY = import.meta.env.VITE_LOCK_ENCRYPT_KEY
@@ -126,7 +122,7 @@
     password: [
       {
         required: true,
-        message: t('lockScreen.lock.inputPlaceholder'),
+        message: '请输入锁屏密码',
         trigger: 'blur'
       }
     ]
@@ -361,7 +357,7 @@
             console.error('更新store失败:', error)
           }
         } else {
-          ElMessage.error(t('lockScreen.pwdError'))
+          ElMessage.error('密码错误')
         }
       } else {
         console.error('表单验证失败:', fields)

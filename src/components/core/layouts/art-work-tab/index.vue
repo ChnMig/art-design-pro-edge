@@ -53,14 +53,12 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, onMounted, ref, watch, nextTick, onUnmounted } from 'vue'
+  import { computed, onMounted, ref, watch, onUnmounted } from 'vue'
   import { LocationQueryRaw, useRoute, useRouter } from 'vue-router'
-  import { useI18n } from 'vue-i18n'
   import { ArrowDown, Close } from '@element-plus/icons-vue'
   import { storeToRefs } from 'pinia'
 
   import { useWorktabStore } from '@/store/modules/worktab'
-  import { useUserStore } from '@/store/modules/user'
   import { formatMenuTitle } from '@/router/utils/utils'
   import { useSettingStore } from '@/store/modules/setting'
   import { MenuItemType } from '../../others/art-menu-right/index.vue'
@@ -83,9 +81,7 @@
   type TabCloseType = 'current' | 'left' | 'right' | 'other' | 'all'
 
   // 基础设置
-  const { t } = useI18n()
   const store = useWorktabStore()
-  const userStore = useUserStore()
   const route = useRoute()
   const router = useRouter()
   const { currentRoute } = router
@@ -152,38 +148,38 @@
       return [
         {
           key: 'refresh',
-          label: t('worktab.btn.refresh'),
+          label: '刷新',
           icon: '&#xe6b3;',
           disabled: !isCurrentTab
         },
         {
           key: 'fixed',
-          label: currentTab?.fixedTab ? t('worktab.btn.unfixed') : t('worktab.btn.fixed'),
+          label: currentTab?.fixedTab ? '取消固定' : '固定',
           icon: '&#xe644;',
           disabled: false,
           showLine: true
         },
         {
           key: 'left',
-          label: t('worktab.btn.closeLeft'),
+          label: '关闭左侧',
           icon: '&#xe866;',
           disabled: clickedIndex === 0 || fixedStatus.areAllLeftTabsFixed
         },
         {
           key: 'right',
-          label: t('worktab.btn.closeRight'),
+          label: '关闭右侧',
           icon: '&#xe865;',
           disabled: isLastTab || fixedStatus.areAllRightTabsFixed
         },
         {
           key: 'other',
-          label: t('worktab.btn.closeOther'),
+          label: '关闭其他',
           icon: '&#xe83a;',
           disabled: isOneTab || fixedStatus.areAllOtherTabsFixed
         },
         {
           key: 'all',
-          label: t('worktab.btn.closeAll'),
+          label: '关闭全部',
           icon: '&#xe71a;',
           disabled: isOneTab || fixedStatus.areAllTabsFixed
         }
@@ -435,16 +431,6 @@
     () => {
       setTransition()
       autoPositionTab()
-    }
-  )
-
-  watch(
-    () => userStore.language,
-    () => {
-      scrollState.value.translateX = 0
-      nextTick(() => {
-        autoPositionTab()
-      })
     }
   )
 </script>

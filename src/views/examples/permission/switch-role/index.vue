@@ -95,12 +95,10 @@
   import { computed, ref } from 'vue'
   import { ElMessage } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
-  import { useI18n } from 'vue-i18n'
   import { fetchLogin, fetchGetUserInfo } from '@/api/auth'
 
   defineOptions({ name: 'PermissionSwitchRole' })
 
-  const { t } = useI18n()
   const userStore = useUserStore()
 
   // 响应式数据
@@ -113,7 +111,7 @@
   const accounts = computed(() => [
     {
       key: 'super',
-      label: t('login.roles.super'),
+      label: '超级管理员',
       userName: 'Super',
       password: '123456',
       roles: ['R_SUPER'],
@@ -122,7 +120,7 @@
     },
     {
       key: 'admin',
-      label: t('login.roles.admin'),
+      label: '管理员',
       userName: 'Admin',
       password: '123456',
       roles: ['R_ADMIN'],
@@ -131,7 +129,7 @@
     },
     {
       key: 'user',
-      label: t('login.roles.user'),
+      label: '普通用户',
       userName: 'User',
       password: '123456',
       roles: ['R_USER'],

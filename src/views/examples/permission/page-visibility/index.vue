@@ -2,7 +2,7 @@
   <div class="page-visibility-page">
     <!-- 页面头部 -->
     <div class="page-header">
-      <h2>{{ $t('menus.examples.permission.pageVisibility') }}</h2>
+      <h2>{{ '超级管理员可见' }}</h2>
       <p class="description">
         此页面仅对<strong>超级管理员</strong>用户可见，演示页面级别的权限控制。
         如果您能看到此页面，说明您拥有相应的访问权限。
@@ -55,7 +55,7 @@
   name: 'PermissionPageVisibility',
   component: RoutesAlias.PermissionPageVisibility,
   meta: {
-    title: 'menus.permission.pageVisibility',
+    title: '页面可见性',
     roles: ['R_SUPER'], // 仅超级管理员可访问
     keepAlive: true
   }
@@ -89,7 +89,7 @@
       "name": "Permission",
       "component": "Layout",
       "meta": {
-        "title": "menus.permission.title",
+        "title": "权限示例",
         "icon": ""
       },
       "children": [
@@ -99,7 +99,7 @@
           "name": "PermissionPageVisibility",
           "component": "permission/page-visibility/index",
           "meta": {
-            "title": "menus.permission.pageVisibility",
+            "title": "页面可见性",
             "keepAlive": true
           }
         }

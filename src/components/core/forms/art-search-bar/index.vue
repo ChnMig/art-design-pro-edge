@@ -69,7 +69,7 @@
           <div class="action-buttons-wrapper" :style="actionButtonsStyle">
             <div class="form-buttons">
               <el-button v-if="showReset" class="reset-button" @click="handleReset" v-ripple>
-                {{ t('table.searchBar.reset') }}
+                {{ '重置' }}
               </el-button>
               <el-button
                 v-if="showSearch"
@@ -79,7 +79,7 @@
                 v-ripple
                 :disabled="disabledSearch"
               >
-                {{ t('table.searchBar.search') }}
+                {{ '查询' }}
               </el-button>
             </div>
             <div v-if="shouldShowExpandToggle" class="filter-toggle" @click="toggleExpand">
@@ -101,8 +101,23 @@
 <script setup lang="ts">
   import { ArrowUpBold, ArrowDownBold } from '@element-plus/icons-vue'
   import { useWindowSize } from '@vueuse/core'
-  import { useI18n } from 'vue-i18n'
   import type { FormInstance } from 'element-plus'
+  import {
+    ElInput,
+    ElInputNumber,
+    ElSelect,
+    ElSwitch,
+    ElCheckbox,
+    ElCheckboxGroup,
+    ElRadioGroup,
+    ElDatePicker,
+    ElRate,
+    ElSlider,
+    ElCascader,
+    ElTimePicker,
+    ElTimeSelect,
+    ElTreeSelect
+  } from 'element-plus'
 
   defineOptions({ name: 'ArtSearchBar' })
 
@@ -127,7 +142,6 @@
   }
 
   const { width } = useWindowSize()
-  const { t } = useI18n()
   const isMobile = computed(() => width.value < 500)
 
   const formInstance = useTemplateRef<FormInstance>('formRef')
@@ -270,7 +284,7 @@
    * 展开/收起按钮文本
    */
   const expandToggleText = computed(() => {
-    return isExpanded.value ? t('table.searchBar.collapse') : t('table.searchBar.expand')
+    return isExpanded.value ? '收起' : '展开'
   })
 
   /**
