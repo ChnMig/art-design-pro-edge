@@ -53,7 +53,8 @@
                 :placeholder="tenantPlaceholder"
                 filterable
                 remote
-                clearable
+                :clearable="!tenantLocked"
+                :disabled="tenantLocked"
                 :remote-method="remoteSearchTenant"
                 :loading="tenantLoading"
               >
@@ -125,7 +126,7 @@
 
 <script setup lang="ts">
   import { computed, onMounted, reactive, ref } from 'vue'
-  import { useRouter } from 'vue-router'
+  import { useRouter, useRoute } from 'vue-router'
   import { storeToRefs } from 'pinia'
   import AppConfig from '@/config'
   import { RoutesAlias } from '@/router/routesAlias'
@@ -150,9 +151,11 @@
 
   const userStore = useUserStore()
   const router = useRouter()
+  const route = useRoute()
 
   const systemName = AppConfig.systemInfo.name
   const formRef = ref<FormInstance>()
+  const tenantLocked = ref(false)
 
   const formData = reactive({
     tenant_code: '',
@@ -290,8 +293,27 @@
     userStore.setLanguage(lang)
   }
 
-  onMounted(() => {
+  onMounted(async () => {
     refreshCaptcha()
+
+    // 如果带有租户编码查询参数，则填充并锁定
+    const q = route.query.tenant_code
+    const queryTenant = typeof q === 'string' ? q : Array.isArray(q) ? q[0] : ''
+    if (queryTenant) {
+      formData.tenant_code = queryTenant
+      tenantLocked.value = true
+      // 可选：尝试预加载对应的下拉项以显示名称
+      try {
+        const { searchTenant } = await import('@/api/auth')
+        const list = await searchTenant(queryTenant)
+        if (Array.isArray(list) && list.length > 0) {
+          tenantOptions.value = list
+        }
+      } catch {
+        // 忽略预加载失败
+        void 0
+      }
+    }
   })
 </script>
 
