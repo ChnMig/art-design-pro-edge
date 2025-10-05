@@ -20,7 +20,7 @@
       >
         <template #left>
           <ElSpace wrap>
-            <ElButton @click="showDialog('add')" v-ripple>新增角色</ElButton>
+            <ElButton @click="showDialog('add')" v-ripple>{{ t('pages.role.add') }}</ElButton>
           </ElSpace>
         </template>
       </ArtTableHeader>
@@ -56,6 +56,7 @@
 
 <script setup lang="ts">
   import { ElMessage, ElMessageBox, ElTag } from 'element-plus'
+  import { useI18n } from 'vue-i18n'
   import { ButtonMoreItem } from '@/components/core/forms/art-button-more/index.vue'
   import { Setting, Edit, Delete } from '@element-plus/icons-vue'
   import { useTable } from '@/composables/useTable'
@@ -66,6 +67,7 @@
   import RolePermissionDialog from './modules/role-permission-dialog.vue'
 
   defineOptions({ name: 'Role' })
+  const { t } = useI18n()
 
   type RoleListItem = Api.SystemManage.RoleListItem
 
@@ -109,33 +111,33 @@
       columnsFactory: () => [
         {
           prop: 'roleId',
-          label: '角色ID',
+          label: t('pages.role.roleId'),
           width: 100
         },
         {
           prop: 'roleName',
-          label: '角色名称',
+          label: t('pages.role.roleName'),
           minWidth: 120
         },
         {
           prop: 'roleCode',
-          label: '角色编码',
+          label: t('pages.role.roleCode'),
           minWidth: 120
         },
         {
           prop: 'description',
-          label: '角色描述',
+          label: t('pages.role.description'),
           minWidth: 150,
           showOverflowTooltip: true
         },
         {
           prop: 'enabled',
-          label: '角色状态',
+          label: t('pages.role.status'),
           width: 100,
           formatter: (row) => {
             const statusConfig = row.enabled
-              ? { type: 'success', text: '启用' }
-              : { type: 'warning', text: '禁用' }
+              ? { type: 'success', text: t('pages.role.enabled') }
+              : { type: 'warning', text: t('pages.role.disabled') }
             return h(
               ElTag,
               { type: statusConfig.type as 'success' | 'warning' },
@@ -145,13 +147,13 @@
         },
         {
           prop: 'createTime',
-          label: '创建日期',
+          label: t('pages.role.createdAt'),
           width: 180,
           sortable: true
         },
         {
           prop: 'operation',
-          label: '操作',
+          label: t('table.column.operation') || '操作',
           width: 80,
           fixed: 'right',
           formatter: (row) =>
@@ -160,17 +162,17 @@
                 list: [
                   {
                     key: 'permission',
-                    label: '菜单权限',
+                    label: t('pages.role.menuPermission'),
                     icon: Setting
                   },
                   {
                     key: 'edit',
-                    label: '编辑角色',
+                    label: t('pages.role.edit'),
                     icon: Edit
                   },
                   {
                     key: 'delete',
-                    label: '删除角色',
+                    label: t('pages.role.delete'),
                     icon: Delete,
                     color: '#f56c6c'
                   }
@@ -225,18 +227,22 @@
   }
 
   const deleteRole = (row: RoleListItem) => {
-    ElMessageBox.confirm(`确定删除角色"${row.roleName}"吗？此操作不可恢复！`, '删除确认', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    })
+    ElMessageBox.confirm(
+      t('pages.role.confirmDelete', { name: row.roleName }),
+      t('pages.role.deleteTitle'),
+      {
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
+        type: 'warning'
+      }
+    )
       .then(() => {
         // TODO: 调用删除接口
-        ElMessage.success('删除成功')
+        ElMessage.success(t('pages.role.success.delete'))
         refreshData()
       })
       .catch(() => {
-        ElMessage.info('已取消删除')
+        ElMessage.info(t('pages.role.cancelDelete'))
       })
   }
 </script>

@@ -5,7 +5,6 @@
 import { MenuThemeEnum, MenuTypeEnum, SystemThemeEnum } from '@/enums/appEnum'
 import { SystemConfig } from '@/types/config'
 import { configImages } from './assets/images'
-import fastEnterConfig from './fastEnter'
 import { headerBarConfig } from './headerBar'
 
 const appConfig: SystemConfig = {
@@ -133,8 +132,6 @@ const appConfig: SystemConfig = {
     defaultCustomRadius: '0.75', // 自定义圆角
     defaultTabStyle: 'tab-default' // 标签样式
   },
-  // 快速入口配置
-  fastEnter: fastEnterConfig,
   // 顶部栏功能配置
   headerBar: headerBarConfig
 }

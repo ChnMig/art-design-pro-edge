@@ -37,7 +37,6 @@ As a developer, I needed to build admin management systems for multiple projects
 - Lock screen
 - Multi-tabs
 - Global breadcrumbs
-- Multi-language support
 - Icon library
 - Rich text editor
 - Echarts charts
@@ -152,3 +151,10 @@ QQ Group: <a href="https://qm.qq.com/cgi-bin/qm/qr?k=Gg6yzZLFaNgmRhK0T5Qcjf7-XcA
 If my project has been helpful to you, donations are welcome! Your support will be used to purchase tools like ChatGPT, Cursor, etc., to improve development efficiency and make the project even better. Thank you for your encouragement and support!
 
 ![Donation QR Code](https://www.qiniu.lingchen.kim/%E7%BB%84%202%402x%202.png)
+
+- Internationalization removed (Chinese only)
+
+  - The language switcher is hidden and the app defaults to Simplified Chinese.
+  - Header language feature is disabled via `src/config/headerBar.ts` (set `language.enabled = false`).
+  - Settings panel language toggle is hidden accordingly; runtime locale remains Chinese.
+  - i18n runtime is still present to avoid breaking existing `$t()` usage, but switching is disabled.

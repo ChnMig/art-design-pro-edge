@@ -78,13 +78,26 @@ git show upstream/main:path/to/file
 
   - 保留本地的路由守卫逻辑，仅吸收安全的上游增强。
   - 移除 注册/忘记密码 页面与路由；登录页改为“二维码联系管理员”。
-  - 同步更新 `src/config/fastEnter.ts` 中快速入口。
+  - 快速入口配置文件 `src/config/fastEnter.ts` 已删除（不再保留该功能）。
 
-- 多语言
-  - 合并上游新增语言项。
-  - 保留/新增登录二维码相关词条：
-    - `login.contactAdmin`、`login.scanQrcode`、`login.noAccountContactAdmin`、`login.forgotPwdContactAdmin`。
-  - 移除 `menus.register` / `menus.forgetPassword`。
+- 国际化
+
+  - 本分支去除国际化开关，默认仅中文：
+    1. 顶部栏关闭语言切换：`src/config/headerBar.ts` -> `language.enabled = false`
+    2. 设置面板默认不显示语言切换：`src/store/modules/setting.ts` -> `showLanguage` 默认 `false`
+    3. 运行时仍保留 i18n 以兼容 `$t()` 用法，但不提供任何切换入口；默认语言为简体中文
+    4. Element Plus 组件语言跟随用户状态中的 `language`，默认 `zh`，不提供切换
+  - 关闭快速入口：`src/config/headerBar.ts` -> `fastEnter.enabled = false`，并将 `src/store/modules/setting.ts` 中 `showFastEnter` 默认设为 `false`
+
+- 快速入口（彻底精简移除）
+  - 移除组件与配置，避免后续同步误引入：
+    1. 删除组件目录：`src/components/core/layouts/art-fast-enter/`
+    2. 删除组合函数：`src/composables/useFastEnter.ts`
+    3. 删除配置文件：`src/config/fastEnter.ts`
+    4. 移除引用：
+       - 顶栏移除 `<ArtFastEnter />`：`src/components/core/layouts/art-header-bar/index.vue`
+       - `src/config/index.ts` 去除 `fastEnter` 引入与导出
+    5. 类型与自动导入：`src/types/components.d.ts` 为自动生成文件，如存在 ArtFastEnter 项，运行本地构建后会自动清理；无需手工维护
 
 ## 5. 验证
 
@@ -97,8 +110,7 @@ pnpm dev
 冒烟测试：
 
 - 登录：多租户 + 图形验证码 + 二维码弹窗
-- 租户管理：列表、创建、更新、删除
-- 语言切换：中/英
+- 租户管理：列表、创建、更新、删除 // 语言切换：已移除（默认中文）
 - ArtSearchBar：示例页与系统页调用是否正确
 - 表格：列头/分页/高度/样式
 
@@ -134,5 +146,5 @@ git commit -m "chore(sync): upstream @ <short-commit> and preserve customization
   - 不要切换到上游的 `/api/auth/login` 与 token 字段命名。
 - 安全检查
   - 路由：移除的页面（注册/忘记密码）不得残留死链。
-  - 多语言：无冗余词条，中文/英文均覆盖。
+  - 国际化：语言切换入口已隐藏；如无需要，可按需删除 `src/locales/langs/en.json`。
   - 环境变量：如需二维码，引入 `VITE_ADMIN_QRCODE_URL`。

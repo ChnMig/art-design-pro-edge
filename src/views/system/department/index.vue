@@ -10,7 +10,9 @@
     <ElCard shadow="never" class="art-table-card">
       <ArtTableHeader v-model:columns="columnChecks" @refresh="handleRefresh">
         <template #left>
-          <ElButton type="primary" @click="showDialog('add')" v-ripple>新增部门</ElButton>
+          <ElButton type="primary" @click="showDialog('add')" v-ripple>{{
+            t('pages.department.add')
+          }}</ElButton>
         </template>
       </ArtTableHeader>
 
@@ -28,29 +30,29 @@
 
     <ElDialog
       v-model="dialogVisible"
-      :title="dialogType === 'add' ? '新增部门' : '编辑部门'"
+      :title="dialogType === 'add' ? t('pages.department.add') : t('pages.department.edit')"
       width="520px"
       align-center
       :close-on-click-modal="false"
     >
       <ElForm ref="formRef" :model="formData" :rules="formRules" label-width="90px">
-        <ElFormItem label="部门名称" prop="name">
-          <ElInput v-model="formData.name" placeholder="请输入部门名称" />
+        <ElFormItem :label="t('pages.department.name')" prop="name">
+          <ElInput v-model="formData.name" :placeholder="t('pages.department.placeholder.name')" />
         </ElFormItem>
-        <ElFormItem label="状态" prop="status">
+        <ElFormItem :label="t('pages.department.status')" prop="status">
           <ElRadioGroup v-model="formData.status">
-            <ElRadio :label="1">启用</ElRadio>
-            <ElRadio :label="2">禁用</ElRadio>
+            <ElRadio :label="1">{{ t('pages.department.enabled') }}</ElRadio>
+            <ElRadio :label="2">{{ t('pages.department.disabled') }}</ElRadio>
           </ElRadioGroup>
         </ElFormItem>
-        <ElFormItem label="排序" prop="sort">
+        <ElFormItem :label="t('pages.department.sort')" prop="sort">
           <ElInputNumber v-model="formData.sort" :min="0" :max="9999" :step="1" />
         </ElFormItem>
       </ElForm>
       <template #footer>
         <div class="dialog-footer">
-          <ElButton @click="dialogVisible = false">取 消</ElButton>
-          <ElButton type="primary" @click="handleSubmit">确 定</ElButton>
+          <ElButton @click="dialogVisible = false">{{ t('common.cancel') }}</ElButton>
+          <ElButton type="primary" @click="handleSubmit">{{ t('common.confirm') }}</ElButton>
         </div>
       </template>
     </ElDialog>
@@ -59,6 +61,7 @@
 
 <script setup lang="ts">
   import { computed, h, nextTick, reactive, ref, resolveComponent } from 'vue'
+  import { useI18n } from 'vue-i18n'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
   import { useTable } from '@/composables/useTable'
@@ -72,6 +75,7 @@
   } from '@/api/department'
 
   defineOptions({ name: 'SystemDepartment' })
+  const { t } = useI18n()
 
   const dialogType = ref<'add' | 'edit'>('add')
   const dialogVisible = ref(false)
@@ -93,38 +97,41 @@
         size: 'page_size'
       },
       columnsFactory: () => [
-        { type: 'index', width: 80, label: '序号' },
-        { prop: 'name', label: '部门名称', align: 'center', width: 220 },
+        { type: 'index', width: 80, label: t('table.column.index') },
+        { prop: 'name', label: t('pages.department.name'), align: 'center', width: 220 },
         {
           prop: 'status',
-          label: '状态',
+          label: t('pages.department.status'),
           align: 'center',
           width: 100,
           formatter: (row: Api.SystemDepartment.DepartmentItem) =>
             h(
               resolveComponent('ElTag'),
               { type: row.status === 1 ? 'success' : 'danger' },
-              { default: () => (row.status === 1 ? '启用' : '禁用') }
+              {
+                default: () =>
+                  row.status === 1 ? t('pages.department.enabled') : t('pages.department.disabled')
+              }
             )
         },
-        { prop: 'sort', label: '排序', align: 'center', width: 100 },
+        { prop: 'sort', label: t('pages.department.sort'), align: 'center', width: 100 },
         {
           prop: 'created_at',
-          label: '创建时间',
+          label: t('pages.department.createdAt'),
           align: 'center',
           width: 180,
           formatter: (row: Api.SystemDepartment.DepartmentItem) => formatDate(row.created_at)
         },
         {
           prop: 'updated_at',
-          label: '更新时间',
+          label: t('pages.department.updatedAt'),
           align: 'center',
           width: 180,
           formatter: (row: Api.SystemDepartment.DepartmentItem) => formatDate(row.updated_at)
         },
         {
           prop: 'operation',
-          label: '操作',
+          label: t('table.column.operation') || '操作',
           align: 'center',
           width: 140,
           fixed: 'right',
@@ -184,20 +191,20 @@
   const searchItems = computed<SearchFormItem[]>(() => [
     {
       key: 'name',
-      label: '部门名称',
+      label: t('pages.department.name'),
       type: 'input',
-      placeholder: '请输入部门名称'
+      placeholder: t('pages.department.placeholder.name')
     },
     {
       key: 'status',
-      label: '状态',
+      label: t('pages.department.status'),
       type: 'select',
       props: {
         clearable: true,
         options: [
-          { label: '全部', value: undefined },
-          { label: '启用', value: 1 },
-          { label: '禁用', value: 2 }
+          { label: t('pages.department.all'), value: undefined },
+          { label: t('pages.department.enabled'), value: 1 },
+          { label: t('pages.department.disabled'), value: 2 }
         ]
       }
     }
@@ -251,14 +258,18 @@
 
   const handleDelete = async (row: Api.SystemDepartment.DepartmentItem) => {
     try {
-      await ElMessageBox.confirm(`确认删除部门 "${row.name}" 吗？`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
+      await ElMessageBox.confirm(
+        t('pages.department.confirmDelete', { name: row.name }),
+        t('common.tips'),
+        {
+          confirmButtonText: t('common.confirm'),
+          cancelButtonText: t('common.cancel'),
+          type: 'warning'
+        }
+      )
 
       await removeDepartment(row.id)
-      ElMessage.success('删除成功')
+      ElMessage.success(t('pages.department.success.delete'))
       refreshAll()
     } catch (error) {
       if (error !== 'cancel') {
@@ -278,17 +289,17 @@
 
       if (dialogType.value === 'edit' && formData.id) {
         await updateDepartment(payload as Required<Api.SystemDepartment.DepartmentPayload>)
-        ElMessage.success('更新成功')
+        ElMessage.success(t('pages.department.success.edit'))
       } else {
         await createDepartment(payload)
-        ElMessage.success('新增成功')
+        ElMessage.success(t('pages.department.success.add'))
       }
 
       dialogVisible.value = false
       refreshAll()
     } catch (error) {
       console.error('提交失败:', error)
-      ElMessage.error('提交失败')
+      ElMessage.error(t('pages.department.error.submit'))
     }
   }
 

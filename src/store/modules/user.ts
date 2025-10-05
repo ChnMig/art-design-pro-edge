@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { LanguageEnum } from '@/enums/appEnum'
+import i18n from '@/locales'
 import { router } from '@/router'
 import { useSettingStore } from './setting'
 import { useWorktabStore } from './worktab'
@@ -85,6 +86,12 @@ export const useUserStore = defineStore(
     const setLanguage = (lang: LanguageEnum) => {
       setPageTitle(router.currentRoute.value)
       language.value = lang
+      // 同步更新全局国际化语言，确保各处切换都生效
+      try {
+        ;(i18n.global as any).locale.value = lang
+      } catch (e) {
+        void e
+      }
     }
 
     /**

@@ -9,6 +9,17 @@ interface UpgradeLog {
 
 export const upgradeLogList = ref<UpgradeLog[]>([
   {
+    version: 'v2.5.8',
+    title: '移除国际化开关/关闭快速入口',
+    date: '2025-10-05',
+    detail: [
+      '隐藏顶栏与登录页语言切换入口，系统默认中文',
+      '保留 i18n 运行时以兼容 $t()，但不提供切换能力',
+      '设置面板“多语言选择”开关隐藏',
+      '顶部栏“快速入口”默认关闭，设置面板开关隐藏'
+    ]
+  },
+  {
     version: 'v2.5.7',
     title: '新增表单组件',
     date: '2025-09-14',

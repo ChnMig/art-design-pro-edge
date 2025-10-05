@@ -12,7 +12,7 @@
       <ArtTableHeader v-model:columns="columnChecks" :loading="loading" @refresh="refreshData">
         <template #left>
           <ElSpace wrap>
-            <ElButton @click="showDialog('add')" v-ripple>新增用户</ElButton>
+            <ElButton @click="showDialog('add')" v-ripple>{{ t('pages.user.add') }}</ElButton>
           </ElSpace>
         </template>
       </ArtTableHeader>
@@ -42,6 +42,7 @@
 
 <script setup lang="ts">
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
+  import { useI18n } from 'vue-i18n'
   import { ACCOUNT_TABLE_DATA } from '@/mock/temp/formData'
   import { ElMessageBox, ElMessage, ElTag, ElImage } from 'element-plus'
   import { useTable } from '@/composables/useTable'
@@ -50,6 +51,7 @@
   import UserDialog from './modules/user-dialog.vue'
 
   defineOptions({ name: 'User' })
+  const { t } = useI18n()
 
   type UserListItem = Api.SystemManage.UserListItem
 
@@ -71,23 +73,17 @@
   })
 
   // 用户状态配置
-  const USER_STATUS_CONFIG = {
-    '1': { type: 'success' as const, text: '在线' },
-    '2': { type: 'info' as const, text: '离线' },
-    '3': { type: 'warning' as const, text: '异常' },
-    '4': { type: 'danger' as const, text: '注销' }
-  } as const
-
   /**
    * 获取用户状态配置
    */
   const getUserStatusConfig = (status: string) => {
-    return (
-      USER_STATUS_CONFIG[status as keyof typeof USER_STATUS_CONFIG] || {
-        type: 'info' as const,
-        text: '未知'
-      }
-    )
+    const map: Record<string, { type: 'success' | 'info' | 'warning' | 'danger'; text: string }> = {
+      '1': { type: 'success', text: t('pages.user.status.online') },
+      '2': { type: 'info', text: t('pages.user.status.offline') },
+      '3': { type: 'warning', text: t('pages.user.status.abnormal') },
+      '4': { type: 'danger', text: t('pages.user.status.canceled') }
+    }
+    return map[status] || { type: 'info', text: t('pages.user.status.unknown') }
   }
 
   const {
@@ -115,10 +111,10 @@
       excludeParams: [],
       columnsFactory: () => [
         { type: 'selection' }, // 勾选列
-        { type: 'index', width: 60, label: '序号' }, // 序号
+        { type: 'index', width: 60, label: t('table.column.index') }, // 序号
         {
           prop: 'avatar',
-          label: '用户名',
+          label: t('pages.user.username'),
           width: 280,
           formatter: (row) => {
             return h('div', { class: 'user', style: 'display: flex; align-items: center' }, [
@@ -138,15 +134,15 @@
         },
         {
           prop: 'userGender',
-          label: '性别',
+          label: t('pages.user.gender'),
           sortable: true,
           // checked: false, // 隐藏列
           formatter: (row) => row.userGender
         },
-        { prop: 'userPhone', label: '手机号' },
+        { prop: 'userPhone', label: t('pages.user.phone') },
         {
           prop: 'status',
-          label: '状态',
+          label: t('pages.user.accountStatus'),
           formatter: (row) => {
             const statusConfig = getUserStatusConfig(row.status)
             return h(ElTag, { type: statusConfig.type }, () => statusConfig.text)
@@ -154,12 +150,12 @@
         },
         {
           prop: 'createTime',
-          label: '创建日期',
+          label: t('pages.user.createdAt'),
           sortable: true
         },
         {
           prop: 'operation',
-          label: '操作',
+          label: t('table.column.operation') || '操作',
           width: 120,
           fixed: 'right', // 固定列
           formatter: (row) =>
@@ -224,12 +220,12 @@
    */
   const deleteUser = (row: UserListItem): void => {
     console.log('删除用户:', row)
-    ElMessageBox.confirm(`确定要注销该用户吗？`, '注销用户', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
+    ElMessageBox.confirm(t('pages.user.confirmLogout'), t('pages.user.logoutTitle'), {
+      confirmButtonText: t('common.confirm'),
+      cancelButtonText: t('common.cancel'),
       type: 'error'
     }).then(() => {
-      ElMessage.success('注销成功')
+      ElMessage.success(t('pages.user.logoutSuccess'))
     })
   }
 

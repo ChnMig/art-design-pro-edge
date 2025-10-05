@@ -331,10 +331,133 @@
     "column": {
       "selection": "勾选",
       "expand": "展开",
-      "index": "序号"
+      "index": "序号",
+      "operation": "操作"
     },
     "zebra": "斑马纹",
     "border": "边框",
     "headerBackground": "表头背景"
+  },
+  "pages": {
+    "tenant": {
+      "title": "租户管理",
+      "add": "新增租户",
+      "edit": "编辑租户",
+      "code": "租户编码",
+      "name": "租户名称",
+      "description": "描述",
+      "status": "状态",
+      "enabled": "启用",
+      "disabled": "禁用",
+      "expiresAt": "到期时间",
+      "createdAt": "创建时间",
+      "all": "全部",
+      "placeholder": {
+        "code": "请输入租户编码",
+        "name": "请输入租户名称",
+        "description": "请输入描述",
+        "expiresAt": "选择到期时间"
+      },
+      "rules": {
+        "codeRequired": "请输入租户编码",
+        "codeLength": "长度在 2 到 50 个字符",
+        "nameRequired": "请输入租户名称",
+        "nameLength": "长度在 2 到 100 个字符",
+        "descMax": "长度不能超过 255 个字符",
+        "statusRequired": "请选择状态"
+      },
+      "confirmDelete": "确认删除租户 \"{name}\" 吗？",
+      "success": { "add": "新增成功", "edit": "更新成功", "delete": "删除成功" },
+      "error": {
+        "delete": "删除失败",
+        "submit": "提交失败",
+        "defaultTenantDelete": "默认租户不能删除"
+      }
+    },
+    "department": {
+      "title": "部门管理",
+      "add": "新增部门",
+      "edit": "编辑部门",
+      "name": "部门名称",
+      "status": "状态",
+      "sort": "排序",
+      "createdAt": "创建时间",
+      "updatedAt": "更新时间",
+      "enabled": "启用",
+      "disabled": "禁用",
+      "all": "全部",
+      "placeholder": {
+        "name": "请输入部门名称"
+      },
+      "confirmDelete": "确认删除部门 \"{name}\" 吗？",
+      "success": {
+        "add": "新增成功",
+        "edit": "更新成功",
+        "delete": "删除成功"
+      },
+      "error": {
+        "delete": "删除失败",
+        "submit": "提交失败"
+      }
+    },
+    "user": {
+      "add": "新增用户",
+      "edit": "编辑用户",
+      "username": "用户名",
+      "gender": "性别",
+      "genderMale": "男",
+      "genderFemale": "女",
+      "phone": "手机号",
+      "email": "邮箱",
+      "accountStatus": "状态",
+      "createdAt": "创建日期",
+      "logoutTitle": "注销用户",
+      "confirmLogout": "确定要注销该用户吗？",
+      "logoutSuccess": "注销成功",
+      "status": {
+        "online": "在线",
+        "offline": "离线",
+        "abnormal": "异常",
+        "canceled": "注销",
+        "unknown": "未知"
+      },
+      "placeholder": {
+        "username": "请输入用户名",
+        "phone": "请输入手机号",
+        "email": "请输入邮箱",
+        "status": "请选择状态"
+      },
+      "role": "角色",
+      "rules": {
+        "usernameRequired": "请输入用户名",
+        "usernameLength": "长度在 2 到 20 个字符",
+        "phoneRequired": "请输入手机号",
+        "phoneFormat": "请输入正确的手机号格式",
+        "genderRequired": "请选择性别",
+        "roleRequired": "请选择角色"
+      },
+      "success": {
+        "add": "新增成功",
+        "edit": "更新成功"
+      }
+    },
+    "role": {
+      "add": "新增角色",
+      "edit": "编辑角色",
+      "roleId": "角色ID",
+      "roleName": "角色名称",
+      "roleCode": "角色编码",
+      "description": "角色描述",
+      "status": "角色状态",
+      "enabled": "启用",
+      "disabled": "禁用",
+      "createdAt": "创建日期",
+      "menuPermission": "菜单权限",
+      "delete": "删除角色",
+      "deleteTitle": "删除确认",
+      "confirmDelete": "确定删除角色\"{name}\"吗？此操作不可恢复！",
+      "success": { "delete": "删除成功" },
+      "cancelDelete": "已取消删除"
+    }
   }
 }

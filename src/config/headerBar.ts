@@ -16,8 +16,8 @@ export const headerBarConfig: HeaderBarFeatureConfig = {
     description: '页面刷新按钮'
   },
   fastEnter: {
-    enabled: true,
-    description: '快速入口功能，提供常用应用和链接的快速访问'
+    enabled: false,
+    description: '快速入口功能，提供常用应用和链接的快速访问（已关闭）'
   },
   breadcrumb: {
     enabled: true,
@@ -40,7 +40,7 @@ export const headerBarConfig: HeaderBarFeatureConfig = {
     description: '聊天功能，提供实时沟通'
   },
   language: {
-    enabled: true,
+    enabled: false,
     description: '多语言切换功能'
   },
   settings: {

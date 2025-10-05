@@ -42,7 +42,6 @@
 - 锁屏
 - 多标签页
 - 全局面包屑
-- 多语言
 - 图标库
 - 富文本编辑器
 - Echarts 图表
@@ -164,3 +163,16 @@ QQ群：<a href="https://qm.qq.com/cgi-bin/qm/qr?k=Gg6yzZLFaNgmRhK0T5Qcjf7-XcAFW
 如果我的项目对你有所帮助，欢迎捐赠支持！你的支持将用于购买 ChatGPT、Cursor 等工具，以提升开发效率，让项目变得更好。感谢你的鼓励与支持！
 
 ![捐赠二维码](https://www.qiniu.lingchen.kim/%E7%BB%84%202%402x%202.png)
+
+- 去除国际化（仅中文）
+
+  - 隐藏语言切换，系统默认使用简体中文。
+  - 通过 `src/config/headerBar.ts` 禁用顶部栏语言功能（`language.enabled = false`）。
+  - 设置面板的“多语言选择”开关随之隐藏；运行时语言固定为中文。
+  - 为避免破坏现有 `$t()` 用法，仍保留 i18n 运行时，但不提供切换能力。
+
+- 去除快速入口
+
+  - 顶部栏“快速入口”默认关闭。
+  - 通过 `src/config/headerBar.ts` 禁用（`fastEnter.enabled = false`）。
+  - 设置面板对应开关随之隐藏。

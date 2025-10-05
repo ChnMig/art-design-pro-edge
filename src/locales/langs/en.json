@@ -339,10 +339,137 @@
     "column": {
       "selection": "Select",
       "expand": "Expand",
-      "index": "Index"
+      "index": "Index",
+      "operation": "Operation"
     },
     "zebra": "Zebra",
     "border": "Border",
     "headerBackground": "Header BG"
+  },
+  "pages": {
+    "tenant": {
+      "title": "Tenant Management",
+      "add": "Add Tenant",
+      "edit": "Edit Tenant",
+      "code": "Tenant Code",
+      "name": "Tenant Name",
+      "description": "Description",
+      "status": "Status",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "expiresAt": "Expiration Time",
+      "createdAt": "Created At",
+      "all": "All",
+      "placeholder": {
+        "code": "Enter tenant code",
+        "name": "Enter tenant name",
+        "description": "Enter description",
+        "expiresAt": "Select expiration time"
+      },
+      "rules": {
+        "codeRequired": "Please enter tenant code",
+        "codeLength": "Length 2 to 50 characters",
+        "nameRequired": "Please enter tenant name",
+        "nameLength": "Length 2 to 100 characters",
+        "descMax": "Max 255 characters",
+        "statusRequired": "Please select status"
+      },
+      "confirmDelete": "Delete tenant \"{name}\"?",
+      "success": {
+        "add": "Created successfully",
+        "edit": "Updated successfully",
+        "delete": "Deleted successfully"
+      },
+      "error": {
+        "delete": "Delete failed",
+        "submit": "Submit failed",
+        "defaultTenantDelete": "Default tenant cannot be deleted"
+      }
+    },
+    "department": {
+      "title": "Department Management",
+      "add": "Add Department",
+      "edit": "Edit Department",
+      "name": "Department Name",
+      "status": "Status",
+      "sort": "Sort",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "all": "All",
+      "placeholder": {
+        "name": "Enter department name"
+      },
+      "confirmDelete": "Delete department \"{name}\"?",
+      "success": {
+        "add": "Created successfully",
+        "edit": "Updated successfully",
+        "delete": "Deleted successfully"
+      },
+      "error": {
+        "delete": "Delete failed",
+        "submit": "Submit failed"
+      }
+    },
+    "user": {
+      "add": "Add User",
+      "edit": "Edit User",
+      "username": "Username",
+      "gender": "Gender",
+      "genderMale": "Male",
+      "genderFemale": "Female",
+      "phone": "Phone",
+      "email": "Email",
+      "accountStatus": "Status",
+      "createdAt": "Created At",
+      "logoutTitle": "Deactivate User",
+      "confirmLogout": "Are you sure to deactivate this user?",
+      "logoutSuccess": "Deactivated successfully",
+      "status": {
+        "online": "Online",
+        "offline": "Offline",
+        "abnormal": "Abnormal",
+        "canceled": "Deactivated",
+        "unknown": "Unknown"
+      },
+      "placeholder": {
+        "username": "Enter username",
+        "phone": "Enter phone number",
+        "email": "Enter email",
+        "status": "Select status"
+      },
+      "role": "Role",
+      "rules": {
+        "usernameRequired": "Please enter username",
+        "usernameLength": "Length 2 to 20 characters",
+        "phoneRequired": "Please enter phone number",
+        "phoneFormat": "Please enter a valid phone number",
+        "genderRequired": "Please select gender",
+        "roleRequired": "Please select role"
+      },
+      "success": {
+        "add": "Created successfully",
+        "edit": "Updated successfully"
+      }
+    },
+    "role": {
+      "add": "Add Role",
+      "edit": "Edit Role",
+      "roleId": "Role ID",
+      "roleName": "Role Name",
+      "roleCode": "Role Code",
+      "description": "Description",
+      "status": "Status",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "createdAt": "Created At",
+      "menuPermission": "Menu Permission",
+      "delete": "Delete Role",
+      "deleteTitle": "Delete Confirmation",
+      "confirmDelete": "Are you sure to delete role \"{name}\"? This action cannot be undone!",
+      "success": { "delete": "Deleted successfully" },
+      "cancelDelete": "Deletion cancelled"
+    }
   }
 }

@@ -22,6 +22,9 @@
   const props = defineProps<Props>()
   const emit = defineEmits<Emits>()
 
+  import { useI18n } from 'vue-i18n'
+  const { t } = useI18n()
+
   // 表单数据双向绑定
   const searchBarRef = ref()
   const formData = computed({
@@ -42,10 +45,10 @@
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve([
-          { label: '在线', value: '1' },
-          { label: '离线', value: '2' },
-          { label: '异常', value: '3' },
-          { label: '注销', value: '4' }
+          { label: t('pages.user.status.online'), value: '1' },
+          { label: t('pages.user.status.offline'), value: '2' },
+          { label: t('pages.user.status.abnormal'), value: '3' },
+          { label: t('pages.user.status.canceled'), value: '4' }
         ])
       }, 1000)
     })
@@ -58,41 +61,41 @@
   // 表单配置
   const formItems = computed(() => [
     {
-      label: '用户名',
+      label: t('pages.user.username'),
       key: 'userName',
       type: 'input',
-      placeholder: '请输入用户名',
+      placeholder: t('pages.user.placeholder.username'),
       clearable: true
     },
     {
-      label: '手机号',
+      label: t('pages.user.phone'),
       key: 'userPhone',
       type: 'input',
-      props: { placeholder: '请输入手机号', maxlength: '11' }
+      props: { placeholder: t('pages.user.placeholder.phone'), maxlength: '11' }
     },
     {
-      label: '邮箱',
+      label: t('pages.user.email'),
       key: 'userEmail',
       type: 'input',
-      props: { placeholder: '请输入邮箱' }
+      props: { placeholder: t('pages.user.placeholder.email') }
     },
     {
-      label: '状态',
+      label: t('pages.user.accountStatus'),
       key: 'status',
       type: 'select',
       props: {
-        placeholder: '请选择状态',
+        placeholder: t('pages.user.placeholder.status'),
         options: statusOptions.value
       }
     },
     {
-      label: '性别',
+      label: t('pages.user.gender'),
       key: 'userGender',
       type: 'radiogroup',
       props: {
         options: [
-          { label: '男', value: '1' },
-          { label: '女', value: '2' }
+          { label: t('pages.user.genderMale'), value: '1' },
+          { label: t('pages.user.genderFemale'), value: '2' }
         ]
       }
     }
