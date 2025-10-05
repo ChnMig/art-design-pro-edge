@@ -138,7 +138,7 @@ Authorization: Bearer {your_jwt_token}
 
 ```json
 {
-  "tenant_code": "default",
+  "tenant_code": "system",
   "account": "admin",
   "password": "123456",
   "captcha": "1234",
@@ -165,7 +165,7 @@ Authorization: Bearer {your_jwt_token}
     "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
     "tenant_info": {
       "tenant_id": 1,
-      "tenant_code": "default",
+      "tenant_code": "system",
       "tenant_name": "默认企业"
     },
     "user_info": {
@@ -175,6 +175,30 @@ Authorization: Bearer {your_jwt_token}
       "account": "admin"
     }
   },
+  "timestamp": 1640995200
+}
+```
+
+#### 1.3 租户编码模糊查询
+
+**接口描述：** 登录页用，根据用户输入模糊查询租户编码，返回最多 10 条。
+
+**请求方式：** `GET`
+
+**请求路径：** `/api/v1/admin/system/user/login/tenant`
+
+**请求参数：**
+
+- `code` (必填) - 用户输入的租户编码片段，长度必须大于系统配置的最小长度（默认 3）。
+
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": [{ "id": 1, "code": "system", "name": "默认企业" }],
   "timestamp": 1640995200
 }
 ```
@@ -799,7 +823,7 @@ Authorization: Bearer {your_jwt_token}
   "data": [
     {
       "id": 1,
-      "code": "default",
+      "code": "system",
       "name": "默认企业",
       "contact": "",
       "phone": "",
@@ -899,7 +923,7 @@ Authorization: Bearer {your_jwt_token}
   "data": [
     {
       "id": 1,
-      "tenant_code": "default",
+      "tenant_code": "system",
       "user_name": "admin",
       "ip": "192.168.1.100",
       "login_status": "success",

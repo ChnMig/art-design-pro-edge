@@ -64,6 +64,13 @@ declare namespace Api {
       tenantCode?: string
       [key: string]: any
     }
+
+    /** 登录页租户模糊查询项 */
+    interface TenantItem {
+      id: number
+      code: string
+      name: string
+    }
   }
 
   /** 系统管理类型 */

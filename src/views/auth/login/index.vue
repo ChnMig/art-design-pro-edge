@@ -48,7 +48,22 @@
             style="margin-top: 25px"
           >
             <ElFormItem prop="tenant_code">
-              <ElInput v-model.trim="formData.tenant_code" :placeholder="tenantPlaceholder" />
+              <ElSelect
+                v-model="formData.tenant_code"
+                :placeholder="tenantPlaceholder"
+                filterable
+                remote
+                clearable
+                :remote-method="remoteSearchTenant"
+                :loading="tenantLoading"
+              >
+                <ElOption
+                  v-for="item in tenantOptions"
+                  :key="item.code"
+                  :label="formatTenantLabel(item)"
+                  :value="item.code"
+                />
+              </ElSelect>
             </ElFormItem>
             <ElFormItem prop="account">
               <ElInput v-model.trim="formData.account" :placeholder="accountPlaceholder" />
@@ -120,7 +135,7 @@
   import { LanguageEnum } from '@/enums/appEnum'
   import { useI18n } from 'vue-i18n'
   import { themeAnimation } from '@/utils/theme/animation'
-  import { fetchLogin, fetchGetUserInfo, fetchCaptcha } from '@/api/auth'
+  import { fetchLogin, fetchGetUserInfo, fetchCaptcha, searchTenant } from '@/api/auth'
   import { useHeaderBar } from '@/composables/useHeaderBar'
   import { useSettingStore } from '@/store/modules/setting'
   import type { FormInstance, FormRules } from 'element-plus'
@@ -140,7 +155,7 @@
   const formRef = ref<FormInstance>()
 
   const formData = reactive({
-    tenant_code: 'default',
+    tenant_code: '',
     account: '',
     password: '',
     captcha: '',
@@ -154,11 +169,36 @@
   const captchaLoadingText = computed(() => t('login.captchaLoading') || '加载中...')
 
   const rules = computed<FormRules>(() => ({
-    tenant_code: [{ required: true, message: tenantPlaceholder.value, trigger: 'blur' }],
+    tenant_code: [{ required: true, message: tenantPlaceholder.value, trigger: 'change' }],
     account: [{ required: true, message: accountPlaceholder.value, trigger: 'blur' }],
     password: [{ required: true, message: passwordPlaceholder.value, trigger: 'blur' }],
     captcha: [{ required: true, message: captchaPlaceholder.value, trigger: 'blur' }]
   }))
+
+  // 登录页租户下拉搜索
+  const tenantOptions = ref<Api.Auth.TenantItem[]>([])
+  const tenantLoading = ref(false)
+  const MIN_LEN = 3
+
+  const doSearchTenant = async (query: string) => {
+    if (!query || query.trim().length < MIN_LEN) {
+      tenantOptions.value = []
+      return
+    }
+    tenantLoading.value = true
+    try {
+      const list = await searchTenant(query.trim())
+      tenantOptions.value = Array.isArray(list) ? list : []
+    } catch (error) {
+      console.error('[Login] search tenant failed:', error)
+      tenantOptions.value = []
+    } finally {
+      tenantLoading.value = false
+    }
+  }
+
+  const remoteSearchTenant = useDebounceFn((query: string) => doSearchTenant(query), 300)
+  const formatTenantLabel = (item: Api.Auth.TenantItem) => `${item.code} - ${item.name}`
 
   const loading = ref(false)
   const captchaImageUrl = ref('')

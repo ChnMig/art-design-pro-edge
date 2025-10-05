@@ -42,3 +42,15 @@ export function fetchGetUserInfo() {
     showErrorMessage: false
   })
 }
+
+/**
+ * 登录页租户编码模糊查询
+ * GET /api/v1/admin/system/user/login/tenant?code=xxx
+ */
+export function searchTenant(code: string) {
+  return request.get<Api.Auth.TenantItem[]>({
+    url: '/api/v1/admin/system/user/login/tenant',
+    params: { code },
+    showErrorMessage: false
+  })
+}
