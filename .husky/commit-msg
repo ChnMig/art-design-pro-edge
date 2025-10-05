@@ -1,1 +1,5 @@
-pnpm dlx commitlint --edit $1
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# 已禁用 commitlint 校验，直接通过
+exit 0

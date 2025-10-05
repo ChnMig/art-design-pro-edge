@@ -100,33 +100,35 @@
             popper-style="border: 1px solid var(--art-border-dashed-color); border-radius: calc(var(--custom-radius) / 2 + 4px); padding: 5px 16px; 5px 16px;"
           >
             <template #reference>
-              <img class="cover" src="@imgs/user/avatar.webp" alt="avatar" />
+              <img
+                class="cover"
+                :src="userInfo.avatar"
+                ref="userAvatarRef"
+                tabindex="-1"
+                alt="avatar"
+              />
             </template>
             <template #default>
               <div class="user-menu-box">
                 <div class="user-head">
-                  <img class="cover" src="@imgs/user/avatar.webp" style="float: left" />
+                  <img class="cover" :src="userInfo.avatar" style="float: left" />
                   <div class="user-wrap">
-                    <span class="name">{{ userInfo.userName }}</span>
-                    <span class="email">{{ userInfo.email }}</span>
+                    <span class="name">{{ displayName }}</span>
+                    <span class="tenant" v-if="currentTenantCode">
+                      <i class="iconfont-sys">&#xe604;</i>
+                      {{ currentTenantName || currentTenantCode }}
+                    </span>
+                    <span class="email" v-if="userInfo.email">{{ userInfo.email }}</span>
                   </div>
                 </div>
                 <ul class="user-menu">
-                  <li @click="goPage('/system/user-center')">
-                    <i class="menu-icon iconfont-sys">&#xe734;</i>
-                    <span class="menu-txt">{{ '个人中心' }}</span>
-                  </li>
-                  <li @click="toDocs()">
-                    <i class="menu-icon iconfont-sys" style="font-size: 15px">&#xe828;</i>
-                    <span class="menu-txt">{{ '使用文档' }}</span>
-                  </li>
-                  <li @click="toGithub()">
-                    <i class="menu-icon iconfont-sys">&#xe8d6;</i>
-                    <span class="menu-txt">{{ 'Github' }}</span>
-                  </li>
                   <li @click="lockScreen()">
                     <i class="menu-icon iconfont-sys">&#xe817;</i>
                     <span class="menu-txt">{{ '锁定屏幕' }}</span>
+                  </li>
+                  <li @click="openEditInfo()">
+                    <i class="menu-icon iconfont-sys">&#xe6e0;</i>
+                    <span class="menu-txt">{{ '修改个人信息' }}</span>
                   </li>
                   <div class="line"></div>
                   <div class="logout-btn" @click="loginOut">
@@ -152,7 +154,6 @@
   import { useUserStore } from '@/store/modules/user'
   import { useMenuStore } from '@/store/modules/menu'
   import AppConfig from '@/config'
-  import { WEB_LINKS } from '@/utils/constants'
   import { mittBus } from '@/utils/sys'
   import { themeAnimation } from '@/utils/theme/animation'
   import { useCommon } from '@/composables/useCommon'
@@ -184,9 +185,24 @@
   const { menuOpen, systemThemeColor, showSettingGuide, menuType, isDark, tabStyle } =
     storeToRefs(settingStore)
 
-  const { getUserInfo: userInfo } = storeToRefs(userStore)
+  const {
+    getUserInfo: userInfo,
+    getCurrentTenantCode: currentTenantCode,
+    getTenantInfo: tenantInfo
+  } = storeToRefs(userStore)
   const { menuList } = storeToRefs(menuStore)
   const userMenuPopover = ref()
+  const userAvatarRef = ref<HTMLImageElement | null>(null)
+
+  const currentTenantName = computed(() => tenantInfo.value?.name || '')
+  const displayName = computed(
+    () =>
+      (userInfo.value?.userName ||
+        userInfo.value?.username ||
+        userInfo.value?.nickName ||
+        userInfo.value?.email ||
+        '未命名用户') as string
+  )
 
   // 菜单类型判断
   const isLeftMenu = computed(() => menuType.value === MenuTypeEnum.LEFT)
@@ -211,32 +227,21 @@
   }
 
   /**
-   * 页面跳转
-   * @param {string} path - 目标路径
-   */
-  const goPage = (path: string): void => {
-    router.push(path)
-  }
-
-  /**
-   * 打开文档页面
-   */
-  const toDocs = (): void => {
-    window.open(WEB_LINKS.DOCS)
-  }
-
-  /**
-   * 打开 GitHub 页面
-   */
-  const toGithub = (): void => {
-    window.open(WEB_LINKS.GITHUB)
-  }
-
-  /**
    * 跳转到首页
    */
   const toHome = (): void => {
     router.push(useCommon().homePath.value)
+  }
+
+  /**
+   * 打开个人信息编辑
+   */
+  const openEditInfo = (): void => {
+    closeUserMenu()
+    nextTick(() => {
+      userAvatarRef.value?.focus()
+      mittBus.emit('openEditInfoDialog')
+    })
   }
 
   /**
@@ -296,7 +301,9 @@
    */
   const closeUserMenu = (): void => {
     setTimeout(() => {
-      userMenuPopover.value.hide()
+      if (userMenuPopover.value && typeof userMenuPopover.value.hide === 'function') {
+        userMenuPopover.value.hide()
+      }
     }, 100)
   }
 </script>
