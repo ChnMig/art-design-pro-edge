@@ -272,18 +272,18 @@
   })
 
   const {
-    tableData,
-    isLoading,
+    data: tableData,
+    loading: isLoading,
     columns,
     columnChecks,
-    paginationState,
-    searchState,
-    searchData,
-    resetSearch,
-    onPageSizeChange,
-    onCurrentPageChange
-  } = tableApi
-  const refreshAll = tableApi.refreshAll
+    pagination: paginationState,
+    searchParams: searchState,
+    getData: searchData,
+    resetSearchParams: resetSearch,
+    handleSizeChange: onPageSizeChange,
+    handleCurrentChange: onCurrentPageChange,
+    refreshAll
+  } = tableApi as any
 
   // 添加部门列表和角色列表的响应式数据
   const departmentList = ref<any[]>([])
