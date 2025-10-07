@@ -12,13 +12,10 @@
     </el-row>
 
     <el-row :gutter="20">
-      <el-col :sm="24" :md="24" :lg="12">
-        <NewUser />
-      </el-col>
-      <el-col :sm="24" :md="12" :lg="6">
+      <el-col :sm="24" :md="12" :lg="12">
         <Dynamic />
       </el-col>
-      <el-col :sm="24" :md="12" :lg="6">
+      <el-col :sm="24" :md="12" :lg="12">
         <TodoList />
       </el-col>
     </el-row>
@@ -31,7 +28,6 @@
   import CardList from './widget/CardList.vue'
   import ActiveUser from './widget/ActiveUser.vue'
   import SalesOverview from './widget/SalesOverview.vue'
-  import NewUser from './widget/NewUser.vue'
   import Dynamic from './widget/Dynamic.vue'
   import TodoList from './widget/TodoList.vue'
   import AboutProject from './widget/AboutProject.vue'
