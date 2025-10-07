@@ -265,6 +265,18 @@ Authorization: Bearer {your_jwt_token}
 - `gender` - 性别 (1 男 / 2 女)
 - `password` - 可选，提供则更新密码
 
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": "更新用户成功",
+  "timestamp": 1640995200
+}
+```
+
 #### 2.3 获取用户列表
 
 **接口描述：** 分页查询用户列表
@@ -333,6 +345,29 @@ Authorization: Bearer {your_jwt_token}
 - `page` - 页码
 - `pageSize` - 每页数量
 
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": [
+    {
+      "id": 1,
+      "username": "admin",
+      "name": "超级管理员",
+      "role_id": 1,
+      "role_name": "超级管理员"
+    }
+  ],
+  "total": 1,
+  "timestamp": 1640995200
+}
+```
+
+> 提示：当携带 `id` 参数时，返回的 `data` 为单个用户对象且不包含 `total` 字段。
+
 #### 2.5 新增用户
 
 **接口描述：** 创建新用户
@@ -356,6 +391,18 @@ Authorization: Bearer {your_jwt_token}
   "status": 1,
   "role_id": 2,
   "department_id": 1
+}
+```
+
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": null,
+  "timestamp": 1640995200
 }
 ```
 
@@ -386,6 +433,18 @@ Authorization: Bearer {your_jwt_token}
 }
 ```
 
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": null,
+  "timestamp": 1640995200
+}
+```
+
 #### 2.7 删除用户
 
 **接口描述：** 删除用户（软删除）
@@ -401,6 +460,18 @@ Authorization: Bearer {your_jwt_token}
 ```json
 {
   "id": 1
+}
+```
+
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": null,
+  "timestamp": 1640995200
 }
 ```
 
@@ -454,6 +525,67 @@ Authorization: Bearer {your_jwt_token}
 
 **请求头：** `Authorization: Bearer {token}`
 
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": [
+    {
+      "id": 1,
+      "updatedAt": 1640995200,
+      "path": "/system",
+      "name": "System",
+      "component": "Layout",
+      "meta": {
+        "title": "系统管理",
+        "icon": "setting",
+        "keepAlive": true,
+        "isFirstLevel": true,
+        "isEnable": true,
+        "sort": 100
+      },
+      "hasPermission": false,
+      "children": [
+        {
+          "id": 2,
+          "updatedAt": 1640995200,
+          "path": "/system/menu",
+          "name": "SystemMenu",
+          "component": "/system/menu/index",
+          "parentId": 1,
+          "meta": {
+            "title": "菜单管理",
+            "icon": "menu",
+            "keepAlive": true,
+            "isEnable": true,
+            "sort": 90,
+            "authList": [
+              {
+                "id": 11,
+                "title": "新增菜单",
+                "authMark": "system:menu:create",
+                "hasPermission": false
+              },
+              {
+                "id": 12,
+                "title": "删除菜单",
+                "authMark": "system:menu:delete",
+                "hasPermission": false
+              }
+            ]
+          },
+          "hasPermission": false
+        }
+      ]
+    }
+  ],
+  "timestamp": 1640995200
+}
+```
+
 #### 3.3 新增菜单
 
 **接口描述：** 创建新菜单
@@ -487,6 +619,40 @@ Authorization: Bearer {your_jwt_token}
 }
 ```
 
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": {
+    "id": 8,
+    "created_at": 1640995200,
+    "updated_at": 1640995200,
+    "path": "/system/report",
+    "name": "SystemReport",
+    "component": "/system/report/index",
+    "title": "报表管理",
+    "icon": "bar-chart",
+    "show_badge": 2,
+    "show_text_badge": "",
+    "is_hide": 2,
+    "is_hide_tab": 2,
+    "link": "",
+    "is_iframe": 2,
+    "keep_alive": 2,
+    "is_in_main_container": 2,
+    "status": 1,
+    "level": 2,
+    "parent_id": 2,
+    "sort": 66,
+    "menu_auths": []
+  },
+  "timestamp": 1640995200
+}
+```
+
 #### 3.4 更新菜单
 
 **接口描述：** 更新菜单信息
@@ -496,6 +662,64 @@ Authorization: Bearer {your_jwt_token}
 **请求路径：** `/api/v1/admin/system/menu`
 
 **请求头：** `Authorization: Bearer {token}`
+
+**请求参数：**
+
+```json
+{
+  "id": 8,
+  "path": "/system/report",
+  "name": "SystemReport",
+  "component": "/system/report/index",
+  "title": "报表管理",
+  "icon": "bar-chart",
+  "showBadge": 2,
+  "showTextBadge": "",
+  "isHide": 2,
+  "isHideTab": 2,
+  "link": "",
+  "isIframe": 2,
+  "keepAlive": 2,
+  "isFirstLevel": 2,
+  "status": 1,
+  "parentId": 2,
+  "sort": 80
+}
+```
+
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": {
+    "id": 8,
+    "created_at": 1640995200,
+    "updated_at": 1640998800,
+    "path": "/system/report",
+    "name": "SystemReport",
+    "component": "/system/report/index",
+    "title": "报表管理",
+    "icon": "bar-chart",
+    "show_badge": 2,
+    "show_text_badge": "",
+    "is_hide": 2,
+    "is_hide_tab": 2,
+    "link": "",
+    "is_iframe": 2,
+    "keep_alive": 2,
+    "is_in_main_container": 2,
+    "status": 1,
+    "level": 2,
+    "parent_id": 2,
+    "sort": 80,
+    "menu_auths": []
+  },
+  "timestamp": 1640998800
+}
+```
 
 #### 3.5 删除菜单
 
@@ -511,7 +735,42 @@ Authorization: Bearer {your_jwt_token}
 
 ```json
 {
-  "id": 1
+  "id": 8
+}
+```
+
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": {
+    "id": 8,
+    "created_at": 1640995200,
+    "updated_at": 1640998800,
+    "deleted_at": 1641002400,
+    "path": "/system/report",
+    "name": "SystemReport",
+    "component": "/system/report/index",
+    "title": "报表管理",
+    "icon": "bar-chart",
+    "show_badge": 2,
+    "show_text_badge": "",
+    "is_hide": 2,
+    "is_hide_tab": 2,
+    "link": "",
+    "is_iframe": 2,
+    "keep_alive": 2,
+    "is_in_main_container": 2,
+    "status": 1,
+    "level": 2,
+    "parent_id": 2,
+    "sort": 80,
+    "menu_auths": []
+  },
+  "timestamp": 1641002400
 }
 ```
 
@@ -531,6 +790,27 @@ Authorization: Bearer {your_jwt_token}
 
 - `menu_id` - 菜单ID（必填）
 
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": [
+    {
+      "id": 21,
+      "created_at": 1640995200,
+      "updated_at": 1640995200,
+      "menu_id": 6,
+      "mark": "system:menu:read",
+      "title": "查看菜单"
+    }
+  ],
+  "timestamp": 1640995200
+}
+```
+
 #### 4.2 新增菜单权限
 
 **接口描述：** 添加菜单权限
@@ -548,6 +828,25 @@ Authorization: Bearer {your_jwt_token}
   "menu_id": 6,
   "mark": "system:user:read",
   "title": "查看"
+}
+```
+
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": {
+    "id": 21,
+    "created_at": 1640995200,
+    "updated_at": 1640995200,
+    "menu_id": 6,
+    "mark": "system:user:read",
+    "title": "查看"
+  },
+  "timestamp": 1640995200
 }
 ```
 
@@ -572,6 +871,25 @@ Authorization: Bearer {your_jwt_token}
 }
 ```
 
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": {
+    "id": 1,
+    "created_at": 1640995200,
+    "updated_at": 1641002400,
+    "menu_id": 6,
+    "mark": "system:user:read",
+    "title": "查看"
+  },
+  "timestamp": 1641002400
+}
+```
+
 #### 4.4 删除菜单权限
 
 **接口描述：** 删除菜单权限
@@ -590,6 +908,26 @@ Authorization: Bearer {your_jwt_token}
 }
 ```
 
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": {
+    "id": 1,
+    "created_at": 1640995200,
+    "updated_at": 1641002400,
+    "deleted_at": 1641006000,
+    "menu_id": 6,
+    "mark": "system:user:read",
+    "title": "查看"
+  },
+  "timestamp": 1641006000
+}
+```
+
 #### 4.5 根据角色获取菜单
 
 **接口描述：** 获取指定角色的菜单权限
@@ -603,6 +941,67 @@ Authorization: Bearer {your_jwt_token}
 **请求参数：**
 
 - `role_id` - 角色ID
+
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": [
+    {
+      "id": 1,
+      "updatedAt": 1640995200,
+      "path": "/system",
+      "name": "System",
+      "component": "Layout",
+      "meta": {
+        "title": "系统管理",
+        "icon": "setting",
+        "keepAlive": true,
+        "isFirstLevel": true,
+        "isEnable": true,
+        "sort": 100
+      },
+      "hasPermission": true,
+      "children": [
+        {
+          "id": 2,
+          "updatedAt": 1640995200,
+          "path": "/system/menu",
+          "name": "SystemMenu",
+          "component": "/system/menu/index",
+          "parentId": 1,
+          "meta": {
+            "title": "菜单管理",
+            "icon": "menu",
+            "keepAlive": true,
+            "isEnable": true,
+            "sort": 90,
+            "authList": [
+              {
+                "id": 11,
+                "title": "新增菜单",
+                "authMark": "system:menu:create",
+                "hasPermission": true
+              },
+              {
+                "id": 12,
+                "title": "删除菜单",
+                "authMark": "system:menu:delete",
+                "hasPermission": false
+              }
+            ]
+          },
+          "hasPermission": true
+        }
+      ]
+    }
+  ],
+  "timestamp": 1640995200
+}
+```
 
 #### 4.6 更新角色菜单权限
 
@@ -620,6 +1019,18 @@ Authorization: Bearer {your_jwt_token}
 {
   "role_id": 2,
   "menu_data": "[ { \"id\":6, \"hasPermission\":true, \"meta\":{ \"authList\":[{ \"id\":1, \"authMark\":\"system:user:read\", \"hasPermission\":true }] } } ]"
+}
+```
+
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": null,
+  "timestamp": 1641006000
 }
 ```
 
@@ -682,6 +1093,25 @@ Authorization: Bearer {your_jwt_token}
 }
 ```
 
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": {
+    "id": 6,
+    "created_at": 1640995200,
+    "updated_at": 1640995200,
+    "name": "部门名称",
+    "sort": 1,
+    "status": 1
+  },
+  "timestamp": 1640995200
+}
+```
+
 #### 5.3 更新部门
 
 **接口描述：** 更新部门信息
@@ -691,6 +1121,36 @@ Authorization: Bearer {your_jwt_token}
 **请求路径：** `/api/v1/admin/system/department`
 
 **请求头：** `Authorization: Bearer {token}`
+
+**请求参数：**
+
+```json
+{
+  "id": 6,
+  "name": "部门名称",
+  "status": 2,
+  "sort": 10
+}
+```
+
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": {
+    "id": 6,
+    "created_at": 1640995200,
+    "updated_at": 1641002400,
+    "name": "部门名称",
+    "sort": 10,
+    "status": 2
+  },
+  "timestamp": 1641002400
+}
+```
 
 #### 5.4 删除部门
 
@@ -707,6 +1167,26 @@ Authorization: Bearer {your_jwt_token}
 ```json
 {
   "id": 1
+}
+```
+
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": {
+    "id": 1,
+    "created_at": 1640995200,
+    "updated_at": 1640998800,
+    "deleted_at": 1641002400,
+    "name": "管理中心",
+    "sort": 1,
+    "status": 1
+  },
+  "timestamp": 1641002400
 }
 ```
 
@@ -769,6 +1249,25 @@ Authorization: Bearer {your_jwt_token}
 }
 ```
 
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": {
+    "id": 5,
+    "created_at": 1640995200,
+    "updated_at": 1640995200,
+    "name": "角色名称",
+    "desc": "角色描述",
+    "status": 1
+  },
+  "timestamp": 1640995200
+}
+```
+
 #### 6.3 更新角色
 
 **接口描述：** 更新角色信息
@@ -778,6 +1277,36 @@ Authorization: Bearer {your_jwt_token}
 **请求路径：** `/api/v1/admin/system/role`
 
 **请求头：** `Authorization: Bearer {token}`
+
+**请求参数：**
+
+```json
+{
+  "id": 5,
+  "name": "角色名称",
+  "desc": "角色描述更新",
+  "status": 2
+}
+```
+
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": {
+    "id": 5,
+    "created_at": 1640995200,
+    "updated_at": 1641002400,
+    "name": "角色名称",
+    "desc": "角色描述更新",
+    "status": 2
+  },
+  "timestamp": 1641002400
+}
+```
 
 #### 6.4 删除角色
 
@@ -794,6 +1323,26 @@ Authorization: Bearer {your_jwt_token}
 ```json
 {
   "id": 1
+}
+```
+
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": {
+    "id": 1,
+    "created_at": 1640995200,
+    "updated_at": 1640998800,
+    "deleted_at": 1641002400,
+    "name": "超级管理员",
+    "desc": "拥有所有权限",
+    "status": 1
+  },
+  "timestamp": 1641002400
 }
 ```
 
@@ -867,8 +1416,20 @@ Authorization: Bearer {your_jwt_token}
   "email": "邮箱",
   "address": "地址",
   "status": 1,
-  "expired_at": null,
+  "expired_at": "2024-12-31T23:59:59Z",
   "max_users": 100
+}
+```
+
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": null,
+  "timestamp": 1640995200
 }
 ```
 
@@ -881,6 +1442,35 @@ Authorization: Bearer {your_jwt_token}
 **请求路径：** `/api/v1/admin/system/tenant`
 
 **请求头：** `Authorization: Bearer {token}`
+
+**请求参数：**
+
+```json
+{
+  "id": 1,
+  "code": "tenant_code",
+  "name": "租户名称更新",
+  "contact": "联系人",
+  "phone": "联系电话",
+  "email": "邮箱",
+  "address": "地址",
+  "status": 2,
+  "expired_at": "2025-12-31T23:59:59Z",
+  "max_users": 200
+}
+```
+
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": null,
+  "timestamp": 1641002400
+}
+```
 
 #### 7.4 删除租户
 
@@ -897,6 +1487,18 @@ Authorization: Bearer {your_jwt_token}
 ```json
 {
   "id": 1
+}
+```
+
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "message": "请求成功",
+  "data": null,
+  "timestamp": 1641002400
 }
 ```
 
