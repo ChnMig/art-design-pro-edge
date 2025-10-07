@@ -413,6 +413,8 @@ Authorization: Bearer {your_jwt_token}
 }
 ```
 
+> 说明：`role_id` 必须为当前租户已创建的角色，不能选择其他租户或平台预置角色。
+
 #### 2.6 更新用户
 
 **接口描述：** 更新用户信息
@@ -452,6 +454,8 @@ Authorization: Bearer {your_jwt_token}
 }
 ```
 
+> 说明：更新时若修改角色，`role_id` 同样必须属于当前租户。
+
 #### 2.7 删除用户
 
 **接口描述：** 删除用户（软删除）
@@ -482,17 +486,96 @@ Authorization: Bearer {your_jwt_token}
 }
 ```
 
-### 3. 菜单管理
+### 3. 平台菜单管理（超级管理员）
 
-#### 3.1 获取用户菜单列表
+**说明：** 以下接口由平台超级管理员使用，路径统一为 `/api/v1/admin/platform/...`，用于维护系统菜单定义并为租户分配最大的可用范围。
 
-**接口描述：** 获取当前用户的菜单权限
+#### 3.1 获取平台菜单列表
 
-**请求方式：** `GET`
+- **请求方式：** `GET`
+- **请求路径：** `/api/v1/admin/platform/menu`
+- **请求头：** `Authorization: Bearer {token}`
 
-**请求路径：** `/api/v1/admin/system/user/menu`
+返回完整的菜单树，供平台侧配置使用。
 
-**请求头：** `Authorization: Bearer {token}`
+#### 3.2 新增平台菜单
+
+- **请求方式：** `POST`
+- **请求路径：** `/api/v1/admin/platform/menu`
+- **请求参数：**
+
+```json
+{
+  "path": "/platform/menu",
+  "name": "PlatformMenu",
+  "component": "/platform/menu/index",
+  "title": "菜单管理",
+  "status": 1,
+  "parentId": 2,
+  "sort": 3
+}
+```
+
+#### 3.3 更新 / 删除平台菜单
+
+- `PUT /api/v1/admin/platform/menu`
+- `DELETE /api/v1/admin/platform/menu`
+
+均仅限超级管理员调用。
+
+#### 3.4 菜单权限定义管理
+
+- `GET /api/v1/admin/platform/menu/auth`
+- `POST /api/v1/admin/platform/menu/auth`
+- `PUT /api/v1/admin/platform/menu/auth`
+- `DELETE /api/v1/admin/platform/menu/auth`
+
+请求与响应结构与原有示例保持一致，仅路径前缀调整为 `/admin/platform`。
+
+#### 3.5 查询租户菜单范围
+
+- **请求方式：** `GET`
+- **请求路径：** `/api/v1/admin/platform/menu/scope`
+- **请求参数：** `tenant_id`（查询参数，必填）
+
+**响应示例：**
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "data": {
+    "tenant_id": 1,
+    "menu_ids": [6, 7, 8, 9, 10]
+  },
+  "timestamp": 1640995200
+}
+```
+
+#### 3.6 更新租户菜单范围
+
+- **请求方式：** `PUT`
+- **请求路径：** `/api/v1/admin/platform/menu/scope`
+- **请求体：**
+
+```json
+{
+  "tenant_id": 1,
+  "menu_ids": [6, 7, 8, 9, 10]
+}
+```
+
+更新后，租户在系统管理端只能在该集合内勾选角色菜单。
+
+### 4. 租户菜单管理
+
+**说明：** 租户管理员通过 `/api/v1/admin/system` 前缀调用，仅能操作平台授权范围内的数据。
+
+#### 4.1 获取当前用户菜单
+
+- **请求方式：** `GET`
+- **请求路径：** `/api/v1/admin/system/user/menu`
+- **请求头：** `Authorization: Bearer {token}`
 
 **响应示例：**
 
@@ -502,19 +585,15 @@ Authorization: Bearer {your_jwt_token}
   "status": "OK",
   "data": [
     {
-      "id": 1,
+      "id": 6,
       "name": "系统管理",
       "path": "/system",
-      "icon": "setting",
-      "sort": 1,
+      "icon": "&#xe72b;",
       "children": [
-        {
-          "id": 2,
-          "name": "用户管理",
-          "path": "/system/user",
-          "icon": "user",
-          "sort": 1
-        }
+        { "id": 7, "name": "角色管理", "path": "/system/role" },
+        { "id": 8, "name": "菜单管理", "path": "/system/menu" },
+        { "id": 9, "name": "部门管理", "path": "/system/department" },
+        { "id": 10, "name": "用户管理", "path": "/system/user" }
       ]
     }
   ],
@@ -522,524 +601,33 @@ Authorization: Bearer {your_jwt_token}
 }
 ```
 
-#### 3.2 获取菜单列表
+#### 4.2 获取租户菜单列表
 
-**接口描述：** 获取所有菜单列表（管理员）
+- **请求方式：** `GET`
+- **请求路径：** `/api/v1/admin/system/menu`
 
-**请求方式：** `GET`
+返回租户可配置的菜单树（已根据平台范围裁剪）。
 
-**请求路径：** `/api/v1/admin/system/menu`
+#### 4.3 获取角色菜单权限
 
-**请求头：** `Authorization: Bearer {token}`
+- **请求方式：** `GET`
+- **请求路径：** `/api/v1/admin/system/menu/role`
+- **请求参数：** `role_id`（必填）
 
-**响应示例：**
+#### 4.4 更新角色菜单权限
 
-```json
-{
-  "code": 200,
-  "status": "OK",
-  "message": "请求成功",
-  "data": [
-    {
-      "id": 1,
-      "updatedAt": 1640995200,
-      "path": "/system",
-      "name": "System",
-      "component": "Layout",
-      "meta": {
-        "title": "系统管理",
-        "icon": "setting",
-        "keepAlive": true,
-        "isFirstLevel": true,
-        "isEnable": true,
-        "sort": 100
-      },
-      "hasPermission": false,
-      "children": [
-        {
-          "id": 2,
-          "updatedAt": 1640995200,
-          "path": "/system/menu",
-          "name": "SystemMenu",
-          "component": "/system/menu/index",
-          "parentId": 1,
-          "meta": {
-            "title": "菜单管理",
-            "icon": "menu",
-            "keepAlive": true,
-            "isEnable": true,
-            "sort": 90,
-            "authList": [
-              {
-                "id": 11,
-                "title": "新增菜单",
-                "authMark": "system:menu:create",
-                "hasPermission": false
-              },
-              {
-                "id": 12,
-                "title": "删除菜单",
-                "authMark": "system:menu:delete",
-                "hasPermission": false
-              }
-            ]
-          },
-          "hasPermission": false
-        }
-      ]
-    }
-  ],
-  "timestamp": 1640995200
-}
-```
-
-#### 3.3 新增菜单
-
-**接口描述：** 创建新菜单
-
-**请求方式：** `POST`
-
-**请求路径：** `/api/v1/admin/system/menu`
-
-**请求头：** `Authorization: Bearer {token}`
-
-**请求参数：**
-
-```json
-{
-  "path": "/system/user",
-  "name": "SystemUser",
-  "component": "/system/user/index",
-  "title": "用户管理",
-  "icon": "",
-  "showBadge": 2,
-  "showTextBadge": "",
-  "isHide": 2,
-  "isHideTab": 2,
-  "link": "",
-  "isIframe": 2,
-  "keepAlive": 2,
-  "isFirstLevel": 2,
-  "status": 1,
-  "parentId": 2,
-  "sort": 66
-}
-```
-
-**响应示例：**
-
-```json
-{
-  "code": 200,
-  "status": "OK",
-  "message": "请求成功",
-  "data": {
-    "id": 8,
-    "created_at": 1640995200,
-    "updated_at": 1640995200,
-    "path": "/system/report",
-    "name": "SystemReport",
-    "component": "/system/report/index",
-    "title": "报表管理",
-    "icon": "bar-chart",
-    "show_badge": 2,
-    "show_text_badge": "",
-    "is_hide": 2,
-    "is_hide_tab": 2,
-    "link": "",
-    "is_iframe": 2,
-    "keep_alive": 2,
-    "is_in_main_container": 2,
-    "status": 1,
-    "level": 2,
-    "parent_id": 2,
-    "sort": 66,
-    "menu_auths": []
-  },
-  "timestamp": 1640995200
-}
-```
-
-#### 3.4 更新菜单
-
-**接口描述：** 更新菜单信息
-
-**请求方式：** `PUT`
-
-**请求路径：** `/api/v1/admin/system/menu`
-
-**请求头：** `Authorization: Bearer {token}`
-
-**请求参数：**
-
-```json
-{
-  "id": 8,
-  "path": "/system/report",
-  "name": "SystemReport",
-  "component": "/system/report/index",
-  "title": "报表管理",
-  "icon": "bar-chart",
-  "showBadge": 2,
-  "showTextBadge": "",
-  "isHide": 2,
-  "isHideTab": 2,
-  "link": "",
-  "isIframe": 2,
-  "keepAlive": 2,
-  "isFirstLevel": 2,
-  "status": 1,
-  "parentId": 2,
-  "sort": 80
-}
-```
-
-**响应示例：**
-
-```json
-{
-  "code": 200,
-  "status": "OK",
-  "message": "请求成功",
-  "data": {
-    "id": 8,
-    "created_at": 1640995200,
-    "updated_at": 1640998800,
-    "path": "/system/report",
-    "name": "SystemReport",
-    "component": "/system/report/index",
-    "title": "报表管理",
-    "icon": "bar-chart",
-    "show_badge": 2,
-    "show_text_badge": "",
-    "is_hide": 2,
-    "is_hide_tab": 2,
-    "link": "",
-    "is_iframe": 2,
-    "keep_alive": 2,
-    "is_in_main_container": 2,
-    "status": 1,
-    "level": 2,
-    "parent_id": 2,
-    "sort": 80,
-    "menu_auths": []
-  },
-  "timestamp": 1640998800
-}
-```
-
-#### 3.5 删除菜单
-
-**接口描述：** 删除菜单
-
-**请求方式：** `DELETE`
-
-**请求路径：** `/api/v1/admin/system/menu`
-
-**请求头：** `Authorization: Bearer {token}`
-
-**请求参数：**
-
-```json
-{
-  "id": 8
-}
-```
-
-**响应示例：**
-
-```json
-{
-  "code": 200,
-  "status": "OK",
-  "message": "请求成功",
-  "data": {
-    "id": 8,
-    "created_at": 1640995200,
-    "updated_at": 1640998800,
-    "deleted_at": 1641002400,
-    "path": "/system/report",
-    "name": "SystemReport",
-    "component": "/system/report/index",
-    "title": "报表管理",
-    "icon": "bar-chart",
-    "show_badge": 2,
-    "show_text_badge": "",
-    "is_hide": 2,
-    "is_hide_tab": 2,
-    "link": "",
-    "is_iframe": 2,
-    "keep_alive": 2,
-    "is_in_main_container": 2,
-    "status": 1,
-    "level": 2,
-    "parent_id": 2,
-    "sort": 80,
-    "menu_auths": []
-  },
-  "timestamp": 1641002400
-}
-```
-
-### 4. 菜单权限管理
-
-#### 4.1 获取菜单权限列表
-
-**接口描述：** 获取菜单权限配置
-
-**请求方式：** `GET`
-
-**请求路径：** `/api/v1/admin/system/menu/auth`
-
-**请求头：** `Authorization: Bearer {token}`
-
-**请求参数：**
-
-- `menu_id` - 菜单ID（必填）
-
-**响应示例：**
-
-```json
-{
-  "code": 200,
-  "status": "OK",
-  "message": "请求成功",
-  "data": [
-    {
-      "id": 21,
-      "created_at": 1640995200,
-      "updated_at": 1640995200,
-      "menu_id": 6,
-      "mark": "system:menu:read",
-      "title": "查看菜单"
-    }
-  ],
-  "timestamp": 1640995200
-}
-```
-
-#### 4.2 新增菜单权限
-
-**接口描述：** 添加菜单权限
-
-**请求方式：** `POST`
-
-**请求路径：** `/api/v1/admin/system/menu/auth`
-
-**请求头：** `Authorization: Bearer {token}`
-
-**请求参数：**
-
-```json
-{
-  "menu_id": 6,
-  "mark": "system:user:read",
-  "title": "查看"
-}
-```
-
-**响应示例：**
-
-```json
-{
-  "code": 200,
-  "status": "OK",
-  "message": "请求成功",
-  "data": {
-    "id": 21,
-    "created_at": 1640995200,
-    "updated_at": 1640995200,
-    "menu_id": 6,
-    "mark": "system:user:read",
-    "title": "查看"
-  },
-  "timestamp": 1640995200
-}
-```
-
-#### 4.3 更新菜单权限
-
-**接口描述：** 更新菜单权限
-
-**请求方式：** `PUT`
-
-**请求路径：** `/api/v1/admin/system/menu/auth`
-
-**请求头：** `Authorization: Bearer {token}`
-
-**请求参数：**
-
-```json
-{
-  "id": 1,
-  "title": "查看",
-  "mark": "system:user:read",
-  "menu_id": 6
-}
-```
-
-**响应示例：**
-
-```json
-{
-  "code": 200,
-  "status": "OK",
-  "message": "请求成功",
-  "data": {
-    "id": 1,
-    "created_at": 1640995200,
-    "updated_at": 1641002400,
-    "menu_id": 6,
-    "mark": "system:user:read",
-    "title": "查看"
-  },
-  "timestamp": 1641002400
-}
-```
-
-#### 4.4 删除菜单权限
-
-**接口描述：** 删除菜单权限
-
-**请求方式：** `DELETE`
-
-**请求路径：** `/api/v1/admin/system/menu/auth`
-
-**请求头：** `Authorization: Bearer {token}`
-
-**请求参数：**
-
-```json
-{
-  "id": 1
-}
-```
-
-**响应示例：**
-
-```json
-{
-  "code": 200,
-  "status": "OK",
-  "message": "请求成功",
-  "data": {
-    "id": 1,
-    "created_at": 1640995200,
-    "updated_at": 1641002400,
-    "deleted_at": 1641006000,
-    "menu_id": 6,
-    "mark": "system:user:read",
-    "title": "查看"
-  },
-  "timestamp": 1641006000
-}
-```
-
-#### 4.5 根据角色获取菜单
-
-**接口描述：** 获取指定角色的菜单权限
-
-**请求方式：** `GET`
-
-**请求路径：** `/api/v1/admin/system/menu/role`
-
-**请求头：** `Authorization: Bearer {token}`
-
-**请求参数：**
-
-- `role_id` - 角色ID
-
-**响应示例：**
-
-```json
-{
-  "code": 200,
-  "status": "OK",
-  "message": "请求成功",
-  "data": [
-    {
-      "id": 1,
-      "updatedAt": 1640995200,
-      "path": "/system",
-      "name": "System",
-      "component": "Layout",
-      "meta": {
-        "title": "系统管理",
-        "icon": "setting",
-        "keepAlive": true,
-        "isFirstLevel": true,
-        "isEnable": true,
-        "sort": 100
-      },
-      "hasPermission": true,
-      "children": [
-        {
-          "id": 2,
-          "updatedAt": 1640995200,
-          "path": "/system/menu",
-          "name": "SystemMenu",
-          "component": "/system/menu/index",
-          "parentId": 1,
-          "meta": {
-            "title": "菜单管理",
-            "icon": "menu",
-            "keepAlive": true,
-            "isEnable": true,
-            "sort": 90,
-            "authList": [
-              {
-                "id": 11,
-                "title": "新增菜单",
-                "authMark": "system:menu:create",
-                "hasPermission": true
-              },
-              {
-                "id": 12,
-                "title": "删除菜单",
-                "authMark": "system:menu:delete",
-                "hasPermission": false
-              }
-            ]
-          },
-          "hasPermission": true
-        }
-      ]
-    }
-  ],
-  "timestamp": 1640995200
-}
-```
-
-#### 4.6 更新角色菜单权限
-
-**接口描述：** 批量更新角色的菜单权限
-
-**请求方式：** `PUT`
-
-**请求路径：** `/api/v1/admin/system/menu/role`
-
-**请求头：** `Authorization: Bearer {token}`
-
-**请求参数：**
+- **请求方式：** `PUT`
+- **请求路径：** `/api/v1/admin/system/menu/role`
+- **请求体：**
 
 ```json
 {
   "role_id": 2,
-  "menu_data": "[ { \"id\":6, \"hasPermission\":true, \"meta\":{ \"authList\":[{ \"id\":1, \"authMark\":\"system:user:read\", \"hasPermission\":true }] } } ]"
+  "menu_data": "[ { \"id\":7, \"hasPermission\":true } ]"
 }
 ```
 
-**响应示例：**
-
-```json
-{
-  "code": 200,
-  "status": "OK",
-  "message": "请求成功",
-  "data": null,
-  "timestamp": 1641006000
-}
-```
+当请求体包含超出平台授权范围的菜单节点时，将返回 `PERMISSION_DENIED`。
 
 ### 5. 部门管理
 
@@ -1199,24 +787,16 @@ Authorization: Bearer {your_jwt_token}
 
 ### 6. 角色管理
 
-#### 6.1 获取角色列表
+#### 6.1 平台角色管理（超级管理员）
 
-**接口描述：** 分页查询角色列表
+- **获取角色列表：** `GET /api/v1/admin/platform/role`，需要查询参数 `tenant_id` 指定目标租户。
+- **创建角色：** `POST /api/v1/admin/platform/role`，请求体需包含 `tenant_id`、`name`、`status`、`desc`。
+- **更新角色：** `PUT /api/v1/admin/platform/role`，可调整角色名称、描述、状态以及归属租户。
+- **删除角色：** `DELETE /api/v1/admin/platform/role`。
 
-**请求方式：** `GET`
+> 说明：平台管理员创建或修改的角色仅对指定租户生效，可用于初始化或协助运营处理。
 
-**请求路径：** `/api/v1/admin/system/role`
-
-**请求头：** `Authorization: Bearer {token}`
-
-**请求参数：**
-
-- `name` - 角色名称（可选）
-- `status` - 状态（可选）
-- `page` - 页码
-- `pageSize` - 每页数量
-
-**响应示例：**
+**示例 - 获取角色列表：**
 
 ```json
 {
@@ -1225,6 +805,7 @@ Authorization: Bearer {your_jwt_token}
   "data": [
     {
       "id": 1,
+      "tenant_id": 1,
       "name": "超级管理员",
       "desc": "拥有所有权限",
       "status": 1,
@@ -1236,27 +817,24 @@ Authorization: Bearer {your_jwt_token}
 }
 ```
 
-#### 6.2 新增角色
+#### 6.2 租户角色管理
 
-**接口描述：** 创建新角色
+- **获取角色列表：** `GET /api/v1/admin/system/role`，自动限定为当前登录租户。
+- **创建角色：** `POST /api/v1/admin/system/role`，租户自行创建，仅对本租户生效。
+- **更新角色信息：** `PUT /api/v1/admin/system/role`。
+- **删除角色：** `DELETE /api/v1/admin/system/role`。
 
-**请求方式：** `POST`
-
-**请求路径：** `/api/v1/admin/system/role`
-
-**请求头：** `Authorization: Bearer {token}`
-
-**请求参数：**
+**请求示例（创建角色）：**
 
 ```json
 {
-  "name": "角色名称",
-  "desc": "角色描述",
-  "status": 1
+  "name": "业务管理员",
+  "status": 1,
+  "desc": "负责日常业务配置"
 }
 ```
 
-**响应示例：**
+**响应示例（创建角色）：**
 
 ```json
 {
@@ -1264,94 +842,17 @@ Authorization: Bearer {your_jwt_token}
   "status": "OK",
   "message": "请求成功",
   "data": {
-    "id": 5,
-    "created_at": 1640995200,
-    "updated_at": 1640995200,
-    "name": "角色名称",
-    "desc": "角色描述",
-    "status": 1
-  },
-  "timestamp": 1640995200
-}
-```
-
-#### 6.3 更新角色
-
-**接口描述：** 更新角色信息
-
-**请求方式：** `PUT`
-
-**请求路径：** `/api/v1/admin/system/role`
-
-**请求头：** `Authorization: Bearer {token}`
-
-**请求参数：**
-
-```json
-{
-  "id": 5,
-  "name": "角色名称",
-  "desc": "角色描述更新",
-  "status": 2
-}
-```
-
-**响应示例：**
-
-```json
-{
-  "code": 200,
-  "status": "OK",
-  "message": "请求成功",
-  "data": {
-    "id": 5,
-    "created_at": 1640995200,
-    "updated_at": 1641002400,
-    "name": "角色名称",
-    "desc": "角色描述更新",
-    "status": 2
-  },
-  "timestamp": 1641002400
-}
-```
-
-#### 6.4 删除角色
-
-**接口描述：** 删除角色
-
-**请求方式：** `DELETE`
-
-**请求路径：** `/api/v1/admin/system/role`
-
-**请求头：** `Authorization: Bearer {token}`
-
-**请求参数：**
-
-```json
-{
-  "id": 1
-}
-```
-
-**响应示例：**
-
-```json
-{
-  "code": 200,
-  "status": "OK",
-  "message": "请求成功",
-  "data": {
-    "id": 1,
-    "created_at": 1640995200,
-    "updated_at": 1640998800,
-    "deleted_at": 1641002400,
-    "name": "超级管理员",
-    "desc": "拥有所有权限",
+    "id": 2,
+    "tenant_id": 1,
+    "name": "业务管理员",
+    "desc": "负责日常业务配置",
     "status": 1
   },
   "timestamp": 1641002400
 }
 ```
+
+> 提示：用户管理中的角色选择列表仅包含本租户创建的角色，平台仅限制菜单范围，不提供通用角色池。
 
 ### 7. 租户管理 **(超级管理员权限)**
 

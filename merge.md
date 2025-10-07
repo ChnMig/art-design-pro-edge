@@ -85,6 +85,19 @@ git show upstream/main:path/to/file
   - “元素权限管理”弹窗（`src/views/system/menu/modal/authInfo.vue`）已按上述规则居中显示。
   - 全局不展示序号列：禁止在系统管理页面新增 `type: 'index'` 的序号列（角色、部门、租户等列表已移除），统一使用数据字段或分页信息，不再以序号列占位。
 
+- 平台管理 vs 系统管理（接口与页面）
+
+  - 系统管理（租户侧，`/api/v1/admin/system`）：角色/菜单/部门/用户，接口已适配为当前登录租户的可用范围。
+  - 平台管理（超级管理员，`/api/v1/admin/platform`）：维护“全局菜单/角色”，并通过“范围接口”为租户分配可用集合。
+  - 代码组织：
+    - 平台接口：`src/api/platform/api.ts`
+    - 平台页面：
+      - 租户管理：`src/views/platform/tenant/index.vue`（从系统租户页迁移，功能一致）
+      - 菜单管理：`src/views/platform/menu/index.vue`（从系统菜单页拷贝界面，并对接平台菜单/权限/范围接口）
+      - 角色管理：`src/views/platform/role/index.vue`（从系统角色页拷贝界面，并对接平台角色/范围接口）
+  - 范围规则：
+    - 平台“菜单/角色”接口控制的是全局数据；系统端仅能在平台分配范围内选择与查看。
+
 - 路由与页面
 
   - 保留本地的路由守卫逻辑，仅吸收安全的上游增强。
