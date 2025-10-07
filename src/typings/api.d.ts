@@ -149,10 +149,12 @@ declare namespace Api {
       id: number
       code: string
       name: string
-      description?: string
+      contact?: string
+      phone?: string
+      email?: string
       status: number
-      expires_at?: number | null
       created_at?: number
+      updated_at?: number
       [key: string]: unknown
     }
 
@@ -168,9 +170,11 @@ declare namespace Api {
       id?: number
       code: string
       name: string
-      description?: string
+      contact?: string
+      phone?: string
+      email?: string
+      address?: string
       status: number
-      expires_at?: number
     }
   }
 

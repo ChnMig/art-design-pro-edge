@@ -51,29 +51,21 @@
         <ElFormItem label="租户名称" prop="name">
           <ElInput v-model="formData.name" placeholder="请输入租户名称" />
         </ElFormItem>
-        <ElFormItem label="描述" prop="description">
-          <ElInput
-            v-model="formData.description"
-            type="textarea"
-            placeholder="请输入描述"
-            :rows="3"
-          />
+        <ElFormItem label="联系人" prop="contact">
+          <ElInput v-model="formData.contact" placeholder="请输入联系人" />
         </ElFormItem>
+        <ElFormItem label="联系电话" prop="phone">
+          <ElInput v-model="formData.phone" placeholder="请输入联系电话" />
+        </ElFormItem>
+        <ElFormItem label="邮箱" prop="email">
+          <ElInput v-model="formData.email" placeholder="请输入邮箱" />
+        </ElFormItem>
+
         <ElFormItem label="状态" prop="status">
           <ElRadioGroup v-model="formData.status">
             <ElRadio :label="1">启用</ElRadio>
             <ElRadio :label="0">禁用</ElRadio>
           </ElRadioGroup>
-        </ElFormItem>
-        <ElFormItem label="到期时间" prop="expires_at">
-          <ElDatePicker
-            v-model="formData.expires_at"
-            type="datetime"
-            placeholder="选择到期时间"
-            format="YYYY-MM-DD HH:mm:ss"
-            value-format="X"
-            style="width: 100%"
-          />
         </ElFormItem>
       </ElForm>
       <template #footer>
@@ -107,7 +99,7 @@
       apiFn: getTenantList,
       apiParams: {
         page: 1,
-        page_size: 10,
+        pageSize: 10,
         code: '',
         name: '',
         status: undefined
@@ -125,12 +117,9 @@
           align: 'center',
           width: 200
         },
-        {
-          prop: 'description',
-          label: '描述',
-          align: 'center',
-          showOverflowTooltip: true
-        },
+        { prop: 'contact', label: '联系人', align: 'center', width: 120 },
+        { prop: 'phone', label: '电话', align: 'center', width: 140 },
+        { prop: 'email', label: '邮箱', align: 'center', minWidth: 180 },
         {
           prop: 'status',
           label: '状态',
@@ -143,13 +132,7 @@
               { default: () => (row.status === 1 ? '启用' : '禁用') }
             )
         },
-        {
-          prop: 'expires_at',
-          label: '到期时间',
-          align: 'center',
-          width: 180,
-          formatter: (row: any) => (row.expires_at ? formatDate(row.expires_at) : '永不过期')
-        },
+
         {
           prop: 'created_at',
           label: '创建时间',
@@ -203,9 +186,12 @@
     id: 0,
     code: '',
     name: '',
-    description: '',
+    contact: '',
+    phone: '',
+    email: '',
+
     status: 1,
-    expires_at: undefined as string | undefined
+    created_at: undefined as number | undefined
   })
 
   // 搜索表单配置项
@@ -244,9 +230,10 @@
   const columnOptions = [
     { label: '租户编码', prop: 'code' },
     { label: '租户名称', prop: 'name' },
-    { label: '描述', prop: 'description' },
+    { label: '联系人', prop: 'contact' },
+    { label: '电话', prop: 'phone' },
+    { label: '邮箱', prop: 'email' },
     { label: '状态', prop: 'status' },
-    { label: '到期时间', prop: 'expires_at' },
     { label: '创建时间', prop: 'created_at' },
     { label: '操作', prop: 'operation' }
   ]
@@ -261,7 +248,10 @@
       { required: true, message: '请输入租户名称', trigger: 'blur' },
       { min: 2, max: 100, message: '长度在 2 到 100 个字符', trigger: 'blur' }
     ],
-    description: [{ max: 255, message: '长度不能超过 255 个字符', trigger: 'blur' }],
+    contact: [{ max: 50, message: '长度不能超过 50 个字符', trigger: 'blur' }],
+    phone: [{ max: 50, message: '长度不能超过 50 个字符', trigger: 'blur' }],
+    email: [{ type: 'email', message: '邮箱格式不正确', trigger: 'blur' }],
+
     status: [{ required: true, message: '请选择状态', trigger: 'change' }]
   }
 
@@ -283,9 +273,10 @@
         id: row.id,
         code: row.code,
         name: row.name,
-        description: row.description,
-        status: row.status,
-        expires_at: row.expires_at
+        contact: row.contact || '',
+        phone: row.phone || '',
+        email: row.email || '',
+        status: row.status
       })
     } else {
       // 新增时重置表单
@@ -293,9 +284,11 @@
         id: 0,
         code: '',
         name: '',
-        description: '',
+        contact: '',
+        phone: '',
+        email: '',
         status: 1,
-        expires_at: undefined
+        created_at: undefined
       })
     }
 
@@ -339,10 +332,7 @@
     try {
       await formRef.value.validate()
 
-      const data = {
-        ...formData,
-        expires_at: formData.expires_at ? parseInt(formData.expires_at) : undefined
-      }
+      const data = { ...formData }
 
       if (dialogType.value === 'edit') {
         await updateTenant(data)

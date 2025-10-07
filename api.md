@@ -1382,10 +1382,7 @@ Authorization: Bearer {your_jwt_token}
       "contact": "",
       "phone": "",
       "email": "",
-      "address": "",
       "status": 1,
-      "expired_at": null,
-      "max_users": 100,
       "created_at": 1640995200,
       "updated_at": 1640995200
     }
@@ -1414,10 +1411,7 @@ Authorization: Bearer {your_jwt_token}
   "contact": "联系人",
   "phone": "联系电话",
   "email": "邮箱",
-  "address": "地址",
-  "status": 1,
-  "expired_at": "2024-12-31T23:59:59Z",
-  "max_users": 100
+  "status": 1
 }
 ```
 
@@ -1453,10 +1447,7 @@ Authorization: Bearer {your_jwt_token}
   "contact": "联系人",
   "phone": "联系电话",
   "email": "邮箱",
-  "address": "地址",
-  "status": 2,
-  "expired_at": "2025-12-31T23:59:59Z",
-  "max_users": 200
+  "status": 2
 }
 ```
 
@@ -1685,10 +1676,7 @@ type SystemTenant struct {
     Contact   string     `json:"contact"`
     Phone     string     `json:"phone"`
     Email     string     `json:"email"`
-    Address   string     `json:"address"`
     Status    uint       `json:"status"`
-    ExpiredAt *time.Time `json:"expired_at"`
-    MaxUsers  uint       `json:"max_users"`
 }
 ```
 
