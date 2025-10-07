@@ -113,7 +113,6 @@
         status: undefined
       },
       columnsFactory: () => [
-        { type: 'index', width: 80, label: '序号' },
         {
           prop: 'code',
           label: '租户编码',
@@ -186,18 +185,18 @@
   })
 
   const {
-    tableData,
-    isLoading,
+    data: tableData,
+    loading: isLoading,
     columns,
     columnChecks,
-    paginationState,
-    searchState,
-    searchData,
-    resetSearch,
-    onPageSizeChange,
-    onCurrentPageChange
-  } = tableApi
-  const refreshAll = tableApi.refreshAll
+    pagination: paginationState,
+    searchParams: searchState,
+    getData: searchData,
+    resetSearchParams: resetSearch,
+    handleSizeChange: onPageSizeChange,
+    handleCurrentChange: onCurrentPageChange,
+    refreshAll
+  } = tableApi as any
 
   // 表单数据
   const formData = reactive({

@@ -139,14 +139,14 @@
   const {
     columns,
     columnChecks,
-    tableData: data,
-    isLoading: loading,
-    paginationState: pagination,
-    searchState: searchParams,
-    searchData: getDataByPage,
-    resetSearch: resetSearchParams,
-    onPageSizeChange: handleSizeChange,
-    onCurrentPageChange: handleCurrentChange,
+    data,
+    loading,
+    pagination,
+    searchParams,
+    getData: getDataByPage,
+    resetSearchParams,
+    handleSizeChange,
+    handleCurrentChange,
     refreshAll: refresh
   } = useTable<any>({
     core: {
@@ -158,7 +158,6 @@
         status: undefined
       },
       columnsFactory: () => [
-        { type: 'index', width: 60, label: '序号' },
         {
           prop: 'name',
           label: '角色名称',
