@@ -287,7 +287,7 @@
           const roleData = {
             name: form.name,
             desc: form.desc,
-            status: form.status ? 1 : 0
+            status: form.status ? 1 : 2
           }
           const response =
             dialogType.value === 'add'

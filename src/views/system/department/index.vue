@@ -269,7 +269,7 @@
           const params = {
             name: formData.name,
             sort: parseInt(formData.sort),
-            status: formData.status ? 1 : 0
+            status: formData.status ? 1 : 2
           }
           if (dialogType.value === 'edit') {
             if (!currentId.value) {

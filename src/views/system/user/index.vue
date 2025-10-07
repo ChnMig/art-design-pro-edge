@@ -130,7 +130,7 @@
         <ElRow :gutter="20">
           <ElCol :span="12">
             <ElFormItem label="启用">
-              <ElSwitch v-model="formData.status" :active-value="1" :inactive-value="0" />
+              <ElSwitch v-model="formData.status" :active-value="1" :inactive-value="2" />
             </ElFormItem>
           </ElCol>
         </ElRow>

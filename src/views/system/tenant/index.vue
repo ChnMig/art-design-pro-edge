@@ -64,7 +64,7 @@
         <ElFormItem label="状态" prop="status">
           <ElRadioGroup v-model="formData.status">
             <ElRadio :label="1">启用</ElRadio>
-            <ElRadio :label="0">禁用</ElRadio>
+            <ElRadio :label="2">禁用</ElRadio>
           </ElRadioGroup>
         </ElFormItem>
       </ElForm>
@@ -219,9 +219,9 @@
       span: 6,
       clearable: true,
       placeholder: '请选择状态',
-      options: () => [
-        { label: '启用', value: 1 },
-        { label: '禁用', value: 0 }
+      options: [
+        { label: '正常', value: 1 },
+        { label: '禁用', value: 2 }
       ]
     }
   ]
