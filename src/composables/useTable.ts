@@ -638,6 +638,8 @@ function useTableImpl<TApiFn extends (params: any) => Promise<any>>(
     // 刷新策略
     /** 全量刷新：清空所有缓存，重新获取数据（适用于手动刷新按钮） */
     refreshData,
+    /** 兼容旧命名：全量刷新（等同于 refreshData） */
+    refreshAll: refreshData,
     /** 轻量刷新：仅清空当前搜索条件的缓存，保持分页状态（适用于定时刷新） */
     refreshSoft,
     /** 新增后刷新：回到第一页并清空分页缓存（适用于新增数据后） */

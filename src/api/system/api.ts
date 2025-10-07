@@ -40,8 +40,12 @@ export const updateMenu = (data: any): Promise<any> => {
   return httpClient.put({ url: `${API_PREFIX}/menu`, data })
 }
 
-export const deleteMenu = (id: string | number): Promise<any> => {
-  return httpClient.del({ url: `${API_PREFIX}/menu`, data: { id } })
+export const deleteMenu = (id: string | number): Promise<Http.BaseResponse<unknown>> => {
+  return httpClient.del({
+    url: `${API_PREFIX}/menu`,
+    data: { id },
+    keepFullResponse: true
+  })
 }
 
 export const addAuth = (data: any): Promise<any> => {

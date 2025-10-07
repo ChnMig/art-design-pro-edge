@@ -167,7 +167,7 @@
     }
   })
 
-  const { tableData, isLoading, columns, columnChecks, refreshAll } = tableApi
+  const { data: tableData, loading: isLoading, columns, columnChecks, refreshAll } = tableApi
 
   // 列配置选项
   const columnOptions = [
