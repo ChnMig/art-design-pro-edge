@@ -327,6 +327,13 @@ Authorization: Bearer {your_jwt_token}
 }
 ```
 
+**字段说明：**
+
+- `role_name` / `role_desc` - 用户所属角色名称与描述。
+- `department_name` - 用户所属部门名称。
+- `created_at` / `updated_at` - 记录创建与更新时间，Unix 时间戳（秒）。
+- 其余字段保持与用户实体一致，不包含密码信息。
+
 #### 2.4 获取用户缓存列表
 
 **接口描述：** 从缓存获取用户列表（性能更优）

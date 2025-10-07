@@ -180,7 +180,6 @@
         role_id: undefined
       },
       columnsFactory: () => [
-        { type: 'index', width: 60, label: '序号' },
         {
           prop: 'name',
           label: '用户名称',
@@ -507,13 +506,13 @@
 
   const getTagType = (status: number) => {
     if (status === 1) return 'success'
-    if (status === 0 || status === 2) return 'danger'
+    if (status === 2) return 'danger'
     return 'info'
   }
 
   const buildTagText = (status: number) => {
     if (status === 1) return '启用'
-    if (status === 0 || status === 2) return '禁用'
+    if (status === 2) return '禁用'
     return '未知'
   }
 
