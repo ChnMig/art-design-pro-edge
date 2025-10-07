@@ -1,135 +1,201 @@
 <template>
   <div class="department-page art-full-height">
+    <!-- 搜索栏 -->
     <ArtSearchBar
-      v-model="searchState"
+      v-model="searchParams"
       :items="searchItems"
-      @reset="resetSearch"
-      @search="searchData"
+      @reset="resetSearchParams"
+      @search="getDataByPage"
     />
 
-    <ElCard shadow="never" class="art-table-card">
-      <ArtTableHeader v-model:columns="columnChecks" @refresh="handleRefresh">
+    <ElCard class="art-table-card" shadow="never">
+      <!-- 表格头部 -->
+      <ArtTableHeader v-model:columns="columnChecks" @refresh="refresh">
         <template #left>
-          <ElButton type="primary" @click="showDialog('add')" v-ripple>{{ '新增部门' }}</ElButton>
+          <ElButton @click="showDialog('add')">添加部门</ElButton>
         </template>
       </ArtTableHeader>
 
+      <!-- 表格 -->
       <ArtTable
-        :data="tableData"
+        :loading="loading"
+        :data="data"
         :columns="columns"
-        :pagination="paginationState"
-        :loading="isLoading"
+        :pagination="pagination"
         :table-config="{ rowKey: 'id' }"
         :layout="{ marginTop: 10 }"
-        @pagination:size-change="onPageSizeChange"
-        @pagination:current-change="onCurrentPageChange"
+        @pagination:size-change="handleSizeChange"
+        @pagination:current-change="handleCurrentChange"
       />
-    </ElCard>
 
-    <ElDialog
-      v-model="dialogVisible"
-      :title="dialogType === 'add' ? '新增部门' : '编辑部门'"
-      width="520px"
-      align-center
-      :close-on-click-modal="false"
-    >
-      <ElForm ref="formRef" :model="formData" :rules="formRules" label-width="90px">
-        <ElFormItem :label="'部门名称'" prop="name">
-          <ElInput v-model="formData.name" :placeholder="'请输入部门名称'" />
-        </ElFormItem>
-        <ElFormItem :label="'状态'" prop="status">
-          <ElRadioGroup v-model="formData.status">
-            <ElRadio :label="1">{{ '启用' }}</ElRadio>
-            <ElRadio :label="2">{{ '禁用' }}</ElRadio>
-          </ElRadioGroup>
-        </ElFormItem>
-        <ElFormItem :label="'排序'" prop="sort">
-          <ElInputNumber v-model="formData.sort" :min="0" :max="9999" :step="1" />
-        </ElFormItem>
-      </ElForm>
-      <template #footer>
-        <div class="dialog-footer">
-          <ElButton @click="dialogVisible = false">{{ '取消' }}</ElButton>
-          <ElButton type="primary" @click="handleSubmit">{{ '确定' }}</ElButton>
-        </div>
-      </template>
-    </ElDialog>
+      <!-- 部门弹窗 -->
+      <ElDialog
+        v-model="dialogVisible"
+        :title="dialogType === 'add' ? '添加部门' : '编辑部门'"
+        width="600px"
+        align-center
+        :close-on-click-modal="false"
+        @closed="resetForm"
+      >
+        <ElForm ref="formRef" :model="formData" :rules="rules" label-width="85px">
+          <ElRow :gutter="20">
+            <ElCol :span="12">
+              <ElFormItem label="名称" prop="name">
+                <ElInput v-model="formData.name" placeholder="请输入部门名称" />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :span="12">
+              <ElFormItem label="排序" prop="sort">
+                <ElInputNumber
+                  v-model="formData.sort"
+                  style="width: 100%"
+                  :min="1"
+                  controls-position="right"
+                  placeholder="请输入排序号"
+                />
+              </ElFormItem>
+            </ElCol>
+          </ElRow>
+          <ElRow :gutter="20">
+            <ElCol :span="12">
+              <ElFormItem label="启用" prop="status">
+                <ElSwitch v-model="formData.status" />
+              </ElFormItem>
+            </ElCol>
+          </ElRow>
+        </ElForm>
+        <template #footer>
+          <div class="dialog-footer">
+            <ElButton @click="dialogVisible = false">取消</ElButton>
+            <ElButton type="primary" @click="submitForm" :loading="submitLoading">提交</ElButton>
+          </div>
+        </template>
+      </ElDialog>
+    </ElCard>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { computed, h, nextTick, reactive, ref, resolveComponent } from 'vue'
-  import { ElMessage, ElMessageBox } from 'element-plus'
-  import type { FormInstance, FormRules } from 'element-plus'
-  import { useTable } from '@/composables/useTable'
-  import { SearchFormItem } from '@/components/core/forms/art-search-bar/index.vue'
+  import { ref, reactive, h, resolveComponent } from 'vue'
+  import { ElMessageBox, ElMessage } from 'element-plus'
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
+  import type { FormInstance, FormRules } from 'element-plus'
   import {
-    fetchDepartmentList,
-    createDepartment,
+    getDepartmentList,
+    addDepartment,
     updateDepartment,
-    removeDepartment
-  } from '@/api/department'
+    deleteDepartment as apiDeleteDepartment
+  } from '@/api/system/api'
+  import { useTable } from '@/composables/useTable'
+  import { SearchFormItem } from '@/types'
 
-  defineOptions({ name: 'SystemDepartment' })
-  const dialogType = ref<'add' | 'edit'>('add')
+  // 搜索表单配置项
+  const searchItems: SearchFormItem[] = [
+    {
+      label: '部门名称',
+      key: 'name',
+      type: 'input',
+      span: 6,
+      clearable: true,
+      placeholder: '请输入部门名称'
+    },
+    {
+      label: '状态',
+      key: 'status',
+      type: 'select',
+      span: 6,
+      clearable: true,
+      placeholder: '请选择状态',
+      options: [
+        { label: '启用', value: 1 },
+        { label: '禁用', value: 2 }
+      ]
+    }
+  ]
+
+  // 表单数据
+  const formData = reactive({
+    name: '',
+    sort: '1',
+    status: true
+  })
+  const dialogType = ref('add')
   const dialogVisible = ref(false)
+  const submitLoading = ref(false)
+  const currentId = ref<number | null>(null)
+  const formRef = ref<FormInstance>()
 
-  const tableApi = useTable<
-    Api.SystemDepartment.DepartmentItem,
-    Api.SystemDepartment.DepartmentSearchParams
-  >({
+  // 表单验证规则
+  const rules = reactive<FormRules>({
+    name: [
+      { required: true, message: '请输入部门名称', trigger: 'blur' },
+      { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+    ],
+    sort: [
+      { required: true, message: '请输入排序号', trigger: 'blur' },
+      { pattern: /^[0-9]*$/, message: '请输入数字', trigger: 'blur' }
+    ]
+  })
+
+  // useTable 适配
+  const {
+    columns,
+    columnChecks,
+    tableData: data,
+    isLoading: loading,
+    paginationState: pagination,
+    searchState: searchParams,
+    searchData: getDataByPage,
+    resetSearch: resetSearchParams,
+    onPageSizeChange: handleSizeChange,
+    onCurrentPageChange: handleCurrentChange,
+    refreshAll: refresh
+  } = useTable<any>({
     core: {
-      apiFn: fetchDepartmentList,
+      apiFn: getDepartmentList,
       apiParams: {
         page: 1,
-        page_size: 10,
+        pageSize: 10,
         name: '',
         status: undefined
       },
-      paginationKey: {
-        current: 'page',
-        size: 'page_size'
-      },
       columnsFactory: () => [
-        { type: 'index', width: 80, label: '序号' },
-        { prop: 'name', label: '部门名称', align: 'center', width: 220 },
+        { type: 'index', width: 60, label: '序号' },
+        {
+          prop: 'name',
+          label: '名称',
+          align: 'center'
+        },
+        {
+          prop: 'sort',
+          label: '排序',
+          sortable: true,
+          align: 'center'
+        },
+        {
+          prop: 'users',
+          label: '人数',
+          align: 'center',
+          formatter: (row: any) => (Array.isArray(row.users) ? row.users.length : 0)
+        },
         {
           prop: 'status',
           label: '状态',
           align: 'center',
-          width: 100,
-          formatter: (row: Api.SystemDepartment.DepartmentItem) =>
+          formatter: (row: any) =>
             h(
               resolveComponent('ElTag'),
-              { type: row.status === 1 ? 'success' : 'danger' },
-              {
-                default: () => (row.status === 1 ? '启用' : '禁用')
-              }
+              { type: row.status === 1 ? 'primary' : 'warning' },
+              { default: () => (row.status === 1 ? '启用' : '禁用') }
             )
-        },
-        { prop: 'sort', label: '排序', align: 'center', width: 100 },
-        {
-          prop: 'created_at',
-          label: '创建时间',
-          align: 'center',
-          width: 180,
-          formatter: (row: Api.SystemDepartment.DepartmentItem) => formatDate(row.created_at)
-        },
-        {
-          prop: 'updated_at',
-          label: '更新时间',
-          align: 'center',
-          width: 180,
-          formatter: (row: Api.SystemDepartment.DepartmentItem) => formatDate(row.updated_at)
         },
         {
           prop: 'operation',
           label: '操作',
           align: 'center',
-          width: 140,
+          width: 120,
           fixed: 'right',
-          formatter: (row: Api.SystemDepartment.DepartmentItem) =>
+          formatter: (row: any) =>
             h('div', { class: 'operation-column-container' }, [
               h(ArtButtonTable, {
                 type: 'edit',
@@ -138,173 +204,133 @@
               }),
               h(ArtButtonTable, {
                 type: 'delete',
-                onClick: () => handleDelete(row)
+                onClick: () => deleteDepartment(row.id)
               })
             ])
         }
       ]
-    },
-    transform: {
-      responseAdapter: (response) => {
-        const data: any = response ?? {}
-        const source = data?.data ?? data
-        const records = Array.isArray(source?.records)
-          ? source.records
-          : Array.isArray(source?.list)
-            ? source.list
-            : Array.isArray(source?.items)
-              ? source.items
-              : []
-        return {
-          records,
-          total: source?.total ?? data?.total ?? records.length,
-          current: source?.page ?? data?.page ?? 1,
-          size: source?.page_size ?? source?.size ?? data?.page_size ?? data?.size ?? 10
-        }
-      }
     },
     hooks: {
       onError: (error) => ElMessage.error(error.message)
     }
   })
 
-  const {
-    tableData,
-    isLoading,
-    columns,
-    columnChecks,
-    paginationState,
-    searchState,
-    searchData,
-    resetSearch,
-    onPageSizeChange,
-    onCurrentPageChange,
-    refreshAll
-  } = tableApi
-
-  const searchItems = computed<SearchFormItem[]>(() => [
-    {
-      key: 'name',
-      label: '部门名称',
-      type: 'input',
-      placeholder: '请输入部门名称'
-    },
-    {
-      key: 'status',
-      label: '状态',
-      type: 'select',
-      props: {
-        clearable: true,
-        options: [
-          { label: '全部', value: undefined },
-          { label: '启用', value: 1 },
-          { label: '禁用', value: 2 }
-        ]
-      }
-    }
-  ])
-
-  const formData = reactive<Api.SystemDepartment.DepartmentPayload>({
-    id: 0,
-    name: '',
-    status: 1,
-    sort: 1
-  })
-
-  const formRules: FormRules = {
-    name: [
-      { required: true, message: '请输入部门名称', trigger: 'blur' },
-      { min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur' }
-    ],
-    status: [{ required: true, message: '请选择状态', trigger: 'change' }]
+  // 弹窗相关
+  const resetForm = () => {
+    formData.name = ''
+    formData.sort = '1'
+    formData.status = true
+    currentId.value = null
   }
 
-  const formRef = ref<FormInstance>()
-
-  const handleRefresh = () => {
-    refreshAll()
-  }
-
-  const showDialog = (type: 'add' | 'edit', row?: Api.SystemDepartment.DepartmentItem) => {
-    dialogVisible.value = true
+  const showDialog = (type: string, row?: any) => {
     dialogType.value = type
-
+    dialogVisible.value = true
     if (type === 'edit' && row) {
-      Object.assign(formData, {
-        id: row.id,
-        name: row.name,
-        status: row.status,
-        sort: row.sort ?? 1
-      })
+      currentId.value = row.id
+      formData.name = row.name
+      formData.sort = String(row.sort)
+      formData.status = row.status === 1
     } else {
-      Object.assign(formData, {
-        id: 0,
-        name: '',
-        status: 1,
-        sort: 1
-      })
+      resetForm()
     }
+  }
 
-    nextTick(() => {
-      formRef.value?.clearValidate()
+  // 删除部门
+  const deleteDepartment = (id: number) => {
+    ElMessageBox.confirm('确定要删除该部门吗？', '删除部门', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
     })
-  }
-
-  const handleDelete = async (row: Api.SystemDepartment.DepartmentItem) => {
-    try {
-      await ElMessageBox.confirm(`确认删除部门 "${row.name}" 吗？`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+      .then(async () => {
+        loading.value = true
+        try {
+          await apiDeleteDepartment(id)
+          // HTTP client returns data directly on success
+          ElMessage.success('删除部门成功')
+          await refresh()
+        } catch (err) {
+          console.error('删除部门出错:', err)
+          ElMessage.error('删除部门失败')
+        } finally {
+          loading.value = false
+        }
       })
-
-      await removeDepartment(row.id)
-      ElMessage.success('删除成功')
-      refreshAll()
-    } catch (error) {
-      if (error !== 'cancel') {
-        console.error('删除部门失败:', error)
-        ElMessage.error('删除失败')
-      }
-    }
+      .catch(() => {})
   }
 
-  const handleSubmit = async () => {
+  // 提交表单
+  const submitForm = async () => {
     if (!formRef.value) return
-
-    try {
-      await formRef.value.validate()
-
-      const payload = { ...formData }
-
-      if (dialogType.value === 'edit' && formData.id) {
-        await updateDepartment(payload as Required<Api.SystemDepartment.DepartmentPayload>)
-        ElMessage.success('更新成功')
-      } else {
-        await createDepartment(payload)
-        ElMessage.success('新增成功')
+    await formRef.value.validate(async (valid) => {
+      if (valid) {
+        submitLoading.value = true
+        try {
+          const params = {
+            name: formData.name,
+            sort: parseInt(formData.sort),
+            status: formData.status ? 1 : 0
+          }
+          if (dialogType.value === 'edit') {
+            if (!currentId.value) {
+              ElMessage.error('部门ID无效')
+              return
+            }
+            await updateDepartment({ ...params, id: currentId.value })
+            // HTTP client returns data directly on success
+            ElMessage.success('修改部门成功')
+            dialogVisible.value = false
+            await refresh()
+          } else {
+            await addDepartment(params)
+            // HTTP client returns data directly on success
+            ElMessage.success('添加部门成功')
+            dialogVisible.value = false
+            await refresh()
+          }
+        } catch (err) {
+          console.error('提交表单出错:', err)
+          ElMessage.error(`${dialogType.value === 'add' ? '添加' : '修改'}部门失败`)
+        } finally {
+          submitLoading.value = false
+        }
       }
-
-      dialogVisible.value = false
-      refreshAll()
-    } catch (error) {
-      console.error('提交失败:', error)
-      ElMessage.error('提交失败')
-    }
-  }
-
-  const formatDate = (timestamp?: number | null) => {
-    if (!timestamp) return '-'
-    return new Date(Number(timestamp) * 1000).toLocaleString()
+    })
   }
 </script>
 
 <style lang="scss" scoped>
   .department-page {
+    .table-container {
+      flex: 1;
+      min-height: 0;
+      padding: 16px;
+    }
+
+    .search-container {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+
+      .el-input {
+        width: 240px;
+        margin-right: 16px;
+      }
+    }
+
     .operation-column-container {
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+
+    .svg-icon {
+      width: 1.8em;
+      height: 1.8em;
+      overflow: hidden;
+      vertical-align: -8px;
+      fill: currentcolor;
     }
   }
 </style>

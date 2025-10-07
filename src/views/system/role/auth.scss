@@ -1,0 +1,251 @@
+.auth-drawer-namespace {
+  .drawer-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 12px;
+  }
+
+  .drawer-header {
+    margin-bottom: 16px;
+  }
+
+  .menu-tree-container {
+    flex: 1;
+    padding: 10px 0;
+    overflow-y: auto;
+    background-color: var(--el-fill-color-light);
+    border-radius: 4px;
+  }
+
+  // 树组件样式
+  :deep(.el-tree) {
+    background: transparent;
+
+    // 强制元素在单元格里
+    .el-tree-node__content {
+      display: block !important; // 强制为块级元素
+      width: 100%;
+      height: auto !important;
+      min-height: 32px;
+      padding: 4px 0;
+      overflow: visible;
+    }
+
+    .el-tree-node__label {
+      width: 100%;
+    }
+
+    .el-tree-node.is-current > .el-tree-node__content {
+      background-color: var(--el-color-primary-light-9);
+    }
+  }
+
+  .drawer-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px 0 0;
+    margin-top: 20px;
+    text-align: right;
+    border-top: 1px solid var(--el-border-color-light);
+  }
+
+  .loading-container {
+    padding: 20px;
+  }
+
+  // 菜单树项目 - 使用表格布局模式
+  .menu-tree-item {
+    display: table;
+    width: 100%;
+    margin: 4px 0;
+    table-layout: fixed;
+  }
+
+  // 菜单行
+  .menu-row {
+    display: table-row;
+    width: 100%;
+  }
+
+  // 权限标签行
+  .auth-row {
+    display: table-row;
+    width: 100%;
+  }
+
+  // 菜单名称区域
+  .menu-name {
+    display: table-cell;
+    min-height: 24px;
+    padding: 4px 0;
+    font-weight: 600;
+    color: var(--el-text-color-primary);
+    vertical-align: middle;
+
+    .menu-icon {
+      margin-right: 6px;
+      font-size: 16px;
+      vertical-align: middle;
+    }
+
+    .menu-title {
+      overflow: hidden;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--el-text-color-primary);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+  }
+
+  // 权限标签容器
+  .auth-tags-wrapper {
+    display: table-cell;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 24px;
+    border-top: 1px dashed #e0e0e0;
+  }
+
+  // 权限标签样式
+  .auth-tag {
+    display: inline-block;
+    margin-right: 6px;
+    margin-bottom: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  // 确保树节点有足够的高度
+  :deep(.el-tree-node) {
+    .el-tree-node__children {
+      overflow: visible;
+    }
+  }
+
+  // 菜单树节点容器
+  .menu-tree-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 2px;
+
+    &.auth-node {
+      padding-left: 4px;
+    }
+
+    .menu-name-row {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 4px 0;
+
+      .menu-icon {
+        margin-right: 8px;
+        font-size: 16px;
+      }
+
+      .menu-title {
+        flex: 1;
+        overflow: hidden;
+        font-weight: 500;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .auth-name-row {
+      display: flex;
+      align-items: center;
+      padding: 3px 0;
+
+      .auth-title {
+        position: relative;
+        padding-left: 16px;
+        font-size: 13px;
+        color: #606266;
+
+        &::before {
+          position: absolute;
+          left: 4px;
+          font-size: 16px;
+          color: #909399;
+          content: '•';
+        }
+      }
+    }
+  }
+
+  // 权限标签行
+  .auth-tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding-top: 6px;
+    padding-bottom: 2px;
+    padding-left: 24px;
+    margin-top: 6px;
+    border-top: 1px dashed #e0e0e0;
+  }
+
+  // 响应式调整
+  @media (width <= 768px) {
+    .menu-tree-container {
+      padding: 0;
+    }
+
+    .auth-tags-wrapper {
+      padding-left: 16px;
+    }
+
+    .auth-tags-row {
+      padding-left: 16px;
+    }
+  }
+
+  // 树节点样式优化
+  .el-tree-node__content {
+    height: auto !important;
+    padding: 4px 0;
+  }
+
+  // 调整权限节点的样式
+  .el-tree .el-tree-node.is-expanded > .el-tree-node__children {
+    .auth-node {
+      margin-top: 2px;
+      margin-left: 24px;
+      background-color: #f5f7fa;
+      border-radius: 4px;
+
+      &:hover {
+        background-color: #ebeef5;
+      }
+    }
+  }
+
+  // 父级菜单节点样式
+  .el-tree-node:has(.el-tree-node__children) > .el-tree-node__content {
+    font-weight: 600;
+  }
+
+  // 对树节点的样式调整
+  .el-tree {
+    .el-tree-node {
+      .el-tree-node__content {
+        padding: 2px 0;
+      }
+    }
+  }
+}

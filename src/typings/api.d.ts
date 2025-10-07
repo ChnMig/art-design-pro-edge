@@ -24,8 +24,8 @@ declare namespace Api {
     /** 分页响应基础结构 */
     interface PaginatedResponse<T = any> {
       records: T[]
-      current: number
-      size: number
+      current?: number
+      size?: number
       total: number
     }
 
@@ -82,47 +82,65 @@ declare namespace Api {
     /** 用户列表 */
     type UserList = Api.Common.PaginatedResponse<UserListItem>
 
-    /** 用户列表项 */
+    /** 用户列表项（系统管理接口返回结构） */
     interface UserListItem {
       id: number
-      avatar: string
-      status: string
-      userName: string
-      userGender: string
-      nickName: string
-      userPhone: string
-      userEmail: string
-      userRoles: string[]
-      createBy: string
-      createTime: string
-      updateBy: string
-      updateTime: string
+      username?: string
+      name: string
+      account?: string
+      phone?: string
+      email?: string | null
+      gender?: number | null
+      status?: number
+      avatar?: string | null
+      role_id?: number | null
+      role_name?: string | null
+      role_desc?: string | null
+      department_id?: number | null
+      department_name?: string | null
+      tenant_id?: number | null
+      tenant_code?: string | null
+      tenant_name?: string | null
+      created_at?: number | string
+      updated_at?: number | string
+      [key: string]: any
     }
 
     /** 用户搜索参数 */
     type UserSearchParams = Partial<
-      Pick<UserListItem, 'id' | 'userName' | 'userGender' | 'userPhone' | 'userEmail' | 'status'> &
-        Api.Common.CommonSearchParams
-    >
+      Pick<
+        UserListItem,
+        'id' | 'username' | 'name' | 'phone' | 'gender' | 'status' | 'role_id' | 'department_id'
+      >
+    > & {
+      page?: number
+      pageSize?: number
+      current?: number
+      size?: number
+    }
 
     /** 角色列表 */
     type RoleList = Api.Common.PaginatedResponse<RoleListItem>
 
-    /** 角色列表项 */
+    /** 角色列表项（与系统管理接口对齐） */
     interface RoleListItem {
-      roleId: number
-      roleName: string
-      roleCode: string
-      description: string
-      enabled: boolean
-      createTime: string
+      id: number
+      name: string
+      desc?: string
+      status?: number
+      created_at?: number | string
+      updated_at?: number | string
+      users?: any[]
+      [key: string]: any
     }
 
     /** 角色搜索参数 */
-    type RoleSearchParams = Partial<
-      Pick<RoleListItem, 'roleId' | 'roleName' | 'roleCode' | 'description' | 'enabled'> &
-        Api.Common.CommonSearchParams
-    >
+    type RoleSearchParams = Partial<Pick<RoleListItem, 'id' | 'name' | 'status'>> & {
+      page?: number
+      pageSize?: number
+      current?: number
+      size?: number
+    }
   }
 
   /** 多租户管理 */

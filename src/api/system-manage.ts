@@ -3,19 +3,45 @@ import { AppRouteRecord } from '@/types/router'
 import { asyncRoutes } from '@/router/routes/asyncRoutes'
 import { menuDataToRouter } from '@/router/utils/menuToRouter'
 
-// 获取用户列表
-export function fetchGetUserList(params: Api.SystemManage.UserSearchParams) {
-  return request.get<Api.SystemManage.UserList>({
-    url: '/api/user/list',
-    params
+type BackendListResponse<T> = Http.BaseResponse<T[]> & {
+  total?: number
+  current?: number
+  page?: number
+  pageSize?: number
+  size?: number
+}
+
+const normalizePaginationParams = (params: Record<string, any>) => {
+  const { current, size, page, pageSize, ...rest } = params
+
+  return {
+    ...rest,
+    page: page ?? current ?? 1,
+    pageSize: pageSize ?? size ?? 10
+  }
+}
+
+// 获取用户列表（直接透传后端字段）
+export function fetchGetUserList(
+  params: Api.SystemManage.UserSearchParams = {}
+): Promise<BackendListResponse<Api.SystemManage.UserListItem>> {
+  return request.get<BackendListResponse<Api.SystemManage.UserListItem>>({
+    url: '/api/v1/admin/system/user',
+    params: normalizePaginationParams(params as Record<string, any>),
+    keepFullResponse: true,
+    showErrorMessage: false
   })
 }
 
-// 获取角色列表
-export function fetchGetRoleList(params: Api.SystemManage.RoleSearchParams) {
-  return request.get<Api.SystemManage.RoleList>({
-    url: '/api/role/list',
-    params
+// 获取角色列表（直接透传后端字段）
+export function fetchGetRoleList(
+  params: Api.SystemManage.RoleSearchParams = {}
+): Promise<BackendListResponse<Api.SystemManage.RoleListItem>> {
+  return request.get<BackendListResponse<Api.SystemManage.RoleListItem>>({
+    url: '/api/v1/admin/system/role',
+    params: normalizePaginationParams(params as Record<string, any>),
+    keepFullResponse: true,
+    showErrorMessage: false
   })
 }
 

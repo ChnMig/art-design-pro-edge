@@ -57,12 +57,14 @@
   import { useTableColumns } from '@/composables/useTableColumns'
   import type { AppRouteRecord } from '@/types/router'
   import { useAuth } from '@/composables/useAuth'
+  import { getAllMenu } from '@/api/system/api'
   import MenuDialog from './modules/menu-dialog.vue'
 
   defineOptions({ name: 'Menus' })
 
   const { hasAuth } = useAuth()
-  const { menuList } = storeToRefs(useMenuStore())
+  const menuStore = useMenuStore()
+  const { menuList } = storeToRefs(menuStore)
 
   // 状态管理
   const loading = ref(false)
@@ -203,7 +205,7 @@
   ])
 
   // 数据相关
-  const tableData = ref<AppRouteRecord[]>([])
+  const tableData = ref<AppRouteRecord[]>(menuList.value || [])
 
   // 事件处理
   const handleReset = () => {
@@ -221,12 +223,20 @@
     getTableData()
   }
 
-  const getTableData = () => {
+  const getTableData = async () => {
     loading.value = true
-    setTimeout(() => {
-      tableData.value = menuList.value
+    try {
+      const response = await getAllMenu()
+      const list = Array.isArray(response) ? response : []
+      tableData.value = list
+      menuStore.setMenuList(list)
+    } catch (error) {
+      console.error('获取菜单列表失败:', error)
+      ElMessage.error('获取菜单列表失败')
+      tableData.value = menuList.value || []
+    } finally {
       loading.value = false
-    }, 500)
+    }
   }
 
   // 工具函数

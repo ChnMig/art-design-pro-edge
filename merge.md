@@ -74,6 +74,8 @@ git show upstream/main:path/to/file
 
   - 保留 `src/api/auth.ts` 的接口路径（`/system/user/*`）与返回字段契约。
   - 若上游 HTTP 处理与本地契约冲突，以本地为准（`src/utils/http/*`）。
+  - 系统管理相关接口需与 `api.md` 保持一致：`fetchGetUserList`、`fetchGetRoleList` 等函数直接调用 `/api/v1/admin/system/*` 接口并透传后端字段，页面层已完成适配，禁止再在 API 层做字段兼容转换。
+  - `src/api/system/api.ts` 固定使用新接口前缀 `/api/v1/admin/system`，所有系统管理页面直接消费后端返回结构，如需调整字段请在页面逻辑中处理，而非在 API 层做二次映射。
 
 - 路由与页面
 
