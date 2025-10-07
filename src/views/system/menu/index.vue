@@ -62,6 +62,7 @@
   import menuInfo from './modal/menuInfo.vue'
   import authInfo from './modal/authInfo.vue'
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
+  import { More } from '@element-plus/icons-vue'
   const isExpanded = ref(false) // 默认全部收起
   const menuModalRef = ref()
   const authModalRef = ref()
@@ -87,20 +88,21 @@
           prop: 'meta.authList',
           label: '元素权限',
           align: 'center',
+          className: 'auth-badge-cell',
           formatter: (row: any) =>
             h('div', { class: 'auth-list-cell' }, [
               h(
-                'el-badge',
+                resolveComponent('ElBadge'),
                 {
-                  value: row.meta?.authList?.length || 0,
+                  value: Array.isArray(row.meta?.authList) ? row.meta.authList.length : 0,
                   type: 'primary',
-                  'show-zero': false
+                  showZero: false
                 },
                 {
                   default: () =>
-                    h('el-button', {
+                    h(resolveComponent('ElButton'), {
                       class: 'share-button',
-                      icon: 'More',
+                      icon: More,
                       size: 'small',
                       style: 'margin: 0; text-align: right',
                       onClick: () => showAuthModal(row)
@@ -253,6 +255,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+
+    /* 仅放宽“元素权限”这一列的单元格裁剪，避免徽标被截断 */
+    :deep(.auth-badge-cell .cell) {
+      overflow: visible;
     }
 
     .operation-column-container {

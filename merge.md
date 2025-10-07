@@ -78,6 +78,12 @@ git show upstream/main:path/to/file
   - 菜单字段以后端为准：页面与表单不得引入上游独有的前端字段（如 `showBadge`、`showTextBadge`、`fixedTab`、`activePath`、`roles` 等）。如后端未返回，对应 UI 也不应出现；仅保留本项目实际使用并由后端提供/驱动的字段（例如 `title`/`icon`/`path`/`component`/`sort`/`status`/`isHide`/`isIframe`/`keepAlive` 等）。
   - `src/api/system/api.ts` 使用 `/api/v1/admin/system` 前缀，并返回后端 payload 的结构；仅做必要的最小化适配（例如把 `status` 映射为布尔 `meta.isEnable` 以便 UI 渲染），不添加无后端来源的扩展键。
 
+- 菜单管理（UI 对齐）
+
+  - “元素权限”列的按钮与主分支一致：徽标包裹的 `ElButton`，仅图标展示（`More`），徽标 `showZero=false`；实现使用 `resolveComponent('ElBadge')` + `resolveComponent('ElButton')`，避免运行时未注册导致按钮不渲染。
+  - 表格居中（全局约定）：所有系统管理下的表格列，默认使用 `align="center"` + `header-align="center"`（除非个别场景需要左对齐，如长文本/多行描述）。新页面、合并上游时都遵循此规则。
+  - “元素权限管理”弹窗（`src/views/system/menu/modal/authInfo.vue`）已按上述规则居中显示。
+
 - 路由与页面
 
   - 保留本地的路由守卫逻辑，仅吸收安全的上游增强。

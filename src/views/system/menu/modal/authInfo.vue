@@ -21,9 +21,21 @@
 
     <!-- 表格部分保持不变 -->
     <ElTable v-loading="loading" :data="tableData" style="width: 100%">
-      <ElTableColumn prop="title" label="权限名称" width="180" />
-      <ElTableColumn prop="mark" label="权限标识" width="180" />
-      <ElTableColumn label="操作">
+      <ElTableColumn
+        prop="title"
+        label="权限名称"
+        width="180"
+        align="center"
+        header-align="center"
+      />
+      <ElTableColumn
+        prop="mark"
+        label="权限标识"
+        width="180"
+        align="center"
+        header-align="center"
+      />
+      <ElTableColumn label="操作" align="center" header-align="center">
         <template #default="scope">
           <ElButton size="small" @click="handleEdit(scope.$index, scope.row)">编辑</ElButton>
           <ElButton size="small" type="danger" @click="handleDelete(scope.row.id)"> 删除 </ElButton>
