@@ -52,7 +52,7 @@
 <script setup lang="ts">
   import { useMenuStore } from '@/store/modules/menu'
   import { ElMessage, ElMessageBox, ElTag } from 'element-plus'
-  import { formatMenuTitle } from '@/router/utils/utils'
+  // import { formatMenuTitle } from '@/router/utils/utils'
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   import { useTableColumns } from '@/composables/useTableColumns'
   import type { AppRouteRecord } from '@/types/router'
@@ -102,57 +102,20 @@
   ])
 
   // 菜单类型工具函数
-  const getMenuTypeTag = (row: AppRouteRecord) => {
-    if (row.meta?.isAuthButton) return 'danger'
-    if (row.children?.length) return 'info'
-    if (row.meta?.link && row.meta?.isIframe) return 'success'
-    if (row.path) return 'primary'
-    if (row.meta?.link) return 'warning'
-    return 'info'
-  }
-
-  const getMenuTypeText = (row: AppRouteRecord) => {
-    if (row.meta?.isAuthButton) return '按钮'
-    if (row.children?.length) return '目录'
-    if (row.meta?.link && row.meta?.isIframe) return '内嵌'
-    if (row.path) return '菜单'
-    if (row.meta?.link) return '外链'
-    return '未知'
-  }
+  // 上游的菜单类型展示已移除
 
   // 表格列配置
   const { columnChecks, columns } = useTableColumns(() => [
     {
-      prop: 'meta.title',
+      prop: 'name',
       label: '菜单名称',
       minWidth: 120,
-      formatter: (row: AppRouteRecord) => formatMenuTitle(row.meta?.title)
-    },
-    {
-      prop: 'type',
-      label: '菜单类型',
-      formatter: (row: AppRouteRecord) => {
-        return h(ElTag, { type: getMenuTypeTag(row) }, () => getMenuTypeText(row))
-      }
+      formatter: (row: any) => row.name || '--'
     },
     {
       prop: 'path',
       label: '路由',
-      formatter: (row: AppRouteRecord) => {
-        if (row.meta?.isAuthButton) return ''
-        return row.meta?.link || row.path || ''
-      }
-    },
-    {
-      prop: 'meta.authList',
-      label: '权限标识',
-      formatter: (row: AppRouteRecord) => {
-        if (row.meta?.isAuthButton) {
-          return row.meta?.authMark || ''
-        }
-        if (!row.meta?.authList?.length) return ''
-        return `${row.meta.authList.length} 个权限标识`
-      }
+      formatter: (row: any) => row.path || row.link || ''
     },
     {
       prop: 'date',
@@ -162,7 +125,10 @@
     {
       prop: 'status',
       label: '状态',
-      formatter: () => h(ElTag, { type: 'success' }, () => '启用')
+      formatter: (row: any) =>
+        h(ElTag, { type: row.status === 1 ? 'success' : 'warning' }, () =>
+          row.status === 1 ? '启用' : '禁用'
+        )
     },
     {
       prop: 'operation',
@@ -205,7 +171,7 @@
   ])
 
   // 数据相关
-  const tableData = ref<AppRouteRecord[]>(menuList.value || [])
+  const tableData = ref<any[]>(menuList.value || [])
 
   // 事件处理
   const handleReset = () => {
@@ -227,7 +193,11 @@
     loading.value = true
     try {
       const response = await getAllMenu()
-      const list = Array.isArray(response) ? response : []
+      const list = Array.isArray(response)
+        ? response
+        : Array.isArray((response as any)?.data)
+          ? (response as any).data
+          : []
       tableData.value = list
       menuStore.setMenuList(list)
     } catch (error) {
@@ -254,45 +224,14 @@
     return cloned
   }
 
-  const convertAuthListToChildren = (items: AppRouteRecord[]): AppRouteRecord[] => {
-    return items.map((item) => {
-      const clonedItem = deepClone(item)
-
-      if (clonedItem.children?.length) {
-        clonedItem.children = convertAuthListToChildren(clonedItem.children)
-      }
-
-      if (item.meta?.authList?.length) {
-        const authChildren: AppRouteRecord[] = item.meta.authList.map(
-          (auth: { title: string; authMark: string }) => ({
-            path: `${item.path}_auth_${auth.authMark}`,
-            name: `${String(item.name)}_auth_${auth.authMark}`,
-            meta: {
-              title: auth.title,
-              authMark: auth.authMark,
-              isAuthButton: true,
-              parentPath: item.path
-            }
-          })
-        )
-
-        clonedItem.children = clonedItem.children?.length
-          ? [...clonedItem.children, ...authChildren]
-          : authChildren
-      }
-
-      return clonedItem
-    })
-  }
-
   const searchMenu = (items: AppRouteRecord[]): AppRouteRecord[] => {
     const results: AppRouteRecord[] = []
 
     for (const item of items) {
       const searchName = appliedFilters.name?.toLowerCase().trim() || ''
       const searchRoute = appliedFilters.route?.toLowerCase().trim() || ''
-      const menuTitle = formatMenuTitle(item.meta?.title || '').toLowerCase()
-      const menuPath = (item.path || '').toLowerCase()
+      const menuTitle = String((item as any).name || '').toLowerCase()
+      const menuPath = String((item as any).path || '').toLowerCase()
       const nameMatch = !searchName || menuTitle.includes(searchName)
       const routeMatch = !searchRoute || menuPath.includes(searchRoute)
 
@@ -316,8 +255,7 @@
 
   // 过滤后的表格数据
   const filteredTableData = computed(() => {
-    const searchedData = searchMenu(tableData.value)
-    return convertAuthListToChildren(searchedData)
+    return searchMenu(tableData.value)
   })
 
   // 弹窗操作处理

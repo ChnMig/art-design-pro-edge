@@ -26,7 +26,7 @@
         :columns="columns"
         :pagination="paginationState"
         :loading="isLoading"
-        :table-config="{ rowKey: 'User.id' }"
+        :table-config="{ rowKey: 'id' }"
         :layout="{ marginTop: 10 }"
         @pagination:size-change="onPageSizeChange"
         @pagination:current-change="onCurrentPageChange"
@@ -182,41 +182,41 @@
       columnsFactory: () => [
         { type: 'index', width: 60, label: '序号' },
         {
-          prop: 'User.name',
+          prop: 'name',
           label: '用户名称',
           align: 'center',
-          formatter: (row: any) => row.User?.name || '--'
+          formatter: (row: any) => row.name || '--'
         },
         {
-          prop: 'User.account',
+          prop: 'account',
           label: '登录账号',
           align: 'center',
-          formatter: (row: any) => row.User?.account || '--'
+          formatter: (row: any) => row.account || '--'
         },
         {
-          prop: 'User.username',
+          prop: 'username',
           label: '用户名',
           align: 'center',
-          formatter: (row: any) => row.User?.username || '--'
+          formatter: (row: any) => row.username || '--'
         },
         {
-          prop: 'User.phone',
+          prop: 'phone',
           label: '手机号',
           align: 'center',
-          formatter: (row: any) => row.User?.phone || '--'
+          formatter: (row: any) => row.phone || '--'
         },
         {
-          prop: 'User.gender',
+          prop: 'gender',
           label: '性别',
           align: 'center',
           formatter: (row: any) => {
-            if (row.User?.gender === 1)
+            if (row.gender === 1)
               return h(
                 resolveComponent('ElTag'),
                 { type: 'success', effect: 'light' },
                 { default: () => '男' }
               )
-            if (row.User?.gender === 2)
+            if (row.gender === 2)
               return h(
                 resolveComponent('ElTag'),
                 { type: 'danger', effect: 'light' },
@@ -236,14 +236,14 @@
           align: 'center'
         },
         {
-          prop: 'User.status',
+          prop: 'status',
           label: '状态',
           align: 'center',
           formatter: (row: any) =>
             h(
               resolveComponent('ElTag'),
-              { type: getTagType(row.User?.status) },
-              { default: () => buildTagText(row.User?.status) }
+              { type: getTagType(row.status) },
+              { default: () => buildTagText(row.status) }
             )
         },
         {
@@ -368,14 +368,14 @@
 
   // 列配置选项
   const columnOptions = [
-    { label: '用户名称', prop: 'User.name' },
-    { label: '登录账号', prop: 'User.account' },
-    { label: '用户名', prop: 'User.username' },
-    { label: '手机号', prop: 'User.phone' },
-    { label: '性别', prop: 'User.gender' },
+    { label: '用户名称', prop: 'name' },
+    { label: '登录账号', prop: 'account' },
+    { label: '用户名', prop: 'username' },
+    { label: '手机号', prop: 'phone' },
+    { label: '性别', prop: 'gender' },
     { label: '部门', prop: 'department_name' },
     { label: '角色', prop: 'role_name' },
-    { label: '状态', prop: 'User.status' },
+    { label: '状态', prop: 'status' },
     { label: '操作', prop: 'operation' }
   ]
 
@@ -435,15 +435,15 @@
     dialogType.value = type
 
     if (type === 'edit' && row) {
-      formData.id = row.User.id
-      formData.account = row.User.account || ''
-      formData.username = row.User.username || ''
-      formData.name = row.User.name
-      formData.phone = row.User.phone || ''
-      formData.gender = row.User.gender === 0 ? 1 : row.User.gender // 如果性别是未知(0)，则默认设为男(1)
-      formData.status = row.User.status
-      formData.department_id = row.User.department_id
-      formData.role_id = row.User.role_id || 1 // 获取角色ID，如果没有则默认为1
+      formData.id = row.id
+      formData.account = row.account || ''
+      formData.username = row.username || ''
+      formData.name = row.name
+      formData.phone = row.phone || ''
+      formData.gender = row.gender === 0 ? 1 : row.gender // 如果性别是未知(0)，则默认设为男(1)
+      formData.status = row.status
+      formData.department_id = row.department_id
+      formData.role_id = row.role_id || 1 // 获取角色ID，如果没有则默认为1
       formData.password = '' // 编辑模式下明确清空密码
     } else {
       // 添加用户时重置表单并确保状态为启用
@@ -482,7 +482,7 @@
       .then(async () => {
         try {
           // 确保用户ID正确传递
-          const userId = row.User?.id
+          const userId = row?.id
           if (!userId) {
             ElMessage.error('用户ID无效')
             return

@@ -74,8 +74,9 @@ git show upstream/main:path/to/file
 
   - 保留 `src/api/auth.ts` 的接口路径（`/system/user/*`）与返回字段契约。
   - 若上游 HTTP 处理与本地契约冲突，以本地为准（`src/utils/http/*`）。
-  - 系统管理相关接口需与 `api.md` 保持一致：`fetchGetUserList`、`fetchGetRoleList` 等函数直接调用 `/api/v1/admin/system/*` 接口并透传后端字段，页面层已完成适配，禁止再在 API 层做字段兼容转换。
-  - `src/api/system/api.ts` 固定使用新接口前缀 `/api/v1/admin/system`，所有系统管理页面直接消费后端返回结构，如需调整字段请在页面逻辑中处理，而非在 API 层做二次映射。
+  - 系统管理相关接口仅按本项目后端契约实现。严禁为“兼容上游纯前端”而在 API 层凭空造字段或做字段重映射。
+  - 菜单字段以后端为准：页面与表单不得引入上游独有的前端字段（如 `showBadge`、`showTextBadge`、`fixedTab`、`activePath`、`roles` 等）。如后端未返回，对应 UI 也不应出现；仅保留本项目实际使用并由后端提供/驱动的字段（例如 `title`/`icon`/`path`/`component`/`sort`/`status`/`isHide`/`isIframe`/`keepAlive` 等）。
+  - `src/api/system/api.ts` 使用 `/api/v1/admin/system` 前缀，并返回后端 payload 的结构；仅做必要的最小化适配（例如把 `status` 映射为布尔 `meta.isEnable` 以便 UI 渲染），不添加无后端来源的扩展键。
 
 - 路由与页面
 

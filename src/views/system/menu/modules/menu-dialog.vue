@@ -50,11 +50,6 @@
               <ArtIconSelector v-model="form.icon" :iconType="iconType" width="100%" />
             </ElFormItem>
           </ElCol>
-          <ElCol :span="12">
-            <ElFormItem label="角色权限" prop="roles">
-              <ElInput v-model="rolesString" placeholder="角色权限，多个用逗号分隔" />
-            </ElFormItem>
-          </ElCol>
         </ElRow>
 
         <ElRow :gutter="20">
@@ -75,18 +70,7 @@
           </ElCol>
         </ElRow>
 
-        <ElRow :gutter="20">
-          <ElCol :span="12">
-            <ElFormItem label="文本徽章" prop="showTextBadge">
-              <ElInput v-model="form.showTextBadge" placeholder="文本徽章内容" />
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="12">
-            <ElFormItem label="激活路径" prop="activePath">
-              <ElInput v-model="form.activePath" placeholder="详情页激活选中的菜单路径" />
-            </ElFormItem>
-          </ElCol>
-        </ElRow>
+        <!-- 后端未提供：文本徽章/激活路径，已移除UI -->
 
         <ElRow :gutter="20">
           <ElCol :span="6">
@@ -109,16 +93,7 @@
               <ElSwitch v-model="form.isIframe" />
             </ElFormItem>
           </ElCol>
-          <ElCol :span="6">
-            <ElFormItem label="显示徽章" prop="showBadge">
-              <ElSwitch v-model="form.showBadge" />
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="6">
-            <ElFormItem label="固定标签" prop="fixedTab">
-              <ElSwitch v-model="form.fixedTab" />
-            </ElFormItem>
-          </ElCol>
+          <!-- 后端未提供：显示徽章/固定标签，已移除UI -->
           <ElCol :span="6">
             <ElFormItem label="标签隐藏" prop="isHideTab">
               <ElSwitch v-model="form.isHideTab" />
@@ -184,14 +159,9 @@
     isMenu: boolean
     keepAlive: boolean
     isHide: boolean
-    isHideTab: boolean
     link: string
     isIframe: boolean
-    showBadge: boolean
-    showTextBadge: string
-    fixedTab: boolean
-    activePath: string
-    roles: string[]
+    isHideTab: boolean
     authName: string
     authLabel: string
     authIcon: string
@@ -235,14 +205,9 @@
     isMenu: true,
     keepAlive: true,
     isHide: false,
-    isHideTab: false,
     link: '',
     isIframe: false,
-    showBadge: false,
-    showTextBadge: '',
-    fixedTab: false,
-    activePath: '',
-    roles: [],
+    isHideTab: false,
     authName: '',
     authLabel: '',
     authIcon: '',
@@ -272,17 +237,7 @@
     return false
   })
 
-  const rolesString = computed({
-    get: () => form.roles.join(','),
-    set: (value: string) => {
-      form.roles = value
-        ? value
-            .split(',')
-            .map((role) => role.trim())
-            .filter((role) => role)
-        : []
-    }
-  })
+  // 角色权限（后端未提供，移除）
 
   const resetForm = () => {
     formRef.value?.resetFields()
@@ -298,14 +253,9 @@
       isMenu: true,
       keepAlive: true,
       isHide: false,
-      isHideTab: false,
       link: '',
       isIframe: false,
-      showBadge: false,
-      showTextBadge: '',
-      fixedTab: false,
-      activePath: '',
-      roles: [],
+      isHideTab: false,
       authName: '',
       authLabel: '',
       authIcon: '',
@@ -334,11 +284,7 @@
       form.isEnable = row.meta?.isEnable ?? true
       form.link = row.meta?.link || ''
       form.isIframe = row.meta?.isIframe ?? false
-      form.showBadge = row.meta?.showBadge ?? false
-      form.showTextBadge = row.meta?.showTextBadge || ''
-      form.fixedTab = row.meta?.fixedTab ?? false
-      form.activePath = row.meta?.activePath || ''
-      form.roles = row.meta?.roles || []
+      // 后端未提供：showBadge/showTextBadge/fixedTab/activePath/roles 均不回显
     } else {
       const row = props.editData
       form.authName = row.title || ''

@@ -104,8 +104,12 @@ export const deleteRole = (id: number): Promise<any> => {
   return httpClient.del({ url: `${API_PREFIX}/role`, data: { id } })
 }
 
-export const getAllMenuByRole = (roleID: number): Promise<any> => {
-  return httpClient.get({ url: `${API_PREFIX}/menu/role`, params: { role_id: roleID } })
+export const getAllMenuByRole = (roleID: number): Promise<Http.BaseResponse<any>> => {
+  return httpClient.get({
+    url: `${API_PREFIX}/menu/role`,
+    params: { role_id: roleID },
+    keepFullResponse: true
+  })
 }
 
 export const saveRolePermission = (data: any): Promise<any> => {
