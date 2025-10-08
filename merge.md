@@ -130,6 +130,9 @@ git show upstream/main:path/to/file
       - 角色—菜单权限抽屉：`src/views/system/role/auth.vue`
       - 接口：`GET/POST/PUT/DELETE /admin/system/role`、`GET/PUT /admin/system/menu/role`
       - 说明：角色完全由租户侧自行创建与维护，平台不再提供角色管理或范围分配接口。
+    - 部门管理：`src/views/system/department/index.vue`
+    - 用户管理：`src/views/system/user/index.vue`
+    - 不包含页面：系统侧不提供“租户管理”和“个人中心”页面；个人信息通过头像入口打开全局 `ArtEditInfoDialog` 进行更新。
 
 - 路由与动态菜单
 

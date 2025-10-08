@@ -567,7 +567,7 @@ Authorization: Bearer {your_jwt_token}
 
 ### 4. 租户菜单管理
 
-**说明：** 租户管理员通过 `/api/v1/admin/system` 前缀调用，仅能操作平台授权范围内的数据。
+**说明：** 租户管理员通过 `/api/v1/admin/system` 前缀调用，仅能操作平台授权范围内的数据。注意：租户端不提供菜单的增删改查与权限定义接口（菜单管理仅平台端可操作）。
 
 #### 4.1 获取当前用户菜单
 
@@ -589,9 +589,8 @@ Authorization: Bearer {your_jwt_token}
       "icon": "&#xe72b;",
       "children": [
         { "id": 7, "name": "角色管理", "path": "/system/role" },
-        { "id": 8, "name": "菜单管理", "path": "/system/menu" },
-        { "id": 9, "name": "部门管理", "path": "/system/department" },
-        { "id": 10, "name": "用户管理", "path": "/system/user" }
+        { "id": 8, "name": "部门管理", "path": "/system/department" },
+        { "id": 9, "name": "用户管理", "path": "/system/user" }
       ]
     }
   ],
@@ -599,20 +598,13 @@ Authorization: Bearer {your_jwt_token}
 }
 ```
 
-#### 4.2 获取租户菜单列表
-
-- **请求方式：** `GET`
-- **请求路径：** `/api/v1/admin/system/menu`
-
-返回租户可配置的菜单树（已根据平台范围裁剪）。
-
-#### 4.3 获取角色菜单权限
+#### 4.2 获取角色菜单权限
 
 - **请求方式：** `GET`
 - **请求路径：** `/api/v1/admin/system/menu/role`
 - **请求参数：** `role_id`（必填）
 
-#### 4.4 更新角色菜单权限
+#### 4.3 更新角色菜单权限
 
 - **请求方式：** `PUT`
 - **请求路径：** `/api/v1/admin/system/menu/role`
