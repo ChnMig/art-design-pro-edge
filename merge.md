@@ -77,6 +77,10 @@ git show upstream/main:path/to/file
   - 系统管理相关接口仅按本项目后端契约实现。严禁为“兼容上游纯前端”而在 API 层凭空造字段或做字段重映射。
   - 菜单字段以后端为准：页面与表单不得引入上游独有的前端字段（如 `showBadge`、`showTextBadge`、`fixedTab`、`activePath`、`roles` 等）。如后端未返回，对应 UI 也不应出现；仅保留本项目实际使用并由后端提供/驱动的字段（例如 `title`/`icon`/`path`/`component`/`sort`/`status`/`isHide`/`isIframe`/`keepAlive` 等）。
   - `src/api/system/api.ts` 使用 `/api/v1/admin/system` 前缀，并返回后端 payload 的结构；仅做必要的最小化适配（例如把 `status` 映射为布尔 `meta.isEnable` 以便 UI 渲染），不添加无后端来源的扩展键。
+  - 全局规则：GET 查询参数清理（`src/utils/http/index.ts`）
+    - 仅对 GET 请求生效；POST/PUT 不受影响。
+    - 自动剔除 `undefined`、`null`、空字符串及纯空白字符串的参数键；保留 `0` 与 `false`。
+    - 目的：避免把“空值”当作有效查询条件拼接到 URL（例如 `?name=&status=`）。
 
 - 菜单管理（UI 对齐）
 

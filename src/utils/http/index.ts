@@ -161,6 +161,21 @@ function delay(ms: number) {
 /** 请求函数 */
 async function makeRequest<T = any>(config: ExtendedAxiosRequestConfig): Promise<T> {
   const method = config.method?.toUpperCase()
+  // 清理 GET 请求中的空参数：剔除 undefined/null/空字符串（含纯空白）
+  if (method === 'GET' && config.params && typeof config.params === 'object') {
+    const cleaned: Record<string, any> = {}
+    const params = config.params as Record<string, any>
+    Object.keys(params).forEach((key) => {
+      const val = params[key]
+      const isEmptyString = typeof val === 'string' && val.trim() === ''
+      const isNil = val === undefined || val === null
+      // 保留 0 和 false，去除 空串/空白串/undefined/null
+      if (!isNil && !isEmptyString) {
+        cleaned[key] = val
+      }
+    })
+    config.params = cleaned
+  }
   if (method && ['POST', 'PUT'].includes(method) && config.params && !config.data) {
     config.data = config.params
     config.params = undefined
