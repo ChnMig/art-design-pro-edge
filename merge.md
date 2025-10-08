@@ -136,6 +136,34 @@ git show upstream/main:path/to/file
     - 用户管理：`src/views/system/user/index.vue`
     - 不包含页面：系统侧不提供“租户管理”和“个人中心”页面；个人信息通过头像入口打开全局 `ArtEditInfoDialog` 进行更新。
 
+- 接口分割与前端适配（必须遵循）
+
+  - 平台“菜单定义”接口（不带 hasPermission 标记）
+
+    - `GET /api/v1/admin/platform/menu`
+    - `POST /api/v1/admin/platform/menu`
+    - `DELETE /api/v1/admin/platform/menu`
+    - 元素权限定义：`GET/POST/PUT/DELETE /api/v1/admin/platform/menu/auth`
+
+  - 平台“租户菜单范围”接口（带 hasPermission 标记）
+
+    - 查询：`GET /api/v1/admin/platform/menu/tenant?tenant_id`
+    - 保存：`PUT /api/v1/admin/platform/menu/tenant { tenant_id, menu_data }`
+    - 使用位置：`src/views/platform/tenant/scope.vue`（从租户列表“查看”按钮进入的右侧抽屉）
+
+  - 系统“角色菜单权限”接口（带 hasPermission 标记）
+
+    - 查询：`GET /api/v1/admin/system/menu/role?role_id`
+    - 保存：`PUT /api/v1/admin/system/menu/role { role_id, menu_data }`
+    - 使用位置：`src/views/system/role/auth.vue`（角色列表的“权限”抽屉）
+
+  - 前端渲染/提交规则（与 system/role 与 platform/tenant 保持一致）
+    - 渲染（默认勾选）：仅当“当前节点及其整棵子树”都为 true 时，才将父节点加入 `checkedKeys`；否则只勾选已为 true 的叶子节点（包含权限子节点）。这样父节点会呈现半选，不会级联把未选中的子节点强行勾上。
+    - 提交：父节点 `hasPermission` 以 “选中 ∪ 半选中” 判断（`getCheckedKeys() ∪ getHalfCheckedKeys()`）；子菜单和权限节点按实际勾选设置 true/false。
+    - 兼容：`hasPermission` 可能存在于节点顶层或 `meta` 下，值可能为 `true/false/1/0/'1'/'0'/'true'/'false'`，前端需统一归一化。
+    - 权限节点（按钮）转换：把 `meta.authList` 转换为树子节点（`id = auth_${menuId}_${authId}`），用于树控件勾选与还原。
+    - 二次确认：保存时需 `ElMessageBox.confirm` 二次确认（两处抽屉都已实现），避免误操作。
+
 - 路由与动态菜单
 
   - 登录后，前端通过 `GET /admin/system/user/menu` 获取“当前用户可见菜单”，据此注册动态路由（`src/router/utils/registerRoutes.ts`）。
