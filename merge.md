@@ -89,6 +89,7 @@ git show upstream/main:path/to/file
   - “元素权限管理”弹窗（`src/views/system/menu/modal/authInfo.vue`）已按上述规则居中显示。
   - 全局不展示序号列：禁止在系统管理页面新增 `type: 'index'` 的序号列（角色、部门、租户等列表已移除），统一使用数据字段或分页信息，不再以序号列占位。
   - 操作列规则：操作项不超过 3 个时直接展示按钮（`ArtButtonTable`），超过 3 个使用下拉（`ArtButtonMore`）。例如“系统/角色”页展示为“权限/编辑/删除”三枚按钮。
+  - 空值占位：表格列在未自定义渲染时，统一在全局组件 `ArtTable` 输出占位符 `--`（规则：`undefined/null/''/空白字符串 -> --`，保留 `0/false`）。路径：`src/components/core/tables/art-table/index.vue`。
 
 - 平台管理 vs 系统管理（接口与页面）
 

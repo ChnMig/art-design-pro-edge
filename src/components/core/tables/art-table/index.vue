@@ -44,6 +44,20 @@
               }"
             />
           </template>
+          <!-- 全局占位渲染：当列未使用插槽时，优先使用列的 formatter；若无则显示值或 "--" 占位 -->
+          <template v-else #default="{ row }">
+            <template v-if="typeof col.formatter === 'function'">
+              <template v-if="isObject(col.formatter(row))">
+                <component :is="col.formatter(row)" />
+              </template>
+              <template v-else>
+                {{ formatCellValue(col.formatter(row)) }}
+              </template>
+            </template>
+            <template v-else>
+              {{ formatCellValue(col.prop ? getCellValue(row, col.prop as string) : undefined) }}
+            </template>
+          </template>
         </ElTableColumn>
       </template>
 
@@ -248,6 +262,29 @@
     delete columnProps.slotName
     return columnProps
   }
+
+  // 读取嵌套字段值（支持 a.b.c 路径）
+  const getCellValue = (obj: Record<string, any>, path: string): any => {
+    try {
+      if (!obj || !path) return undefined
+      if (path.includes('.')) {
+        return path.split('.').reduce((acc: any, key: string) => (acc ? acc[key] : undefined), obj)
+      }
+      return obj[path]
+    } catch {
+      return undefined
+    }
+  }
+
+  // 统一显示空占位 "--"
+  const formatCellValue = (val: any): string | number => {
+    if (val === 0 || val === false) return String(val)
+    if (val === undefined || val === null) return '--'
+    if (typeof val === 'string' && val.trim() === '') return '--'
+    return val as string | number
+  }
+
+  const isObject = (val: any) => val !== null && typeof val === 'object'
 
   // 分页大小变化
   const handleSizeChange = (val: number) => {
