@@ -29,6 +29,7 @@
           node-key="id"
           default-expand-all
           :check-strictly="false"
+          :default-checked-keys="defaultCheckedKeys"
           :props="defaultProps"
           @check="handleTreeCheck"
         >
@@ -223,48 +224,14 @@
     return !/[<>&;#]/.test(iconName)
   }
 
-  // 设置树的选中状态 - 重写这个方法以确保正确勾选
+  // 设置树的选中状态 - 使用“仅子树全选才勾父”的策略，避免父节点勾选级联全选子节点
   const setTreeCheckedState = () => {
     if (!menuTreeRef.value) return
-
+    const checkedKeys = buildCheckedKeys(processedMenus.value)
     menuTreeRef.value.setCheckedKeys([])
-
-    // 调试日志：输出处理后的菜单树结构
-    console.log('处理后的菜单树结构:', JSON.stringify(processedMenus.value))
-
-    // 收集所有应该被选中的节点ID
-    const checkedKeys = []
-
-    // 递归查找所有hasPermission为true的节点
-    const findCheckedNodes = (nodes) => {
-      if (!nodes || !nodes.length) return
-
-      nodes.forEach((node) => {
-        if (node.hasPermission === true) {
-          console.log(`节点将被勾选: ${node.id}, 类型: ${node.isAuth ? '权限' : '菜单'}`)
-          checkedKeys.push(node.id)
-        }
-
-        // 递归处理子节点
-        if (node.children && node.children.length > 0) {
-          findCheckedNodes(node.children)
-        }
-      })
-    }
-
-    // 执行查找
-    findCheckedNodes(processedMenus.value)
-
-    console.log(`找到 ${checkedKeys.length} 个需要勾选的节点:`, checkedKeys)
-
-    // 先执行一次设置，确保基本选中逻辑正确
     if (checkedKeys.length > 0) {
       menuTreeRef.value.setCheckedKeys(checkedKeys)
-
-      // 再次设置选中状态，确保完全应用
-      setTimeout(() => {
-        menuTreeRef.value.setCheckedKeys(checkedKeys)
-      }, 50)
+      setTimeout(() => menuTreeRef.value?.setCheckedKeys(checkedKeys), 50)
     }
   }
 
@@ -275,8 +242,13 @@
 
   // 递归收集选中的权限数据，用于保存
   const collectSelectedAuths = () => {
-    // 在严格模式下只需要获取选中的节点，不需要半选中节点
-    const checkedKeys = menuTreeRef.value.getCheckedKeys()
+    // 同时收集选中与半选中节点：父菜单在部分子项选中时也应为 true
+    const checked = menuTreeRef.value.getCheckedKeys()
+    const halfChecked = menuTreeRef.value.getHalfCheckedKeys?.()
+    const checkedKeySet = new Set([
+      ...(Array.isArray(checked) ? checked : []),
+      ...(Array.isArray(halfChecked) ? halfChecked : [])
+    ])
 
     // 克隆原始菜单树
     const clonedMenus = JSON.parse(JSON.stringify(menus.value))
@@ -286,14 +258,14 @@
       if (!menuList || !menuList.length) return []
 
       return menuList.map((menu) => {
-        // 检查菜单是否选中 - 不再需要考虑半选中状态
-        menu.hasPermission = checkedKeys.includes(menu.id)
+        // 父菜单：选中或半选中均视为 true
+        menu.hasPermission = checkedKeySet.has(menu.id)
 
         // 处理权限列表
         if (menu.meta?.authList && menu.meta.authList.length > 0) {
           menu.meta.authList.forEach((auth) => {
             const authKey = `auth_${menu.id}_${auth.id}`
-            auth.hasPermission = checkedKeys.includes(authKey)
+            auth.hasPermission = checkedKeySet.has(authKey)
           })
         }
 
@@ -352,6 +324,50 @@
       }
     }
   )
+
+  // 计算默认勾选 keys：仅当“当前节点及其整棵子树”都选中时，才把父节点放入 keys；否则只放入已选中的叶子
+  const defaultCheckedKeys = computed(() => buildCheckedKeys(processedMenus.value))
+
+  function buildCheckedKeys(nodes: any[]): (number | string)[] {
+    const result: (number | string)[] = []
+
+    const dfs = (node: any): boolean => {
+      if (!node) return false
+      // 权限节点：叶子
+      if (node.isAuth) {
+        const permitted = isPermitted(node)
+        if (permitted) result.push(node.id)
+        return permitted
+      }
+
+      const children = Array.isArray(node.children) ? node.children : []
+      if (children.length === 0) {
+        const permitted = isPermitted(node)
+        if (permitted) result.push(node.id)
+        return permitted
+      }
+
+      let allChildrenPermitted = true
+      for (const child of children) {
+        const childFull = dfs(child)
+        if (!childFull) allChildrenPermitted = false
+      }
+
+      const currentPermitted = isPermitted(node)
+      const subtreeFullyPermitted = currentPermitted && allChildrenPermitted
+      if (subtreeFullyPermitted) result.push(node.id)
+      return subtreeFullyPermitted
+    }
+
+    nodes?.forEach((n) => dfs(n))
+    return result
+  }
+
+  function isPermitted(node: any): boolean {
+    if (node && 'hasPermission' in node) return !!node.hasPermission
+    if (node?.meta && 'hasPermission' in node.meta) return !!(node.meta as any).hasPermission
+    return false
+  }
 
   // 关闭抽屉
   const handleClose = (skipCheck = false) => {

@@ -94,17 +94,53 @@
       data.isAuth ? data.title : formatMenuTitle(data.meta?.title) || data.name || '未命名菜单'
   }
 
-  const defaultCheckedKeys = computed<(number | string)[]>(() => {
-    const keys: (number | string)[] = []
-    const walk = (nodes: any[]) => {
-      nodes?.forEach((n) => {
-        if (isPermitted(n)) keys.push(n.id)
-        if (n.children?.length) walk(n.children)
-      })
+  // 仅在“整个子树都选中”的情况下才勾选父节点；否则只勾选具体已选中的子节点
+  const defaultCheckedKeys = computed<(number | string)[]>(() =>
+    buildCheckedKeys(processedMenus.value)
+  )
+
+  const buildCheckedKeys = (nodes: any[]): (number | string)[] => {
+    const result: (number | string)[] = []
+
+    const dfs = (node: any): boolean => {
+      // 返回当前节点“子树是否全部选中”
+      if (!node) return false
+
+      // 权限节点：叶子
+      if (node.isAuth) {
+        const permitted = isPermitted(node)
+        if (permitted) result.push(node.id)
+        return permitted
+      }
+
+      // 菜单节点
+      const children = Array.isArray(node.children) ? node.children : []
+
+      if (children.length === 0) {
+        const permitted = isPermitted(node)
+        if (permitted) result.push(node.id)
+        return permitted
+      }
+
+      // 递归处理子节点，收集 key
+      let allChildrenPermitted = true
+      for (const child of children) {
+        const childFull = dfs(child)
+        if (!childFull) allChildrenPermitted = false
+      }
+
+      const currentPermitted = isPermitted(node)
+      const subtreeFullyPermitted = currentPermitted && allChildrenPermitted
+
+      // 只有当整棵子树都选中时，才将父节点加入勾选，避免父节点勾选导致子节点被级联全选
+      if (subtreeFullyPermitted) result.push(node.id)
+
+      return subtreeFullyPermitted
     }
-    walk(processedMenus.value)
-    return keys
-  })
+
+    nodes?.forEach((n) => dfs(n))
+    return result
+  }
 
   // 加载菜单 + 权限（平台端 GET /platform/menu?tenant_id）
   const loadTenantScope = async (tenantId: number) => {
@@ -212,14 +248,7 @@
 
   const setTreeCheckedState = () => {
     if (!menuTreeRef.value) return
-    const checked: (number | string)[] = []
-    const walk = (nodes: any[]) => {
-      nodes?.forEach((n) => {
-        if (isPermitted(n)) checked.push(n.id)
-        if (n.children?.length) walk(n.children)
-      })
-    }
-    walk(processedMenus.value)
+    const checked = buildCheckedKeys(processedMenus.value)
     menuTreeRef.value.setCheckedKeys([])
     if (checked.length > 0) {
       menuTreeRef.value.setCheckedKeys(checked)
@@ -228,15 +257,18 @@
   }
 
   const collectSelectedAuths = () => {
-    const keys = (menuTreeRef.value?.getCheckedKeys() || []) as (number | string)[]
+    const checked = (menuTreeRef.value?.getCheckedKeys() || []) as (number | string)[]
+    const half = (menuTreeRef.value?.getHalfCheckedKeys?.() || []) as (number | string)[]
+    const keySet = new Set<number | string>([...checked, ...half])
     const cloned = JSON.parse(JSON.stringify(menus.value))
     const mark = (list: any[]): any[] =>
       list.map((m) => {
-        m.hasPermission = keys.includes(m.id)
+        // 父级：选中或半选中均视为 true
+        m.hasPermission = keySet.has(m.id)
         if (m.meta?.authList?.length) {
           m.meta.authList.forEach((a: any) => {
             const key = `auth_${m.id}_${a.id}`
-            a.hasPermission = keys.includes(key)
+            a.hasPermission = keySet.has(key)
           })
         }
         if (m.children?.length) m.children = mark(m.children)
