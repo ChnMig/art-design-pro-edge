@@ -484,19 +484,20 @@ Authorization: Bearer {your_jwt_token}
 }
 ```
 
-### 3. 平台菜单管理（超级管理员）
+### 3. 平台菜单与租户范围（超级管理员）
 
-**说明：** 以下接口由平台超级管理员使用，路径统一为 `/api/v1/admin/platform/...`，用于维护系统菜单定义并为租户分配最大的可用范围。
+**说明：** 平台侧维护系统菜单定义，同时可为指定租户配置“可用菜单范围”。GET/PUT `/api/v1/admin/platform/menu` 接口接受 `tenant_id` 参数，并返回（或保存）该租户的菜单范围，响应包含“全部菜单与权限”，并在其中标记该租户当前已拥有的菜单和按钮权限。
 
-#### 3.1 获取平台菜单列表
+#### 3.1 获取指定租户的菜单范围（带权限标记）
 
 - **请求方式：** `GET`
 - **请求路径：** `/api/v1/admin/platform/menu`
+- **查询参数：** `tenant_id`（必填）
 - **请求头：** `Authorization: Bearer {token}`
 
-返回完整的菜单树，供平台侧配置使用。
+接口返回所有菜单与其权限列表，并对属于该租户范围内的菜单（及其下的按钮权限）设置 `hasPermission = true` 标记，便于前端直接呈现勾选状态。
 
-#### 3.2 新增平台菜单
+#### 3.2 新增平台菜单（定义）
 
 - **请求方式：** `POST`
 - **请求路径：** `/api/v1/admin/platform/menu`
@@ -514,56 +515,34 @@ Authorization: Bearer {your_jwt_token}
 }
 ```
 
-#### 3.3 更新 / 删除平台菜单
+#### 3.3 更新指定租户的菜单范围
 
-- `PUT /api/v1/admin/platform/menu`
-- `DELETE /api/v1/admin/platform/menu`
+- **请求方式：** `PUT`
+- **请求路径：** `/api/v1/admin/platform/menu`
+- **请求体：**
 
-均仅限超级管理员调用。
+```json
+{
+  "tenant_id": 1,
+  "menu_data": "[ { \"id\":6, \"hasPermission\":true, \"children\":[ ... ] } ]"
+}
+```
 
-#### 3.4 菜单权限定义管理
+当 `menu_data` 中某节点 `hasPermission` 为 `true` 时，该菜单会被加入该租户的范围。按钮权限的 `hasPermission` 仅用于呈现；目前租户范围按“菜单级别”存储，按钮权限将根据已授权菜单自动标记允许。
+
+#### 3.4 删除平台菜单（定义）
+
+- **请求方式：** `DELETE`
+- **请求路径：** `/api/v1/admin/platform/menu`
+
+#### 3.5 菜单权限定义管理（定义层）
 
 - `GET /api/v1/admin/platform/menu/auth`
 - `POST /api/v1/admin/platform/menu/auth`
 - `PUT /api/v1/admin/platform/menu/auth`
 - `DELETE /api/v1/admin/platform/menu/auth`
 
-请求与响应结构与原有示例保持一致，仅路径前缀调整为 `/admin/platform`。
-
-#### 3.5 查询租户菜单范围
-
-- **请求方式：** `GET`
-- **请求路径：** `/api/v1/admin/platform/menu/scope`
-- **请求参数：** `tenant_id`（查询参数，必填）
-
-**响应示例：**
-
-```json
-{
-  "code": 200,
-  "status": "OK",
-  "data": {
-    "tenant_id": 1,
-    "menu_ids": [6, 7, 8, 9, 10]
-  },
-  "timestamp": 1640995200
-}
-```
-
-#### 3.6 更新租户菜单范围
-
-- **请求方式：** `PUT`
-- **请求路径：** `/api/v1/admin/platform/menu/scope`
-- **请求体：**
-
-```json
-{
-  "tenant_id": 1,
-  "menu_ids": [6, 7, 8, 9, 10]
-}
-```
-
-更新后，租户在系统管理端只能在该集合内勾选角色菜单。
+请求与响应结构与原有示例保持一致，仅路径前缀为 `/admin/platform`。
 
 ### 4. 租户菜单管理
 
@@ -583,14 +562,14 @@ Authorization: Bearer {your_jwt_token}
   "status": "OK",
   "data": [
     {
-      "id": 6,
+      "id": 5,
       "name": "系统管理",
       "path": "/system",
       "icon": "&#xe72b;",
       "children": [
-        { "id": 7, "name": "角色管理", "path": "/system/role" },
-        { "id": 8, "name": "部门管理", "path": "/system/department" },
-        { "id": 9, "name": "用户管理", "path": "/system/user" }
+        { "id": 6, "name": "角色管理", "path": "/system/role" },
+        { "id": 7, "name": "部门管理", "path": "/system/department" },
+        { "id": 8, "name": "用户管理", "path": "/system/user" }
       ]
     }
   ],
@@ -613,7 +592,7 @@ Authorization: Bearer {your_jwt_token}
 ```json
 {
   "role_id": 2,
-  "menu_data": "[ { \"id\":7, \"hasPermission\":true } ]"
+  "menu_data": "[ { \"id\":6, \"hasPermission\":true } ]"
 }
 ```
 

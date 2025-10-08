@@ -5,9 +5,9 @@ const http = request as HttpClient
 
 const API_PREFIX = '/api/v1/admin/platform'
 
-// 平台菜单（全局定义 + 范围分配）
-export const getPlatformMenu = (): Promise<any[]> => {
-  return http.get({ url: `${API_PREFIX}/menu`, showErrorMessage: false })
+// 平台菜单（全局定义 + 范围分配，GET 可带 tenant_id 返回带 hasPermission 的树）
+export const getPlatformMenu = (params?: { tenant_id?: number }): Promise<any> => {
+  return http.get({ url: `${API_PREFIX}/menu`, params, showErrorMessage: false })
 }
 
 export const addPlatformMenu = (data: any): Promise<any> => {
@@ -39,20 +39,12 @@ export const deletePlatformMenuAuth = (id: number): Promise<any> => {
   return http.del({ url: `${API_PREFIX}/menu/auth`, data: { id } })
 }
 
-// 平台菜单范围（为租户分配可用菜单集合）
-export const getPlatformMenuScope = (tenant_id: number): Promise<any> => {
-  return http.get({
-    url: `${API_PREFIX}/menu/scope`,
-    params: { tenant_id },
-    showErrorMessage: false
-  })
-}
-
-export const updatePlatformMenuScope = (data: {
+// 保存租户菜单范围（与定义共用同一路径，通过 tenant_id + menu_data 区分）
+export const savePlatformMenuRange = (data: {
   tenant_id: number
-  menu_ids: number[]
+  menu_data: string
 }): Promise<any> => {
-  return http.put({ url: `${API_PREFIX}/menu/scope`, data })
+  return http.put({ url: `${API_PREFIX}/menu`, data })
 }
 
 export default {
@@ -64,6 +56,5 @@ export default {
   addPlatformMenuAuth,
   updatePlatformMenuAuth,
   deletePlatformMenuAuth,
-  getPlatformMenuScope,
-  updatePlatformMenuScope
+  savePlatformMenuRange
 }

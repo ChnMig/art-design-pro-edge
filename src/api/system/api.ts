@@ -120,6 +120,8 @@ export const saveRolePermission = (data: any): Promise<any> => {
   return httpClient.put({ url: `${API_PREFIX}/menu/role`, data })
 }
 
+// 基于同一路径的“组织/租户”菜单范围接口（与角色一致的结构与逻辑）
+
 export const getUserList = (
   params: Record<string, any>
 ): Promise<BackendListResponse<Api.SystemManage.UserListItem>> => {
