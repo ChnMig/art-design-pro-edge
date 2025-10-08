@@ -391,13 +391,11 @@
       margin-bottom: 16px;
     }
 
-    // 中间内容区可滚动
+    // 中间内容区可滚动（去除灰色边框背景）
     .menu-tree-container {
       flex: 1; // 占据所有剩余空间
       padding: 10px 0;
       overflow-y: auto; // 内容溢出时可滚动
-      border-top: 1px solid #f0f0f0;
-      border-bottom: 1px solid #f0f0f0;
     }
 
     // 底部固定
@@ -506,6 +504,20 @@
         }
       }
     }
+  }
+
+  /* 去除抽屉内灰色背景与提示条背景 */
+  :deep(.el-drawer__body) {
+    background-color: #fff !important;
+  }
+
+  :deep(.el-alert) {
+    background-color: transparent !important;
+    border: none !important;
+  }
+
+  :deep(.el-tree) {
+    background-color: transparent !important;
   }
 </style>
 

@@ -14,8 +14,8 @@
     flex: 1;
     padding: 10px 0;
     overflow-y: auto;
-    background-color: var(--el-fill-color-light);
-    border-radius: 4px;
+    background-color: transparent; // 去除灰底
+    border-radius: 0;
   }
 
   // 树组件样式
@@ -34,6 +34,10 @@
 
     .el-tree-node__label {
       width: 100%;
+    }
+
+    .el-tree-node__content:hover {
+      background-color: transparent !important; // 去除悬浮灰底
     }
 
     .el-tree-node.is-current > .el-tree-node__content {
@@ -226,11 +230,11 @@
     .auth-node {
       margin-top: 2px;
       margin-left: 24px;
-      background-color: #f5f7fa;
-      border-radius: 4px;
+      background-color: transparent; // 去除灰底
+      border-radius: 0;
 
       &:hover {
-        background-color: #ebeef5;
+        background-color: transparent;
       }
     }
   }
