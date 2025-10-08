@@ -48,7 +48,7 @@ UPSTREAM_COMMIT_MSG=$(git log -1 --format="%H %s" upstream/main)
 echo "Sync to: $UPSTREAM_COMMIT_MSG"
 ```
 
-在 README.md / README.zh-CN.md 中更新“同步来源与版本”（上游 commit 信息）。同时保持该 commitId 与本步骤记录的值一致（短/长哈希任选其一，但需前后统一）。
+在 README.md 中更新“同步来源与版本”（上游 commit 信息）。同时保持该 commitId 与本步骤记录的值一致（短/长哈希任选其一，但需前后统一）。
 
 ## 3. 审阅上游变更
 
@@ -243,6 +243,7 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
     - 上游如变更用户信息字段命名，同步更新该组件内的字段映射，不要在调用方硬编码水印文本。
 
 - 快速入口（彻底精简移除）
+
   - 移除组件与配置，避免后续同步误引入：
     1. 删除组件目录：`src/components/core/layouts/art-fast-enter/`
     2. 删除组合函数：`src/composables/useFastEnter.ts`
@@ -251,6 +252,21 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
        - 顶栏移除 `<ArtFastEnter />`：`src/components/core/layouts/art-header-bar/index.vue`
        - `src/config/index.ts` 去除 `fastEnter` 引入与导出
     5. 类型与自动导入：`src/types/components.d.ts` 为自动生成文件，如存在 ArtFastEnter 项，运行本地构建后会自动清理；无需手工维护
+
+- 示例页面（彻底精简移除，outside 保留）
+  - 目标目录：
+    - `src/views/article/`
+    - `src/views/change/`
+    - `src/views/examples/`
+    - `src/views/result/`
+    - `src/views/safeguard/`
+    - `src/views/template/`
+    - `src/views/widgets/`
+  - 保留目录：`src/views/outside/`（用于 iframe 外链页面承载）
+  - 路由同步：
+    - 本地 `src/router/routes/asyncRoutes.ts` 已精简，仅保留“仪表盘/系统管理/异常页面/外链示例”四类；若上游再次引入示例菜单，请在合并时删除对应菜单项。
+    - `src/router/routesAlias.ts` 已移除示例路由别名（如 Widgets/Template/Examples/Article/Result/Safeguard 等）；如上游回归，请勿恢复。
+  - 文档同步：README 已注明“示例页面精简”；合并时如上游文档提及示例目录，请忽略或改为系统页面示例。
 
 ## 5. 验证
 
@@ -281,11 +297,9 @@ pnpm lint:prettier   # Markdown/JSON/样式格式化检查（如配置可用）
   - 文件：`src/mock/upgrade/changeLog.ts`
   - 在数组头部新增一条记录，包含：`version`（形如 `v2.x.x`）、`title`、`date`（YYYY-MM-DD）、`detail`（要点列表）、`remark/requireReLogin`（如需）。
 - 更新 README（必须）
-  - 中文：`README.zh-CN.md`
-    - “同步来源与版本”中更新上游分支与 Commit（`upstream/main` + 最新 commitId 与 message）。
-    - 若有新的定制项或环境变量，也在“项目定制/升级说明”补充。
-  - 英文：`README.md`
-    - “Upstream Version”中更新最新 Commit 信息。
+  - 文件：`README.md`
+  - “同步来源与版本”中更新上游分支与 Commit（`upstream/main` + 最新 commitId 与 message）。
+  - 若有新的定制项或环境变量，也在“项目定制/升级说明”补充。
   - 统一性：README 中记录的 commitId 与“第 2 步记录”的值保持一致（短/长哈希任选其一）。
 - 更新环境变量版本号（必须）
   - 文件：`.env`
