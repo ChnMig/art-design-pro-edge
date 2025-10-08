@@ -75,6 +75,14 @@
         </div>
       </template>
     </ElDialog>
+
+    <!-- 右侧菜单范围抽屉 -->
+    <TenantMenuScope
+      v-model:visible="scopeDrawerVisible"
+      :tenant-id="currentTenantId"
+      title="菜单范围配置"
+      @saved="refreshAll"
+    />
   </div>
 </template>
 
@@ -83,6 +91,7 @@
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
   import { getTenantList, addTenant, updateTenant, deleteTenant } from '@/api/system/api'
+  import TenantMenuScope from './scope.vue'
   import { useTable } from '@/composables/useTable'
   import { SearchFormItem } from '@/types'
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
@@ -92,6 +101,8 @@
   // 状态变量
   const dialogType = ref('add')
   const dialogVisible = ref(false)
+  const scopeDrawerVisible = ref(false)
+  const currentTenantId = ref<number | undefined>(undefined)
 
   // useTable 适配
   const tableApi = useTable<any>({
@@ -144,10 +155,15 @@
           prop: 'operation',
           label: '操作',
           align: 'center',
-          width: 120,
+          width: 180,
           fixed: 'right',
           formatter: (row: any) =>
             h('div', { class: 'operation-column-container' }, [
+              h(ArtButtonTable, {
+                type: 'view',
+                style: 'margin-right: 8px;',
+                onClick: () => openScopeDrawer(row)
+              }),
               h(ArtButtonTable, {
                 type: 'edit',
                 style: 'margin-right: 8px;',
@@ -323,6 +339,12 @@
         ElMessage.error('删除失败')
       }
     }
+  }
+
+  // 打开菜单范围抽屉
+  const openScopeDrawer = (row: any) => {
+    currentTenantId.value = row.id
+    scopeDrawerVisible.value = true
   }
 
   // 提交表单
