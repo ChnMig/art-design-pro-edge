@@ -73,14 +73,7 @@
   import { getRoleList, addRole, updateRole, deleteRole } from '@/api/system/api'
   import RoleAuth from './auth.vue'
   import { useTable } from '@/composables/useTable'
-  import ArtButtonMore from '@/components/core/forms/art-button-more/index.vue'
-  // 由于 ButtonMoreItem 仅为类型，需单独定义类型
-  type ButtonMoreItem = {
-    key: string | number
-    label: string
-    disabled?: boolean
-    auth?: string
-  }
+  import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   import { SearchFormItem } from '@/types'
 
   // 搜索表单配置项
@@ -128,12 +121,7 @@
     desc: [{ required: true, message: '请输入角色描述', trigger: 'blur' }]
   })
 
-  // 操作按钮列表
-  const actionButtons: ButtonMoreItem[] = [
-    { key: 'permission', label: '菜单权限' },
-    { key: 'edit', label: '编辑角色' },
-    { key: 'delete', label: '删除角色' }
-  ]
+  // 操作按钮：不超过3个时直接展示按钮（权限/编辑/删除）
 
   // useTable 适配
   const {
@@ -184,13 +172,23 @@
           prop: 'operation',
           label: '操作',
           align: 'center',
-          width: 160,
+          width: 200,
           fixed: 'right',
           formatter: (row: any) =>
             h('div', { class: 'operation-column-container' }, [
-              h(ArtButtonMore, {
-                list: actionButtons,
-                onClick: (item: ButtonMoreItem) => buttonMoreClick(item, row)
+              h(ArtButtonTable, {
+                type: 'view',
+                style: 'margin-right: 8px;',
+                onClick: () => showPermissionDrawer(row)
+              }),
+              h(ArtButtonTable, {
+                type: 'edit',
+                style: 'margin-right: 8px;',
+                onClick: () => showDialog('edit', row)
+              }),
+              h(ArtButtonTable, {
+                type: 'delete',
+                onClick: () => deleteRoleAction(row.id)
               })
             ])
         }
@@ -201,20 +199,7 @@
     }
   })
 
-  // 操作按钮点击事件
-  const buttonMoreClick = (item: ButtonMoreItem, row: any) => {
-    switch (item.key) {
-      case 'permission':
-        showPermissionDrawer(row)
-        break
-      case 'edit':
-        showDialog('edit', row)
-        break
-      case 'delete':
-        deleteRoleAction(row.id)
-        break
-    }
-  }
+  // 注意：操作按钮已直接渲染为三个按钮，无需“更多”下拉
 
   // 弹窗相关
   const showDialog = (type: string, row?: any) => {
