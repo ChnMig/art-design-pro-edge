@@ -9,11 +9,33 @@
   - `upstream`：Daymychen/art-design-pro
 - Node ≥ 20.19，pnpm ≥ 8.8
 
+- 校验远程与开发环境（首次或环境变更时建议执行）
+
+  ```
+  # 查看远程
+  git remote -v
+  # 若不存在 upstream，则添加其为上游（任选其一）
+  git remote add upstream git@github.com:Daymychen/art-design-pro.git
+  git remote add upstream https://github.com/Daymychen/art-design-pro.git
+
+  # 基线校验：确保工作区干净且当前代码可构建
+  git status --porcelain   # 输出应为空
+  pnpm i
+  pnpm build               # 本项目 build 已包含类型检查（vue-tsc）
+  ```
+
 ## 1. 创建同步分支
 
 ```
-# 从当前工作分支切出同步分支
+# 建议从 main 切出，并更新到最新
+git switch main || git checkout main
+git pull --ff-only origin main
+
+# 从 main 切出同步分支（命名示例）
 git checkout -b merge/upstream-sync-YYYYMM
+
+# 可推送远端并创建 Draft PR 便于审阅/CI
+git push -u origin merge/upstream-sync-YYYYMM
 ```
 
 ## 2. 获取上游并记录版本
@@ -26,7 +48,7 @@ UPSTREAM_COMMIT_MSG=$(git log -1 --format="%H %s" upstream/main)
 echo "Sync to: $UPSTREAM_COMMIT_MSG"
 ```
 
-在 README.md / README.zh-CN.md 中更新“同步来源与版本”（上游 commit 信息）。
+在 README.md / README.zh-CN.md 中更新“同步来源与版本”（上游 commit 信息）。同时保持该 commitId 与本步骤记录的值一致（短/长哈希任选其一，但需前后统一）。
 
 ## 3. 审阅上游变更
 
@@ -42,6 +64,16 @@ git diff --name-status HEAD..upstream/main
 git show upstream/main:path/to/file
 ```
 
+依赖与关键文件关注点：
+
+```
+# 依赖与锁文件是否变更
+git diff --name-status HEAD..upstream/main -- package.json pnpm-lock.yaml
+
+# 构建配置、自动导入等工具链文件
+git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .prettierrc .stylelintrc.cjs
+```
+
 ## 4. 按主题合并（确保本地定制不回退）
 
 建议采用以下顺序减少冲突：
@@ -50,6 +82,16 @@ git show upstream/main:path/to/file
 
   - `vite.config.ts`：确保存在 `unplugin-element-plus`（`useSource: true`）、`AutoImport`、`Components`，并在 SCSS `additionalData` 中注入 `@styles/el-light.scss`、variables、mixin。
   - `optimizeDeps.include` 如需包含 element-plus css。
+  - 依赖与锁文件策略：上游如变更 `package.json`，先合并依赖声明，再本地执行 `pnpm i` 同步生成 `pnpm-lock.yaml`，两者一并提交。避免手工改动锁文件。
+
+- 合并决策矩阵（默认策略）
+
+  - 构建/工具链：以上游为准，但保留本地必要插件与 SCSS 注入（按上文要求校正）。
+  - 核心组件源码：以上游为准；如需扩展，优先在调用方适配，避免改动组件本体。
+  - 登录页流程（多租户/图形验证码/管理员二维码）：以本地为准，吸收样式优化不改变流程与接口契约。
+  - HTTP 层与接口契约（`src/api/*`、`src/utils/http/*`）：以本地为准，禁止为兼容上游而前端造字段或重映射。
+  - 菜单字段与动态路由：以后端契约为准，不引入上游前端私有字段（`showBadge` 等）。
+  - 国际化、快速入口、通知/聊天：保持移除，禁止回归。
 
 - 核心组件（与上游保持完全一致）
 
@@ -216,6 +258,9 @@ git show upstream/main:path/to/file
 pnpm i
 pnpm build
 pnpm dev
+pnpm lint            # 代码规范（如配置可用）
+pnpm lint:stylelint  # 样式规范（如配置可用）
+pnpm lint:prettier   # Markdown/JSON/样式格式化检查（如配置可用）
 ```
 
 冒烟测试：
@@ -224,6 +269,11 @@ pnpm dev
 - 租户管理：列表、创建、更新、删除 // 语言切换：已移除（默认中文）
 - ArtSearchBar：示例页与系统页调用是否正确
 - 表格：列头/分页/高度/样式
+- 动态菜单注册：登录后根据 `GET /admin/system/user/menu` 成功注入路由；菜单 meta 与后端契约一致。
+- 权限抽屉一致性：`system/role/auth.vue` 与 `platform/tenant/scope.vue` 勾选/半选/提交规则一致。
+- 头像菜单：仅“锁定屏幕/修改个人信息/退出登录”三项，`ArtEditInfoDialog` 正常打开与提交。
+- 水印：默认文案“租户编码 | 用户账号”正确，props.content 覆盖优先。
+- 平台范围：租户端菜单树已按平台分配范围裁剪。
 
 ## 6. 文档
 
@@ -236,6 +286,7 @@ pnpm dev
     - 若有新的定制项或环境变量，也在“项目定制/升级说明”补充。
   - 英文：`README.md`
     - “Upstream Version”中更新最新 Commit 信息。
+  - 统一性：README 中记录的 commitId 与“第 2 步记录”的值保持一致（短/长哈希任选其一）。
 - 更新环境变量版本号（必须）
   - 文件：`.env`
   - `VITE_VERSION` 同步更新为当前项目发布版本号（与升级日志 version 对齐）。
@@ -247,6 +298,37 @@ pnpm dev
 git add -A
 git commit -m "chore(sync): upstream @ <short-commit> and preserve customizations"
 # 提交 PR 并进行代码审阅
+git push -u origin HEAD
+```
+
+- 建议使用 Draft PR 先跑 CI/预审，确认无误后转正式 PR；标题、描述中附上上游 commitId 与本次合并要点。
+
+## 8. 回滚与应急
+
+- 合并前备份（可选但推荐）
+
+```
+git branch backup/before-sync-$(date +%Y%m%d)
+```
+
+- 合并后发现问题的回退策略
+
+```
+# 方式 A：优先使用 revert，保留历史（推荐）
+git log --oneline --merges      # 找到本次合并的 merge-commit
+git revert -m 1 <merge-commit>  # 生成反向提交回滚
+
+# 方式 B：基于备份分支恢复（需谨慎，如已推送需与团队确认是否强推）
+git reset --hard backup/before-sync-YYYYMMDD
+git push -f origin HEAD
+```
+
+- 发布标签回退（如存在发行标签）
+
+```
+git switch -c hotfix/rollback <last_release_tag>
+```
+
 ```
 
 ## 注意事项
@@ -259,3 +341,4 @@ git commit -m "chore(sync): upstream @ <short-commit> and preserve customization
   - 路由：移除的页面（注册/忘记密码）不得残留死链。
   - 国际化：语言切换入口已隐藏；如无需要，可按需删除 `src/locales/langs/en.json`。
   - 环境变量：如需二维码，引入 `VITE_ADMIN_QRCODE_URL`。
+```
