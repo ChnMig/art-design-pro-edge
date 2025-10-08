@@ -32,9 +32,12 @@
           :props="defaultProps"
         >
           <template #default="{ data }">
-            <div class="menu-tree-node">
-              <div class="menu-name-row">
+            <div class="menu-tree-node" :class="{ 'auth-node': data.isAuth }">
+              <div v-if="!data.isAuth" class="menu-name-row">
                 <span class="menu-title">{{ formatMenuTitle(data.meta?.title) || data.name }}</span>
+              </div>
+              <div v-else class="auth-name-row">
+                <span class="auth-tag">{{ data.title }}</span>
               </div>
             </div>
           </template>
@@ -86,7 +89,8 @@
 
   const defaultProps = {
     children: 'children',
-    label: (data: any) => formatMenuTitle(data.meta?.title) || data.name || '未命名菜单'
+    label: (data: any) =>
+      data.isAuth ? data.title : formatMenuTitle(data.meta?.title) || data.name || '未命名菜单'
   }
 
   // 加载菜单 + 权限（平台端 GET /platform/menu?tenant_id）
@@ -262,7 +266,7 @@
 
     .menu-tree-node {
       display: flex;
-      align-items: flex-start;
+      align-items: flex-start; // 靠左对齐
       width: 100%;
       margin-bottom: 2px;
 
@@ -271,6 +275,29 @@
         align-items: center;
         width: 100%;
         padding: 4px 0;
+      }
+
+      .auth-name-row {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        padding: 3px 0;
+
+        .auth-tag {
+          display: inline-block;
+          padding: 3px 8px;
+          margin-right: 8px;
+          font-size: 12px;
+          color: #409eff;
+          cursor: pointer;
+          background-color: #ecf5ff;
+          border: 1px solid #d9ecff;
+          border-radius: 4px;
+
+          &:hover {
+            background-color: #d9ecff;
+          }
+        }
       }
     }
   }
