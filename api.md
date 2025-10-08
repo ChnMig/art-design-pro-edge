@@ -484,18 +484,17 @@ Authorization: Bearer {your_jwt_token}
 }
 ```
 
-### 3. 平台菜单与租户范围（超级管理员）
+### 3. 平台菜单管理（超级管理员）
 
-**说明：** 平台侧维护系统菜单定义，同时可为指定租户配置“可用菜单范围”。GET/PUT `/api/v1/admin/platform/menu` 接口接受 `tenant_id` 参数，并返回（或保存）该租户的菜单范围，响应包含“全部菜单与权限”，并在其中标记该租户当前已拥有的菜单和按钮权限。
+**说明：** 平台侧维护“菜单定义”，并通过单独接口为租户配置“菜单范围/按钮范围”。
 
-#### 3.1 获取指定租户的菜单范围（带权限标记）
+#### 3.1 获取平台菜单（定义）
 
 - **请求方式：** `GET`
 - **请求路径：** `/api/v1/admin/platform/menu`
-- **查询参数：** `tenant_id`（必填）
 - **请求头：** `Authorization: Bearer {token}`
 
-接口返回所有菜单与其权限列表，并对属于该租户范围内的菜单（及其下的按钮权限）设置 `hasPermission = true` 标记，便于前端直接呈现勾选状态。
+返回全量菜单+权限（不含 hasPermission 标记），用于平台编辑菜单定义。
 
 #### 3.2 新增平台菜单（定义）
 
@@ -515,27 +514,12 @@ Authorization: Bearer {your_jwt_token}
 }
 ```
 
-#### 3.3 更新指定租户的菜单范围
-
-- **请求方式：** `PUT`
-- **请求路径：** `/api/v1/admin/platform/menu`
-- **请求体：**
-
-```json
-{
-  "tenant_id": 1,
-  "menu_data": "[ { \"id\":6, \"hasPermission\":true, \"children\":[ ... ] } ]"
-}
-```
-
-当 `menu_data` 中某节点 `hasPermission` 为 `true` 时，该菜单会被加入该租户的范围。按钮权限的 `hasPermission` 仅用于呈现；目前租户范围按“菜单级别”存储，按钮权限将根据已授权菜单自动标记允许。
-
-#### 3.4 删除平台菜单（定义）
+#### 3.3 更新/删除平台菜单（定义）
 
 - **请求方式：** `DELETE`
 - **请求路径：** `/api/v1/admin/platform/menu`
 
-#### 3.5 菜单权限定义管理（定义层）
+#### 3.4 菜单权限定义管理（定义层）
 
 - `GET /api/v1/admin/platform/menu/auth`
 - `POST /api/v1/admin/platform/menu/auth`
@@ -1285,3 +1269,27 @@ docker-compose -f docker/docker-compose.yml up -d
 ---
 
 _文档最后更新时间：2025年_
+
+#### 3.5 获取指定租户的菜单范围（带权限标记）
+
+- **请求方式：** `GET`
+- **请求路径：** `/api/v1/admin/platform/menu/tenant`
+- **查询参数：** `tenant_id`（必填）
+- **请求头：** `Authorization: Bearer {token}`
+
+返回全量菜单与权限，并对属于该租户范围内的菜单设置 `hasPermission = true`。按钮权限的勾选状态根据“租户按钮权限范围”单独标记；若未配置按钮范围，则按钮均为未勾选。
+
+#### 3.6 更新指定租户的菜单范围
+
+- **请求方式：** `PUT`
+- **请求路径：** `/api/v1/admin/platform/menu/tenant`
+- **请求体：**
+
+```json
+{
+  "tenant_id": 1,
+  "menu_data": "[ { \"id\":6, \"hasPermission\":true, \"children\":[ ... ] } ]"
+}
+```
+
+当 `menu_data` 中某节点 `hasPermission` 为 `true` 时，该菜单会被加入该租户的范围。同时会保存被勾选的按钮权限为“租户按钮权限范围”；未勾选的按钮不会被派生为选中，即使其所属菜单被选中。

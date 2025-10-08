@@ -29,6 +29,7 @@
           node-key="id"
           default-expand-all
           :check-strictly="false"
+          :default-checked-keys="defaultCheckedKeys"
           :props="defaultProps"
         >
           <template #default="{ data }">
@@ -56,7 +57,7 @@
   import { ref, watch, computed, nextTick } from 'vue'
   import { ElMessage } from 'element-plus'
   import { formatMenuTitle } from '@/router/utils/utils'
-  import { getPlatformMenu, savePlatformMenuRange } from '@/api/platform/api'
+  import { getPlatformTenantMenu, savePlatformTenantMenu } from '@/api/platform/api'
 
   const props = defineProps({
     tenantId: {
@@ -93,17 +94,29 @@
       data.isAuth ? data.title : formatMenuTitle(data.meta?.title) || data.name || '未命名菜单'
   }
 
+  const defaultCheckedKeys = computed<(number | string)[]>(() => {
+    const keys: (number | string)[] = []
+    const walk = (nodes: any[]) => {
+      nodes?.forEach((n) => {
+        if (isPermitted(n)) keys.push(n.id)
+        if (n.children?.length) walk(n.children)
+      })
+    }
+    walk(processedMenus.value)
+    return keys
+  })
+
   // 加载菜单 + 权限（平台端 GET /platform/menu?tenant_id）
   const loadTenantScope = async (tenantId: number) => {
     if (!tenantId) return
     loading.value = true
     try {
-      const list = await getPlatformMenu({ tenant_id: Number(tenantId) })
+      const list = await getPlatformTenantMenu(Number(tenantId))
       // http 客户端直接返回 data
       if (list) {
         menus.value = processMenuIcons(Array.isArray(list) ? list : list.data || [])
         processedMenus.value = convertAuthsToTreeNodes(menus.value)
-        await nextTick()
+        await ensureTreeReady()
         setTreeCheckedState()
       } else {
         ElMessage.error('获取菜单范围失败')
@@ -123,7 +136,7 @@
     try {
       saveLoading.value = true
       const updatedMenus = collectSelectedAuths()
-      await savePlatformMenuRange({ tenant_id: tenantId, menu_data: JSON.stringify(updatedMenus) })
+      await savePlatformTenantMenu({ tenant_id: tenantId, menu_data: JSON.stringify(updatedMenus) })
       ElMessage.success('保存成功')
       emit('saved', { tenantId })
       emit('update:visible', false)
@@ -173,7 +186,7 @@
           originalAuthId: auth.id,
           parentMenuId: menu.id,
           isAuth: true,
-          hasPermission: auth.hasPermission
+          hasPermission: resolvePermissionFlag(auth)
         }))
         if (!menuCopy.children) menuCopy.children = []
         menuCopy.children = [...menuCopy.children, ...authNodes]
@@ -184,6 +197,15 @@
         const authChildren = menuCopy.children.filter((c: any) => c.isAuth)
         menuCopy.children = [...convertedChildren, ...authChildren]
       }
+      // 兼容：hasPermission 可能在 meta 上
+      if (
+        menuCopy.hasPermission === undefined &&
+        menuCopy.meta &&
+        'hasPermission' in menuCopy.meta
+      ) {
+        // @ts-expect-error meta 可能未声明 hasPermission，运行时存在
+        menuCopy.hasPermission = resolvePermissionFlag(menuCopy.meta)
+      }
       return menuCopy
     })
   }
@@ -193,7 +215,7 @@
     const checked: (number | string)[] = []
     const walk = (nodes: any[]) => {
       nodes?.forEach((n) => {
-        if (n.hasPermission === true) checked.push(n.id)
+        if (isPermitted(n)) checked.push(n.id)
         if (n.children?.length) walk(n.children)
       })
     }
@@ -221,6 +243,26 @@
         return m
       })
     return mark(cloned)
+  }
+  // 确保 Tree 已渲染
+  const ensureTreeReady = async () => {
+    let tries = 0
+    while (!menuTreeRef.value && tries < 10) {
+      tries++
+      await nextTick()
+      await new Promise((r) => setTimeout(r, 16))
+    }
+  }
+  // 兼容性判断：布尔/数字/字符串
+  const resolvePermissionFlag = (obj: any): boolean => {
+    const v = obj?.hasPermission
+    return v === true || v === 1 || v === '1'
+  }
+
+  const isPermitted = (node: any): boolean => {
+    if (node && 'hasPermission' in node) return resolvePermissionFlag(node)
+    if (node?.meta && 'hasPermission' in node.meta) return resolvePermissionFlag(node.meta)
+    return false
   }
   // end helpers
 </script>

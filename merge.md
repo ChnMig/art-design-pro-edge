@@ -121,9 +121,9 @@ git show upstream/main:path/to/file
       - 接口：`GET/POST/PUT/DELETE /admin/platform/menu`
       - 元素权限：`GET/POST/PUT/DELETE /admin/platform/menu/auth`
     - 菜单范围（仅抽屉）：`src/views/platform/tenant/scope.vue`
-      - 接口（统一到定义路径）：
-        - 查询带 hasPermission 的菜单树：`GET /admin/platform/menu?tenant_id`
-        - 保存租户菜单范围：`PUT /admin/platform/menu { tenant_id, menu_data }`
+      - 接口（与定义分离）：
+        - 查询带 hasPermission 的菜单树：`GET /admin/platform/menu/tenant?tenant_id`
+        - 保存租户菜单范围：`PUT /admin/platform/menu/tenant { tenant_id, menu_data }`
     - 角色管理：已移除（平台侧不再维护角色）。
   - 系统侧（租户）
     - 菜单管理：`src/views/system/menu/index.vue`（菜单树已按平台范围裁剪）
@@ -141,8 +141,8 @@ git show upstream/main:path/to/file
   - 登录后，前端通过 `GET /admin/system/user/menu` 获取“当前用户可见菜单”，据此注册动态路由（`src/router/utils/registerRoutes.ts`）。
   - 菜单 `meta` 字段遵循后端契约，仅使用已约定的键值（`title`/`icon`/`keepAlive`/`isHide` 等）；不引入上游前端专属字段。
   - 平台页面组件路径建议：
-    - 菜单管理：`/platform/menu/index`
-    - 菜单范围：不再提供平台页面入口，通过“租户管理”列表的“查看”按钮打开抽屉。
+    - 菜单管理（定义）：`/platform/menu/index`
+    - 菜单范围（租户）：不提供平台页面入口，通过“租户管理”列表的“查看”按钮打开抽屉。
 
 - 路由与页面
 
