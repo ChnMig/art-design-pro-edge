@@ -55,54 +55,6 @@ export const updatePlatformMenuScope = (data: {
   return http.put({ url: `${API_PREFIX}/menu/scope`, data })
 }
 
-// 平台角色（按租户维度维护全量角色）
-export const getPlatformRoleList = (params: {
-  tenant_id: number
-  page?: number
-  pageSize?: number
-}): Promise<any> => {
-  return http.get({ url: `${API_PREFIX}/role`, params, keepFullResponse: true })
-}
-
-export const addPlatformRole = (data: {
-  tenant_id: number
-  name: string
-  status: number
-  desc?: string
-}): Promise<any> => {
-  return http.post({ url: `${API_PREFIX}/role`, data })
-}
-
-export const updatePlatformRole = (data: {
-  id: number
-  tenant_id?: number
-  name?: string
-  status?: number
-  desc?: string
-}): Promise<any> => {
-  return http.put({ url: `${API_PREFIX}/role`, data })
-}
-
-export const deletePlatformRole = (id: number): Promise<any> => {
-  return http.del({ url: `${API_PREFIX}/role`, data: { id } })
-}
-
-// 平台角色范围（为租户分配可用角色集合）
-export const getPlatformRoleScope = (tenant_id: number): Promise<any> => {
-  return http.get({
-    url: `${API_PREFIX}/role/scope`,
-    params: { tenant_id },
-    showErrorMessage: false
-  })
-}
-
-export const updatePlatformRoleScope = (data: {
-  tenant_id: number
-  role_ids: number[]
-}): Promise<any> => {
-  return http.put({ url: `${API_PREFIX}/role/scope`, data })
-}
-
 export default {
   getPlatformMenu,
   addPlatformMenu,
@@ -113,11 +65,5 @@ export default {
   updatePlatformMenuAuth,
   deletePlatformMenuAuth,
   getPlatformMenuScope,
-  updatePlatformMenuScope,
-  getPlatformRoleList,
-  addPlatformRole,
-  updatePlatformRole,
-  deletePlatformRole,
-  getPlatformRoleScope,
-  updatePlatformRoleScope
+  updatePlatformMenuScope
 }

@@ -94,9 +94,47 @@ git show upstream/main:path/to/file
     - 平台页面：
       - 租户管理：`src/views/platform/tenant/index.vue`（从系统租户页迁移，功能一致）
       - 菜单管理：`src/views/platform/menu/index.vue`（从系统菜单页拷贝界面，并对接平台菜单/权限/范围接口）
-      - 角色管理：`src/views/platform/role/index.vue`（从系统角色页拷贝界面，并对接平台角色/范围接口）
   - 范围规则：
     - 平台“菜单/角色”接口控制的是全局数据；系统端仅能在平台分配范围内选择与查看。
+
+**菜单逻辑与分布（重要）**
+
+- 角色与职责
+
+  - 平台管理员（`/api/v1/admin/platform`）
+    - 维护全局“菜单定义 + 元素权限”（菜单、元素权限仅在平台侧创建/编辑）
+    - 为各租户分配“菜单范围”（租户可见/可选的菜单集合）
+  - 租户管理员（`/api/v1/admin/system`）
+    - 在平台授权的“菜单范围”内，为本租户创建并维护具体角色的“菜单权限”（角色—菜单—元素权限）
+    - 维护本租户的部门与用户，并在“本租户角色池”内为用户授予角色
+
+- 数据流与页面映射
+
+  - 平台侧
+    - 菜单管理：`src/views/platform/menu/index.vue`
+      - 接口：`GET/POST/PUT/DELETE /admin/platform/menu`
+      - 元素权限：`GET/POST/PUT/DELETE /admin/platform/menu/auth`
+    - 菜单范围（新增页面）：`src/views/platform/menu/scope.vue`
+      - 接口：
+        - 查询租户范围：`GET /admin/platform/menu/scope?tenant_id`
+        - 更新租户范围：`PUT /admin/platform/menu/scope { tenant_id, menu_ids }`
+    - 角色管理：已移除（平台侧不再维护角色）。
+  - 系统侧（租户）
+    - 菜单管理：`src/views/system/menu/index.vue`（菜单树已按平台范围裁剪）
+      - 接口：`GET/POST/PUT/DELETE /admin/system/menu`、`/admin/system/menu/auth`
+    - 角色管理：`src/views/system/role/index.vue`
+      - 角色—菜单权限抽屉：`src/views/system/role/auth.vue`
+      - 接口：`GET/POST/PUT/DELETE /admin/system/role`、`GET/PUT /admin/system/menu/role`
+      - 说明：角色完全由租户侧自行创建与维护，平台不再提供角色管理或范围分配接口。
+
+- 路由与动态菜单
+
+  - 登录后，前端通过 `GET /admin/system/user/menu` 获取“当前用户可见菜单”，据此注册动态路由（`src/router/utils/registerRoutes.ts`）。
+  - 菜单 `meta` 字段遵循后端契约，仅使用已约定的键值（`title`/`icon`/`keepAlive`/`isHide` 等）；不引入上游前端专属字段。
+  - 平台页面组件路径建议：
+    - 菜单管理：`/platform/menu/index`
+    - 菜单范围：`/platform/menu/scope`
+    - 角色管理/范围：不再提供平台页面，由租户侧自管角色。
 
 - 路由与页面
 

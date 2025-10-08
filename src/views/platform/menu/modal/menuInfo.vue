@@ -135,7 +135,7 @@
   import type { FormInstance, FormRules } from 'element-plus'
   import { ElMessage } from 'element-plus'
   import { IconTypeEnum } from '@/enums/appEnum'
-  import { addMenu, updateMenu } from '@/api/system/api'
+  import { addPlatformMenu, updatePlatformMenu } from '@/api/platform/api'
   import { QuestionFilled } from '@element-plus/icons-vue'
 
   const dialogVisible = ref(false)
@@ -289,7 +289,7 @@
           formData.isHideTab = form.isHideTab ? 1 : 2
           formData.isIframe = form.isIframe ? 1 : 2
           formData.isFirstLevel = form.isFirstLevel ? 1 : 2
-          await updateMenu(formData)
+          await updatePlatformMenu(formData)
           // HTTP client returns data directly on success
           ElMessage.success(`${isEdit.value ? '编辑' : '新增'}成功`)
           dialogVisible.value = false
@@ -303,7 +303,7 @@
           formData.isHideTab = form.isHideTab ? 1 : 2
           formData.isIframe = form.isIframe ? 1 : 2
           formData.isFirstLevel = form.isFirstLevel ? 1 : 2
-          await addMenu(formData)
+          await addPlatformMenu(formData)
           // HTTP client returns data directly on success
           ElMessage.success(`${isEdit.value ? '编辑' : '新增'}成功`)
           dialogVisible.value = false

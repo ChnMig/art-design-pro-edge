@@ -113,7 +113,12 @@
   import { ref, reactive } from 'vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
-  import { getAuthList, addAuth, updateAuth, deleteAuth } from '@/api/system/api'
+  import {
+    getPlatformMenuAuth,
+    addPlatformMenuAuth,
+    updatePlatformMenuAuth,
+    deletePlatformMenuAuth
+  } from '@/api/platform/api'
   import { QuestionFilled } from '@element-plus/icons-vue'
 
   const emit = defineEmits(['refresh'])
@@ -156,7 +161,7 @@
 
     try {
       // 向后端请求当前菜单的权限列表 - HTTP client returns data directly
-      const data = await getAuthList(row.id)
+      const data = await getPlatformMenuAuth(row.id)
       tableData.value = Array.isArray(data) ? data : []
     } catch (error) {
       console.error('获取权限列表出错:', error)
@@ -219,7 +224,7 @@
       })
 
       loading.value = true
-      await deleteAuth(id)
+      await deletePlatformMenuAuth(id)
       // HTTP client returns data directly on success
       ElMessage.success('删除成功')
       // 重新加载数据
@@ -247,10 +252,10 @@
 
         if (isEditingAuth.value && formData.id) {
           // 编辑权限
-          await updateAuth(formData)
+          await updatePlatformMenuAuth(formData)
         } else {
           // 添加权限
-          await addAuth(formData)
+          await addPlatformMenuAuth(formData)
         }
 
         // HTTP client returns data directly on success

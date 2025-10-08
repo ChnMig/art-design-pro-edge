@@ -55,9 +55,8 @@
 <script setup lang="ts">
   import { onMounted, ref, computed, h, resolveComponent } from 'vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
-  import { ApiStatus } from '@/utils/http/status'
   import { formatMenuTitle } from '@/router/utils/utils'
-  import { getAllMenu, deleteMenu } from '@/api/system/api'
+  import { getPlatformMenu, deletePlatformMenu } from '@/api/platform/api'
   import { useTable } from '@/composables/useTable'
   import menuInfo from './modal/menuInfo.vue'
   import authInfo from './modal/authInfo.vue'
@@ -70,7 +69,7 @@
   // 使用 useTable 管理表格数据
   const tableApi = useTable<any>({
     core: {
-      apiFn: getAllMenu,
+      apiFn: getPlatformMenu,
       immediate: true,
       columnsFactory: () => [
         {
@@ -209,13 +208,8 @@
         cancelButtonText: '取消',
         type: 'warning'
       })
-      const res = await deleteMenu(id)
-      if (res.code === ApiStatus.success) {
-        ElMessage.success('删除成功')
-      } else {
-        console.error(res.message)
-        ElMessage.error('删除失败: ' + res.message)
-      }
+      await deletePlatformMenu(id)
+      ElMessage.success('删除成功')
       await refreshMenuList()
     } catch (error) {
       if (error !== 'cancel') {
