@@ -292,6 +292,11 @@
     const updatedMenus = collectSelectedAuths()
 
     try {
+      await ElMessageBox.confirm('确认保存该角色的菜单与按钮权限设置吗？', '提示', {
+        type: 'warning',
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      })
       saveLoading.value = true
 
       // 构建权限数据 - 转换为后端期望的格式
@@ -306,8 +311,10 @@
       // 重置更改状态标志，然后关闭抽屉
       hasDataChanged.value = false
       handleClose(true) // 传递true表示跳过更改检查
-    } catch {
-      ElMessage.error('保存权限失败，请稍后再试')
+    } catch (e) {
+      if (e !== 'cancel') {
+        ElMessage.error('保存权限失败，请稍后再试')
+      }
     } finally {
       saveLoading.value = false
     }

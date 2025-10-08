@@ -55,7 +55,7 @@
 
 <script setup lang="ts">
   import { ref, watch, computed, nextTick } from 'vue'
-  import { ElMessage } from 'element-plus'
+  import { ElMessage, ElMessageBox } from 'element-plus'
   import { formatMenuTitle } from '@/router/utils/utils'
   import { getPlatformTenantMenu, savePlatformTenantMenu } from '@/api/platform/api'
 
@@ -170,6 +170,11 @@
     const tenantId = Number(props.tenantId)
     if (!tenantId || !menuTreeRef.value) return
     try {
+      await ElMessageBox.confirm('确认保存当前租户的菜单范围吗？', '提示', {
+        type: 'warning',
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      })
       saveLoading.value = true
       const updatedMenus = collectSelectedAuths()
       await savePlatformTenantMenu({ tenant_id: tenantId, menu_data: JSON.stringify(updatedMenus) })
@@ -177,8 +182,10 @@
       emit('saved', { tenantId })
       emit('update:visible', false)
     } catch (e) {
-      console.error('保存菜单范围失败', e)
-      ElMessage.error('保存失败')
+      if (e !== 'cancel') {
+        console.error('保存菜单范围失败', e)
+        ElMessage.error('保存失败')
+      }
     } finally {
       saveLoading.value = false
     }
