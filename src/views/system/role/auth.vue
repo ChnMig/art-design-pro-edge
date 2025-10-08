@@ -328,17 +328,12 @@
         menu_data: JSON.stringify(updatedMenus)
       }
 
-      // 调用保存API
-      const response = await saveRolePermission(permissionData)
-
-      if (response.code === 200) {
-        emit('saved', { roleId: props.roleId, menus: updatedMenus })
-        // 重置更改状态标志，然后关闭抽屉
-        hasDataChanged.value = false
-        handleClose(true) // 传递true表示跳过更改检查
-      } else {
-        ElMessage.error(response.message || '保存权限失败')
-      }
+      // 调用保存API（HTTP 客户端成功即 resolve）
+      await saveRolePermission(permissionData)
+      emit('saved', { roleId: props.roleId, menus: updatedMenus })
+      // 重置更改状态标志，然后关闭抽屉
+      hasDataChanged.value = false
+      handleClose(true) // 传递true表示跳过更改检查
     } catch {
       ElMessage.error('保存权限失败，请稍后再试')
     } finally {
