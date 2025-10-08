@@ -15,20 +15,6 @@
 
 [访问上游文档](https://www.artd.pro/docs/)
 
-## 演示图
-
-### 浅色主题
-
-![浅色主题](https://www.qiniu.lingchen.kim/art_design_pro_readme_cover1.png)
-
-![浅色主题](https://www.qiniu.lingchen.kim/art_design_pro_readme_cover2.png)
-
-### 暗黑主题
-
-![暗黑主题](https://www.qiniu.lingchen.kim/art_design_pro_readme_cover3.png)
-
-![暗黑主题](https://www.qiniu.lingchen.kim/art_design_pro_readme_cover4.png)
-
 ## 特点
 
 - 使用最新技术栈
@@ -231,16 +217,6 @@ pnpm build
 ## 致谢
 
 本项目基于上游开源项目 Daymychen/art-design-pro 二次开发，感谢上游项目及其所有贡献者的长期投入与维护。
-
-## 技术支持
-
-QQ群：<a href="https://qm.qq.com/cgi-bin/qm/qr?k=Gg6yzZLFaNgmRhK0T5Qcjf7-XcAFWWXm&jump_from=webapi&authKey=YpRKVJQyFKYbGTiKw0GJ/YQXnNF+GdXNZC5beQQqnGZTvuLlXoMO7nw5fNXvmVhA">821834289</a>（点击链接加入群聊）
-
-## 捐赠
-
-如果我的项目对你有所帮助，欢迎捐赠支持！你的支持将用于购买 ChatGPT、Cursor 等工具，以提升开发效率，让项目变得更好。感谢你的鼓励与支持！
-
-![捐赠二维码](https://www.qiniu.lingchen.kim/%E7%BB%84%202%402x%202.png)
 
 - 去除国际化（仅中文）
 
