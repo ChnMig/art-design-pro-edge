@@ -355,4 +355,9 @@ git switch -c hotfix/rollback <last_release_tag>
   - 路由：移除的页面（注册/忘记密码）不得残留死链。
   - 国际化：语言切换入口已隐藏；如无需要，可按需删除 `src/locales/langs/en.json`。
   - 环境变量：如需二维码，引入 `VITE_ADMIN_QRCODE_URL`。
+
+- 控制台与推广文案（保持精简）
+  - 移除“技术支持/QQ群/捐赠”等推广性文案的控制台输出，保留中性欢迎与上游 Star 信息即可。
+  - 文件：`src/utils/sys/console.ts`
+  - 文档：README 不包含“技术支持/捐赠”等章节；上游若回归相关内容，合并时一并清理。
 ```
