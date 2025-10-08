@@ -143,12 +143,12 @@
   .menu-tree-node {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start; // 靠左对齐
     width: 100%;
     margin-bottom: 2px;
 
     &.auth-node {
-      padding-left: 4px;
+      padding-left: 0; // 靠左对齐
     }
 
     .menu-name-row {
@@ -173,6 +173,7 @@
     .auth-name-row {
       display: flex;
       align-items: center;
+      width: 100%; // 占满行宽
       padding: 3px 0;
 
       .auth-title {
@@ -229,7 +230,7 @@
   .el-tree .el-tree-node.is-expanded > .el-tree-node__children {
     .auth-node {
       margin-top: 2px;
-      margin-left: 24px;
+      margin-left: 0; // 靠左对齐
       background-color: transparent; // 去除灰底
       border-radius: 0;
 

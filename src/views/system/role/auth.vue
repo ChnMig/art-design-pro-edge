@@ -414,7 +414,7 @@
 
     .menu-tree-node {
       display: flex;
-      align-items: center;
+      align-items: flex-start; // 靠左对齐
       margin-bottom: 2px;
 
       &.auth-node {
@@ -439,6 +439,7 @@
       .auth-name-row {
         display: flex;
         align-items: center;
+        width: 100%; // 占满行宽
         padding: 3px 0;
 
         .auth-tag {
