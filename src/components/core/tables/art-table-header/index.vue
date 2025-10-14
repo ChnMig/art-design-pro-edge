@@ -57,6 +57,7 @@
             :disabled="false"
             filter=".fixed-column"
             :prevent-on-filter="false"
+            @move="checkColumnMove"
           >
             <div
               v-for="item in columns"
@@ -163,6 +164,19 @@
    */
   const shouldShow = (componentName: string) => {
     return layoutItems.value.includes(componentName)
+  }
+
+  /**
+   * 拖拽移动校验：禁止拖拽到固定列位置
+   * 说明：当拖拽目标位置（related）包含 fixed-column 类名时，阻止移动，
+   *      以避免固定列因拖拽而发生位置改变。
+   */
+  const checkColumnMove = (event: any) => {
+    const toElement = event?.related as HTMLElement | null
+    if (toElement && toElement.classList.contains('fixed-column')) {
+      return false
+    }
+    return true
   }
 
   /** 搜索事件处理 */

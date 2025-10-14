@@ -36,7 +36,7 @@ export async function fetchTenantList(params?: Api.SystemTenant.TenantSearchPara
 export function createTenant(data: Api.SystemTenant.TenantPayload) {
   const payload = {
     ...data,
-    expired_at: (data as any).expired_at ?? data.expires_at,
+    expired_at: (data as any).expired_at ?? (data as any).expires_at,
     expires_at: undefined
   }
   return request.post({
@@ -51,7 +51,7 @@ export function createTenant(data: Api.SystemTenant.TenantPayload) {
 export function updateTenant(data: Required<Api.SystemTenant.TenantPayload>) {
   const payload = {
     ...data,
-    expired_at: (data as any).expired_at ?? data.expires_at,
+    expired_at: (data as any).expired_at ?? (data as any).expires_at,
     expires_at: undefined
   }
   return request.put({

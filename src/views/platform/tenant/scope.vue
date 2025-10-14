@@ -246,7 +246,6 @@
         menuCopy.meta &&
         'hasPermission' in menuCopy.meta
       ) {
-        // @ts-expect-error meta 可能未声明 hasPermission，运行时存在
         menuCopy.hasPermission = resolvePermissionFlag(menuCopy.meta)
       }
       return menuCopy

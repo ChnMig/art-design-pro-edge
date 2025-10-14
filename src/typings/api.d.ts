@@ -52,7 +52,7 @@ declare namespace Api {
 
     /** 用户信息 */
     interface UserInfo {
-      id?: number
+      id?: number | string
       userId?: number
       userName?: string
       username?: string

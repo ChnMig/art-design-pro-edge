@@ -282,7 +282,7 @@
       if (!valid) return
       try {
         if (isEdit.value) {
-          const formData = { ...form }
+          const formData: any = { ...form }
           formData.status = form.isEnable ? 1 : 2
           formData.keepAlive = form.keepAlive ? 1 : 2
           formData.isHide = form.isHide ? 1 : 2
@@ -296,7 +296,7 @@
           // 触发父组件刷新列表
           emit('refresh')
         } else {
-          const formData = { ...form }
+          const formData: any = { ...form }
           formData.status = form.isEnable ? 1 : 2
           formData.keepAlive = form.keepAlive ? 1 : 2
           formData.isHide = form.isHide ? 1 : 2

@@ -54,12 +54,8 @@
 
 <script setup lang="ts">
   import { onMounted, ref, reactive } from 'vue-demi'
-  import avatar1 from '@/assets/img/avatar/avatar1.webp'
-  import avatar2 from '@/assets/img/avatar/avatar2.webp'
-  import avatar3 from '@/assets/img/avatar/avatar3.webp'
-  import avatar4 from '@/assets/img/avatar/avatar4.webp'
-  import avatar5 from '@/assets/img/avatar/avatar5.webp'
-  import avatar6 from '@/assets/img/avatar/avatar6.webp'
+  // 上游新增了多张示例头像，但本仓库未引入该目录，统一使用默认头像
+  import defaultAvatar from '@/assets/img/user/avatar.webp'
 
   const radio2 = ref('本月')
 
@@ -72,7 +68,7 @@
       percentage: 60,
       pro: 0,
       color: 'rgb(var(--art-primary)) !important',
-      avatar: avatar1
+      avatar: defaultAvatar
     },
     {
       username: '何小荷',
@@ -82,7 +78,7 @@
       percentage: 20,
       pro: 0,
       color: 'rgb(var(--art-secondary)) !important',
-      avatar: avatar2
+      avatar: defaultAvatar
     },
     {
       username: '誶誶淰',
@@ -92,7 +88,7 @@
       percentage: 60,
       pro: 0,
       color: 'rgb(var(--art-warning)) !important',
-      avatar: avatar3
+      avatar: defaultAvatar
     },
     {
       username: '发呆草',
@@ -102,7 +98,7 @@
       percentage: 50,
       pro: 0,
       color: 'rgb(var(--art-info)) !important',
-      avatar: avatar4
+      avatar: defaultAvatar
     },
     {
       username: '甜筒',
@@ -112,7 +108,7 @@
       percentage: 70,
       pro: 0,
       color: 'rgb(var(--art-error)) !important',
-      avatar: avatar5
+      avatar: defaultAvatar
     },
     {
       username: '冷月呆呆',
@@ -122,7 +118,7 @@
       percentage: 90,
       pro: 0,
       color: 'rgb(var(--art-success)) !important',
-      avatar: avatar6
+      avatar: defaultAvatar
     }
   ])
 

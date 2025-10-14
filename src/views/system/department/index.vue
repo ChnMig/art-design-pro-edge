@@ -243,7 +243,7 @@
       type: 'warning'
     })
       .then(async () => {
-        loading.value = true
+        // 这里不直接修改 useTable 返回的只读 loading 状态
         try {
           await apiDeleteDepartment(id)
           // HTTP client returns data directly on success
@@ -253,7 +253,7 @@
           console.error('删除部门出错:', err)
           ElMessage.error('删除部门失败')
         } finally {
-          loading.value = false
+          // no-op
         }
       })
       .catch(() => {})

@@ -15,7 +15,8 @@ import {
 // 类型推导工具类型
 type InferApiParams<T> = T extends (params: infer P) => any ? P : never
 type InferApiResponse<T> = T extends (params: any) => Promise<infer R> ? R : never
-type InferRecordType<T> = T extends Api.Common.PaginatedResponse<infer U> ? U : never
+// 当无法从返回值中推断出记录类型时，回退为 any，避免出现 never 导致的类型不兼容
+type InferRecordType<T> = T extends Api.Common.PaginatedResponse<infer U> ? U : any
 
 // 优化的配置接口 - 支持自动类型推导
 export interface UseTableConfig<

@@ -394,12 +394,13 @@
   const loadDepartmentList = async () => {
     try {
       const res = await getDepartmentList({ page: 1, pageSize: 200 })
-      const list = Array.isArray(res?.data?.records)
-        ? res.data.records
-        : Array.isArray(res?.data)
-          ? res.data
-          : Array.isArray(res)
-            ? res
+      const r: any = res as any
+      const list = Array.isArray(r?.data?.records)
+        ? r.data.records
+        : Array.isArray(r?.data)
+          ? r.data
+          : Array.isArray(r)
+            ? r
             : []
       departmentList.value = list
     } catch (err) {
@@ -412,12 +413,13 @@
   const loadRoleList = async () => {
     try {
       const res = await getRoleList({ page: 1, pageSize: 200 })
-      const list = Array.isArray(res?.data?.records)
-        ? res.data.records
-        : Array.isArray(res?.data)
-          ? res.data
-          : Array.isArray(res)
-            ? res
+      const r: any = res as any
+      const list = Array.isArray(r?.data?.records)
+        ? r.data.records
+        : Array.isArray(r?.data)
+          ? r.data
+          : Array.isArray(r)
+            ? r
             : []
       roleList.value = list
     } catch (err) {
