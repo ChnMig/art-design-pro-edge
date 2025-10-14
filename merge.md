@@ -273,8 +273,9 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
 ```
 pnpm i
 pnpm build
+pnpm fix             # 等价于 `pnpm lint --fix`，先自动修复可修复项
 pnpm dev
-pnpm lint            # 代码规范（如配置可用）
+pnpm lint            # 代码规范（确认无残留错误）
 pnpm lint:stylelint  # 样式规范（如配置可用）
 pnpm lint:prettier   # Markdown/JSON/样式格式化检查（如配置可用）
 ```
