@@ -81,6 +81,12 @@ git diff --name-status HEAD..upstream/main -- package.json pnpm-lock.yaml
 git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .prettierrc .stylelintrc.cjs
 ```
 
+变更日志（必须阅读并映射到本仓库）：
+
+- 阅读上游 `CHANGELOG.md` / `CHANGELOG.zh-CN.md`，逐条判断是否适用本仓库。
+- 适用项：按“合并决策矩阵”和“样式与组件（默认合并）”执行；不适用项：在本节或“注意事项”中已有明确排除（如注册/i18n/演示/快速入口/契约冲突等）。
+- 将本次吸收的要点补充到本文档相应小节，保持“默认可合并清单”持续更新，减少下次沟通成本。
+
 ## 4. 按主题合并（确保本地定制不回退）
 
 建议采用以下顺序减少冲突：
@@ -105,16 +111,10 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
     - 若动态路由注册时捕获到 401，路由守卫中应取消当前导航而非跳转 500，由 Axios 拦截器负责登出与提示。
     - 本仓库已实现该优化（`src/router/guards/beforeEach.ts`），合并上游时如有相关改动，保持此行为不回退。
 
-- 样式与组件（默认合并，除非本节明确排除）
+- 样式与交互（默认合并）
 
-  - 过渡动画：对齐上游动画参数与进入/离开行为
-    - 文件：`src/assets/styles/transition.scss`
-    - 参数：`duration=0.25s`、`distance=15px`、进入/离开采用不同时长/缓动曲线（更顺滑）
-  - 侧边菜单样式：与上游对齐边框与间距
-    - 文件：
-      - `src/components/core/layouts/art-menus/art-sidebar-menu/style.scss`：新增 `.layout-sidebar` 右侧边框、`dual-menu-left` 边框使用 `--art-border-color`
-      - `src/components/core/layouts/art-menus/art-sidebar-menu/theme.scss`：菜单高度 `$menu-height=42px`，`menu-icon` 间距 8px；暗黑主题选中时文字与图标为白色
-  - 说明：除 i18n、演示/示例、快速入口与本仓库契约冲突项外，其余样式与通用行为默认吸收并合并。
+  - 原则：非契约性的 UI/动效/样式微调默认合并，不在本文档逐项列举；前提是不改变业务契约与本仓库既有约束。
+  - 排除：i18n、演示/示例、快速入口以及与后端契约冲突的改动。
 
 - 核心组件（与上游保持完全一致）
 
@@ -137,18 +137,11 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
 
 - 选择性 bugfix（按需 cherry-pick 指南）
 
-  - 原则：仅挑选“fix/构建稳定性/无 i18n 回归”的小范围变更。涉及 `src/locales/*`、`src/views/examples|widgets|template|article|change|result|safeguard`、`src/components/core/layouts/art-fast-enter/*` 一律跳过。
-  - 工具链相关：
-    - `vite.config.ts` 中的 `optimizeDeps.include` 扩充与 `AutoImport.eslintrc.globalsPropValue: true`（对应 v2.6.0 打包稳定性修复）。
-  - 组件与样式：
-    - 表格头固定列拖拽防护：本仓库已具备“禁止拖到固定列”逻辑（`ArtTableHeader`），如上游类似修复出现，仅校验一致性，不重复改动。
-  - 路由守卫：
-
-    - 401 错误时取消导航（不跳 500），由拦截器统一登出与提示，已有实现，保持不回退。
-
-  - 样式：
-
-    - 动画与菜单样式等纯 UI 变更默认合并（路径：`src/assets/styles/*`、`src/components/core/layouts/art-menus/*`）。
+  - 原则：仅挑选“fix/构建稳定性/不涉及 i18n·示例·快速入口/不改变契约”的小范围改动。
+  - 工具链：构建稳定性与小版本兼容可直接合入（如自动导入/预构建配置等）。
+  - 组件/交互：不改变业务契约的行为修复可合入；如与契约有冲突，以本仓库为准，优先改调用方。
+  - 路由守卫：401 取消导航，由拦截器统一登出与提示；保持本仓库既定方案。
+  - 样式/动效：纯 UI 修复默认可合并，不在本文档逐项记录。
 
   - 快速筛选命令：
 

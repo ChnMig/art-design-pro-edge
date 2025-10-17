@@ -336,7 +336,7 @@ export function resetRouterState(): void {
 function handleRootPathRedirect(to: RouteLocationNormalized, next: NavigationGuardNext): boolean {
   if (to.path === '/') {
     const { homePath } = useCommon()
-    if (homePath.value) {
+    if (homePath.value && homePath.value !== '/') {
       next({ path: homePath.value, replace: true })
       return true
     }
