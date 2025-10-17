@@ -38,7 +38,7 @@ git checkout -b merge/upstream-sync-YYYYMM
 git push -u origin merge/upstream-sync-YYYYMM
 ```
 
-## 2. 获取上游并记录版本
+## 2. 获取上游并记录版本（当前基线：v2.6.0）
 
 ```
 git fetch upstream --prune
@@ -48,7 +48,14 @@ UPSTREAM_COMMIT_MSG=$(git log -1 --format="%H %s" upstream/main)
 echo "Sync to: $UPSTREAM_COMMIT_MSG"
 ```
 
-在 README.md 中更新“同步来源与版本”（上游 commit 信息）。同时保持该 commitId 与本步骤记录的值一致（短/长哈希任选其一，但需前后统一）。
+在 README.md 中更新“同步来源与版本”（上游 commit 信息）。当前已对齐至：
+
+- 上游分支：`upstream/main`
+- 上游提交：`62a6658`（fix: code optimization, bug fixes）
+
+同时保持 README 中的 commitId 与本步骤记录的值一致（短/长哈希任选其一，但需前后统一）。
+
+版本号同步（仅显示用途）：`.env` 中的 `VITE_VERSION` 建议与上游发行保持一致（当前为 2.6.0），不影响功能行为。
 
 ## 3. 审阅上游变更
 
@@ -78,10 +85,11 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
 
 建议采用以下顺序减少冲突：
 
-- 构建/工具链
+- 构建/工具链（优先，保持编译稳定）
 
   - `vite.config.ts`：确保存在 `unplugin-element-plus`（`useSource: true`）、`AutoImport`、`Components`，并在 SCSS `additionalData` 中注入 `@styles/el-light.scss`、variables、mixin。
-  - `optimizeDeps.include` 如需包含 element-plus css。
+  - `optimizeDeps.include`：建议包含 `element-plus/es` 及常用组件样式（如 `element-plus/es/components/*/style/css`、`message/notification/upload/button/icon` 等），并按需加入 `echarts`、`xlsx`、`xgplayer`、`crypto-js`、`file-saver`、`vue-img-cutter`，以降低打包期“组件/样式未导入”导致的异常（参考 v2.6.0）。
+  - `AutoImport`：开启 `eslintrc.globalsPropValue: true`，减少 ESLint 全局声明误报（v2.6.0 修复点）。
   - 依赖与锁文件策略：上游如变更 `package.json`，先合并依赖声明，再本地执行 `pnpm i` 同步生成 `pnpm-lock.yaml`，两者一并提交。避免手工改动锁文件。
 
 - 合并决策矩阵（默认策略）
@@ -92,6 +100,10 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
   - HTTP 层与接口契约（`src/api/*`、`src/utils/http/*`）：以本地为准，禁止为兼容上游而前端造字段或重映射。
   - 菜单字段与动态路由：以后端契约为准，不引入上游前端私有字段（`showBadge` 等）。
   - 国际化、快速入口、通知/聊天：保持移除，禁止回归。
+
+  - 401 未授权的路由守卫处理（修复项，建议吸收）
+    - 若动态路由注册时捕获到 401，路由守卫中应取消当前导航而非跳转 500，由 Axios 拦截器负责登出与提示。
+    - 本仓库已实现该优化（`src/router/guards/beforeEach.ts`），合并上游时如有相关改动，保持此行为不回退。
 
 - 核心组件（与上游保持完全一致）
 
@@ -112,6 +124,30 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
     - “二维码联系管理员”弹窗（环境变量 `VITE_ADMIN_QRCODE_URL`）。
     - 登录页支持读取 URL 上的 `tenant_code` 参数并自动填写、锁定租户选择框。
 
+- 选择性 bugfix（按需 cherry-pick 指南）
+
+  - 原则：仅挑选“fix/构建稳定性/无 i18n 回归”的小范围变更。涉及 `src/locales/*`、`src/views/examples|widgets|template|article|change|result|safeguard`、`src/components/core/layouts/art-fast-enter/*` 一律跳过。
+  - 工具链相关：
+    - `vite.config.ts` 中的 `optimizeDeps.include` 扩充与 `AutoImport.eslintrc.globalsPropValue: true`（对应 v2.6.0 打包稳定性修复）。
+  - 组件与样式：
+    - 表格头固定列拖拽防护：本仓库已具备“禁止拖到固定列”逻辑（`ArtTableHeader`），如上游类似修复出现，仅校验一致性，不重复改动。
+  - 路由守卫：
+
+    - 401 错误时取消导航（不跳 500），由拦截器统一登出与提示，已有实现，保持不回退。
+
+  - 快速筛选命令：
+
+    ```bash
+    # 查看近 N 条上游提交（仅 fix 类）
+    git log --oneline upstream/main -n 50 | rg -i "^\w+\s+fix|bug|error|异常|优化|稳定"
+
+    # 检查某个提交的影响面
+    git show --name-only <commit>
+
+    # 预览差异并人工甄别是否含 i18n/示例目录
+    git show <commit> | rg -n "src/locales|views/(examples|widgets|template|article|change|result|safeguard)|art-fast-enter"
+    ```
+
 - HTTP 层
 
   - 保留 `src/api/auth.ts` 的接口路径（`/system/user/*`）与返回字段契约。
@@ -123,6 +159,7 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
     - 仅对 GET 请求生效；POST/PUT 不受影响。
     - 自动剔除 `undefined`、`null`、空字符串及纯空白字符串的参数键；保留 `0` 与 `false`。
     - 目的：避免把“空值”当作有效查询条件拼接到 URL（例如 `?name=&status=`）。
+  - 401 处理：拦截器统一登出与提示；路由守卫遇到 401 时取消导航（不跳 500）。
 
 - 菜单管理（UI 对齐）
 
@@ -280,6 +317,10 @@ pnpm lint:stylelint  # 样式规范（如配置可用）
 pnpm lint:prettier   # Markdown/JSON/样式格式化检查（如配置可用）
 ```
 
+版本校验：
+
+- 运行 `pnpm build` 时，控制台打印 `🚀 VERSION = 2.6.0`（来自 `.env`），仅用于显示，不影响功能。
+
 冒烟测试：
 
 - 登录：多租户 + 图形验证码 + 二维码弹窗
@@ -354,7 +395,8 @@ git switch -c hotfix/rollback <last_release_tag>
   - 不要切换到上游的 `/api/auth/login` 与 token 字段命名。
 - 安全检查
   - 路由：移除的页面（注册/忘记密码）不得残留死链。
-  - 国际化：语言切换入口已隐藏；如无需要，可按需删除 `src/locales/langs/en.json`。
+- 国际化：语言切换入口已隐藏；如无需要，可按需删除 `src/locales/langs/en.json`。
+  - 上游 v2.6.0 引入/调整的 i18n 代码统一不回归；发现 `$t()/useI18n()` 直接改为中文静态文案并移除导入。
   - 环境变量：如需二维码，引入 `VITE_ADMIN_QRCODE_URL`。
 
 - 控制台与推广文案（保持精简）

@@ -16,6 +16,8 @@ import { loadingService } from '@/utils/ui'
 import { useCommon } from '@/composables/useCommon'
 import { useWorktabStore } from '@/store/modules/worktab'
 import { fetchGetUserInfo } from '@/api/auth'
+import { ApiStatus } from '@/utils/http/status'
+import { HttpError, isHttpError } from '@/utils/http/error'
 
 // 前端权限模式 loading 关闭延时，提升用户体验
 const LOADING_DELAY = 50
@@ -181,6 +183,11 @@ async function handleDynamicRoutes(
     })
   } catch (error) {
     console.error('动态路由注册失败:', error)
+    // 若为未授权错误（401），Axios 拦截器已处理退出登录，这里取消当前导航避免误跳 500
+    if (isUnauthorizedError(error)) {
+      next(false)
+      return
+    }
     next('/exception/500')
   }
 }
@@ -335,4 +342,11 @@ function handleRootPathRedirect(to: RouteLocationNormalized, next: NavigationGua
     }
   }
   return false
+}
+
+/**
+ * 判断是否为未授权错误（401）
+ */
+function isUnauthorizedError(error: unknown): error is HttpError {
+  return isHttpError(error) && error.code === ApiStatus.unauthorized
 }
