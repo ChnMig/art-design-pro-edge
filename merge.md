@@ -105,6 +105,17 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
     - 若动态路由注册时捕获到 401，路由守卫中应取消当前导航而非跳转 500，由 Axios 拦截器负责登出与提示。
     - 本仓库已实现该优化（`src/router/guards/beforeEach.ts`），合并上游时如有相关改动，保持此行为不回退。
 
+- 样式与组件（默认合并，除非本节明确排除）
+
+  - 过渡动画：对齐上游动画参数与进入/离开行为
+    - 文件：`src/assets/styles/transition.scss`
+    - 参数：`duration=0.25s`、`distance=15px`、进入/离开采用不同时长/缓动曲线（更顺滑）
+  - 侧边菜单样式：与上游对齐边框与间距
+    - 文件：
+      - `src/components/core/layouts/art-menus/art-sidebar-menu/style.scss`：新增 `.layout-sidebar` 右侧边框、`dual-menu-left` 边框使用 `--art-border-color`
+      - `src/components/core/layouts/art-menus/art-sidebar-menu/theme.scss`：菜单高度 `$menu-height=42px`，`menu-icon` 间距 8px；暗黑主题选中时文字与图标为白色
+  - 说明：除 i18n、演示/示例、快速入口与本仓库契约冲突项外，其余样式与通用行为默认吸收并合并。
+
 - 核心组件（与上游保持完全一致）
 
   - 原则：组件源码以上游为唯一真源，不在本仓库做自定义 Fork。若为满足本仓库“项目特点”（多租户、验证码、二维码联系管理员）确需扩展，优先通过调用方适配（调用方式、样式覆写、组合式函数），避免改动组件本体。
@@ -134,6 +145,10 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
   - 路由守卫：
 
     - 401 错误时取消导航（不跳 500），由拦截器统一登出与提示，已有实现，保持不回退。
+
+  - 样式：
+
+    - 动画与菜单样式等纯 UI 变更默认合并（路径：`src/assets/styles/*`、`src/components/core/layouts/art-menus/*`）。
 
   - 快速筛选命令：
 
@@ -320,6 +335,13 @@ pnpm lint:prettier   # Markdown/JSON/样式格式化检查（如配置可用）
 版本校验：
 
 - 运行 `pnpm build` 时，控制台打印 `🚀 VERSION = 2.6.0`（来自 `.env`），仅用于显示，不影响功能。
+
+视觉/行为校验：
+
+- 页面过渡动画是否顺滑（进入/离开动画时长与缓动对齐）
+- 侧边菜单：
+  - 左侧边框与双列菜单右侧边框是否与主题一致
+  - 暗黑主题下选中项文字/图标为白色、浅色背景
 
 冒烟测试：
 
