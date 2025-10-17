@@ -87,7 +87,13 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
 - 适用项：按“合并决策矩阵”和“样式与组件（默认合并）”执行；不适用项：在本节或“注意事项”中已有明确排除（如注册/i18n/演示/快速入口/契约冲突等）。
 - 将本次吸收的要点补充到本文档相应小节，保持“默认可合并清单”持续更新，减少下次沟通成本。
 
-## 4. 按主题合并（确保本地定制不回退）
+## 4. 按主题合并（先全量同步，再回放二开）
+
+总体原则：
+
+- 先合并上游最新代码，让“组件/样式/通用基础设施”最大限度与上游保持一致；
+- 再回放本仓库“二开特征”（API 契约、业务页面、禁用能力）与必要适配；
+- 若上游修改了组件 API 或行为，以组件为准，统一“改调用方”（在本仓库业务页面中适配）。
 
 建议采用以下顺序减少冲突：
 
@@ -98,14 +104,45 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
   - `AutoImport`：开启 `eslintrc.globalsPropValue: true`，减少 ESLint 全局声明误报（v2.6.0 修复点）。
   - 依赖与锁文件策略：上游如变更 `package.json`，先合并依赖声明，再本地执行 `pnpm i` 同步生成 `pnpm-lock.yaml`，两者一并提交。避免手工改动锁文件。
 
-- 合并决策矩阵（默认策略）
+- 合并决策矩阵（路径优先级）
 
-  - 构建/工具链：以上游为准，但保留本地必要插件与 SCSS 注入（按上文要求校正）。
-  - 核心组件源码：以上游为准；如需扩展，优先在调用方适配，避免改动组件本体。
-  - 登录页流程（多租户/图形验证码/管理员二维码）：以本地为准，吸收样式优化不改变流程与接口契约。
-  - HTTP 层与接口契约（`src/api/*`、`src/utils/http/*`）：以本地为准，禁止为兼容上游而前端造字段或重映射。
-  - 菜单字段与动态路由：以后端契约为准，不引入上游前端私有字段（`showBadge` 等）。
-  - 国际化、快速入口、通知/聊天：保持移除，禁止回归。
+  - 接受上游（theirs，合并后如有变化，改调用方）：
+    - 工具链与样式：`vite.config.ts`（保留必要注入）、`src/assets/styles/**`
+    - 通用组件与布局：`src/components/**`（但排除本仓库已禁用功能，见下）
+    - 路由与基础工具：`src/router/utils/**`、`src/store/**`（不涉及业务契约的部分）
+  - 保留本地（ours，合并后回放特征）：
+    - API 与 HTTP 契约：`src/api/**`、`src/utils/http/**`
+    - 业务页面（管理端）：`src/views/system/**`、`src/views/platform/**`
+    - 认证流程与登录页：`src/views/auth/login/**`（多租户+图形验证码+联系管理员）；`src/views/auth/register/**` 不回归
+  - 显式移除/禁止回归：
+    - i18n：`src/locales/**`、`$t()/useI18n()`
+    - 演示/示例/快速入口/通知/聊天：`src/views/(examples|widgets|template|article|change|result|safeguard)`、`art-fast-enter/**`、`art-notification/**`、`art-chat-window/**`
+  - 菜单与动态路由：以后端契约为准，不引入前端私有字段（如 `showBadge` 等）；动态路由注册逻辑可吸收上游增强，但不得改变后端菜单契约。
+
+### 冲突处理与命令速查（高频路径）
+
+- 接受上游（theirs）
+  - 工具链/样式/通用组件：`git checkout --theirs vite.config.ts src/assets/styles src/components`
+  - 路由/状态基础工具（不含业务契约）：`git checkout --theirs src/router/utils src/store`
+  - 批量确认：`git add <paths>` → `git commit`
+- 保留本地（ours）
+  - API 与 HTTP：`git checkout --ours src/api src/utils/http`
+  - 业务页面：`git checkout --ours src/views/system src/views/platform`
+  - 认证流程与登录页：`git checkout --ours src/views/auth/login`
+- 禁止回归（直接删除或拒绝）：
+  - i18n/示例/快速入口/通知/聊天相关新增文件：`git rm <unwanted paths>` 或忽略合并变更
+- 辅助工具
+  - 可视化解决：`git mergetool`（如已配置）
+  - 复用冲突决策：`git config rerere.enabled true`（可选）
+
+### 组件 API 变更后的本地适配流程（改调用方）
+
+1. 定位 API 变化：对比组件源码差异（`git show upstream/main:path/to/component`）。
+2. 搜索本仓库业务调用：`rg -n "<ComponentName>|<PropName>|<EventName>" src/views/system src/views/platform`。
+3. 批量适配调用写法，确保 props/slots/事件名符合上游最新 API（保留业务契约）。
+4. 构建与冒烟验证：`pnpm build`，登录后检查对应页面交互是否符合预期。
+
+提示：业务契约与数据结构始终以后端为准；即便组件有增强，也不要在页面层“凭空造字段或重映射”。
 
 - 样式与交互（默认合并）
 
@@ -117,21 +154,22 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
   - 原则：组件源码以上游为唯一真源，不在本仓库做自定义 Fork。若为满足本仓库“项目特点”（多租户、验证码、二维码联系管理员）确需扩展，优先通过调用方适配（调用方式、样式覆写、组合式函数），避免改动组件本体。
   - API 变更：若上游调整了组件 Props/Slots/事件命名或行为，统一“以组件为准、改调用方”。做法：
     1. 逐个对比组件源码（git show upstream/main:path）确认差异；
-    2. 直接以 upstream 版本覆盖本地组件文件（如确认为纯上游演进）；
-    3. 全局搜用法并按上游 API 批量适配（示例页、系统页一起改）；
+    2. 直接以 upstream 版本覆盖本地组件文件；
+    3. 全局搜本仓库“业务页面”用法并按上游 API 批量适配（system/platform 页面一起改）；
     4. 运行构建/冒烟测试，确保渲染和交互正常。
   - 渲染语义：保持与上游一致的判定习惯（如需要渲染 0 值，采用显式 undefined/null 判断）。该条为通用约定，不在本仓库叠加“仅当前版本”的临时性规则。
-  - 样式同步：优先采用上游样式和变量，移除不必要的本地覆写；仅在不影响上游升级的前提下为本仓库视觉做最小化适配（例如通过局部作用域样式或容器类名）。
+  - 样式同步：优先采用上游样式和变量，移除不必要的本地覆写；如需企业风格，仅通过局部作用域或容器类名最小化适配，避免改动组件本体。
 
-- 登录页
+  - 登录页
 
   - 吸收上游样式优化，但保留本地登录流程：
+
     - 多租户字段 + 图形验证码（可刷新）。
     - 后端契约不变：`access_token` / `refresh_token`。
     - “二维码联系管理员”弹窗（环境变量 `VITE_ADMIN_QRCODE_URL`）。
     - 登录页支持读取 URL 上的 `tenant_code` 参数并自动填写、锁定租户选择框。
 
-- 选择性 bugfix（按需 cherry-pick 指南）
+  - 选择性 bugfix（按需 cherry-pick 指南）
 
   - 原则：上游改动如果不与本地的业务契约有冲突则默认合并
   - 工具链：构建稳定性与小版本兼容可直接合入（如自动导入/预构建配置等）。
@@ -324,12 +362,13 @@ pnpm lint:prettier   # Markdown/JSON/样式格式化检查（如配置可用）
 
 - 运行 `pnpm build` 时，控制台打印 `🚀 VERSION = 2.6.0`（来自 `.env`），仅用于显示，不影响功能。
 
-视觉/行为校验：
+视觉/行为校验（合并后回放二开特征，检查调用方已适配组件 API）：
 
-- 页面过渡动画是否顺滑（进入/离开动画时长与缓动对齐）
-- 侧边菜单：
-  - 左侧边框与双列菜单右侧边框是否与主题一致
-  - 暗黑主题下选中项文字/图标为白色、浅色背景
+- 组件调用：system / platform 页面组件调用是否符合上游最新 API；无运行时警告
+- 动态菜单：登录后按后端菜单契约正常注册；meta 字段契约不变
+- 401 行为：未登录访问受限路由不出现 500；由拦截器统一退出并提示
+- 登录页：多租户/图形验证码/联系管理员入口正常
+- 样式外观：采用上游样式为主，企业化局部样式不影响上游升级
 
 冒烟测试：
 
