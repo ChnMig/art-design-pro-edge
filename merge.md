@@ -102,6 +102,7 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
   - `optimizeDeps.include`：建议包含 `element-plus/es` 及常用组件样式（如 `element-plus/es/components/*/style/css`、`message/notification/upload/button/icon` 等），并按需加入 `echarts`、`xlsx`、`xgplayer`、`crypto-js`、`file-saver`、`vue-img-cutter`，以降低打包期“组件/样式未导入”导致的异常（参考 v2.6.0）。
   - `AutoImport`：开启 `eslintrc.globalsPropValue: true`，减少 ESLint 全局声明误报（v2.6.0 修复点）。
   - 依赖与锁文件策略：上游如变更 `package.json`，先合并依赖声明，再本地执行 `pnpm i` 同步生成 `pnpm-lock.yaml`，两者一并提交。避免手工改动锁文件。
+  - 路由历史模式：保持 `src/router/index.ts` 使用 `createWebHashHistory()`。如上游切换为 `createWebHistory()` 或修改 `base`，本仓库仍坚持 Hash 模式以避免服务端 404（无需服务器配合）。
 
 - 合并决策矩阵（路径优先级）
   - 接受上游（theirs，合并后如有变化，改调用方）：
@@ -268,6 +269,15 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
     - 在注册动态路由前，同步将菜单写入 Store：`useMenuStore().setMenuList(menuList)`，以便侧边栏与首页路径计算（`getFirstMenuPath`）立即可用。
     - 登出/重置需清理：调用 `resetRouterState()`，执行 `menuStore.removeAllDynamicRoutes()`，并清空 `menuStore.setMenuList([])` 与 `sessionStorage('iframeRoutes')`，避免残留动态路由与缓存。
     - 根路径跳转：登录且已完成注册时，如命中根路径 `/`，根据 `useCommon().homePath.value` 重定向到首页；若后端未返回首页，使用仪表盘 `/dashboard/console` 作为兜底。
+  - 访问模式与 roles（环境变量约定）：
+    - `VITE_ACCESS_MODE=backend`（默认）：严格按后端返回菜单注册；忽略前端 `roles`。后端不应返回 `roles`。
+    - `VITE_ACCESS_MODE=frontend`（开发/演示）：使用本地 `src/router/routes/asyncRoutes.ts`。该文件可带 `meta.roles` 做前端过滤，但仅限本地前端模式，禁止反向影响后端契约。
+  - 后端路由字段契约（component/path/name 必读）：
+    - `path`：子级为相对路径，父子拼接形成最终路径；顶级使用以 `/` 开头的一级路径（例如 `/system`）。
+    - `component`：指向 `src/views` 下的视图相对路径（不含扩展名），支持两种：`/a/b`（映射 `src/views/a/b.vue`）或 `/a/b/index`（映射 `src/views/a/b/index.vue`）。一级菜单容器使用 `RoutesAlias.Layout`（`/index/index`）。
+    - `name`：全局唯一，避免与静态路由名冲突（保留名：`Login`、`Exception403/404/500`、`Outside`、`Iframe`）。
+    - iframe 外链：`meta.isIframe=true` 且提供 `meta.link`，其余按 `registerRoutes.ts` 的 iframe 规则生成。
+    - 隐藏菜单：`meta.isHide=true` 时侧边栏不展示，但可直接访问；请避免把首页标记为隐藏。
 
 - 路由与页面
   - 保留本地的路由守卫逻辑，仅吸收安全的上游增强。
@@ -363,6 +373,8 @@ pnpm lint:prettier   # Markdown/JSON/样式格式化检查（如配置可用）
 - 登录页：多租户/图形验证码/联系管理员入口正常
 - 样式外观：采用上游样式为主，企业化局部样式不影响上游升级
 - 刷新行为：已登录状态下刷新受保护页面，不应落入 404；侧边菜单保持渲染且首页跳转正确
+- 路由契约：后端返回的 `component/path/name` 满足“后端路由字段契约”；无重复 `name`，与静态路由不冲突
+- 历史模式：保持 Hash，刷新与直链访问均正常
 
 冒烟测试：
 
