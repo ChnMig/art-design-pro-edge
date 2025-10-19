@@ -91,13 +91,8 @@
   import { computed, ref, watch, type Ref, type ComputedRef } from 'vue'
   import AppConfig from '@/config'
 
-  // 导入头像图片
-  import avatar1 from '@/assets/img/avatar/avatar1.webp'
-  import avatar2 from '@/assets/img/avatar/avatar2.webp'
-  import avatar3 from '@/assets/img/avatar/avatar3.webp'
-  import avatar4 from '@/assets/img/avatar/avatar4.webp'
-  import avatar5 from '@/assets/img/avatar/avatar5.webp'
-  import avatar6 from '@/assets/img/avatar/avatar6.webp'
+  // 统一使用默认头像，避免依赖上游示例头像资源
+  import defaultAvatar from '@/assets/img/user/avatar.webp'
 
   defineOptions({ name: 'ArtNotification' })
 
@@ -189,36 +184,12 @@
 
     // 消息数据
     const msgList = ref<MessageItem[]>([
-      {
-        title: '池不胖 关注了你',
-        time: '2021-2-26 23:50',
-        avatar: avatar1
-      },
-      {
-        title: '唐不苦 关注了你',
-        time: '2021-2-21 8:05',
-        avatar: avatar2
-      },
-      {
-        title: '中小鱼 关注了你',
-        time: '2020-1-17 21:12',
-        avatar: avatar3
-      },
-      {
-        title: '何小荷 关注了你',
-        time: '2021-01-14 0:20',
-        avatar: avatar4
-      },
-      {
-        title: '誶誶淰 关注了你',
-        time: '2020-12-20 0:15',
-        avatar: avatar5
-      },
-      {
-        title: '冷月呆呆 关注了你',
-        time: '2020-12-17 22:06',
-        avatar: avatar6
-      }
+      { title: '池不胖 关注了你', time: '2021-2-26 23:50', avatar: defaultAvatar },
+      { title: '唐不苦 关注了你', time: '2021-2-21 8:05', avatar: defaultAvatar },
+      { title: '中小鱼 关注了你', time: '2020-1-17 21:12', avatar: defaultAvatar },
+      { title: '何小荷 关注了你', time: '2021-01-14 0:20', avatar: defaultAvatar },
+      { title: '誶誶淰 关注了你', time: '2020-12-20 0:15', avatar: defaultAvatar },
+      { title: '冷月呆呆 关注了你', time: '2020-12-17 22:06', avatar: defaultAvatar }
     ])
 
     // 待办数据

@@ -34,7 +34,7 @@ export const useSettingStore = defineStore(
     /** 菜单主题类型 */
     const menuThemeType = ref(MenuThemeEnum.DESIGN)
     /** 系统主题颜色 */
-    const systemThemeColor = ref(AppConfig.elementPlusTheme.primary)
+    const systemThemeColor = ref(AppConfig.systemMainColor[0])
 
     // 界面显示设置
     /** 是否显示菜单按钮 */
@@ -48,7 +48,7 @@ export const useSettingStore = defineStore(
     /** 是否显示工作台标签 */
     const showWorkTab = ref(true)
     /** 是否显示进度条 */
-    const showNprogress = ref(true)
+    const showNprogress = ref(false)
     /** 是否显示设置引导 */
     const showSettingGuide = ref(true)
     /** 是否显示节日文本 */

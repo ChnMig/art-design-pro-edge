@@ -1,6 +1,5 @@
 import { RoutesAlias } from '../routesAlias'
 import { AppRouteRecord } from '@/types/router'
-import { WEB_LINKS } from '@/utils/constants'
 
 /**
  * 精简后的异步路由
@@ -26,24 +25,6 @@ export const asyncRoutes: AppRouteRecord[] = [
           title: '工作台',
           keepAlive: false,
           fixedTab: true
-        }
-      },
-      {
-        path: 'analysis',
-        name: 'Analysis',
-        component: RoutesAlias.Analysis,
-        meta: {
-          title: '分析页',
-          keepAlive: false
-        }
-      },
-      {
-        path: 'ecommerce',
-        name: 'Ecommerce',
-        component: RoutesAlias.Ecommerce,
-        meta: {
-          title: '电子商务',
-          keepAlive: false
         }
       }
     ]
@@ -114,93 +95,6 @@ export const asyncRoutes: AppRouteRecord[] = [
             { title: '删除', authMark: 'delete' }
           ]
         }
-      },
-      {
-        path: 'nested',
-        name: 'Nested',
-        component: '',
-        meta: {
-          title: '嵌套菜单',
-          keepAlive: true
-        },
-        children: [
-          {
-            path: 'menu1',
-            name: 'NestedMenu1',
-            component: RoutesAlias.NestedMenu1,
-            meta: {
-              title: '菜单1',
-              icon: '&#xe676;',
-              keepAlive: true
-            }
-          },
-          {
-            path: 'menu2',
-            name: 'NestedMenu2',
-            component: '',
-            meta: {
-              title: '菜单2',
-              icon: '&#xe676;',
-              keepAlive: true
-            },
-            children: [
-              {
-                path: 'menu2-1',
-                name: 'NestedMenu2-1',
-                component: RoutesAlias.NestedMenu21,
-                meta: {
-                  title: '菜单2-1',
-                  icon: '&#xe676;',
-                  keepAlive: true
-                }
-              }
-            ]
-          },
-          {
-            path: 'menu3',
-            name: 'NestedMenu3',
-            component: '',
-            meta: {
-              title: '菜单3',
-              icon: '&#xe676;',
-              keepAlive: true
-            },
-            children: [
-              {
-                path: 'menu3-1',
-                name: 'NestedMenu3-1',
-                component: RoutesAlias.NestedMenu31,
-                meta: {
-                  title: '菜单3-1',
-                  icon: '&#xe676;',
-                  keepAlive: true
-                }
-              },
-              {
-                path: 'menu3-2',
-                name: 'NestedMenu3-2',
-                component: '',
-                meta: {
-                  title: '菜单3-2',
-                  icon: '&#xe676;',
-                  keepAlive: true
-                },
-                children: [
-                  {
-                    path: 'menu3-2-1',
-                    name: 'NestedMenu3-2-1',
-                    component: RoutesAlias.NestedMenu321,
-                    meta: {
-                      title: '菜单3-2-1',
-                      icon: '&#xe676;',
-                      keepAlive: true
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        ]
       }
     ]
   },
@@ -233,31 +127,5 @@ export const asyncRoutes: AppRouteRecord[] = [
         meta: { title: '500', keepAlive: true, isFullPage: true }
       }
     ]
-  },
-
-  // 外链示例（保留官方文档与精简版链接）
-  {
-    name: 'Document',
-    path: '',
-    component: '',
-    meta: {
-      title: '官方文档',
-      icon: '&#xe73e;',
-      link: WEB_LINKS.DOCS,
-      isIframe: false,
-      keepAlive: false
-    }
-  },
-  {
-    name: 'LiteVersion',
-    path: '',
-    component: '',
-    meta: {
-      title: '精简版本',
-      icon: '&#xe7ff;',
-      link: WEB_LINKS.LiteVersion,
-      isIframe: false,
-      keepAlive: false
-    }
   }
 ]

@@ -4,7 +4,7 @@
     :title="title || '菜单权限配置'"
     direction="rtl"
     size="30%"
-    :before-close="handleClose"
+    :before-close="onBeforeClose"
     :destroy-on-close="false"
     :close-on-click-modal="false"
     append-to-body
@@ -50,7 +50,7 @@
       </div>
 
       <div class="drawer-footer">
-        <el-button @click="handleClose">取消</el-button>
+        <el-button @click="() => handleClose()">取消</el-button>
         <el-button type="primary" @click="savePermissions" :loading="saveLoading">保存</el-button>
       </div>
     </div>
@@ -88,8 +88,8 @@
   })
 
   const menuTreeRef = ref()
-  const menus = ref([])
-  const processedMenus = ref([])
+  const menus = ref<any[]>([])
+  const processedMenus = ref<any[]>([])
   const loading = ref(false)
   const saveLoading = ref(false)
   const hasDataChanged = ref(false)
@@ -97,7 +97,7 @@
   // 树节点配置
   const defaultProps = {
     children: 'children',
-    label: (data) => {
+    label: (data: any) => {
       if (data.isAuth) {
         return data.title
       }
@@ -123,7 +123,7 @@
   })
 
   // 加载角色菜单权限
-  const loadRoleMenus = async (roleId) => {
+  const loadRoleMenus = async (roleId: any) => {
     if (!roleId) return
 
     loading.value = true
@@ -147,7 +147,7 @@
           }, 100)
         })
       } else {
-        ElMessage.error(response.message || '获取菜单权限失败')
+        ElMessage.error((response as any).msg || '获取菜单权限失败')
       }
     } catch {
       ElMessage.error('获取菜单权限失败，请稍后再试')
@@ -157,7 +157,7 @@
   }
 
   // 处理菜单图标，确保有效
-  const processMenuIcons = (menuList) => {
+  const processMenuIcons = (menuList: any[]) => {
     return menuList.map((menu) => {
       // 深拷贝菜单项
       const menuItem = { ...menu }
@@ -177,14 +177,14 @@
   }
 
   // 将权限转换为菜单的子节点
-  const convertAuthsToTreeNodes = (menuList) => {
-    return menuList.map((menu) => {
+  const convertAuthsToTreeNodes = (menuList: any[]) => {
+    return menuList.map((menu: any) => {
       const menuCopy = { ...menu }
 
       // 处理权限转换为子节点
       if (menuCopy.meta?.authList && menuCopy.meta.authList.length > 0) {
         // 创建权限子节点
-        const authNodes = menuCopy.meta.authList.map((auth) => ({
+        const authNodes = menuCopy.meta.authList.map((auth: any) => ({
           id: `auth_${menu.id}_${auth.id}`, // 创建唯一ID
           title: auth.title,
           authMark: auth.authMark,
@@ -205,11 +205,11 @@
 
       // 递归处理子菜单
       if (menuCopy.children && menuCopy.children.length > 0) {
-        const originalChildren = menuCopy.children.filter((child) => !child.isAuth)
+        const originalChildren = menuCopy.children.filter((child: any) => !child.isAuth)
         if (originalChildren.length > 0) {
           const convertedChildren = convertAuthsToTreeNodes(originalChildren)
           // 替换原有子菜单，保留权限节点
-          const authChildren = menuCopy.children.filter((child) => child.isAuth)
+          const authChildren = menuCopy.children.filter((child: any) => child.isAuth)
           menuCopy.children = [...convertedChildren, ...authChildren]
         }
       }
@@ -254,16 +254,16 @@
     const clonedMenus = JSON.parse(JSON.stringify(menus.value))
 
     // 处理菜单和权限的选中状态
-    const processNodePermissions = (menuList) => {
+    const processNodePermissions = (menuList: any[]) => {
       if (!menuList || !menuList.length) return []
 
-      return menuList.map((menu) => {
+      return menuList.map((menu: any) => {
         // 父菜单：选中或半选中均视为 true
         menu.hasPermission = checkedKeySet.has(menu.id)
 
         // 处理权限列表
         if (menu.meta?.authList && menu.meta.authList.length > 0) {
-          menu.meta.authList.forEach((auth) => {
+          menu.meta.authList.forEach((auth: any) => {
             const authKey = `auth_${menu.id}_${auth.id}`
             auth.hasPermission = checkedKeySet.has(authKey)
           })
@@ -377,7 +377,7 @@
   }
 
   // 关闭抽屉
-  const handleClose = (skipCheck = false) => {
+  const handleClose = (skipCheck: boolean = false) => {
     if (hasDataChanged.value && !skipCheck) {
       ElMessageBox.confirm('有未保存的权限更改，确定要关闭吗？', '提示', {
         confirmButtonText: '确定',
@@ -390,6 +390,25 @@
         .catch(() => {})
     } else {
       emit('update:visible', false)
+    }
+  }
+
+  // 适配 ElDrawer 的 before-close 签名
+  const onBeforeClose = (done: () => void) => {
+    if (hasDataChanged.value) {
+      ElMessageBox.confirm('有未保存的权限更改，确定要关闭吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          emit('update:visible', false)
+          done()
+        })
+        .catch(() => {})
+    } else {
+      emit('update:visible', false)
+      done()
     }
   }
 </script>

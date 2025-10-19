@@ -1,5 +1,4 @@
 import { AxiosError } from 'axios'
-import { ElMessage } from 'element-plus'
 import { ApiStatus } from './status'
 
 // 错误响应接口

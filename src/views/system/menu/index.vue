@@ -213,8 +213,8 @@
       if (res.code === ApiStatus.success) {
         ElMessage.success('删除成功')
       } else {
-        console.error(res.message)
-        ElMessage.error('删除失败: ' + res.message)
+        console.error(res.msg)
+        ElMessage.error('删除失败: ' + res.msg)
       }
       await refreshMenuList()
     } catch (error) {
