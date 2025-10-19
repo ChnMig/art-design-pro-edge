@@ -31,3 +31,4 @@
 - 路由兼容：不进行 component 路径映射，请后端返回真实路径；analysis 使用 `/dashboard/analysis`，ecommerce 已删除。
 - 登录契约：保留 `access_token/refresh_token` 字段命名，多租户与图形验证码不可移除。
 - 全局水印：默认文案“租户编码 | 用户账号”，可被组件 `props.content` 覆盖。
+- 路由守卫：动态路由注册完成后，导航续跳必须基于 `path/query/hash` 重新匹配（`next({ path: to.path, query: to.query, hash: to.hash, replace: true })`），禁止 `next(to)` 或 `next({ ...to })`，以避免刷新时因初次匹配到 404 而持续落入 404。

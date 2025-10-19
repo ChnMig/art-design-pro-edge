@@ -8,6 +8,7 @@ import { RoutesAlias } from '../routesAlias'
 import { fetchGetMenuList } from '@/api/system-manage'
 import { registerDynamicRoutes } from '../utils/registerRoutes'
 import { useCommon } from '@/composables/useCommon'
+import { useMenuStore } from '@/store/modules/menu'
 
 let isRouteRegistered = false
 
@@ -29,9 +30,15 @@ export function setupBeforeEachGuard(router: Router): void {
     if (userStore.isLogin && !isRouteRegistered) {
       try {
         const { menuList } = await fetchGetMenuList()
+        // 同步菜单数据到 Store，保证侧边菜单与首页路径可用
+        const menuStore = useMenuStore()
+        menuStore.setMenuList(menuList)
+        // 注册动态路由
         registerDynamicRoutes(router, menuList)
         isRouteRegistered = true
-        next({ ...to, replace: true })
+        // 重要：不要直接传递 `to` 对象（其可能已匹配到 404），
+        // 仅使用 path/query/hash 重新触发匹配，避免刷新后仍落到 404。
+        next({ path: to.path, query: to.query, hash: to.hash, replace: true })
         return
       } catch (error) {
         console.error('动态路由注册失败:', error)

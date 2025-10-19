@@ -167,22 +167,9 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
   - 选择性 bugfix（按需 cherry-pick 指南）
 
   - 原则：上游改动如果不与本地的业务契约有冲突则默认合并
-  - 工具链：构建稳定性与小版本兼容可直接合入（如自动导入/预构建配置等）。
+  - 工具链：尽量合并
   - 组件/交互：尽量合并, 如与契约有冲突，尝试同步后修改调用方调用方式来适应新的组件/契约
   - 样式/动效：纯 UI 修复默认可合并，不在本文档逐项记录。
-
-  - 快速筛选命令：
-
-    ```bash
-    # 查看近 N 条上游提交（仅 fix 类）
-    git log --oneline upstream/main -n 50 | rg -i "^\w+\s+fix|bug|error|异常|优化|稳定"
-
-    # 检查某个提交的影响面
-    git show --name-only <commit>
-
-    # 预览差异并人工甄别是否含 i18n/示例目录
-    git show <commit> | rg -n "src/locales|views/(examples|widgets|template|article|change|result|safeguard)|art-fast-enter"
-    ```
 
 - HTTP 层
   - 保留 `src/api/auth.ts` 的接口路径（`/system/user/*`）与返回字段契约。
@@ -276,6 +263,11 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
   - 平台页面组件路径建议：
     - 菜单管理（定义）：`/platform/menu/index`
     - 菜单范围（租户）：不提供平台页面入口，通过“租户管理”列表的“查看”按钮打开抽屉。
+  - 路由守卫关键约定（避免刷新落入 404 的回归）：
+    - 首次注册动态路由后，二次导航严禁使用 `next(to)` 或 `next({ ...to })`，应基于“路径重匹配”执行：`next({ path: to.path, query: to.query, hash: to.hash, replace: true })`。原因：刷新时初次匹配多为静态 404，携带其 matched/name 会持续落入 404。
+    - 在注册动态路由前，同步将菜单写入 Store：`useMenuStore().setMenuList(menuList)`，以便侧边栏与首页路径计算（`getFirstMenuPath`）立即可用。
+    - 登出/重置需清理：调用 `resetRouterState()`，执行 `menuStore.removeAllDynamicRoutes()`，并清空 `menuStore.setMenuList([])` 与 `sessionStorage('iframeRoutes')`，避免残留动态路由与缓存。
+    - 根路径跳转：登录且已完成注册时，如命中根路径 `/`，根据 `useCommon().homePath.value` 重定向到首页；若后端未返回首页，使用仪表盘 `/dashboard/console` 作为兜底。
 
 - 路由与页面
   - 保留本地的路由守卫逻辑，仅吸收安全的上游增强。
@@ -370,6 +362,7 @@ pnpm lint:prettier   # Markdown/JSON/样式格式化检查（如配置可用）
 - 401 行为：未登录访问受限路由不出现 500；由拦截器统一退出并提示
 - 登录页：多租户/图形验证码/联系管理员入口正常
 - 样式外观：采用上游样式为主，企业化局部样式不影响上游升级
+- 刷新行为：已登录状态下刷新受保护页面，不应落入 404；侧边菜单保持渲染且首页跳转正确
 
 冒烟测试：
 
