@@ -22,11 +22,12 @@
 
 - 单语中文界面：严禁引入 `vue-i18n` 与相关语言切换 UI。
 - 移除“快速入口”：禁止回归 `fastEnter` 相关配置与组件。
-- 仪表盘仅保留 Console：删除 dashboard/analysis 与 dashboard/ecommerce，后续同步不得回归。
+- 仪表盘保留 Console 与 Analysis（dashboard/analysis）；
 - 平台/系统分层：
   - 平台维护“菜单定义 + 元素权限 + 租户菜单范围”；
   - 系统侧维护“角色—菜单—元素权限”；
   - 权限树渲染规则：仅当整棵子树全为 true 才勾选父节点；提交时父节点采用“已选 ∪ 半选”。
 - 动态菜单：严格按后端返回注册路由；菜单 meta 仅使用约定字段（`title/icon/keepAlive/isHide` 等），不引入上游前端私有字段。
+- 路由兼容：不进行 component 路径映射，请后端返回真实路径；analysis 使用 `/dashboard/analysis`，ecommerce 已删除。
 - 登录契约：保留 `access_token/refresh_token` 字段命名，多租户与图形验证码不可移除。
 - 全局水印：默认文案“租户编码 | 用户账号”，可被组件 `props.content` 覆盖。
