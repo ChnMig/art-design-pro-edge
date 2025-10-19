@@ -98,14 +98,12 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
 建议采用以下顺序减少冲突：
 
 - 构建/工具链（优先，保持编译稳定）
-
   - `vite.config.ts`：确保存在 `unplugin-element-plus`（`useSource: true`）、`AutoImport`、`Components`，并在 SCSS `additionalData` 中注入 `@styles/el-light.scss`、variables、mixin。
   - `optimizeDeps.include`：建议包含 `element-plus/es` 及常用组件样式（如 `element-plus/es/components/*/style/css`、`message/notification/upload/button/icon` 等），并按需加入 `echarts`、`xlsx`、`xgplayer`、`crypto-js`、`file-saver`、`vue-img-cutter`，以降低打包期“组件/样式未导入”导致的异常（参考 v2.6.0）。
   - `AutoImport`：开启 `eslintrc.globalsPropValue: true`，减少 ESLint 全局声明误报（v2.6.0 修复点）。
   - 依赖与锁文件策略：上游如变更 `package.json`，先合并依赖声明，再本地执行 `pnpm i` 同步生成 `pnpm-lock.yaml`，两者一并提交。避免手工改动锁文件。
 
 - 合并决策矩阵（路径优先级）
-
   - 接受上游（theirs，合并后如有变化，改调用方）：
     - 工具链与样式：`vite.config.ts`（保留必要注入）、`src/assets/styles/**`
     - 通用组件与布局：`src/components/**`（但排除本仓库已禁用功能，见下）
@@ -145,12 +143,10 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
 提示：业务契约与数据结构始终以后端为准；即便组件有增强，也不要在页面层“凭空造字段或重映射”。
 
 - 样式与交互（默认合并）
-
   - 原则：非契约性的 UI/动效/样式微调默认合并，不在本文档逐项列举；前提是不改变业务契约与本仓库既有约束。
   - 排除：i18n、演示/示例、快速入口以及与后端契约冲突的改动。
 
 - 核心组件（与上游保持完全一致）
-
   - 原则：组件源码以上游为唯一真源，不在本仓库做自定义 Fork。若为满足本仓库“项目特点”（多租户、验证码、二维码联系管理员）确需扩展，优先通过调用方适配（调用方式、样式覆写、组合式函数），避免改动组件本体。
   - API 变更：若上游调整了组件 Props/Slots/事件命名或行为，统一“以组件为准、改调用方”。做法：
     1. 逐个对比组件源码（git show upstream/main:path）确认差异；
@@ -163,7 +159,6 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
   - 登录页
 
   - 吸收上游样式优化，但保留本地登录流程：
-
     - 多租户字段 + 图形验证码（可刷新）。
     - 后端契约不变：`access_token` / `refresh_token`。
     - “二维码联系管理员”弹窗（环境变量 `VITE_ADMIN_QRCODE_URL`）。
@@ -190,7 +185,6 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
     ```
 
 - HTTP 层
-
   - 保留 `src/api/auth.ts` 的接口路径（`/system/user/*`）与返回字段契约。
   - 若上游 HTTP 处理与本地契约冲突，以本地为准（`src/utils/http/*`）。
   - 系统管理相关接口仅按本项目后端契约实现。严禁为“兼容上游纯前端”而在 API 层凭空造字段或做字段重映射。
@@ -203,7 +197,6 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
   - 401 处理：拦截器统一登出与提示；路由守卫遇到 401 时取消导航（不跳 500）。
 
 - 菜单管理（UI 对齐）
-
   - “元素权限”列的按钮与主分支一致：徽标包裹的 `ElButton`，仅图标展示（`More`），徽标 `showZero=false`；实现使用 `resolveComponent('ElBadge')` + `resolveComponent('ElButton')`，避免运行时未注册导致按钮不渲染。
   - 表格居中（全局约定）：所有系统管理下的表格列，默认使用 `align="center"` + `header-align="center"`（除非个别场景需要左对齐，如长文本/多行描述）。新页面、合并上游时都遵循此规则。
   - “元素权限管理”弹窗（`src/views/system/menu/modal/authInfo.vue`）已按上述规则居中显示。
@@ -212,7 +205,6 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
   - 空值占位：表格列在未自定义渲染时，统一在全局组件 `ArtTable` 输出占位符 `--`（规则：`undefined/null/''/空白字符串 -> --`，保留 `0/false`）。路径：`src/components/core/tables/art-table/index.vue`。
 
 - 平台管理 vs 系统管理（接口与页面）
-
   - 系统管理（租户侧，`/api/v1/admin/system`）：角色/菜单/部门/用户，接口已适配为当前登录租户的可用范围。
   - 平台管理（超级管理员，`/api/v1/admin/platform`）：维护“全局菜单/角色”，并通过“范围接口”为租户分配可用集合。
   - 代码组织：
@@ -226,7 +218,6 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
 **菜单逻辑与分布（重要）**
 
 - 角色与职责
-
   - 平台管理员（`/api/v1/admin/platform`）
     - 维护全局“菜单定义 + 元素权限”（菜单、元素权限仅在平台侧创建/编辑）
     - 为各租户分配“菜单范围”（租户可见/可选的菜单集合）
@@ -235,7 +226,6 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
     - 维护本租户的部门与用户，并在“本租户角色池”内为用户授予角色
 
 - 数据流与页面映射
-
   - 平台侧
     - 菜单管理：`src/views/platform/menu/index.vue`
       - 接口：`GET/POST/PUT/DELETE /admin/platform/menu`
@@ -257,22 +247,18 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
     - 不包含页面：系统侧不提供“租户管理”和“个人中心”页面；个人信息通过头像入口打开全局 `ArtEditInfoDialog` 进行更新。
 
 - 接口分割与前端适配（必须遵循）
-
   - 平台“菜单定义”接口（不带 hasPermission 标记）
-
     - `GET /api/v1/admin/platform/menu`
     - `POST /api/v1/admin/platform/menu`
     - `DELETE /api/v1/admin/platform/menu`
     - 元素权限定义：`GET/POST/PUT/DELETE /api/v1/admin/platform/menu/auth`
 
   - 平台“租户菜单范围”接口（带 hasPermission 标记）
-
     - 查询：`GET /api/v1/admin/platform/menu/tenant?tenant_id`
     - 保存：`PUT /api/v1/admin/platform/menu/tenant { tenant_id, menu_data }`
     - 使用位置：`src/views/platform/tenant/scope.vue`（从租户列表“查看”按钮进入的右侧抽屉）
 
   - 系统“角色菜单权限”接口（带 hasPermission 标记）
-
     - 查询：`GET /api/v1/admin/system/menu/role?role_id`
     - 保存：`PUT /api/v1/admin/system/menu/role { role_id, menu_data }`
     - 使用位置：`src/views/system/role/auth.vue`（角色列表的“权限”抽屉）
@@ -285,7 +271,6 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
     - 二次确认：保存时需 `ElMessageBox.confirm` 二次确认（两处抽屉都已实现），避免误操作。
 
 - 路由与动态菜单
-
   - 登录后，前端通过 `GET /admin/system/user/menu` 获取“当前用户可见菜单”，据此注册动态路由（`src/router/utils/registerRoutes.ts`）。
   - 菜单 `meta` 字段遵循后端契约，仅使用已约定的键值（`title`/`icon`/`keepAlive`/`isHide` 等）；不引入上游前端专属字段。
   - 平台页面组件路径建议：
@@ -293,14 +278,12 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
     - 菜单范围（租户）：不提供平台页面入口，通过“租户管理”列表的“查看”按钮打开抽屉。
 
 - 路由与页面
-
   - 保留本地的路由守卫逻辑，仅吸收安全的上游增强。
   - 注册页仍保持移除状态；忘记密码页保留，为用户提供“联系管理员”指引（二维码/客服信息）。
   - 登录页到忘记密码页的跳转需继续可用，上游新增页面时注意合并本地版本的内容与交互。
   - 快速入口配置文件 `src/config/fastEnter.ts` 已删除（不再保留该功能）。
 
 - 国际化（已彻底移除，需保持中文单语界面）
-
   1. 删除上游新增的 `vue-i18n` 依赖、`src/locales/*` 文件以及 `app.use(i18n)` 相关调用。
   2. 发现 `$t()` / `useI18n()` / `languageOptions` 等语句，一律改写为中文静态文案并移除对应导入。
   3. 路由、菜单等 meta.title 只能写中文字符串；如上游仍返回 `menus.xxx`，请手动改为中文。
@@ -310,7 +293,6 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
 - 关闭快速入口：`src/config/headerBar.ts` -> `fastEnter.enabled = false`，并将 `src/store/modules/setting.ts` 中 `showFastEnter` 默认设为 `false`
 
 - 顶部栏模块
-
   - 通知中心与在线对话入口已移除：`src/components/core/layouts/art-header-bar/index.vue` 不再渲染对应按钮，也删除了 `ArtNotification` 弹层及 `mittBus.emit('openChat')` 等逻辑。
   - 上游若重新加入 `notice` / `chat` 相关代码，合并时请同步清理，确保顶部栏仅保留刷新、全屏、设置、主题等按钮；同步移除全局组件配置中的 `chat-window`（`src/config/component.ts`），避免重新加载 `ArtChatWindow` 组件。
   - 顶栏“修改个人信息”入口需联动全局组件 `ArtEditInfoDialog`：保留 `mittBus.emit('openEditInfoDialog')` 事件，确保 `src/components/core/layouts/art-edit-info/index.vue` 及其在 `src/config/component.ts` 的挂载项存在，并使用 `/api/v1/admin/system/user/info` 的 GET/PUT 接口同步更新用户信息（提交字段需匹配新文档：`username`、`phone`、`gender`、`password`）。
@@ -321,7 +303,6 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
     - 上游如变更用户信息字段命名，同步更新该组件内的字段映射，不要在调用方硬编码水印文本。
 
 - 快速入口（彻底精简移除）
-
   - 移除组件与配置，避免后续同步误引入：
     1. 删除组件目录：`src/components/core/layouts/art-fast-enter/`
     2. 删除组合函数：`src/composables/useFastEnter.ts`
@@ -345,6 +326,26 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
     - 本地 `src/router/routes/asyncRoutes.ts` 已精简，仅保留“仪表盘/系统管理/异常页面/外链示例”四类；若上游再次引入示例菜单，请在合并时删除对应菜单项。
     - `src/router/routesAlias.ts` 已移除示例路由别名（如 Widgets/Template/Examples/Article/Result/Safeguard 等）；如上游回归，请勿恢复。
   - 文档同步：README 已注明“示例页面精简”；合并时如上游文档提及示例目录，请忽略或改为系统页面示例。
+
+- 仪表盘演示页与系统嵌套菜单（不合并）
+  - 不合并内容：
+    - 仪表盘演示页：`src/views/dashboard/analysis`、`src/views/dashboard/ecommerce`
+    - 系统嵌套演示：`src/views/system/nested/**`
+  - 路由约束：
+    - 仅保留工作台（Console）。`src/router/modules/dashboard.ts` 的 `children` 里只允许 `console`；移除 `analysis/ecommerce`。
+    - 系统模块不包含 `nested` 多级演示菜单。`src/router/modules/system.ts` 中删除 `nested` 相关配置。
+    - `src/router/routesAlias.ts` 不应包含 `Analysis/Ecommerce/Nested*` 别名。
+  - 快速清理命令：
+
+    ```bash
+    # 移除演示视图目录
+    git rm -rf src/views/dashboard/analysis src/views/dashboard/ecommerce src/views/system/nested || true
+
+    # 预览路由是否仍有引用
+    rg -n "dashboard/(analysis|ecommerce)|system/nested|NestedMenu|RoutesAlias\.(Analysis|Ecommerce)" src
+    ```
+
+  - 合并后校验：运行 `pnpm build` 应无缺失组件/路径错误；导航菜单仅出现工作台与业务菜单。
 
 ## 5. 验证
 
@@ -444,8 +445,9 @@ git switch -c hotfix/rollback <last_release_tag>
   - 不要切换到上游的 `/api/auth/login` 与 token 字段命名。
 - 安全检查
   - 路由：移除的页面（注册/忘记密码）不得残留死链。
-- 国际化：语言切换入口已隐藏；如无需要，可按需删除 `src/locales/langs/en.json`。
-  - 上游 v2.6.0 引入/调整的 i18n 代码统一不回归；发现 `$t()/useI18n()` 直接改为中文静态文案并移除导入。
+- 国际化：项目为中文单语，语言文件已删除并禁止回归（`src/locales/langs/*.json`）。
+  - 如合并后出现语言文件或语言切换入口，请一并移除。
+  - 上游引入/调整的 i18n 代码统一不回归；发现 `$t()/useI18n()` 直接改为中文静态文案并移除导入。
   - 环境变量：如需二维码，引入 `VITE_ADMIN_QRCODE_URL`。
 
 - 控制台与推广文案（保持精简）

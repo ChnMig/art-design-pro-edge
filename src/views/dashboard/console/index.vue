@@ -25,12 +25,12 @@
 </template>
 
 <script setup lang="ts">
-  import CardList from './widget/CardList.vue'
-  import ActiveUser from './widget/ActiveUser.vue'
-  import SalesOverview from './widget/SalesOverview.vue'
-  import Dynamic from './widget/Dynamic.vue'
-  import TodoList from './widget/TodoList.vue'
-  import AboutProject from './widget/AboutProject.vue'
+  import CardList from './modules/card-list.vue'
+  import ActiveUser from './modules/active-user.vue'
+  import SalesOverview from './modules/sales-overview.vue'
+  import Dynamic from './modules/dynamic-stats.vue'
+  import TodoList from './modules/todo-list.vue'
+  import AboutProject from './modules/about-project.vue'
   import { useCommon } from '@/composables/useCommon'
 
   defineOptions({ name: 'Console' })
