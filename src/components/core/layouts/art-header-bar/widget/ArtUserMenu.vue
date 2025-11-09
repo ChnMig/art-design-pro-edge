@@ -80,7 +80,13 @@
   const { getUserInfo: userInfo, getTenantInfo, getCurrentTenantCode } = storeToRefs(userStore)
   const userMenuPopover = ref()
 
-  const avatarSrc = computed(() => userInfo.value?.avatar || defaultAvatar)
+  const avatarSrc = computed(() => {
+    const avatar = userInfo.value?.avatar
+    if (!avatar) return defaultAvatar
+    const invalidPrefixes = ['/src/', '@/']
+    if (invalidPrefixes.some((prefix) => avatar.startsWith(prefix))) return defaultAvatar
+    return avatar
+  })
 
   const displayName = computed(() => {
     const info = userInfo.value || {}
