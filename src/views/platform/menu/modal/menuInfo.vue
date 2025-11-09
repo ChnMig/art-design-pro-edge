@@ -50,10 +50,21 @@
         </ElCol>
         <ElCol :span="12">
           <ElFormItem label="图标" prop="icon">
-            <ElInput
-              v-model="form.icon"
-              placeholder="请输入 Iconify 图标名称，如 ri:dashboard-line"
-            />
+            <div class="icon-field">
+              <ElInput
+                v-model="form.icon"
+                placeholder="请输入 Iconify 图标名称，如 ri:dashboard-line"
+              />
+              <ElLink
+                class="icon-help-link"
+                type="primary"
+                href="https://remixicon.com/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                去挑选
+              </ElLink>
+            </div>
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -377,6 +388,16 @@
       li {
         margin-bottom: 4px;
       }
+    }
+  }
+
+  .icon-field {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    .icon-help-link {
+      white-space: nowrap;
     }
   }
 </style>
