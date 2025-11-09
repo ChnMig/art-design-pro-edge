@@ -123,23 +123,23 @@ pnpm build
   - 二维码内容支持环境变量配置：`VITE_ADMIN_QRCODE_URL`。
 
 - 平台 / 系统分层（本仓库独有）
-  - 平台管理员（`/api/v1/admin/platform`）
+  - 平台管理员（`/api/v1/private/admin/platform`）
     - 仅维护“全局菜单定义 + 元素权限”。
     - 为各租户分配“菜单范围”。
-  - 租户管理员（`/api/v1/admin/system`）
+  - 租户管理员（`/api/v1/private/admin/system`）
     - 在平台授权范围内创建并维护本租户的“角色—菜单—元素权限”。
     - 维护部门与用户，并为用户授予本租户角色。
   - 登录后基于 `GET /admin/system/user/menu` 动态注册路由。
   - 页面与接口（主要位置）
     - 平台菜单（定义）：`src/views/platform/menu/index.vue`
-      - `GET/POST/PUT/DELETE /api/v1/admin/platform/menu`
-      - 元素权限：`GET/POST/PUT/DELETE /api/v1/admin/platform/menu/auth`
+      - `GET/POST/PUT/DELETE /api/v1/private/admin/platform/menu`
+      - 元素权限：`GET/POST/PUT/DELETE /api/v1/private/admin/platform/menu/auth`
     - 平台租户菜单范围（从租户列表“查看”抽屉进入）：`src/views/platform/tenant/scope.vue`
-      - 查询带 hasPermission 的菜单树：`GET /api/v1/admin/platform/menu/tenant?tenant_id`
-      - 保存范围：`PUT /api/v1/admin/platform/menu/tenant { tenant_id, menu_data }`
+      - 查询带 hasPermission 的菜单树：`GET /api/v1/private/admin/platform/menu/tenant?tenant_id`
+      - 保存范围：`PUT /api/v1/private/admin/platform/menu/tenant { tenant_id, menu_data }`
     - 系统角色权限抽屉：`src/views/system/role/auth.vue`
-      - 查询：`GET /api/v1/admin/system/menu/role?role_id`
-      - 保存：`PUT /api/v1/admin/system/menu/role { role_id, menu_data }`
+      - 查询：`GET /api/v1/private/admin/system/menu/role?role_id`
+      - 保存：`PUT /api/v1/private/admin/system/menu/role { role_id, menu_data }`
   - 权限树行为
     - 渲染：仅当整棵子树全为 true 时父节点才勾选，否则父节点半选、叶子按实际勾选。
     - 提交：父节点以“已选 ∪ 半选”判定，子节点按实际勾选；
@@ -147,7 +147,7 @@ pnpm build
 
 - HTTP 契约与数据规则（本仓库约定）
   - 严格遵守后端契约，不为兼容上游而前端造字段或做字段重映射。
-  - 接口前缀：系统 `/api/v1/admin/system`、平台 `/api/v1/admin/platform`。
+  - 接口前缀：系统 `/api/v1/private/admin/system`、平台 `/api/v1/private/admin/platform`。
   - 菜单 meta 仅使用约定字段（如 `title`、`icon`、`keepAlive`、`isHide` 等），禁止引入上游前端私有字段（如 `showBadge`、`fixedTab`、`roles` 等）。
   - GET 查询参数清理（仅 GET 生效）：剔除 `undefined/null/空字符串/纯空白字符串`，保留 `0/false`。
   - 仅做必要的最小 UI 映射，如把数字 `status` 映射为布尔 `meta.isEnable` 便于渲染。

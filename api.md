@@ -18,7 +18,7 @@
 
 **API 版本：** `v1`
 
-**基础路径：** `/api/v1`
+**基础路径：** `/api/v1`（公共接口分组 `/open`，业务接口统一在 `/private/admin` 之下）
 
 ## 通用说明
 
@@ -92,6 +92,14 @@ Authorization: Bearer {your_jwt_token}
 
 系统支持多租户架构，需要在登录时提供 `tenant_code` 租户编码。
 
+### 健康检查
+
+平台提供统一的健康检查接口供负载均衡或监控调用：
+
+- **请求方式：** `GET`
+- **请求路径：** `/api/v1/open/health`
+- **说明：** 返回服务当前运行状态、就绪情况以及运行时长，无需鉴权。
+
 ---
 
 ## 系统管理接口
@@ -104,7 +112,7 @@ Authorization: Bearer {your_jwt_token}
 
 **请求方式：** `GET`
 
-**请求路径：** `/api/v1/admin/system/user/login/captcha`
+**请求路径：** `/api/v1/private/admin/system/user/login/captcha`
 
 **请求参数：**
 
@@ -132,7 +140,7 @@ Authorization: Bearer {your_jwt_token}
 
 **请求方式：** `POST`
 
-**请求路径：** `/api/v1/admin/system/user/login`
+**请求路径：** `/api/v1/private/admin/system/user/login`
 
 **请求参数：**
 
@@ -185,7 +193,7 @@ Authorization: Bearer {your_jwt_token}
 
 **请求方式：** `GET`
 
-**请求路径：** `/api/v1/admin/system/user/login/tenant`
+**请求路径：** `/api/v1/private/admin/system/user/login/tenant`
 
 **请求参数：**
 
@@ -211,7 +219,7 @@ Authorization: Bearer {your_jwt_token}
 
 **请求方式：** `GET`
 
-**请求路径：** `/api/v1/admin/system/user/info`
+**请求路径：** `/api/v1/private/admin/system/user/info`
 
 **请求头：** `Authorization: Bearer {token}`
 
@@ -245,7 +253,7 @@ Authorization: Bearer {your_jwt_token}
 
 **请求方式：** `PUT`
 
-**请求路径：** `/api/v1/admin/system/user/info`
+**请求路径：** `/api/v1/private/admin/system/user/info`
 
 **请求头：** `Authorization: Bearer {token}`
 
@@ -283,7 +291,7 @@ Authorization: Bearer {your_jwt_token}
 
 **请求方式：** `GET`
 
-**请求路径：** `/api/v1/admin/system/user`
+**请求路径：** `/api/v1/private/admin/system/user`
 
 **请求头：** `Authorization: Bearer {token}`
 
@@ -340,7 +348,7 @@ Authorization: Bearer {your_jwt_token}
 
 **请求方式：** `GET`
 
-**请求路径：** `/api/v1/admin/system/user/cache`
+**请求路径：** `/api/v1/private/admin/system/user/cache`
 
 **请求头：** `Authorization: Bearer {token}`
 
@@ -381,7 +389,7 @@ Authorization: Bearer {your_jwt_token}
 
 **请求方式：** `POST`
 
-**请求路径：** `/api/v1/admin/system/user`
+**请求路径：** `/api/v1/private/admin/system/user`
 
 **请求头：** `Authorization: Bearer {token}`
 
@@ -421,7 +429,7 @@ Authorization: Bearer {your_jwt_token}
 
 **请求方式：** `PUT`
 
-**请求路径：** `/api/v1/admin/system/user`
+**请求路径：** `/api/v1/private/admin/system/user`
 
 **请求头：** `Authorization: Bearer {token}`
 
@@ -460,7 +468,7 @@ Authorization: Bearer {your_jwt_token}
 
 **请求方式：** `DELETE`
 
-**请求路径：** `/api/v1/admin/system/user`
+**请求路径：** `/api/v1/private/admin/system/user`
 
 **请求头：** `Authorization: Bearer {token}`
 
@@ -491,7 +499,7 @@ Authorization: Bearer {your_jwt_token}
 #### 3.1 获取平台菜单（定义）
 
 - **请求方式：** `GET`
-- **请求路径：** `/api/v1/admin/platform/menu`
+- **请求路径：** `/api/v1/private/admin/platform/menu`
 - **请求头：** `Authorization: Bearer {token}`
 
 返回全量菜单+权限（不含 hasPermission 标记），用于平台编辑菜单定义。
@@ -499,7 +507,7 @@ Authorization: Bearer {your_jwt_token}
 #### 3.2 新增平台菜单（定义）
 
 - **请求方式：** `POST`
-- **请求路径：** `/api/v1/admin/platform/menu`
+- **请求路径：** `/api/v1/private/admin/platform/menu`
 - **请求参数：**
 
 ```json
@@ -517,25 +525,25 @@ Authorization: Bearer {your_jwt_token}
 #### 3.3 更新/删除平台菜单（定义）
 
 - **请求方式：** `DELETE`
-- **请求路径：** `/api/v1/admin/platform/menu`
+- **请求路径：** `/api/v1/private/admin/platform/menu`
 
 #### 3.4 菜单权限定义管理（定义层）
 
-- `GET /api/v1/admin/platform/menu/auth`
-- `POST /api/v1/admin/platform/menu/auth`
-- `PUT /api/v1/admin/platform/menu/auth`
-- `DELETE /api/v1/admin/platform/menu/auth`
+- `GET /api/v1/private/admin/platform/menu/auth`
+- `POST /api/v1/private/admin/platform/menu/auth`
+- `PUT /api/v1/private/admin/platform/menu/auth`
+- `DELETE /api/v1/private/admin/platform/menu/auth`
 
 请求与响应结构与原有示例保持一致，仅路径前缀为 `/admin/platform`。
 
 ### 4. 租户菜单管理
 
-**说明：** 租户管理员通过 `/api/v1/admin/system` 前缀调用，仅能操作平台授权范围内的数据。注意：租户端不提供菜单的增删改查与权限定义接口（菜单管理仅平台端可操作）。
+**说明：** 租户管理员通过 `/api/v1/private/admin/system` 前缀调用，仅能操作平台授权范围内的数据。注意：租户端不提供菜单的增删改查与权限定义接口（菜单管理仅平台端可操作）。
 
 #### 4.1 获取当前用户菜单
 
 - **请求方式：** `GET`
-- **请求路径：** `/api/v1/admin/system/user/menu`
+- **请求路径：** `/api/v1/private/admin/system/user/menu`
 - **请求头：** `Authorization: Bearer {token}`
 
 **响应示例：**
@@ -570,7 +578,7 @@ Authorization: Bearer {your_jwt_token}
 #### 4.2 获取角色菜单权限
 
 - **请求方式：** `GET`
-- **请求路径：** `/api/v1/admin/system/menu/role`
+- **请求路径：** `/api/v1/private/admin/system/menu/role`
 - **请求参数：** `role_id`（必填）
 
 > 说明（统一行为）：
@@ -581,7 +589,7 @@ Authorization: Bearer {your_jwt_token}
 #### 4.3 更新角色菜单权限
 
 - **请求方式：** `PUT`
-- **请求路径：** `/api/v1/admin/system/menu/role`
+- **请求路径：** `/api/v1/private/admin/system/menu/role`
 - **请求体：**
 
 ```json
@@ -631,7 +639,7 @@ Authorization: Bearer {your_jwt_token}
 
 **请求方式：** `GET`
 
-**请求路径：** `/api/v1/admin/system/department`
+**请求路径：** `/api/v1/private/admin/system/department`
 
 **请求头：** `Authorization: Bearer {token}`
 
@@ -668,7 +676,7 @@ Authorization: Bearer {your_jwt_token}
 
 **请求方式：** `POST`
 
-**请求路径：** `/api/v1/admin/system/department`
+**请求路径：** `/api/v1/private/admin/system/department`
 
 **请求头：** `Authorization: Bearer {token}`
 
@@ -707,7 +715,7 @@ Authorization: Bearer {your_jwt_token}
 
 **请求方式：** `PUT`
 
-**请求路径：** `/api/v1/admin/system/department`
+**请求路径：** `/api/v1/private/admin/system/department`
 
 **请求头：** `Authorization: Bearer {token}`
 
@@ -747,7 +755,7 @@ Authorization: Bearer {your_jwt_token}
 
 **请求方式：** `DELETE`
 
-**请求路径：** `/api/v1/admin/system/department`
+**请求路径：** `/api/v1/private/admin/system/department`
 
 **请求头：** `Authorization: Bearer {token}`
 
@@ -783,10 +791,10 @@ Authorization: Bearer {your_jwt_token}
 
 #### 6.1 平台角色管理（超级管理员）
 
-- **获取角色列表：** `GET /api/v1/admin/platform/role`，需要查询参数 `tenant_id` 指定目标租户。
-- **创建角色：** `POST /api/v1/admin/platform/role`，请求体需包含 `tenant_id`、`name`、`status`、`desc`。
-- **更新角色：** `PUT /api/v1/admin/platform/role`，可调整角色名称、描述、状态以及归属租户。
-- **删除角色：** `DELETE /api/v1/admin/platform/role`。
+- **获取角色列表：** `GET /api/v1/private/admin/platform/role`，需要查询参数 `tenant_id` 指定目标租户。
+- **创建角色：** `POST /api/v1/private/admin/platform/role`，请求体需包含 `tenant_id`、`name`、`status`、`desc`。
+- **更新角色：** `PUT /api/v1/private/admin/platform/role`，可调整角色名称、描述、状态以及归属租户。
+- **删除角色：** `DELETE /api/v1/private/admin/platform/role`。
 
 > 说明：平台管理员创建或修改的角色仅对指定租户生效，可用于初始化或协助运营处理。
 
@@ -813,10 +821,10 @@ Authorization: Bearer {your_jwt_token}
 
 #### 6.2 租户角色管理
 
-- **获取角色列表：** `GET /api/v1/admin/system/role`，自动限定为当前登录租户。
-- **创建角色：** `POST /api/v1/admin/system/role`，租户自行创建，仅对本租户生效。
-- **更新角色信息：** `PUT /api/v1/admin/system/role`。
-- **删除角色：** `DELETE /api/v1/admin/system/role`。
+- **获取角色列表：** `GET /api/v1/private/admin/system/role`，自动限定为当前登录租户。
+- **创建角色：** `POST /api/v1/private/admin/system/role`，租户自行创建，仅对本租户生效。
+- **更新角色信息：** `PUT /api/v1/private/admin/system/role`。
+- **删除角色：** `DELETE /api/v1/private/admin/system/role`。
 
 **请求示例（创建角色）：**
 
@@ -858,7 +866,7 @@ Authorization: Bearer {your_jwt_token}
 
 **请求方式：** `GET`
 
-**请求路径：** `/api/v1/admin/system/tenant`
+**请求路径：** `/api/v1/private/admin/system/tenant`
 
 **请求头：** `Authorization: Bearer {token}`
 
@@ -900,7 +908,7 @@ Authorization: Bearer {your_jwt_token}
 
 **请求方式：** `POST`
 
-**请求路径：** `/api/v1/admin/system/tenant`
+**请求路径：** `/api/v1/private/admin/system/tenant`
 
 **请求头：** `Authorization: Bearer {token}`
 
@@ -935,7 +943,7 @@ Authorization: Bearer {your_jwt_token}
 
 **请求方式：** `PUT`
 
-**请求路径：** `/api/v1/admin/system/tenant`
+**请求路径：** `/api/v1/private/admin/system/tenant`
 
 **请求头：** `Authorization: Bearer {token}`
 
@@ -971,7 +979,7 @@ Authorization: Bearer {your_jwt_token}
 
 **请求方式：** `DELETE`
 
-**请求路径：** `/api/v1/admin/system/tenant`
+**请求路径：** `/api/v1/private/admin/system/tenant`
 
 **请求头：** `Authorization: Bearer {token}`
 
@@ -1003,7 +1011,7 @@ Authorization: Bearer {your_jwt_token}
 
 **请求方式：** `GET`
 
-**请求路径：** `/api/v1/admin/system/login/log`
+**请求路径：** `/api/v1/private/admin/system/login/log`
 
 **请求头：** `Authorization: Bearer {token}`
 
@@ -1320,7 +1328,7 @@ _文档最后更新时间：2025年_
 #### 3.5 获取指定租户的菜单范围（带权限标记）
 
 - **请求方式：** `GET`
-- **请求路径：** `/api/v1/admin/platform/menu/tenant`
+- **请求路径：** `/api/v1/private/admin/platform/menu/tenant`
 - **查询参数：** `tenant_id`（必填）
 - **请求头：** `Authorization: Bearer {token}`
 
@@ -1329,7 +1337,7 @@ _文档最后更新时间：2025年_
 #### 3.6 更新指定租户的菜单范围
 
 - **请求方式：** `PUT`
-- **请求路径：** `/api/v1/admin/platform/menu/tenant`
+- **请求路径：** `/api/v1/private/admin/platform/menu/tenant`
 - **请求体：**
 
 ```json

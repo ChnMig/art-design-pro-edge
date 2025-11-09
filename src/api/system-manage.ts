@@ -26,7 +26,7 @@ export function fetchGetUserList(
   params: Api.SystemManage.UserSearchParams = {}
 ): Promise<BackendListResponse<Api.SystemManage.UserListItem>> {
   return request.get<BackendListResponse<Api.SystemManage.UserListItem>>({
-    url: '/api/v1/admin/system/user',
+    url: '/api/v1/private/admin/system/user',
     params: normalizePaginationParams(params as Record<string, any>),
     keepFullResponse: true,
     showErrorMessage: false
@@ -38,7 +38,7 @@ export function fetchGetRoleList(
   params: Api.SystemManage.RoleSearchParams = {}
 ): Promise<BackendListResponse<Api.SystemManage.RoleListItem>> {
   return request.get<BackendListResponse<Api.SystemManage.RoleListItem>>({
-    url: '/api/v1/admin/system/role',
+    url: '/api/v1/private/admin/system/role',
     params: normalizePaginationParams(params as Record<string, any>),
     keepFullResponse: true,
     showErrorMessage: false
@@ -55,7 +55,7 @@ export async function fetchGetMenuList(): Promise<MenuResponse> {
   try {
     // 后端控制模式：优先请求后端菜单
     const backendMenu = await request.get<AppRouteRecord[]>({
-      url: '/api/v1/admin/system/user/menu',
+      url: '/api/v1/private/admin/system/user/menu',
       showErrorMessage: false
     })
 

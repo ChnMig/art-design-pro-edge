@@ -3,7 +3,7 @@ import type { HttpClient } from '@/utils/http'
 
 const http = request as HttpClient
 
-const API_PREFIX = '/api/v1/admin/platform'
+const API_PREFIX = '/api/v1/private/admin/platform'
 
 // 平台菜单（仅定义，不带 hasPermission）
 export const getPlatformMenu = (): Promise<any> => {
