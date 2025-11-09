@@ -125,12 +125,6 @@ const appConfig: SystemConfig = {
     '#F9901F',
     '#FF80C8'
   ] as const,
-  // 系统其他项默认配置
-  systemSetting: {
-    defaultMenuWidth: 230, // 菜单宽度
-    defaultCustomRadius: '0.75', // 自定义圆角
-    defaultTabStyle: 'tab-default' // 标签样式
-  },
   // 顶部栏功能配置
   headerBar: headerBarConfig
 }

@@ -35,24 +35,22 @@
         <ul class="py-4 mt-3 border-t border-g-300/80">
           <li class="btn-item" @click="goPage('/system/user-center')">
             <ArtSvgIcon icon="ri:user-3-line" />
-            <span>{{ $t('topBar.user.userCenter') }}</span>
+            <span>个人中心</span>
           </li>
           <li class="btn-item" @click="toDocs()">
             <ArtSvgIcon icon="ri:book-2-line" />
-            <span>{{ $t('topBar.user.docs') }}</span>
+            <span>文档</span>
           </li>
           <li class="btn-item" @click="toGithub()">
             <ArtSvgIcon icon="ri:github-line" />
-            <span>{{ $t('topBar.user.github') }}</span>
+            <span>GitHub</span>
           </li>
           <li class="btn-item" @click="lockScreen()">
             <ArtSvgIcon icon="ri:lock-line" />
-            <span>{{ $t('topBar.user.lockScreen') }}</span>
+            <span>锁屏</span>
           </li>
           <div class="w-full h-px my-2 bg-g-300/80"></div>
-          <div class="log-out c-p" @click="loginOut">
-            {{ $t('topBar.user.logout') }}
-          </div>
+          <div class="log-out c-p" @click="loginOut">退出登录</div>
         </ul>
       </div>
     </template>
@@ -60,7 +58,6 @@
 </template>
 
 <script setup lang="ts">
-  import { useI18n } from 'vue-i18n'
   import { useRouter } from 'vue-router'
   import { ElMessageBox } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
@@ -70,7 +67,6 @@
   defineOptions({ name: 'ArtUserMenu' })
 
   const router = useRouter()
-  const { t } = useI18n()
   const userStore = useUserStore()
 
   const { getUserInfo: userInfo } = storeToRefs(userStore)
@@ -111,9 +107,9 @@
   const loginOut = (): void => {
     closeUserMenu()
     setTimeout(() => {
-      ElMessageBox.confirm(t('common.logOutTips'), t('common.tips'), {
-        confirmButtonText: t('common.confirm'),
-        cancelButtonText: t('common.cancel'),
+      ElMessageBox.confirm('确定要退出登录吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
         customClass: 'login-out-dialog'
       }).then(() => {
         userStore.logOut()

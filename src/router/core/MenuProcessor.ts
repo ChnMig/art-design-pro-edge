@@ -53,8 +53,8 @@ export class MenuProcessor {
    * 处理后端控制模式的菜单
    */
   private async processBackendMenu(): Promise<AppRouteRecord[]> {
-    const list = await fetchGetMenuList()
-    return this.filterEmptyMenus(list)
+    const { menuList } = await fetchGetMenuList()
+    return this.filterEmptyMenus(menuList)
   }
 
   /**

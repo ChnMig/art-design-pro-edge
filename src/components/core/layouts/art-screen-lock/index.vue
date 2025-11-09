@@ -2,43 +2,53 @@
 <template>
   <div class="layout-lock-screen">
     <!-- 开发者工具警告覆盖层 -->
-    <div v-if="showDevToolsWarning" class="dev-tools-warning">
-      <div class="warning-content">
-        <div class="warning-icon">🔒</div>
-        <h1 class="warning-title">系统已锁定</h1>
-        <p class="warning-text">
+    <div
+      v-if="showDevToolsWarning"
+      class="fixed top-0 left-0 z-[999999] flex-cc w-full h-full text-white bg-gradient-to-br from-[#1e1e1e] to-black animate-fade-in"
+    >
+      <div class="p-5 text-center select-none">
+        <div class="mb-7.5 text-5xl">🔒</div>
+        <h1 class="m-0 mb-5 text-3xl font-semibold text-danger">系统已锁定</h1>
+        <p class="max-w-125 m-0 text-lg leading-relaxed text-white">
           检测到开发者工具已打开<br />
           为了系统安全，请关闭开发者工具后继续使用
         </p>
-        <div class="warning-subtitle">Security Lock Activated</div>
+        <div class="mt-7.5 text-sm text-gray-400">Security Lock Activated</div>
       </div>
     </div>
 
     <!-- 锁屏弹窗 -->
     <div v-if="!isLock">
       <ElDialog v-model="visible" :width="370" :show-close="false" @open="handleDialogOpen">
-        <div class="lock-content">
-          <img class="cover" src="@imgs/user/avatar.webp" alt="用户头像" />
-          <div class="username">{{ userInfo.userName }}</div>
-          <ElForm ref="formRef" :model="formData" :rules="rules" @submit.prevent="handleLock">
+        <div class="flex-c flex-col">
+          <img class="w-16 h-16 rounded-full" src="@imgs/user/avatar.webp" alt="用户头像" />
+          <div class="mt-7.5 mb-3.5 text-base font-medium">{{ userInfo.userName }}</div>
+          <ElForm
+            ref="formRef"
+            :model="formData"
+            :rules="rules"
+            class="w-[90%]"
+            @submit.prevent="handleLock"
+          >
             <ElFormItem prop="password">
               <ElInput
                 v-model="formData.password"
                 type="password"
-                :placeholder="'请输入锁屏密码'"
+                placeholder="请输入锁屏密码"
                 :show-password="true"
                 ref="lockInputRef"
+                class="w-full mt-9"
                 @keyup.enter="handleLock"
               >
                 <template #suffix>
-                  <ElIcon class="cursor-pointer" @click="handleLock">
+                  <ElIcon class="c-p" @click="handleLock">
                     <Lock />
                   </ElIcon>
                 </template>
               </ElInput>
             </ElFormItem>
-            <ElButton type="primary" class="lock-btn" @click="handleLock" v-ripple>
-              {{ '锁定' }}
+            <ElButton type="primary" class="w-full" @click="handleLock" v-ripple>
+              立即锁定
             </ElButton>
           </ElForm>
         </div>
@@ -47,37 +57,45 @@
 
     <!-- 解锁界面 -->
     <div v-else class="unlock-content">
-      <div class="box">
-        <img class="cover" src="@imgs/user/avatar.webp" alt="用户头像" />
-        <div class="username">{{ userInfo.userName }}</div>
+      <div class="flex-c flex-col w-90 p-7.5 bg-white/90 rounded-xl">
+        <img class="w-16 h-16 mt-5 rounded-full" src="@imgs/user/avatar.webp" alt="用户头像" />
+        <div class="mt-7.5 mb-3.5 text-base font-medium">
+          {{ userInfo.userName }}
+        </div>
         <ElForm
           ref="unlockFormRef"
           :model="unlockForm"
           :rules="rules"
+          class="w-full !px-2.5"
           @submit.prevent="handleUnlock"
         >
           <ElFormItem prop="password">
             <ElInput
               v-model="unlockForm.password"
               type="password"
-              :placeholder="'请输入解锁密码'"
+              placeholder="请输入解锁密码"
               :show-password="true"
               ref="unlockInputRef"
+              class="mt-5"
             >
               <template #suffix>
-                <ElIcon class="cursor-pointer" @click="handleUnlock">
+                <ElIcon class="c-p" @click="handleUnlock">
                   <Unlock />
                 </ElIcon>
               </template>
             </ElInput>
           </ElFormItem>
 
-          <ElButton type="primary" class="unlock-btn" @click="handleUnlock" v-ripple>
-            {{ '解锁' }}
-          </ElButton>
-          <ElButton text class="login-btn" @click="toLogin">
-            {{ '返回登录' }}
-          </ElButton>
+          <ElButton type="primary" class="w-full" @click="handleUnlock" v-ripple>解锁</ElButton>
+          <div class="w-full text-center">
+            <ElButton
+              text
+              class="mt-2.5 !text-g-600 hover:!text-theme hover:!bg-transparent"
+              @click="toLogin"
+            >
+              返回登录
+            </ElButton>
+          </div>
         </ElForm>
       </div>
     </div>
@@ -121,7 +139,7 @@
     password: [
       {
         required: true,
-        message: '请输入锁屏密码',
+        message: '请输入密码',
         trigger: 'blur'
       }
     ]
@@ -356,7 +374,7 @@
             console.error('更新store失败:', error)
           }
         } else {
-          ElMessage.error('密码错误')
+          ElMessage.error('密码错误，请重试')
         }
       } else {
         console.error('表单验证失败:', fields)
@@ -415,158 +433,26 @@
   })
 </script>
 
-<style scoped lang="scss">
-  .layout-lock-screen {
-    :deep(.el-dialog) {
-      border-radius: 10px;
-    }
-
-    // 开发者工具警告样式
-    .dev-tools-warning {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 999999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 100%;
-      color: #fff;
-      background: linear-gradient(135deg, #1e1e1e 0%, #000 100%);
-      animation: fadeIn 0.3s ease-in-out;
-
-      .warning-content {
-        padding: 20px;
-        text-align: center;
-        user-select: none;
-
-        .warning-icon {
-          margin-bottom: 30px;
-          font-size: 48px;
-        }
-
-        .warning-title {
-          margin: 0 0 20px;
-          font-size: 28px;
-          font-weight: 600;
-          color: #ff6b6b;
-        }
-
-        .warning-text {
-          max-width: 500px;
-          margin: 0;
-          font-size: 18px;
-          line-height: 1.6;
-          color: #ccc;
-        }
-
-        .warning-subtitle {
-          margin-top: 30px;
-          font-size: 14px;
-          color: #888;
-        }
-      }
-    }
-
-    .lock-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-
-      .cover {
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
-      }
-
-      .username {
-        margin: 15px 0;
-        margin-top: 30px;
-        font-size: 16px;
-        font-weight: 500;
-      }
-
-      .el-form {
-        width: 90%;
-      }
-
-      .el-input {
-        width: 100%;
-        margin-top: 35px;
-      }
-
-      .lock-btn {
-        width: 100%;
-      }
-    }
-
-    .unlock-content {
-      position: fixed;
-      inset: 0;
-      z-index: 2500;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      background-color: #fff;
-      background-image: url('@imgs/lock/lock_screen_1.webp');
-      background-size: cover;
-      transition: transform 0.3s ease-in-out;
-
-      .box {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 320px;
-        padding: 30px;
-        background: rgb(255 255 255 / 90%);
-        border-radius: 10px;
-
-        .cover {
-          width: 64px;
-          height: 64px;
-          margin-top: 20px;
-          border-radius: 50%;
-        }
-
-        .username {
-          margin: 15px 0;
-          margin-top: 30px;
-          font-size: 16px;
-          font-weight: 500;
-          color: #333 !important;
-        }
-
-        .el-form {
-          width: 100%;
-          padding: 0 10px !important;
-        }
-
-        .el-input {
-          margin-top: 20px;
-          color: #333;
-        }
-
-        .unlock-btn {
-          width: 100%;
-        }
-
-        .login-btn {
-          display: block;
-          margin: 10px auto;
-          color: #333 !important;
-
-          &:hover {
-            color: var(--main-color) !important;
-            background-color: transparent !important;
-          }
-        }
-      }
-    }
+<style scoped>
+  .layout-lock-screen :deep(.el-dialog) {
+    border-radius: 10px;
   }
 
-  @keyframes fadeIn {
+  .unlock-content {
+    position: fixed;
+    inset: 0;
+    z-index: 2500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: #fff;
+    background-image: url('@imgs/lock/lock_screen_1.webp');
+    background-size: cover;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  @keyframes fade-in {
     from {
       opacity: 0;
       transform: scale(0.9);
@@ -576,5 +462,9 @@
       opacity: 1;
       transform: scale(1);
     }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-in-out;
   }
 </style>

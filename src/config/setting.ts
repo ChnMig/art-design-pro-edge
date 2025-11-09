@@ -53,8 +53,6 @@ export const SETTING_DEFAULT_CONFIG = {
   showCrumbs: true,
   /** 是否显示工作台标签 */
   showWorkTab: true,
-  /** 是否显示语言切换 */
-  showLanguage: true,
   /** 是否显示进度条 */
   showNprogress: false,
   /** 是否显示设置引导 */

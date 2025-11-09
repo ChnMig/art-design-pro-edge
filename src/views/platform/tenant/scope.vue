@@ -56,7 +56,7 @@
 <script setup lang="ts">
   import { ref, watch, computed, nextTick } from 'vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
-  import { formatMenuTitle } from '@/router/utils/utils'
+  import { formatMenuTitle } from '@/utils/router'
   import { getPlatformTenantMenu, savePlatformTenantMenu } from '@/api/platform/api'
 
   const props = defineProps({

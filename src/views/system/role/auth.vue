@@ -59,7 +59,7 @@
 
 <script setup lang="ts">
   import { ref, nextTick, watch, computed, onMounted } from 'vue'
-  import { formatMenuTitle } from '@/router/utils/utils'
+  import { formatMenuTitle } from '@/utils/router'
   import { getAllMenuByRole, saveRolePermission } from '@/api/system/api'
   import { ElMessage, ElMessageBox } from 'element-plus'
 

@@ -3,12 +3,8 @@
   <div
     class="mt-10 flex gap-8 border-t border-[var(--default-border)] bg-[var(--art-bg-color)] pt-5"
   >
-    <ElButton type="primary" class="flex-1 !h-8" @click="handleCopyConfig">
-      {{ $t('setting.actions.copyConfig') }}
-    </ElButton>
-    <ElButton type="danger" plain class="flex-1 !h-8" @click="handleResetConfig">
-      {{ $t('setting.actions.resetConfig') }}
-    </ElButton>
+    <ElButton type="primary" class="flex-1 !h-8" @click="handleCopyConfig">复制配置</ElButton>
+    <ElButton type="danger" plain class="flex-1 !h-8" @click="handleResetConfig">恢复默认</ElButton>
   </div>
 </template>
 
@@ -17,13 +13,11 @@
   import { useSettingStore } from '@/store/modules/setting'
   import { SETTING_DEFAULT_CONFIG } from '@/config/setting'
   import { useClipboard } from '@vueuse/core'
-  import { useI18n } from 'vue-i18n'
   import { MenuThemeEnum } from '@/enums/appEnum'
   import { useTheme } from '@/hooks/core/useTheme'
 
   defineOptions({ name: 'SettingActions' })
 
-  const { t } = useI18n()
   const settingStore = useSettingStore()
   const { copy, copied } = useClipboard()
   const { switchThemeStyles } = useTheme()
@@ -74,7 +68,6 @@
     { comment: '是否显示刷新按钮', key: 'showRefreshButton' },
     { comment: '是否显示面包屑', key: 'showCrumbs' },
     { comment: '是否显示工作台标签', key: 'showWorkTab' },
-    { comment: '是否显示语言切换', key: 'showLanguage' },
     { comment: '是否显示进度条', key: 'showNprogress' },
     { comment: '是否显示设置引导', key: 'showSettingGuide' },
     { comment: '是否显示节日文本', key: 'showFestivalText' },
@@ -137,13 +130,13 @@
 
       if (copied.value) {
         ElMessage.success({
-          message: t('setting.actions.copySuccess'),
+          message: '配置复制成功',
           duration: 3000
         })
       }
     } catch (error) {
       console.error('复制配置失败:', error)
-      ElMessage.error(t('setting.actions.copyFailed'))
+      ElMessage.error('配置复制失败')
     }
   }
 
@@ -194,9 +187,6 @@
         settingStore.setShowRefreshButton()
       )
       toggleIfDifferent(settingStore.showCrumbs, config.showCrumbs, () => settingStore.setCrumbs())
-      toggleIfDifferent(settingStore.showLanguage, config.showLanguage, () =>
-        settingStore.setLanguage()
-      )
       toggleIfDifferent(settingStore.showNprogress, config.showNprogress, () =>
         settingStore.setNprogress()
       )
@@ -229,7 +219,7 @@
       location.reload()
     } catch (error) {
       console.error('重置配置失败:', error)
-      ElMessage.error(t('setting.actions.resetFailed'))
+      ElMessage.error('重置配置失败')
     }
   }
 </script>

@@ -55,7 +55,7 @@
 <script setup lang="ts">
   import { onMounted, ref, computed, h, resolveComponent } from 'vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
-  import { formatMenuTitle } from '@/router/utils/utils'
+  import { formatMenuTitle } from '@/utils/router'
   import { getPlatformMenu, deletePlatformMenu } from '@/api/platform/api'
   import { useTable } from '@/composables/useTable'
   import menuInfo from './modal/menuInfo.vue'
