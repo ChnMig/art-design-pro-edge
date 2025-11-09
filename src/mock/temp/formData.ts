@@ -1,4 +1,13 @@
-import defaultAvatar from '@/assets/img/user/avatar.webp'
+import avatar1 from '@/assets/images/avatar/avatar1.webp'
+import avatar2 from '@/assets/images/avatar/avatar2.webp'
+import avatar3 from '@/assets/images/avatar/avatar3.webp'
+import avatar4 from '@/assets/images/avatar/avatar4.webp'
+import avatar5 from '@/assets/images/avatar/avatar5.webp'
+import avatar6 from '@/assets/images/avatar/avatar6.webp'
+import avatar7 from '@/assets/images/avatar/avatar7.webp'
+import avatar8 from '@/assets/images/avatar/avatar8.webp'
+import avatar9 from '@/assets/images/avatar/avatar9.webp'
+import avatar10 from '@/assets/images/avatar/avatar10.webp'
 
 export interface User {
   id: number
@@ -23,7 +32,7 @@ export const ACCOUNT_TABLE_DATA: User[] = [
     dep: '研发部',
     status: '1',
     create_time: '2020-09-09 10:01:10',
-    avatar: defaultAvatar
+    avatar: avatar1
   },
   {
     id: 2,
@@ -34,7 +43,7 @@ export const ACCOUNT_TABLE_DATA: User[] = [
     dep: '电商部',
     status: '1',
     create_time: '2020-10-10 13:01:12',
-    avatar: defaultAvatar
+    avatar: avatar2
   },
   {
     id: 3,
@@ -45,7 +54,7 @@ export const ACCOUNT_TABLE_DATA: User[] = [
     dep: '人事部',
     status: '1',
     create_time: '2020-11-14 12:01:45',
-    avatar: defaultAvatar
+    avatar: avatar3
   },
   {
     id: 4,
@@ -56,7 +65,7 @@ export const ACCOUNT_TABLE_DATA: User[] = [
     dep: '产品部',
     status: '1',
     create_time: '2020-11-14 09:01:20',
-    avatar: defaultAvatar
+    avatar: avatar4
   },
   {
     id: 5,
@@ -67,7 +76,7 @@ export const ACCOUNT_TABLE_DATA: User[] = [
     dep: '财务部',
     status: '1',
     create_time: '2020-11-13 11:01:05',
-    avatar: defaultAvatar
+    avatar: avatar5
   },
   {
     id: 6,
@@ -78,7 +87,7 @@ export const ACCOUNT_TABLE_DATA: User[] = [
     dep: '运营部',
     status: '1',
     create_time: '2020-10-11 13:10:26',
-    avatar: defaultAvatar
+    avatar: avatar6
   },
   {
     id: 7,
@@ -89,7 +98,7 @@ export const ACCOUNT_TABLE_DATA: User[] = [
     dep: '客服部',
     status: '2',
     create_time: '2020-05-14 12:05:10',
-    avatar: defaultAvatar
+    avatar: avatar7
   },
   {
     id: 8,
@@ -100,7 +109,7 @@ export const ACCOUNT_TABLE_DATA: User[] = [
     dep: '总经办',
     status: '3',
     create_time: '2020-11-12 07:22:25',
-    avatar: defaultAvatar
+    avatar: avatar8
   },
   {
     id: 9,
@@ -111,7 +120,7 @@ export const ACCOUNT_TABLE_DATA: User[] = [
     dep: '研发部',
     status: '4',
     create_time: '2020-06-12 05:04:20',
-    avatar: defaultAvatar
+    avatar: avatar9
   },
   {
     id: 10,
@@ -122,7 +131,7 @@ export const ACCOUNT_TABLE_DATA: User[] = [
     dep: '研发部',
     status: '1',
     create_time: '2020-11-12 16:01:10',
-    avatar: defaultAvatar
+    avatar: avatar10
   },
   {
     id: 11,
@@ -133,7 +142,7 @@ export const ACCOUNT_TABLE_DATA: User[] = [
     dep: '研发部',
     status: '1',
     create_time: '2020-11-14 12:01:20',
-    avatar: defaultAvatar
+    avatar: avatar6
   },
   {
     id: 12,
@@ -144,7 +153,7 @@ export const ACCOUNT_TABLE_DATA: User[] = [
     dep: '研发部',
     status: '1',
     create_time: '2020-11-14 12:01:20',
-    avatar: defaultAvatar
+    avatar: avatar7
   },
   {
     id: 13,
@@ -155,7 +164,7 @@ export const ACCOUNT_TABLE_DATA: User[] = [
     dep: '研发部',
     status: '1',
     create_time: '2020-11-14 12:01:20',
-    avatar: defaultAvatar
+    avatar: avatar8
   },
   {
     id: 14,
@@ -166,7 +175,7 @@ export const ACCOUNT_TABLE_DATA: User[] = [
     dep: '研发部',
     status: '1',
     create_time: '2020-11-14 12:01:20',
-    avatar: defaultAvatar
+    avatar: avatar9
   },
   {
     id: 15,
@@ -177,7 +186,7 @@ export const ACCOUNT_TABLE_DATA: User[] = [
     dep: '研发部',
     status: '1',
     create_time: '2020-11-14 12:01:20',
-    avatar: defaultAvatar
+    avatar: avatar10
   }
 ]
 

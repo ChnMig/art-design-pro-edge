@@ -25,7 +25,7 @@
 
 ## 技术栈
 
-- 开发框架：Vue3、TypeScript、Vite、Element-Plus
+- 开发框架：Vue3、TypeScript、Vite、Element-Plus、Tailwind CSS
 - 代码规范：Eslint、Prettier、Stylelint、Husky、Lint-staged、cz-git
 
 ## 功能
@@ -53,6 +53,12 @@
 
 - 支持 Chrome、Safari、Firefox 等现代主流浏览器。
 
+## 预览与文档
+
+- 官方演示：[https://www.artd.pro](https://www.artd.pro)
+- 上游文档：[https://www.artd.pro/docs](https://www.artd.pro/docs)
+- 变更记录：`CHANGELOG.md` / `CHANGELOG.zh-CN.md`
+
 ## 安装运行
 
 ```bash
@@ -73,8 +79,8 @@ pnpm build
 
 - 上游项目：Daymychen/art-design-pro
 - 同步分支：upstream/main
-- 同步提交：3956355050868a30c02190c92e35b53c952e96ef（fix: bug fix, add theme color switching feature to the authorization page，tag v2.6.1）
-- 同步时间：见本仓库最近一次同步提交（分支：merge/upstream-sync-202502）
+- 同步提交：817b85473722b5fbce29a6dd5594c82aee163a1b（refactor: directory structure adjustment and optimization，tag v3.0.0）
+- 同步时间：见本仓库最近一次同步提交（分支：merge/upstream-sync-3.0）
 
 ## 项目定制
 
