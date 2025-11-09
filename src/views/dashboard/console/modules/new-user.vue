@@ -1,18 +1,18 @@
 <template>
-  <div class="card art-custom-card">
-    <div class="card-header">
+  <div class="art-card p-5 h-128 overflow-hidden mb-5 max-sm:mb-4">
+    <div class="art-card-header">
       <div class="title">
-        <h4 class="box-title">新用户</h4>
-        <p class="subtitle">这个月增长<span class="text-success">+20%</span></p>
+        <h4>新用户</h4>
+        <p>这个月增长<span class="text-success">+20%</span></p>
       </div>
-      <el-radio-group v-model="radio2">
-        <el-radio-button value="本月" label="本月"></el-radio-button>
-        <el-radio-button value="上月" label="上月"></el-radio-button>
-        <el-radio-button value="今年" label="今年"></el-radio-button>
-      </el-radio-group>
+      <ElRadioGroup v-model="radio2">
+        <ElRadioButton value="本月" label="本月"></ElRadioButton>
+        <ElRadioButton value="上月" label="上月"></ElRadioButton>
+        <ElRadioButton value="今年" label="今年"></ElRadioButton>
+      </ElRadioGroup>
     </div>
     <ArtTable
-      class="table"
+      class="w-full"
       :data="tableData"
       style="width: 100%"
       size="large"
@@ -21,45 +21,65 @@
       :header-cell-style="{ background: 'transparent' }"
     >
       <template #default>
-        <el-table-column label="头像" prop="avatar" width="150px">
+        <ElTableColumn label="头像" prop="avatar" width="150px">
           <template #default="scope">
             <div style="display: flex; align-items: center">
-              <img class="avatar" :src="scope.row.avatar" alt="avatar" />
-              <span class="user-name">{{ scope.row.username }}</span>
+              <img class="size-9 rounded-lg" :src="scope.row.avatar" alt="avatar" />
+              <span class="ml-2">{{ scope.row.username }}</span>
             </div>
           </template>
-        </el-table-column>
-        <el-table-column label="地区" prop="province" />
-        <el-table-column label="性别" prop="avatar">
+        </ElTableColumn>
+        <ElTableColumn label="地区" prop="province" />
+        <ElTableColumn label="性别" prop="avatar">
           <template #default="scope">
             <div style="display: flex; align-items: center">
               <span style="margin-left: 10px">{{ scope.row.sex === 1 ? '男' : '女' }}</span>
             </div>
           </template>
-        </el-table-column>
-        <el-table-column label="进度" width="240">
+        </ElTableColumn>
+        <ElTableColumn label="进度" width="240">
           <template #default="scope">
-            <el-progress
+            <ElProgress
               :percentage="scope.row.pro"
               :color="scope.row.color"
               :stroke-width="4"
               :aria-label="`${scope.row.username}的完成进度: ${scope.row.pro}%`"
             />
           </template>
-        </el-table-column>
+        </ElTableColumn>
       </template>
     </ArtTable>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { onMounted, ref, reactive } from 'vue-demi'
-  // 上游新增了多张示例头像，但本仓库未引入该目录，统一使用默认头像
-  import defaultAvatar from '@/assets/img/user/avatar.webp'
+  import avatar1 from '@/assets/images/avatar/avatar1.webp'
+  import avatar2 from '@/assets/images/avatar/avatar2.webp'
+  import avatar3 from '@/assets/images/avatar/avatar3.webp'
+  import avatar4 from '@/assets/images/avatar/avatar4.webp'
+  import avatar5 from '@/assets/images/avatar/avatar5.webp'
+  import avatar6 from '@/assets/images/avatar/avatar6.webp'
+
+  interface UserTableItem {
+    username: string
+    province: string
+    sex: 0 | 1
+    age: number
+    percentage: number
+    pro: number
+    color: string
+    avatar: string
+  }
+
+  const ANIMATION_DELAY = 100
 
   const radio2 = ref('本月')
 
-  const tableData = reactive([
+  /**
+   * 新用户表格数据
+   * 包含用户基本信息和完成进度
+   */
+  const tableData = reactive<UserTableItem[]>([
     {
       username: '中小鱼',
       province: '北京',
@@ -67,8 +87,8 @@
       age: 22,
       percentage: 60,
       pro: 0,
-      color: 'rgb(var(--art-primary)) !important',
-      avatar: defaultAvatar
+      color: 'var(--art-primary)',
+      avatar: avatar1
     },
     {
       username: '何小荷',
@@ -77,8 +97,8 @@
       age: 21,
       percentage: 20,
       pro: 0,
-      color: 'rgb(var(--art-secondary)) !important',
-      avatar: defaultAvatar
+      color: 'var(--art-secondary)',
+      avatar: avatar2
     },
     {
       username: '誶誶淰',
@@ -87,8 +107,8 @@
       age: 23,
       percentage: 60,
       pro: 0,
-      color: 'rgb(var(--art-warning)) !important',
-      avatar: defaultAvatar
+      color: 'var(--art-warning)',
+      avatar: avatar3
     },
     {
       username: '发呆草',
@@ -97,8 +117,8 @@
       age: 28,
       percentage: 50,
       pro: 0,
-      color: 'rgb(var(--art-info)) !important',
-      avatar: defaultAvatar
+      color: 'var(--art-info)',
+      avatar: avatar4
     },
     {
       username: '甜筒',
@@ -107,8 +127,8 @@
       age: 26,
       percentage: 70,
       pro: 0,
-      color: 'rgb(var(--art-error)) !important',
-      avatar: defaultAvatar
+      color: 'var(--art-error)',
+      avatar: avatar5
     },
     {
       username: '冷月呆呆',
@@ -117,61 +137,33 @@
       age: 25,
       percentage: 90,
       pro: 0,
-      color: 'rgb(var(--art-success)) !important',
-      avatar: defaultAvatar
+      color: 'var(--art-success)',
+      avatar: avatar6
     }
   ])
+
+  /**
+   * 添加进度条动画效果
+   * 延迟后将进度值从 0 更新到目标百分比，触发动画
+   */
+  const addAnimation = (): void => {
+    setTimeout(() => {
+      tableData.forEach((item) => {
+        item.pro = item.percentage
+      })
+    }, ANIMATION_DELAY)
+  }
 
   onMounted(() => {
     addAnimation()
   })
-
-  const addAnimation = () => {
-    setTimeout(() => {
-      for (let i = 0; i < tableData.length; i++) {
-        let item = tableData[i]
-        tableData[i].pro = item.percentage
-      }
-    }, 100)
-  }
 </script>
 
-<style lang="scss">
-  .card {
-    // 进度动画
-    .el-progress-bar__inner {
-      transition: all 1s !important;
-    }
-
-    .el-radio-button__original-radio:checked + .el-radio-button__inner {
+<style lang="scss" scoped>
+  .art-card {
+    :deep(.el-radio-button__original-radio:checked + .el-radio-button__inner) {
       color: var(--el-color-primary) !important;
       background: transparent !important;
-    }
-  }
-</style>
-
-<style lang="scss" scoped>
-  .card {
-    width: 100%;
-    height: 510px;
-    overflow: hidden;
-
-    .card-header {
-      padding-left: 25px !important;
-    }
-
-    :deep(.el-table__body tr:last-child td) {
-      border-bottom: none !important;
-    }
-
-    .avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 6px;
-    }
-
-    .user-name {
-      margin-left: 10px;
     }
   }
 </style>

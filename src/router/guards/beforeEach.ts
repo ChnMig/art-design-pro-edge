@@ -6,7 +6,7 @@ import { useUserStore } from '@/store/modules/user'
 import { useMenuStore } from '@/store/modules/menu'
 import { useWorktabStore } from '@/store/modules/worktab'
 import { setWorktab } from '@/utils/navigation'
-import { setPageTitle } from '../utils/utils'
+import { setPageTitle } from '@/utils/router'
 import { fetchGetMenuList } from '@/api/system-manage'
 import { registerDynamicRoutes } from '../utils/registerRoutes'
 import type { AppRouteRecord } from '@/types/router'
@@ -16,6 +16,7 @@ import { asyncRoutes } from '../routes/asyncRoutes'
 import { staticRoutes } from '../routes/staticRoutes'
 import { loadingService } from '@/utils/ui'
 import { useCommon } from '@/composables/useCommon'
+import { useAppMode } from '@/hooks/core/useAppMode'
 import { fetchGetUserInfo } from '@/api/auth'
 import { ApiStatus } from '@/utils/http/status'
 import { HttpError, isHttpError } from '@/utils/http/error'
@@ -136,7 +137,8 @@ async function handleDynamicRoutes(
 
 // 拉取菜单并注册
 async function getMenuData(router: Router): Promise<void> {
-  if (useCommon().isFrontendMode.value) {
+  const { isFrontendMode } = useAppMode()
+  if (isFrontendMode.value) {
     await processFrontendMenu(router)
   } else {
     await processBackendMenu(router)

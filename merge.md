@@ -177,7 +177,7 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
   - 若上游 HTTP 处理与本地契约冲突，以本地为准（`src/utils/http/*`）。
   - 系统管理相关接口仅按本项目后端契约实现。严禁为“兼容上游纯前端”而在 API 层凭空造字段或做字段重映射。
   - 菜单字段以后端为准：页面与表单不得引入上游独有的前端字段（如 `showBadge`、`showTextBadge`、`fixedTab`、`activePath`、`roles` 等）。如后端未返回，对应 UI 也不应出现；仅保留本项目实际使用并由后端提供/驱动的字段（例如 `title`/`icon`/`path`/`component`/`sort`/`status`/`isHide`/`isIframe`/`keepAlive` 等）。
-  - `src/api/system/api.ts` 使用 `/api/v1/admin/system` 前缀，并返回后端 payload 的结构；仅做必要的最小化适配（例如把 `status` 映射为布尔 `meta.isEnable` 以便 UI 渲染），不添加无后端来源的扩展键。
+  - `src/api/system/api.ts` 使用 `/api/v1/private/admin/system` 前缀，并返回后端 payload 的结构；仅做必要的最小化适配（例如把 `status` 映射为布尔 `meta.isEnable` 以便 UI 渲染），不添加无后端来源的扩展键。
   - 全局规则：GET 查询参数清理（`src/utils/http/index.ts`）
     - 仅对 GET 请求生效；POST/PUT 不受影响。
     - 自动剔除 `undefined`、`null`、空字符串及纯空白字符串的参数键；保留 `0` 与 `false`。
@@ -193,8 +193,8 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
   - 空值占位：表格列在未自定义渲染时，统一在全局组件 `ArtTable` 输出占位符 `--`（规则：`undefined/null/''/空白字符串 -> --`，保留 `0/false`）。路径：`src/components/core/tables/art-table/index.vue`。
 
 - 平台管理 vs 系统管理（接口与页面）
-  - 系统管理（租户侧，`/api/v1/admin/system`）：角色/菜单/部门/用户，接口已适配为当前登录租户的可用范围。
-  - 平台管理（超级管理员，`/api/v1/admin/platform`）：维护“全局菜单/角色”，并通过“范围接口”为租户分配可用集合。
+  - 系统管理（租户侧，`/api/v1/private/admin/system`）：角色/菜单/部门/用户，接口已适配为当前登录租户的可用范围。
+  - 平台管理（超级管理员，`/api/v1/private/admin/platform`）：维护“全局菜单/角色”，并通过“范围接口”为租户分配可用集合。
   - 代码组织：
     - 平台接口：`src/api/platform/api.ts`
     - 平台页面：
@@ -206,10 +206,10 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
 **菜单逻辑与分布（重要）**
 
 - 角色与职责
-  - 平台管理员（`/api/v1/admin/platform`）
+  - 平台管理员（`/api/v1/private/admin/platform`）
     - 维护全局“菜单定义 + 元素权限”（菜单、元素权限仅在平台侧创建/编辑）
     - 为各租户分配“菜单范围”（租户可见/可选的菜单集合）
-  - 租户管理员（`/api/v1/admin/system`）
+  - 租户管理员（`/api/v1/private/admin/system`）
     - 在平台授权的“菜单范围”内，为本租户创建并维护具体角色的“菜单权限”（角色—菜单—元素权限）
     - 维护本租户的部门与用户，并在“本租户角色池”内为用户授予角色
 
@@ -236,19 +236,19 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
 
 - 接口分割与前端适配（必须遵循）
   - 平台“菜单定义”接口（不带 hasPermission 标记）
-    - `GET /api/v1/admin/platform/menu`
-    - `POST /api/v1/admin/platform/menu`
-    - `DELETE /api/v1/admin/platform/menu`
-    - 元素权限定义：`GET/POST/PUT/DELETE /api/v1/admin/platform/menu/auth`
+    - `GET /api/v1/private/admin/platform/menu`
+    - `POST /api/v1/private/admin/platform/menu`
+    - `DELETE /api/v1/private/admin/platform/menu`
+    - 元素权限定义：`GET/POST/PUT/DELETE /api/v1/private/admin/platform/menu/auth`
 
   - 平台“租户菜单范围”接口（带 hasPermission 标记）
-    - 查询：`GET /api/v1/admin/platform/menu/tenant?tenant_id`
-    - 保存：`PUT /api/v1/admin/platform/menu/tenant { tenant_id, menu_data }`
+    - 查询：`GET /api/v1/private/admin/platform/menu/tenant?tenant_id`
+    - 保存：`PUT /api/v1/private/admin/platform/menu/tenant { tenant_id, menu_data }`
     - 使用位置：`src/views/platform/tenant/scope.vue`（从租户列表“查看”按钮进入的右侧抽屉）
 
   - 系统“角色菜单权限”接口（带 hasPermission 标记）
-    - 查询：`GET /api/v1/admin/system/menu/role?role_id`
-    - 保存：`PUT /api/v1/admin/system/menu/role { role_id, menu_data }`
+    - 查询：`GET /api/v1/private/admin/system/menu/role?role_id`
+    - 保存：`PUT /api/v1/private/admin/system/menu/role { role_id, menu_data }`
     - 使用位置：`src/views/system/role/auth.vue`（角色列表的“权限”抽屉）
 
   - 前端渲染/提交规则（与 system/role 与 platform/tenant 保持一致）
@@ -297,8 +297,9 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
 - 顶部栏模块
   - 通知中心与在线对话入口已移除：`src/components/core/layouts/art-header-bar/index.vue` 不再渲染对应按钮，也删除了 `ArtNotification` 弹层及 `mittBus.emit('openChat')` 等逻辑。
   - 上游若重新加入 `notice` / `chat` 相关代码，合并时请同步清理，确保顶部栏仅保留刷新、全屏、设置、主题等按钮；同步移除全局组件配置中的 `chat-window`（`src/config/component.ts`），避免重新加载 `ArtChatWindow` 组件。
-  - 顶栏“修改个人信息”入口需联动全局组件 `ArtEditInfoDialog`：保留 `mittBus.emit('openEditInfoDialog')` 事件，确保 `src/components/core/layouts/art-edit-info/index.vue` 及其在 `src/config/component.ts` 的挂载项存在，并使用 `/api/v1/admin/system/user/info` 的 GET/PUT 接口同步更新用户信息（提交字段需匹配新文档：`username`、`phone`、`gender`、`password`）。
-  - 用户头像区保持与上游一致：使用 `userInfo.avatar` 作为头像来源，并仅保留“锁定屏幕 / 修改个人信息 / 退出登录”三项菜单，禁止回退到自定义静态头像或增加额外入口；同时确保默认头像文件 `src/assets/img/user/avatar.webp` 保留（供 `setUserInfo` 兜底）。
+  - 顶栏“修改个人信息”入口需联动全局组件 `ArtEditInfoDialog`：保留 `mittBus.emit('openEditInfoDialog')` 事件，确保 `src/components/core/layouts/art-edit-info/index.vue` 及其在 `src/config/component.ts` 的挂载项存在，并使用 `/api/v1/private/admin/system/user/info` 的 GET/PUT 接口同步更新用户信息（提交字段需匹配新文档：`username`、`phone`、`gender`、`password`）。
+  - 用户头像区保持与上游一致：使用 `userInfo.avatar` 作为头像来源，并仅保留“锁定屏幕 / 修改个人信息 / 退出登录”三项菜单，禁止回退到自定义静态头像或增加额外入口；同时确保默认头像文件 `src/assets/images/user/avatar.webp` 保留（供 `setUserInfo` 兜底），并在 `ArtUserMenu` 中对无效地址（例如 `/src/**`、`@/**`）回退到该默认头像。
+  - 头像浮层信息不得简化：头像右侧需展示“租户：{code - name}”“账号：{account}”“邮箱”三段信息（按实际存在显示），字段取值顺序为 `userInfo.userName/username/nickName/account/email` 与 `tenantInfo.code/tenantInfo.name/currentTenantCode`，参考 `src/components/core/layouts/art-header-bar/widget/ArtUserMenu.vue` 现有实现；合并上游后如弹层信息被删改，必须回放此逻辑。
   - 全局水印：使用“租户编码 | 用户账号”作为默认文案（登录时填写的两项），实现于 `src/components/core/others/art-watermark/index.vue`。行为规范：
     - 优先使用传入 props.content；未显式传入时，按“tenant_code | account”组装；若两项缺失，回退为系统名称 `AppConfig.systemInfo.name`。
     - 租户编码来源：`userStore.getTenantInfo.code` 或 `userStore.getCurrentTenantCode`；用户账号来源：`userStore.getUserInfo.account || username || userName`。

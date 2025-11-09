@@ -6,8 +6,13 @@ import { SystemThemeEnum, MenuThemeEnum, MenuTypeEnum, ContainerWidthEnum } from
 import { setElementThemeColor } from '@/utils/ui'
 import { useCeremony } from '@/composables/useCeremony'
 import { StorageConfig } from '@/utils'
+import { SETTING_DEFAULT_CONFIG } from '@/config/setting'
 
-const { defaultMenuWidth, defaultCustomRadius, defaultTabStyle } = AppConfig.systemSetting
+const {
+  menuOpenWidth: defaultMenuWidth,
+  customRadius: defaultCustomRadius,
+  tabStyle: defaultTabStyle
+} = SETTING_DEFAULT_CONFIG
 
 /**
  * 系统设置状态管理

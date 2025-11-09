@@ -1,7 +1,7 @@
 import { computed } from 'vue'
 import { ContainerWidthEnum } from '@/enums/appEnum'
 import AppConfig from '@/config'
-import { headerBarConfig } from '@/config/headerBar'
+import { headerBarConfig } from '@/config/modules/headerBar'
 
 /**
  * 设置项配置选项管理
@@ -11,15 +11,15 @@ export function useSettingsConfig() {
   const tabStyleOptions = computed(() => [
     {
       value: 'tab-default',
-      label: '默认'
+      label: '默认样式'
     },
     {
       value: 'tab-card',
-      label: '卡片'
+      label: '卡片样式'
     },
     {
       value: 'tab-google',
-      label: '谷歌'
+      label: '谷歌样式'
     }
   ])
 
@@ -31,19 +31,19 @@ export function useSettingsConfig() {
     },
     {
       value: 'fade',
-      label: '淡入淡出'
+      label: '渐隐'
     },
     {
       value: 'slide-left',
-      label: '左侧滑入'
+      label: '向左滑入'
     },
     {
       value: 'slide-bottom',
-      label: '下方滑入'
+      label: '向下滑入'
     },
     {
       value: 'slide-top',
-      label: '上方滑入'
+      label: '向上滑入'
     }
   ])
 
@@ -60,13 +60,13 @@ export function useSettingsConfig() {
   const containerWidthOptions = computed(() => [
     {
       value: ContainerWidthEnum.FULL,
-      label: '铺满',
-      icon: '&#xe694;'
+      label: '自适应宽度',
+      icon: 'icon-park-outline:auto-width'
     },
     {
       value: ContainerWidthEnum.BOXED,
-      label: '定宽',
-      icon: '&#xe6de;'
+      label: '定宽布局',
+      icon: 'ix:width'
     }
   ])
 
@@ -74,12 +74,12 @@ export function useSettingsConfig() {
   const boxStyleOptions = computed(() => [
     {
       value: 'border-mode',
-      label: '边框',
+      label: '描边模式',
       type: 'border-mode' as const
     },
     {
       value: 'shadow-mode',
-      label: '阴影',
+      label: '阴影模式',
       type: 'shadow-mode' as const
     }
   ])
@@ -102,21 +102,21 @@ export function useSettingsConfig() {
     const allSettings = [
       {
         key: 'showWorkTab',
-        label: '开启多标签栏',
+        label: '显示多标签',
         type: 'switch' as const,
         handler: 'workTab',
         headerBarKey: null // 不依赖headerBar配置
       },
       {
         key: 'uniqueOpened',
-        label: '侧边栏开启手风琴模式',
+        label: '菜单手风琴',
         type: 'switch' as const,
         handler: 'uniqueOpened',
         headerBarKey: null // 不依赖headerBar配置
       },
       {
         key: 'showMenuButton',
-        label: '显示折叠侧边栏按钮',
+        label: '显示折叠菜单按钮',
         type: 'switch' as const,
         handler: 'menuButton',
         headerBarKey: 'menuButton' as const
@@ -130,14 +130,14 @@ export function useSettingsConfig() {
       },
       {
         key: 'showRefreshButton',
-        label: '显示重载页面按钮',
+        label: '显示刷新按钮',
         type: 'switch' as const,
         handler: 'refreshButton',
         headerBarKey: 'refreshButton' as const
       },
       {
         key: 'showCrumbs',
-        label: '显示全局面包屑导航',
+        label: '显示面包屑',
         type: 'switch' as const,
         handler: 'crumbs',
         mobileHide: true,
@@ -178,7 +178,7 @@ export function useSettingsConfig() {
       },
       {
         key: 'tabStyle',
-        label: '标签页风格',
+        label: '标签样式',
         type: 'select' as const,
         handler: 'tabStyle',
         options: tabStyleOptions.value,
@@ -187,7 +187,7 @@ export function useSettingsConfig() {
       },
       {
         key: 'pageTransition',
-        label: '页面切换动画',
+        label: '页面过渡动画',
         type: 'select' as const,
         handler: 'pageTransition',
         options: pageTransitionOptions.value,
@@ -196,7 +196,7 @@ export function useSettingsConfig() {
       },
       {
         key: 'customRadius',
-        label: '自定义圆角',
+        label: '组件圆角',
         type: 'select' as const,
         handler: 'customRadius',
         options: customRadiusOptions,

@@ -3,7 +3,7 @@ import type { HttpClient } from '@/utils/http'
 
 const httpClient = request as HttpClient
 
-const API_PREFIX = '/api/v1/admin/system'
+const API_PREFIX = '/api/v1/private/admin/system'
 
 type BackendListResponse<T> = Http.BaseResponse<T[]> & {
   total?: number

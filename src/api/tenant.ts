@@ -1,9 +1,9 @@
 import request from '@/utils/http'
 
 // 统一的基础路径前缀
-const TENANT_BASE = '/api/v1/admin/system/tenant'
+const TENANT_BASE = '/api/v1/private/admin/system/tenant'
 
-// 适配最新 API：GET /api/v1/admin/system/tenant
+// 适配最新 API：GET /api/v1/private/admin/system/tenant
 // 后端返回形如 { code, status/message, data: [], total }，此处做结构适配为 { data: { records, total, page, page_size } }
 export async function fetchTenantList(params?: Api.SystemTenant.TenantSearchParams) {
   const res = await request.get<any>({
@@ -32,7 +32,7 @@ export async function fetchTenantList(params?: Api.SystemTenant.TenantSearchPara
   } as any
 }
 
-// 适配最新 API：POST /api/v1/admin/system/tenant
+// 适配最新 API：POST /api/v1/private/admin/system/tenant
 export function createTenant(data: Api.SystemTenant.TenantPayload) {
   const payload = {
     ...data,
@@ -47,7 +47,7 @@ export function createTenant(data: Api.SystemTenant.TenantPayload) {
   })
 }
 
-// 适配最新 API：PUT /api/v1/admin/system/tenant
+// 适配最新 API：PUT /api/v1/private/admin/system/tenant
 export function updateTenant(data: Required<Api.SystemTenant.TenantPayload>) {
   const payload = {
     ...data,
@@ -62,7 +62,7 @@ export function updateTenant(data: Required<Api.SystemTenant.TenantPayload>) {
   })
 }
 
-// 适配最新 API：DELETE /api/v1/admin/system/tenant，按文档以 JSON 体传递 { id }
+// 适配最新 API：DELETE /api/v1/private/admin/system/tenant，按文档以 JSON 体传递 { id }
 export function removeTenant(id: number) {
   return request.del({
     url: TENANT_BASE,

@@ -1,6 +1,6 @@
 import request from '@/utils/http'
 
-const DEPT_BASE = '/api/v1/admin/system/department'
+const DEPT_BASE = '/api/v1/private/admin/system/department'
 
 export async function fetchDepartmentList(params?: Api.SystemDepartment.DepartmentSearchParams) {
   // 兼容 page/page_size 与 pageSize 两种命名

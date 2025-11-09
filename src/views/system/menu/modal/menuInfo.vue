@@ -50,12 +50,23 @@
         </ElCol>
         <ElCol :span="12">
           <ElFormItem label="图标" prop="icon">
-            <ArtIconSelector
+            <ElInput
               v-model="form.icon"
-              :iconType="iconType"
-              :defaultIcon="form.icon"
-              width="229px"
-            />
+              placeholder="请输入 Iconify 图标名称，如 ri:dashboard-line"
+              class="icon-input"
+            >
+              <template #suffix>
+                <ElTooltip
+                  effect="dark"
+                  content="点击跳转到 Remix Icon 搜索图标并复制名称"
+                  placement="top"
+                >
+                  <ElIcon class="icon-help-icon" @click="openRemixIcon">
+                    <QuestionFilled />
+                  </ElIcon>
+                </ElTooltip>
+              </template>
+            </ElInput>
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -134,7 +145,6 @@
   import { ref, reactive, computed, nextTick, watch } from 'vue'
   import type { FormInstance, FormRules } from 'element-plus'
   import { ElMessage } from 'element-plus'
-  import { IconTypeEnum } from '@/enums/appEnum'
   import { addMenu, updateMenu } from '@/api/system/api'
   import { QuestionFilled } from '@element-plus/icons-vue'
 
@@ -160,7 +170,6 @@
     isIframe: false,
     parentId: 0
   })
-  const iconType = ref(IconTypeEnum.UNICODE)
   const isEdit = ref(false)
   const lockMenuType = ref(false)
   const formRef = ref<FormInstance>()
@@ -344,6 +353,10 @@
   const showHelp = () => {
     helpDialogVisible.value = true
   }
+
+  const openRemixIcon = () => {
+    window.open('https://remixicon.com/', '_blank', 'noopener')
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -382,5 +395,17 @@
         margin-bottom: 4px;
       }
     }
+  }
+
+  :deep(.icon-input .el-input__suffix) {
+    display: inline-flex;
+    align-items: center;
+    padding-right: 4px;
+  }
+
+  .icon-help-icon {
+    font-size: 16px;
+    color: var(--el-color-primary);
+    cursor: pointer;
   }
 </style>

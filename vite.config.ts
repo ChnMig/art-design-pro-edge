@@ -8,6 +8,7 @@ import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import ElementPlus from 'unplugin-element-plus/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import tailwindcss from '@tailwindcss/vite'
 // import { visualizer } from 'rollup-plugin-visualizer'
 
 export default ({ mode }: { mode: string }) => {
@@ -39,11 +40,10 @@ export default ({ mode }: { mode: string }) => {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
         '@views': resolvePath('src/views'),
-        '@imgs': resolvePath('src/assets/img'),
+        '@imgs': resolvePath('src/assets/images'),
         '@icons': resolvePath('src/assets/icons'),
         '@utils': resolvePath('src/utils'),
         '@stores': resolvePath('src/store'),
-        '@plugins': resolvePath('src/plugins'),
         '@styles': resolvePath('src/assets/styles')
       }
     },
@@ -68,6 +68,7 @@ export default ({ mode }: { mode: string }) => {
     },
     plugins: [
       vue(),
+      tailwindcss(),
       // 自动按需导入 API
       AutoImport({
         imports: ['vue', 'vue-router', 'pinia', '@vueuse/core'],
@@ -134,9 +135,8 @@ export default ({ mode }: { mode: string }) => {
         // sass variable and mixin
         scss: {
           additionalData: `
-            @use "@styles/el-light.scss" as *;
-            @use "@styles/variables.scss" as *;
-            @use "@styles/mixin.scss" as *;
+            @use "@styles/core/el-light.scss" as *;
+            @use "@styles/core/mixin.scss" as *;
           `
         }
       },

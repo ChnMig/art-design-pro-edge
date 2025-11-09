@@ -2,7 +2,7 @@ import request from '@/utils/http'
 
 /**
  * 获取验证码
- * 新接口：GET /api/v1/admin/system/user/login/captcha
+ * 新接口：GET /api/v1/private/admin/system/user/login/captcha
  * 可选的 height/width 将作为查询参数传递（若后端忽略也无副作用）
  */
 export async function fetchCaptcha(
@@ -12,7 +12,7 @@ export async function fetchCaptcha(
   const params =
     typeof height === 'number' && typeof width === 'number' ? { height, width } : undefined
   const data = await request.get<any>({
-    url: '/api/v1/admin/system/user/login/captcha',
+    url: '/api/v1/private/admin/system/user/login/captcha',
     params,
     showErrorMessage: false
   })
@@ -23,11 +23,11 @@ export async function fetchCaptcha(
 
 /**
  * 登录
- * 新接口：POST /api/v1/admin/system/user/login
+ * 新接口：POST /api/v1/private/admin/system/user/login
  */
 export async function fetchLogin(params: Api.Auth.LoginParams): Promise<Api.Auth.LoginResponse> {
   const res = await request.post<any>({
-    url: '/api/v1/admin/system/user/login',
+    url: '/api/v1/private/admin/system/user/login',
     data: params,
     showErrorMessage: false
   })
@@ -40,18 +40,18 @@ export async function fetchLogin(params: Api.Auth.LoginParams): Promise<Api.Auth
 
 /**
  * 获取用户信息
- * 新接口：GET /api/v1/admin/system/user/info
+ * 新接口：GET /api/v1/private/admin/system/user/info
  */
 export function fetchGetUserInfo() {
   return request.get<Api.Auth.UserInfo>({
-    url: '/api/v1/admin/system/user/info',
+    url: '/api/v1/private/admin/system/user/info',
     showErrorMessage: false
   })
 }
 
 /**
  * 更新用户信息
- * PUT /api/v1/admin/system/user/info
+ * PUT /api/v1/private/admin/system/user/info
  */
 export function fetchUpdateUserInfo(
   data: Partial<Api.Auth.UserInfo> & {
@@ -64,7 +64,7 @@ export function fetchUpdateUserInfo(
   }
 ) {
   return request.put<void>({
-    url: '/api/v1/admin/system/user/info',
+    url: '/api/v1/private/admin/system/user/info',
     data,
     showSuccessMessage: false
   })
@@ -72,11 +72,11 @@ export function fetchUpdateUserInfo(
 
 /**
  * 登录页租户编码模糊查询
- * GET /api/v1/admin/system/user/login/tenant?code=xxx
+ * GET /api/v1/private/admin/system/user/login/tenant?code=xxx
  */
 export function searchTenant(code: string) {
   return request.get<Api.Auth.TenantItem[]>({
-    url: '/api/v1/admin/system/user/login/tenant',
+    url: '/api/v1/private/admin/system/user/login/tenant',
     params: { code },
     showErrorMessage: false
   })
