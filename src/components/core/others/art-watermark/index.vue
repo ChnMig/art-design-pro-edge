@@ -6,7 +6,7 @@
     :style="{ zIndex: zIndex }"
   >
     <ElWatermark
-      :content="content"
+      :content="watermarkContent"
       :font="{ fontSize: fontSize, color: fontColor }"
       :rotate="rotate"
       :gap="[gapX, gapY]"
@@ -18,13 +18,17 @@
 </template>
 
 <script setup lang="ts">
+  import { computed, toRefs } from 'vue'
+  import { storeToRefs } from 'pinia'
   import AppConfig from '@/config'
   import { useSettingStore } from '@/store/modules/setting'
+  import { useUserStore } from '@/store/modules/user'
 
   defineOptions({ name: 'ArtWatermark' })
 
   const settingStore = useSettingStore()
-  const { watermarkVisible } = storeToRefs(settingStore)
+  const userStore = useUserStore()
+  const { watermarkVisible: storeVisible } = storeToRefs(settingStore)
 
   interface WatermarkProps {
     /** 水印内容 */
@@ -49,9 +53,9 @@
     zIndex?: number
   }
 
-  withDefaults(defineProps<WatermarkProps>(), {
-    content: AppConfig.systemInfo.name,
-    visible: false,
+  const props = withDefaults(defineProps<WatermarkProps>(), {
+    content: '',
+    visible: undefined,
     fontSize: 16,
     fontColor: 'rgba(128, 128, 128, 0.2)',
     rotate: -22,
@@ -60,5 +64,27 @@
     offsetX: 50,
     offsetY: 50,
     zIndex: 3100
+  })
+
+  const { fontSize, fontColor, rotate, gapX, gapY, offsetX, offsetY, zIndex } = toRefs(props)
+
+  const watermarkVisible = computed(() => {
+    if (typeof props.visible === 'boolean') return props.visible
+    return storeVisible.value
+  })
+
+  const watermarkContent = computed(() => {
+    if (props.content && props.content.trim()) return props.content
+    const tenantCode =
+      userStore.getTenantInfo?.code ||
+      userStore.getCurrentTenantCode ||
+      userStore.getTenantInfo?.tenantCode ||
+      ''
+    const user = userStore.getUserInfo
+    const account = user?.account || user?.username || user?.userName || ''
+    if (tenantCode || account) {
+      return [tenantCode, account].filter(Boolean).join(' | ')
+    }
+    return AppConfig.systemInfo.name
   })
 </script>

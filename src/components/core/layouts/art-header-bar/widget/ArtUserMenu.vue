@@ -14,7 +14,7 @@
     <template #reference>
       <img
         class="size-8.5 mr-5 c-p rounded-full max-sm:w-6.5 max-sm:h-6.5 max-sm:mr-[16px]"
-        src="@imgs/user/avatar.webp"
+        :src="avatarSrc"
         alt="avatar"
       />
     </template>
@@ -23,27 +23,37 @@
         <div class="flex-c pb-1 px-0">
           <img
             class="w-10 h-10 mr-3 ml-0 overflow-hidden rounded-full float-left"
-            src="@imgs/user/avatar.webp"
+            :src="avatarSrc"
           />
           <div class="w-[calc(100%-60px)] h-full">
-            <span class="block text-sm font-medium text-g-800 truncate">{{
-              userInfo.userName
-            }}</span>
-            <span class="block mt-0.5 text-xs text-g-500 truncate">{{ userInfo.email }}</span>
+            <span class="block text-sm font-medium text-g-800 truncate">{{ displayName }}</span>
+            <span
+              v-if="tenantDisplay"
+              class="block mt-0.5 text-xs text-g-500 truncate"
+              :title="tenantDisplay"
+            >
+              租户：{{ tenantDisplay }}
+            </span>
+            <span
+              v-if="accountDisplay"
+              class="block mt-0.5 text-xs text-g-500 truncate"
+              :title="accountDisplay"
+            >
+              账号：{{ accountDisplay }}
+            </span>
+            <span
+              v-if="userInfo.email"
+              class="block mt-0.5 text-xs text-g-500 truncate"
+              :title="userInfo.email"
+            >
+              {{ userInfo.email }}
+            </span>
           </div>
         </div>
         <ul class="py-4 mt-3 border-t border-g-300/80">
-          <li class="btn-item" @click="goPage('/system/user-center')">
-            <ArtSvgIcon icon="ri:user-3-line" />
-            <span>个人中心</span>
-          </li>
-          <li class="btn-item" @click="toDocs()">
-            <ArtSvgIcon icon="ri:book-2-line" />
-            <span>文档</span>
-          </li>
-          <li class="btn-item" @click="toGithub()">
-            <ArtSvgIcon icon="ri:github-line" />
-            <span>GitHub</span>
+          <li class="btn-item" @click="editUserInfo">
+            <ArtSvgIcon icon="ri:user-settings-line" />
+            <span>修改个人信息</span>
           </li>
           <li class="btn-item" @click="lockScreen()">
             <ArtSvgIcon icon="ri:lock-line" />
@@ -58,40 +68,43 @@
 </template>
 
 <script setup lang="ts">
-  import { useRouter } from 'vue-router'
   import { ElMessageBox } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
-  import { WEB_LINKS } from '@/utils/constants'
   import { mittBus } from '@/utils/sys'
+  import defaultAvatar from '@imgs/user/avatar.webp'
 
   defineOptions({ name: 'ArtUserMenu' })
 
-  const router = useRouter()
   const userStore = useUserStore()
 
-  const { getUserInfo: userInfo } = storeToRefs(userStore)
+  const { getUserInfo: userInfo, getTenantInfo, getCurrentTenantCode } = storeToRefs(userStore)
   const userMenuPopover = ref()
 
-  /**
-   * 页面跳转
-   * @param {string} path - 目标路径
-   */
-  const goPage = (path: string): void => {
-    router.push(path)
-  }
+  const avatarSrc = computed(() => userInfo.value?.avatar || defaultAvatar)
 
-  /**
-   * 打开文档页面
-   */
-  const toDocs = (): void => {
-    window.open(WEB_LINKS.DOCS)
-  }
+  const displayName = computed(() => {
+    const info = userInfo.value || {}
+    return (
+      info.userName || info.username || info.nickName || info.account || info.email || '未命名用户'
+    )
+  })
 
-  /**
-   * 打开 GitHub 页面
-   */
-  const toGithub = (): void => {
-    window.open(WEB_LINKS.GITHUB)
+  const tenantDisplay = computed(() => {
+    const tenant = getTenantInfo.value
+    const code = tenant?.code || tenant?.tenantCode || getCurrentTenantCode.value || ''
+    const name = tenant?.name || ''
+    if (code && name) return `${code} - ${name}`
+    return code || name || ''
+  })
+
+  const accountDisplay = computed(() => {
+    const info = userInfo.value
+    return info?.account || info?.username || info?.userName || ''
+  })
+
+  const editUserInfo = () => {
+    closeUserMenu()
+    mittBus.emit('openEditInfoDialog')
   }
 
   /**
