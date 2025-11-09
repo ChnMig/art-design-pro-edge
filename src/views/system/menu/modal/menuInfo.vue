@@ -50,21 +50,23 @@
         </ElCol>
         <ElCol :span="12">
           <ElFormItem label="图标" prop="icon">
-            <div class="icon-field">
-              <ElInput
-                v-model="form.icon"
-                placeholder="请输入 Iconify 图标名称，如 ri:dashboard-line"
-              />
-              <ElLink
-                class="icon-help-link"
-                type="primary"
-                href="https://remixicon.com/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                去挑选
-              </ElLink>
-            </div>
+            <ElInput
+              v-model="form.icon"
+              placeholder="请输入 Iconify 图标名称，如 ri:dashboard-line"
+              class="icon-input"
+            >
+              <template #suffix>
+                <ElTooltip
+                  effect="dark"
+                  content="点击跳转到 Remix Icon 搜索图标并复制名称"
+                  placement="top"
+                >
+                  <ElIcon class="icon-help-icon" @click="openRemixIcon">
+                    <QuestionFilled />
+                  </ElIcon>
+                </ElTooltip>
+              </template>
+            </ElInput>
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -351,6 +353,10 @@
   const showHelp = () => {
     helpDialogVisible.value = true
   }
+
+  const openRemixIcon = () => {
+    window.open('https://remixicon.com/', '_blank', 'noopener')
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -391,13 +397,15 @@
     }
   }
 
-  .icon-field {
-    display: flex;
-    gap: 8px;
+  :deep(.icon-input .el-input__suffix) {
+    display: inline-flex;
     align-items: center;
+    padding-right: 4px;
+  }
 
-    .icon-help-link {
-      white-space: nowrap;
-    }
+  .icon-help-icon {
+    font-size: 16px;
+    color: var(--el-color-primary);
+    cursor: pointer;
   }
 </style>
