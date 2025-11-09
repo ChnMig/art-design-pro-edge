@@ -50,11 +50,9 @@
         </ElCol>
         <ElCol :span="12">
           <ElFormItem label="图标" prop="icon">
-            <ArtIconSelector
+            <ElInput
               v-model="form.icon"
-              :iconType="iconType"
-              :defaultIcon="form.icon"
-              width="229px"
+              placeholder="请输入 Iconify 图标名称，如 ri:dashboard-line"
             />
           </ElFormItem>
         </ElCol>
@@ -134,7 +132,6 @@
   import { ref, reactive, computed, nextTick, watch } from 'vue'
   import type { FormInstance, FormRules } from 'element-plus'
   import { ElMessage } from 'element-plus'
-  import { IconTypeEnum } from '@/enums/appEnum'
   import { addMenu, updateMenu } from '@/api/system/api'
   import { QuestionFilled } from '@element-plus/icons-vue'
 
@@ -160,7 +157,6 @@
     isIframe: false,
     parentId: 0
   })
-  const iconType = ref(IconTypeEnum.UNICODE)
   const isEdit = ref(false)
   const lockMenuType = ref(false)
   const formRef = ref<FormInstance>()
