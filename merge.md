@@ -38,7 +38,7 @@ git checkout -b merge/upstream-sync-YYYYMM
 git push -u origin merge/upstream-sync-YYYYMM
 ```
 
-## 2. 获取上游并记录版本（当前基线：v2.6.1）
+## 2. 获取上游并记录版本（当前基线：v3.0.1）
 
 ```
 git fetch upstream --prune
@@ -51,11 +51,11 @@ echo "Sync to: $UPSTREAM_COMMIT_MSG"
 在 README.md 中更新“同步来源与版本”（上游 commit 信息）。当前已对齐至：
 
 - 上游分支：`upstream/main`
-- 上游提交：`3956355`（fix: bug fix, add theme color switching feature to the authorization page）
+- 上游提交：`66e0704`（feat: bug fixes and new features，tag v3.0.1）
 
 同时保持 README 中的 commitId 与本步骤记录的值一致（短/长哈希任选其一，但需前后统一）。
 
-版本号同步（仅显示用途）：`.env` 中的 `VITE_VERSION` 建议与上游发行保持一致（当前为 2.6.0），不影响功能行为。
+版本号同步（仅显示用途）：`.env` 中的 `VITE_VERSION` 建议与上游发行保持一致（当前为 3.0.1），不影响功能行为。
 
 ## 3. 审阅上游变更
 

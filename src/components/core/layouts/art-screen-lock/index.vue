@@ -433,7 +433,7 @@
   })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   .layout-lock-screen :deep(.el-dialog) {
     border-radius: 10px;
   }
@@ -447,9 +447,15 @@
     justify-content: center;
     overflow: hidden;
     background-color: #fff;
-    background-image: url('@imgs/lock/lock_screen_1.webp');
+    background-image: url('@imgs/lock/bg_light.webp');
     background-size: cover;
     transition: transform 0.3s ease-in-out;
+  }
+
+  .dark {
+    .unlock-content {
+      background-image: url('@imgs/lock/bg_dark.webp');
+    }
   }
 
   @keyframes fade-in {
@@ -466,5 +472,31 @@
 
   .animate-fade-in {
     animation: fade-in 0.3s ease-in-out;
+  }
+
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+      transform: translateX(-10px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+      transform: translateX(10px);
+    }
+  }
+
+  .shake-animation {
+    animation: shake 0.5s ease-in-out;
   }
 </style>
