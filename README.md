@@ -79,8 +79,8 @@ pnpm build
 
 - 上游项目：Daymychen/art-design-pro
 - 同步分支：upstream/main
-- 同步提交：817b85473722b5fbce29a6dd5594c82aee163a1b（refactor: directory structure adjustment and optimization，tag v3.0.0）
-- 同步时间：见本仓库最近一次同步提交（分支：merge/upstream-sync-3.0）
+- 同步提交：66e0704cac1a5df02338affb02dd732f9684a264（feat: bug fixes and new features，tag v3.0.1）
+- 同步时间：见本仓库最近一次同步提交（分支：merge/upstream-sync-3.0.1）
 
 ## 项目定制
 
@@ -89,16 +89,16 @@ pnpm build
 - 多租户与图形验证码登录
   - 登录页保留租户编码与图形验证码输入，支持点击图片刷新验证码。
   - 接口：
-    - 获取验证码：`GET /system/user/login/captcha`（函数：`src/api/auth.ts:fetchCaptcha`）
-    - 登录：`POST /system/user/login`（函数：`src/api/auth.ts:fetchLogin`）
-    - 用户信息：`GET /system/user/info`（函数：`src/api/auth.ts:fetchGetUserInfo`）
+    - 获取验证码：`GET /api/v1/private/admin/system/user/login/captcha`（函数：`src/api/auth.ts:fetchCaptcha`）
+    - 登录：`POST /api/v1/private/admin/system/user/login`（函数：`src/api/auth.ts:fetchLogin`）
+    - 用户信息：`GET /api/v1/private/admin/system/user/info`（函数：`src/api/auth.ts:fetchGetUserInfo`）
   - Token 字段：`access_token`、`refresh_token`。
   - Store 增强：在 `src/store/modules/user.ts` 中保留 `tenantInfo`、`currentTenantCode` 等字段，便于多租户场景使用。
 
 - 多租户管理页面
   - 页面：`src/views/system/tenant/index.vue`
   - 接口：`src/api/tenant.ts`
-  - 类型：`src/typings/api.d.ts` 中 `Api.SystemTenant.*`
+  - 类型：`src/types/api/api.d.ts` 中 `Api.SystemTenant.*`
 
 - 构建与主题
   - 已启用 `unplugin-element-plus` 的 `useSource: true` 按需样式方案，主题变量通过 Vite 的 `css.preprocessorOptions.scss.additionalData` 注入（见 `vite.config.ts`）。

@@ -22,13 +22,14 @@
 
 - 单语中文界面：严禁引入 `vue-i18n` 与相关语言切换 UI。
 - 移除“快速入口”：禁止回归 `fastEnter` 相关配置与组件。
-- 仪表盘保留 Console 与 Analysis（dashboard/analysis）；
+- 仪表盘：仅保留 Console（`/dashboard/console`），演示性质的 Analysis 与 Ecommerce 页面保持删除状态。
+- 路由核心：动态路由注册与菜单处理统一使用 `MenuProcessor` + `RouteRegistry` + `RoutePermissionValidator` 方案，如需调整菜单数据结构或权限校验，应优先在这些核心模块中集中处理。
 - 平台/系统分层：
   - 平台维护“菜单定义 + 元素权限 + 租户菜单范围”；
   - 系统侧维护“角色—菜单—元素权限”；
   - 权限树渲染规则：仅当整棵子树全为 true 才勾选父节点；提交时父节点采用“已选 ∪ 半选”。
 - 动态菜单：严格按后端返回注册路由；菜单 meta 仅使用约定字段（`title/icon/keepAlive/isHide` 等），不引入上游前端私有字段。
-- 路由兼容：不进行 component 路径映射，请后端返回真实路径；analysis 使用 `/dashboard/analysis`，ecommerce 已删除。
+- 路由兼容：不进行 component 路径映射，请后端返回真实路径；仪表盘首页使用 `/dashboard/console`。
 - 登录契约：保留 `access_token/refresh_token` 字段命名，多租户与图形验证码不可移除。
 - 全局水印：默认文案“租户编码 | 用户账号”，可被组件 `props.content` 覆盖。
 - 路由守卫：动态路由注册完成后，导航续跳必须基于 `path/query/hash` 重新匹配（`next({ path: to.path, query: to.query, hash: to.hash, replace: true })`），禁止 `next(to)` 或 `next({ ...to })`，以避免刷新时因初次匹配到 404 而持续落入 404。
