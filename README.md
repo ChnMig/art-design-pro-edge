@@ -79,7 +79,7 @@ pnpm build
 
 - 上游项目：Daymychen/art-design-pro
 - 同步分支：upstream/main
-- 同步提交：66e0704cac1a5df02338affb02dd732f9684a264（feat: bug fixes and new features，tag v3.0.1）
+- 同步提交：bc6a651c737b6e59066988e52da1283fae2b7514（docs: update qq group，基于 tag v3.0.1）
 - 同步时间：见本仓库最近一次同步提交（分支：merge/upstream-sync-3.0.1）
 
 ## 项目定制
