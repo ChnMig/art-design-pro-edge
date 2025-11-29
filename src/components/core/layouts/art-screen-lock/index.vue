@@ -36,6 +36,7 @@
                 type="password"
                 placeholder="请输入锁屏密码"
                 :show-password="true"
+                autocomplete="new-password"
                 ref="lockInputRef"
                 class="w-full mt-9"
                 @keyup.enter="handleLock"
@@ -75,6 +76,7 @@
               type="password"
               placeholder="请输入解锁密码"
               :show-password="true"
+              autocomplete="new-password"
               ref="unlockInputRef"
               class="mt-5"
             >
