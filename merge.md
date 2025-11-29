@@ -51,7 +51,7 @@ echo "Sync to: $UPSTREAM_COMMIT_MSG"
 在 README.md 中更新“同步来源与版本”（上游 commit 信息）。当前已对齐至：
 
 - 上游分支：`upstream/main`
-- 上游提交：`66e0704`（feat: bug fixes and new features，tag v3.0.1）
+- 上游提交：`1c20801`（fix: fix animation missing after opening settings center，tag v3.0.1 之后的 bugfix 提交）
 
 同时保持 README 中的 commitId 与本步骤记录的值一致（短/长哈希任选其一，但需前后统一）。
 
