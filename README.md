@@ -79,7 +79,7 @@ pnpm build
 
 - 上游项目：Daymychen/art-design-pro
 - 同步分支：upstream/main
-- 同步提交：1c20801d094a7d884f4f5147fd104d1e248489c9（fix: fix animation missing after opening settings center，基于 tag v3.0.1）
+- 同步提交：c4aa8ae9b7bcff3a2e8d393cb53d9a2a6af56747（feat: useTable hooks addcolumn、updatecolumn、togglecolumn support batch operations，基于 tag v3.0.1 的功能增强提交）
 - 同步时间：见本仓库最近一次同步提交（分支：merge/upstream-sync-3.0.1）
 
 ## 项目定制

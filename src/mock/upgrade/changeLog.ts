@@ -32,7 +32,8 @@ export const upgradeLogList = ref<UpgradeLog[]>([
       '新增：WebSocket 连接',
       '修复：动态路由初始化失败时可能导致的重复请求与死循环问题',
       '修复：设置中心抽屉打开后主题切换动画丢失问题',
-      '优化：锁屏密码输入框禁用浏览器自动填充，提升安全性'
+      '优化：锁屏密码输入框禁用浏览器自动填充，提升安全性',
+      '新增：useTable hooks 的 addColumn/updateColumn/toggleColumn 支持批量列操作，批量更新列配置更便捷'
     ]
   },
   {
