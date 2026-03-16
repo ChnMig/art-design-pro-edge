@@ -30,7 +30,8 @@
             <slot :name="item.key" :item="item" :modelValue="modelValue">
               <component
                 :is="getComponent(item)"
-                v-model="modelValue[item.key]"
+                :model-value="getFieldValue(item.key)"
+                @update:model-value="setFieldValue(item.key, $event)"
                 v-bind="getProps(item)"
               >
                 <!-- 下拉选择 -->
@@ -97,7 +98,7 @@
 
 <script setup lang="ts">
   import { useWindowSize } from '@vueuse/core'
-  import type { Component } from 'vue'
+  import { toRaw, type Component } from 'vue'
   import {
     ElCascader,
     ElCheckbox,
@@ -193,6 +194,16 @@
     showSubmit?: boolean
     /** 是否禁用提交按钮 */
     disabledSubmit?: boolean
+    sanitizeOutput?: Partial<SanitizeOutputOptions>
+  }
+
+  interface SanitizeOutputOptions {
+    removeEmptyString: boolean
+    removeEmptyArray: boolean
+    removeEmptyObject: boolean
+    removeEmptyRichText: boolean
+    keepZero: boolean
+    keepFalse: boolean
   }
 
   const props = withDefaults(defineProps<FormProps>(), {
@@ -204,19 +215,187 @@
     buttonLeftLimit: 2,
     showReset: true,
     showSubmit: true,
-    disabledSubmit: false
+    disabledSubmit: false,
+    sanitizeOutput: () => ({})
   })
 
   interface FormEmits {
     reset: []
-    submit: []
+    submit: [Record<string, any>]
   }
 
   const emit = defineEmits<FormEmits>()
 
   const modelValue = defineModel<Record<string, any>>({ default: {} })
+  const initialModelValue = ref<Record<string, any>>({})
+
+  const cloneModelValue = (value: Record<string, any> | undefined) => {
+    if (!value) return {}
+
+    const deepClone = (source: unknown): unknown => {
+      if (Array.isArray(source)) {
+        return source.map((item) => deepClone(item))
+      }
+
+      if (source && typeof source === 'object') {
+        const rawSource = toRaw(source)
+        return Object.keys(rawSource).reduce<Record<string, unknown>>((accumulator, key) => {
+          accumulator[key] = deepClone((rawSource as Record<string, unknown>)[key])
+          return accumulator
+        }, {})
+      }
+
+      return source
+    }
+
+    return deepClone(toRaw(value)) as Record<string, any>
+  }
+
+  initialModelValue.value = cloneModelValue(modelValue.value)
 
   const rootProps = ['label', 'labelWidth', 'key', 'type', 'hidden', 'span', 'slots']
+  const sanitizeOutputOptions = computed<SanitizeOutputOptions>(() => ({
+    removeEmptyString: true,
+    removeEmptyArray: true,
+    removeEmptyObject: true,
+    removeEmptyRichText: true,
+    keepZero: true,
+    keepFalse: true,
+    ...props.sanitizeOutput
+  }))
+
+  const PATH_NUMBER_RE = /^\d+$/
+
+  const parsePath = (path: string) => {
+    return path
+      .split('.')
+      .filter(Boolean)
+      .map((segment) => (PATH_NUMBER_RE.test(segment) ? Number(segment) : segment))
+  }
+
+  const getFieldValue = (path: string) => {
+    return parsePath(path).reduce<any>((currentValue, segment) => {
+      if (currentValue == null) return undefined
+      return currentValue[segment]
+    }, modelValue.value)
+  }
+
+  const deleteFieldValue = (path: string) => {
+    const segments = parsePath(path)
+    if (!segments.length) return
+
+    const lastSegment = segments.pop()
+    const parent = segments.reduce<any>((currentValue, segment) => {
+      if (currentValue == null) return undefined
+      return currentValue[segment]
+    }, modelValue.value)
+
+    if (parent != null && lastSegment !== undefined) {
+      delete parent[lastSegment]
+    }
+  }
+
+  const setFieldValue = (path: string, value: unknown) => {
+    const normalizedValue = value === '' ? undefined : value
+    const segments = parsePath(path)
+
+    if (!segments.length) return
+
+    if (normalizedValue === undefined) {
+      deleteFieldValue(path)
+      return
+    }
+
+    let currentValue: any = modelValue.value
+
+    segments.forEach((segment, index) => {
+      const isLast = index === segments.length - 1
+
+      if (isLast) {
+        currentValue[segment] = normalizedValue
+        return
+      }
+
+      const nextSegment = segments[index + 1]
+      const nextContainer = typeof nextSegment === 'number' ? [] : {}
+
+      if (
+        currentValue[segment] === null ||
+        currentValue[segment] === undefined ||
+        typeof currentValue[segment] !== 'object'
+      ) {
+        currentValue[segment] = nextContainer
+      }
+
+      currentValue = currentValue[segment]
+    })
+  }
+
+  const isRichTextEmpty = (value: string) => {
+    if (/<(img|video|audio|iframe|embed|object)\b/i.test(value)) {
+      return false
+    }
+
+    return (
+      value
+        .replace(/&nbsp;/gi, '')
+        .replace(/<br\s*\/?>/gi, '')
+        .replace(/<[^>]*>/g, '')
+        .trim() === ''
+    )
+  }
+
+  const sanitizeOutputValue = (value: unknown): unknown => {
+    const options = sanitizeOutputOptions.value
+
+    if (Array.isArray(value)) {
+      const sanitizedArray = value
+        .map((item) => sanitizeOutputValue(item))
+        .filter((item) => item !== undefined)
+      return sanitizedArray.length === 0 && options.removeEmptyArray ? undefined : sanitizedArray
+    }
+
+    if (value && typeof value === 'object') {
+      const rawValue = toRaw(value)
+      const sanitizedObject = Object.entries(rawValue).reduce<Record<string, unknown>>(
+        (accumulator, [key, item]) => {
+          const sanitizedItem = sanitizeOutputValue(item)
+          if (sanitizedItem !== undefined) {
+            accumulator[key] = sanitizedItem
+          }
+          return accumulator
+        },
+        {}
+      )
+      return Object.keys(sanitizedObject).length === 0 && options.removeEmptyObject
+        ? undefined
+        : sanitizedObject
+    }
+
+    if (typeof value === 'string') {
+      if (options.removeEmptyString && value.trim() === '') {
+        return undefined
+      }
+      if (options.removeEmptyRichText && isRichTextEmpty(value)) {
+        return undefined
+      }
+      return value
+    }
+
+    if (value === 0) {
+      return options.keepZero ? value : undefined
+    }
+
+    if (value === false) {
+      return options.keepFalse ? value : undefined
+    }
+
+    return value ?? undefined
+  }
+
+  const getSanitizedOutput = () => {
+    return (sanitizeOutputValue(cloneModelValue(modelValue.value)) || {}) as Record<string, any>
+  }
 
   const getProps = (item: FormItem) => {
     if (item.props) return item.props
@@ -281,11 +460,10 @@
     // 重置表单字段（UI 层）
     formInstance.value?.resetFields()
 
-    // 清空所有表单项值（包含隐藏项）
-    Object.assign(
-      modelValue.value,
-      Object.fromEntries(props.items.map(({ key }) => [key, undefined]))
-    )
+    Object.keys(modelValue.value).forEach((key) => {
+      delete modelValue.value[key]
+    })
+    Object.assign(modelValue.value, cloneModelValue(initialModelValue.value))
 
     // 触发 reset 事件
     emit('reset')
@@ -295,13 +473,14 @@
    * 处理提交事件
    */
   const handleSubmit = () => {
-    emit('submit')
+    emit('submit', getSanitizedOutput())
   }
 
   defineExpose({
     ref: formInstance,
     validate: (...args: any[]) => formInstance.value?.validate(...args),
-    reset: handleReset
+    reset: handleReset,
+    getOutput: getSanitizedOutput
   })
 
   // 解构 props 以便在模板中直接使用
