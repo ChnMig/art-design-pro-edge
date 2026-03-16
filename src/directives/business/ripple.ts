@@ -44,8 +44,10 @@ export interface RippleOptions {
   color?: string
 }
 
-export const vRipple: Directive = {
-  mounted(el: HTMLElement, binding: DirectiveBinding) {
+export type RippleDirective = Directive<HTMLElement, RippleOptions>
+
+export const vRipple: RippleDirective = {
+  mounted(el: HTMLElement, binding: DirectiveBinding<RippleOptions>) {
     // 获取指令的配置参数
     const options: RippleOptions = binding.value || {}
 
