@@ -22,6 +22,7 @@
         :data="data"
         :columns="columns"
         :pagination="pagination"
+        table-layout="fixed"
         :table-config="{ rowKey: 'id' }"
         :layout="{ marginTop: 10 }"
         @pagination:size-change="handleSizeChange"
