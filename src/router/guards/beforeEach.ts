@@ -226,6 +226,10 @@ function handleLoginStatus(
 function isStaticRoute(path: string): boolean {
   const checkRoute = (routes: any[], targetPath: string): boolean => {
     return routes.some((route) => {
+      if (route.name === 'Exception404') {
+        return false
+      }
+
       // 处理动态路由参数匹配
       const routePath = route.path
       const pattern = routePath.replace(/:[^/]+/g, '[^/]+').replace(/\*/g, '.*')
@@ -284,6 +288,17 @@ async function handleDynamicRoutes(
 
     // 7. 验证工作标签页
     useWorktabStore().validateWorktabs(router)
+
+    if (isStaticRoute(to.path)) {
+      routeInitInProgress = false
+      next({
+        path: to.path,
+        query: to.query,
+        hash: to.hash,
+        replace: true
+      })
+      return
+    }
 
     // 8. 验证目标路径权限
     const { homePath } = useCommon()
