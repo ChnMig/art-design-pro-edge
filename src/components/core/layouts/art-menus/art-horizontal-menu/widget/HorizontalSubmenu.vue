@@ -22,7 +22,7 @@
   </ElSubMenu>
 
   <ElMenuItem
-    v-else-if="!item.meta.isHide"
+    v-else-if="isNavigableRoute"
     :index="item.path || item.meta.title"
     @click="goPage(item)"
   >
@@ -71,6 +71,16 @@
   // 过滤后的子菜单项（不包含隐藏的）
   const filteredChildren = computed(() => {
     return props.item.children?.filter((child) => !child.meta.isHide) || []
+  })
+
+  const isNavigableRoute = computed(() => {
+    return !!(
+      !props.item.meta.isHide &&
+      ((props.item.path && props.item.path.trim()) ||
+        props.item.meta.link ||
+        props.item.meta.isIframe === true) &&
+      (props.item.component || props.item.meta.link || props.item.meta.isIframe === true)
+    )
   })
 
   // 计算当前项是否有可见的子菜单

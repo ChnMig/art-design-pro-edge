@@ -18,6 +18,7 @@
       size="large"
       :border="false"
       :stripe="false"
+      table-layout="fixed"
       :header-cell-style="{ background: 'transparent' }"
     >
       <template #default>

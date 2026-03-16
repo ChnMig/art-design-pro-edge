@@ -26,6 +26,7 @@
         :columns="columns"
         :pagination="paginationState"
         :loading="isLoading"
+        table-layout="fixed"
         :table-config="{ rowKey: 'id' }"
         :layout="{ marginTop: 10 }"
         @pagination:size-change="onPageSizeChange"

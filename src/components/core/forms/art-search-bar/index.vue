@@ -30,7 +30,8 @@
             <slot :name="item.key" :item="item" :modelValue="modelValue">
               <component
                 :is="getComponent(item)"
-                v-model="modelValue[item.key]"
+                :model-value="getFieldValue(item.key)"
+                @update:model-value="setFieldValue(item.key, $event)"
                 v-bind="getProps(item)"
               >
                 <!-- 下拉选择 -->
@@ -104,7 +105,7 @@
 <script setup lang="ts">
   import { ArrowUpBold, ArrowDownBold } from '@element-plus/icons-vue'
   import { useWindowSize } from '@vueuse/core'
-  import type { Component } from 'vue'
+  import { toRaw, type Component } from 'vue'
   import {
     ElCascader,
     ElCheckbox,
@@ -206,6 +207,16 @@
     showSearch?: boolean
     /** 是否禁用搜索按钮 */
     disabledSearch?: boolean
+    sanitizeOutput?: Partial<SanitizeOutputOptions>
+  }
+
+  interface SanitizeOutputOptions {
+    removeEmptyString: boolean
+    removeEmptyArray: boolean
+    removeEmptyObject: boolean
+    removeEmptyRichText: boolean
+    keepZero: boolean
+    keepFalse: boolean
   }
 
   const props = withDefaults(defineProps<SearchBarProps>(), {
@@ -220,17 +231,43 @@
     buttonLeftLimit: 2,
     showReset: true,
     showSearch: true,
-    disabledSearch: false
+    disabledSearch: false,
+    sanitizeOutput: () => ({})
   })
 
   interface SearchBarEmits {
     reset: []
-    search: []
+    search: [Record<string, any>]
   }
 
   const emit = defineEmits<SearchBarEmits>()
 
   const modelValue = defineModel<Record<string, any>>({ default: {} })
+  const initialModelValue = ref<Record<string, any>>({})
+
+  const cloneModelValue = (value: Record<string, any> | undefined) => {
+    if (!value) return {}
+
+    const deepClone = (source: unknown): unknown => {
+      if (Array.isArray(source)) {
+        return source.map((item) => deepClone(item))
+      }
+
+      if (source && typeof source === 'object') {
+        const rawSource = toRaw(source)
+        return Object.keys(rawSource).reduce<Record<string, unknown>>((accumulator, key) => {
+          accumulator[key] = deepClone((rawSource as Record<string, unknown>)[key])
+          return accumulator
+        }, {})
+      }
+
+      return source
+    }
+
+    return deepClone(toRaw(value)) as Record<string, any>
+  }
+
+  initialModelValue.value = cloneModelValue(modelValue.value)
 
   /**
    * 是否展开状态
@@ -238,6 +275,15 @@
   const isExpanded = ref(props.defaultExpanded)
 
   const rootProps = ['label', 'labelWidth', 'key', 'type', 'hidden', 'span', 'slots']
+  const sanitizeOutputOptions = computed<SanitizeOutputOptions>(() => ({
+    removeEmptyString: true,
+    removeEmptyArray: true,
+    removeEmptyObject: true,
+    removeEmptyRichText: true,
+    keepZero: true,
+    keepFalse: true,
+    ...props.sanitizeOutput
+  }))
 
   const getProps = (item: SearchFormItem) => {
     if (item.props) return item.props
@@ -264,6 +310,89 @@
    */
   const getColSpan = (itemSpan: number | undefined, breakpoint: ResponsiveBreakpoint): number => {
     return calculateResponsiveSpan(itemSpan, span.value, breakpoint)
+  }
+
+  const normalizeFieldValue = (value: unknown) => {
+    return value === '' ? undefined : value
+  }
+
+  const getFieldValue = (key: string) => modelValue.value[key]
+
+  const setFieldValue = (key: string, value: unknown) => {
+    const normalizedValue = normalizeFieldValue(value)
+
+    if (normalizedValue === undefined) {
+      delete modelValue.value[key]
+      return
+    }
+
+    modelValue.value[key] = normalizedValue
+  }
+
+  const isRichTextEmpty = (value: string) => {
+    if (/<(img|video|audio|iframe|embed|object)\b/i.test(value)) {
+      return false
+    }
+
+    return (
+      value
+        .replace(/&nbsp;/gi, '')
+        .replace(/<br\s*\/?>/gi, '')
+        .replace(/<[^>]*>/g, '')
+        .trim() === ''
+    )
+  }
+
+  const sanitizeOutputValue = (value: unknown): unknown => {
+    const options = sanitizeOutputOptions.value
+
+    if (Array.isArray(value)) {
+      const sanitizedArray = value
+        .map((item) => sanitizeOutputValue(item))
+        .filter((item) => item !== undefined)
+      return sanitizedArray.length === 0 && options.removeEmptyArray ? undefined : sanitizedArray
+    }
+
+    if (value && typeof value === 'object') {
+      const rawValue = toRaw(value)
+      const sanitizedObject = Object.entries(rawValue).reduce<Record<string, unknown>>(
+        (accumulator, [key, item]) => {
+          const sanitizedItem = sanitizeOutputValue(item)
+          if (sanitizedItem !== undefined) {
+            accumulator[key] = sanitizedItem
+          }
+          return accumulator
+        },
+        {}
+      )
+      return Object.keys(sanitizedObject).length === 0 && options.removeEmptyObject
+        ? undefined
+        : sanitizedObject
+    }
+
+    if (typeof value === 'string') {
+      if (options.removeEmptyString && value.trim() === '') {
+        return undefined
+      }
+      if (options.removeEmptyRichText && isRichTextEmpty(value)) {
+        return undefined
+      }
+      return value
+    }
+
+    if (value === 0) {
+      return options.keepZero ? value : undefined
+    }
+
+    if (value === false) {
+      return options.keepFalse ? value : undefined
+    }
+
+    return value ?? undefined
+  }
+
+  const getSanitizedOutput = () => {
+    return (sanitizeOutputValue(cloneModelValue(modelValue.value)) || {}) as Record<string, any>
   }
 
   // 组件
@@ -330,11 +459,10 @@
     // 重置表单字段（UI 层）
     formInstance.value?.resetFields()
 
-    // 清空所有表单项值（包含隐藏项）
-    Object.assign(
-      modelValue.value,
-      Object.fromEntries(props.items.map(({ key }) => [key, undefined]))
-    )
+    Object.keys(modelValue.value).forEach((key) => {
+      delete modelValue.value[key]
+    })
+    Object.assign(modelValue.value, cloneModelValue(initialModelValue.value))
 
     // 触发 reset 事件
     emit('reset')
@@ -344,13 +472,14 @@
    * 处理搜索事件
    */
   const handleSearch = () => {
-    emit('search')
+    emit('search', getSanitizedOutput())
   }
 
   defineExpose({
     ref: formInstance,
     validate: (...args: any[]) => formInstance.value?.validate(...args),
-    reset: handleReset
+    reset: handleReset,
+    getOutput: getSanitizedOutput
   })
 
   // 解构 props 以便在模板中直接使用

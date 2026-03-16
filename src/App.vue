@@ -1,5 +1,12 @@
 <template>
-  <ElConfigProvider size="default" :locale="zh" :z-index="3000">
+  <ElConfigProvider
+    size="default"
+    :locale="zh"
+    :z-index="3000"
+    :card="{
+      shadow: 'never'
+    }"
+  >
     <RouterView></RouterView>
   </ElConfigProvider>
 </template>

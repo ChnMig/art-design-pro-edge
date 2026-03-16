@@ -79,8 +79,8 @@ pnpm build
 
 - 上游项目：Daymychen/art-design-pro
 - 同步分支：upstream/main
-- 同步提交：c4aa8ae9b7bcff3a2e8d393cb53d9a2a6af56747（feat: useTable hooks addcolumn、updatecolumn、togglecolumn support batch operations，基于 tag v3.0.1 的功能增强提交）
-- 同步时间：见本仓库最近一次同步提交（分支：merge/upstream-sync-3.0.1）
+- 同步提交：d224dd4504e23cdf230b242a7f78eb089efdbee5（fix: bug fixes, form and routing experience improvements，包含 v3.0.2 的问题修复与体验优化）
+- 同步时间：2026-03-16（本次同步目标：菜单滚动、表单清洗、路由恢复、富文本与指令类型优化）
 
 ## 项目定制
 

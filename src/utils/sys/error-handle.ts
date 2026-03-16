@@ -31,6 +31,41 @@
  */
 import type { App } from 'vue'
 
+const IGNORABLE_SCRIPT_ERRORS = [
+  'ResizeObserver loop completed with undelivered notifications.',
+  'ResizeObserver loop limit exceeded'
+]
+
+function normalizeErrorMessage(message: Event | string): string {
+  if (typeof message === 'string') {
+    return message
+  }
+
+  if ('message' in message && typeof message.message === 'string') {
+    return message.message
+  }
+
+  return ''
+}
+
+function isIgnorableScriptError(message: Event | string, source?: string): boolean {
+  const normalizedMessage = normalizeErrorMessage(message)
+
+  if (!normalizedMessage) {
+    return false
+  }
+
+  if (IGNORABLE_SCRIPT_ERRORS.some((item) => normalizedMessage.includes(item))) {
+    return true
+  }
+
+  if (normalizedMessage === 'Script error.' && source === '') {
+    return true
+  }
+
+  return false
+}
+
 /**
  * Vue 运行时错误处理
  */
@@ -50,6 +85,10 @@ export function scriptErrorHandler(
   colno?: number,
   error?: Error
 ): boolean {
+  if (isIgnorableScriptError(message, source)) {
+    return true
+  }
+
   console.error('[ScriptError]', { message, source, lineno, colno, error })
   // reportError({ type: 'script', message, source, lineno, colno, error })
   return true // 阻止默认控制台报错，可根据需求改

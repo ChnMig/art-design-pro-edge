@@ -9,6 +9,21 @@ interface UpgradeLog {
 
 export const upgradeLogList = ref<UpgradeLog[]>([
   {
+    version: 'v3.0.2',
+    title: '问题修复、表单与路由体验优化',
+    date: '2026-03-16',
+    detail: [
+      '修复：侧边菜单内容超高时无法滚动的问题，父级可访问菜单在子项被隐藏后仍可正常保留与跳转',
+      '修复：静态路由刷新后直接落入 404、隐藏动态路由与动态参数路由校验异常的问题',
+      '优化：ArtForm 与 ArtSearchBar 提交前自动清理空值，重置时恢复默认值，保留 0 与 false 等有效参数',
+      '修复：ArtTable 属性继承与插槽预渲染导致的表单校验异常，统一补齐 table-layout 约束',
+      '优化：全局搜索支持内部路由、外链与 iframe 菜单跳转，历史记录按真实目标去重',
+      '优化：桌面端与移动端切换时恢复原菜单布局，异常页在未登录场景下返回登录页并保留 redirect',
+      '优化：富文本编辑器上传能力、标题/列表样式与加粗表现，补齐自定义指令类型声明',
+      '修复：WebSocket 重连状态异常与浏览器 ResizeObserver 噪声误报问题'
+    ]
+  },
+  {
     version: 'v3.0.1',
     title: 'bug修复、新增功能',
     date: '2025-11-15',
