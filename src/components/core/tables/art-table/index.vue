@@ -4,11 +4,7 @@
 <!-- 获取 ref：默认暴露了 elTableRef 外部通过 ref.value.elTableRef 可以调用 el-table 方法 -->
 <template>
   <div class="art-table" :class="{ 'is-empty': isEmpty }" :style="containerHeight">
-    <ElTable
-      ref="elTableRef"
-      v-loading="!!loading"
-      v-bind="{ ...$attrs, ...props, height, stripe, border, size, headerCellStyle }"
-    >
+    <ElTable ref="elTableRef" v-loading="!!loading" v-bind="mergedTableProps">
       <template v-for="col in columns" :key="col.prop || col.type">
         <!-- 渲染全局序号列 -->
         <ElTableColumn v-if="col.type === 'globalIndex'" v-bind="{ ...col }">
@@ -36,6 +32,7 @@
           </template>
           <template v-if="col.useSlot && col.prop" #default="slotScope">
             <slot
+              v-if="shouldRenderSlotScope(slotScope)"
               :name="col.slotName || col.prop"
               v-bind="{
                 ...slotScope,
@@ -89,7 +86,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, nextTick, watchEffect } from 'vue'
+  import { ref, computed, nextTick, watchEffect, getCurrentInstance, useAttrs } from 'vue'
   import type { ElTable, TableProps } from 'element-plus'
   import { storeToRefs } from 'pinia'
   import { ColumnOption } from '@/types'
@@ -136,7 +133,7 @@
   }
 
   /** ArtTable 组件的 Props 接口 */
-  interface ArtTableProps extends TableProps<Record<string, any>> {
+  interface ArtTableProps extends Partial<TableProps<Record<string, any>>> {
     /** 加载状态 */
     loading?: boolean
     /** 列渲染配置 */
@@ -156,6 +153,7 @@
   const props = withDefaults(defineProps<ArtTableProps>(), {
     columns: () => [],
     fit: true,
+    tableLayout: 'fixed',
     showHeader: true,
     stripe: undefined,
     border: undefined,
@@ -164,6 +162,8 @@
     emptyText: '暂无数据',
     showTableHeader: true
   })
+  const instance = getCurrentInstance()
+  const attrs = useAttrs()
 
   const LAYOUT = {
     MOBILE: 'prev, pager, next, sizes, jumper, total',
@@ -263,8 +263,31 @@
     ...(props.headerCellStyle || {}) // 合并用户传入的样式
   }))
 
+  const hasExplicitTableProp = (propName: string): boolean => {
+    const rawProps = (instance?.vnode.props || {}) as Record<string, unknown>
+    const kebabName = propName.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`)
+    return propName in rawProps || kebabName in rawProps
+  }
+
+  const mergedTableProps = computed(() => ({
+    ...attrs,
+    ...props,
+    height: height.value,
+    stripe: stripe.value,
+    border: border.value,
+    size: size.value,
+    headerCellStyle: headerCellStyle.value,
+    selectOnIndeterminate: hasExplicitTableProp('selectOnIndeterminate')
+      ? props.selectOnIndeterminate
+      : undefined
+  }))
+
   // 是否显示分页器
   const showPagination = computed(() => props.pagination && !isEmpty.value)
+
+  const shouldRenderSlotScope = (slotScope: { $index?: number }) => {
+    return slotScope.$index === undefined || slotScope.$index >= 0
+  }
 
   // 清理列属性，移除插槽相关的自定义属性，确保它们不会被 ElTableColumn 错误解释
   const cleanColumnProps = (col: ColumnOption) => {
