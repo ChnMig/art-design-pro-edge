@@ -6,7 +6,7 @@
  * ## 主要功能
  *
  * - iframe 路由检测，判断是否为外部嵌入页面
- * - 菜单项有效性验证，过滤隐藏和无效菜单
+ * - 菜单项可导航性验证，过滤无效菜单
  * - 路径标准化处理，统一路径格式
  * - 递归查找菜单树中第一个有效路径
  * - 支持多级嵌套菜单的路径解析
@@ -29,13 +29,16 @@ export function isIframe(url: string): boolean {
   return url.startsWith('/outside/iframe/')
 }
 
-/**
- * 验证菜单项是否有效
- * @param menuItem 菜单项
- * @returns 是否为有效菜单项
- */
-const isValidMenuItem = (menuItem: AppRouteRecord): boolean => {
-  return !!(menuItem.path && menuItem.path.trim() && !menuItem.meta?.isHide)
+export const isNavigableMenuItem = (menuItem: AppRouteRecord): boolean => {
+  if (!menuItem.path || !menuItem.path.trim()) {
+    return false
+  }
+
+  if (!menuItem.meta?.isHide) {
+    return true
+  }
+
+  return menuItem.meta?.isFullPage === true
 }
 
 /**
@@ -58,7 +61,7 @@ export const getFirstMenuPath = (menuList: AppRouteRecord[]): string => {
   }
 
   for (const menuItem of menuList) {
-    if (!isValidMenuItem(menuItem)) {
+    if (!isNavigableMenuItem(menuItem)) {
       continue
     }
 
