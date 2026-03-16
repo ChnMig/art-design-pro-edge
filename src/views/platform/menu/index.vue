@@ -18,6 +18,7 @@
       :data="tableData"
       :columns="columns"
       :loading="isLoading"
+      table-layout="fixed"
       row-key="id"
       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       :default-expand-all="isExpanded"
