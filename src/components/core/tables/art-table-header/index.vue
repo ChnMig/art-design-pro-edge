@@ -54,7 +54,12 @@
       </div>
 
       <!-- 列设置 -->
-      <ElPopover v-if="shouldShow('columns')" placement="bottom" trigger="click">
+      <ElPopover
+        v-if="shouldShow('columns')"
+        placement="bottom"
+        trigger="click"
+        @show="initColumnDragging"
+      >
         <template #reference>
           <div class="button">
             <ArtSvgIcon icon="ri:align-right" />
@@ -62,22 +67,19 @@
         </template>
         <div>
           <ElScrollbar max-height="380px">
-            <VueDraggable
-              v-model="columns"
-              :disabled="false"
-              filter=".fixed-column"
-              :prevent-on-filter="false"
-              @move="checkColumnMove"
-            >
+            <div ref="columnListRef">
               <div
                 v-for="item in columns"
                 :key="item.prop || item.type"
                 class="column-option flex-c"
                 :class="{ 'fixed-column': item.fixed }"
+                @pointerup="finishColumnDrag(item)"
+                @pointercancel="cancelColumnDrag"
               >
                 <div
                   class="drag-icon mr-2 h-4.5 flex-cc text-g-500"
                   :class="item.fixed ? 'cursor-default text-g-300' : 'cursor-move'"
+                  @pointerdown="startColumnDrag(item)"
                 >
                   <ArtSvgIcon
                     :icon="item.fixed ? 'ri:unpin-line' : 'ri:drag-move-2-fill'"
@@ -93,7 +95,7 @@
                   {{ item.label || (item.type === 'selection' ? '选择列' : '') }}
                 </ElCheckbox>
               </div>
-            </VueDraggable>
+            </div>
           </ElScrollbar>
         </div>
       </ElPopover>
@@ -118,11 +120,11 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, ref, onMounted, onUnmounted } from 'vue'
+  import { computed, ref, nextTick, onMounted, onUnmounted } from 'vue'
   import { storeToRefs } from 'pinia'
   import { TableSizeEnum } from '@/enums/formEnum'
   import { useTableStore } from '@/store/modules/table'
-  import { VueDraggable } from 'vue-draggable-plus'
+  import { useDraggable } from 'vue-draggable-plus'
   import type { ColumnOption } from '@/types/component'
   import { ElScrollbar } from 'element-plus'
 
@@ -223,6 +225,68 @@
       return false
     }
     return true
+  }
+
+  const getColumnKey = (item: ColumnOption) => String(item.prop || item.type || '')
+  let columnDragSourceKey = ''
+  let columnDragUpdated = false
+
+  const startColumnDrag = (item: ColumnOption) => {
+    if (item.fixed) return
+    columnDragSourceKey = getColumnKey(item)
+    columnDragUpdated = false
+  }
+
+  const finishColumnDrag = (target: ColumnOption) => {
+    const sourceKey = columnDragSourceKey
+    const targetKey = getColumnKey(target)
+
+    if (!sourceKey || !targetKey || sourceKey === targetKey || target.fixed) {
+      columnDragSourceKey = ''
+      return
+    }
+
+    queueMicrotask(() => {
+      if (!columnDragUpdated) {
+        const nextColumns = [...columns.value]
+        const sourceIndex = nextColumns.findIndex((item) => getColumnKey(item) === sourceKey)
+        const targetIndex = nextColumns.findIndex((item) => getColumnKey(item) === targetKey)
+
+        if (sourceIndex >= 0 && targetIndex >= 0) {
+          const [movedColumn] = nextColumns.splice(sourceIndex, 1)
+          nextColumns.splice(targetIndex, 0, movedColumn)
+          columns.value = nextColumns
+        }
+      }
+
+      columnDragSourceKey = ''
+    })
+  }
+
+  const cancelColumnDrag = () => {
+    columnDragSourceKey = ''
+  }
+
+  const handleColumnDragUpdate = () => {
+    columnDragUpdated = true
+  }
+
+  const columnListRef = ref<HTMLElement | null>(null)
+  const columnDragging = useDraggable(columnListRef, columns, {
+    immediate: false,
+    handle: '.drag-icon',
+    filter: '.fixed-column',
+    preventOnFilter: false,
+    onMove: checkColumnMove,
+    onUpdate: handleColumnDragUpdate
+  })
+
+  /** 弹层显示后绑定真实列表容器，避免挂载时插槽 DOM 尚未就绪 */
+  const initColumnDragging = async () => {
+    await nextTick()
+    if (columnListRef.value) {
+      columnDragging.start(columnListRef.value)
+    }
   }
 
   /** 搜索事件处理 */

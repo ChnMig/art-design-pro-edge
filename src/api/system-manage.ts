@@ -1,7 +1,6 @@
 import request from '@/utils/http'
 import { AppRouteRecord } from '@/types/router'
 import { asyncRoutes } from '@/router/routes/asyncRoutes'
-import { menuDataToRouter } from '@/router/utils/menuToRouter'
 
 type BackendListResponse<T> = Http.BaseResponse<T[]> & {
   total?: number
@@ -59,9 +58,7 @@ export async function fetchGetMenuList(): Promise<MenuResponse> {
       showErrorMessage: false
     })
 
-    const menuList = Array.isArray(backendMenu)
-      ? backendMenu.map((route) => menuDataToRouter(route))
-      : []
+    const menuList = Array.isArray(backendMenu) ? backendMenu : []
 
     if (menuList.length > 0) {
       return { menuList }
@@ -72,6 +69,5 @@ export async function fetchGetMenuList(): Promise<MenuResponse> {
   }
 
   // 前端控制模式：使用本地路由
-  const localMenu = asyncRoutes.map((route) => menuDataToRouter(route))
-  return { menuList: localMenu }
+  return { menuList: asyncRoutes }
 }
