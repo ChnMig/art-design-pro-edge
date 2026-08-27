@@ -109,7 +109,7 @@
   import { ElNotification, ElMessage } from 'element-plus'
   import { useUserStore } from '@/store/modules/user'
   import { themeAnimation } from '@/utils/theme/animation'
-  import { fetchLogin, fetchGetUserInfo, fetchCaptcha } from '@/api/auth'
+  import { fetchLogin, fetchCaptcha } from '@/api/auth'
   import { useHeaderBar } from '@/composables/useHeaderBar'
   import { useSettingStore } from '@/store/modules/setting'
   import type { FormInstance, FormRules } from 'element-plus'
@@ -219,21 +219,6 @@
       userStore.setToken(loginRes.token)
       userStore.setCurrentTenantCode(formData.tenant_code)
       userStore.setLoginStatus(true)
-
-      const userInfo = await fetchGetUserInfo().catch((error) => {
-        console.error('[Login] fetch user info error:', error)
-        return undefined
-      })
-
-      if (userInfo) {
-        userStore.setUserInfo(userInfo)
-        if (userInfo.tenant) {
-          userStore.setTenantInfo(userInfo.tenant as Record<string, any>)
-        }
-        if (userInfo.tenantCode) {
-          userStore.setCurrentTenantCode(userInfo.tenantCode)
-        }
-      }
 
       showLoginSuccessNotice()
       router.push('/')
