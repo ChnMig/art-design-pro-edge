@@ -5,7 +5,7 @@
       v-model="searchState"
       :items="searchItems"
       @reset="resetSearch"
-      @search="searchData"
+      @search="handleSearch"
     />
 
     <ElCard shadow="never" class="art-table-card">
@@ -110,8 +110,8 @@
     core: {
       apiFn: getTenantList,
       apiParams: {
-        page: 1,
-        pageSize: 10,
+        current: 1,
+        size: 10,
         code: '',
         name: '',
         status: undefined
@@ -191,12 +191,18 @@
     columnChecks,
     pagination: paginationState,
     searchParams: searchState,
-    getData: searchData,
+    replaceSearchParams,
+    getData: getDataByPage,
     resetSearchParams: resetSearch,
     handleSizeChange: onPageSizeChange,
     handleCurrentChange: onCurrentPageChange,
     refreshAll
   } = tableApi as any
+
+  const handleSearch = async (params: Record<string, any>) => {
+    replaceSearchParams(params)
+    await getDataByPage()
+  }
 
   // 表单数据
   const formData = reactive({

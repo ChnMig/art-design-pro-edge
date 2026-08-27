@@ -5,7 +5,7 @@
       v-model="searchParams"
       :items="searchItems"
       @reset="resetSearchParams"
-      @search="getDataByPage"
+      @search="handleSearch"
     />
 
     <ElCard class="art-table-card" shadow="never">
@@ -146,6 +146,7 @@
     loading,
     pagination,
     searchParams,
+    replaceSearchParams,
     getData: getDataByPage,
     resetSearchParams,
     handleSizeChange,
@@ -155,8 +156,8 @@
     core: {
       apiFn: getDepartmentList,
       apiParams: {
-        page: 1,
-        pageSize: 10,
+        current: 1,
+        size: 10,
         name: '',
         status: undefined
       },
@@ -214,6 +215,11 @@
       onError: (error) => ElMessage.error(error.message)
     }
   })
+
+  const handleSearch = async (params: Record<string, any>) => {
+    replaceSearchParams(params)
+    await getDataByPage()
+  }
 
   // 弹窗相关
   const resetForm = () => {

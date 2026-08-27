@@ -38,7 +38,7 @@ git checkout -b merge/upstream-sync-YYYYMM
 git push -u origin merge/upstream-sync-YYYYMM
 ```
 
-## 2. 获取上游并记录版本（当前基线：v3.0.1）
+## 2. 获取上游并记录版本（当前基线：v3.0.2 + 后续修复）
 
 ```
 git fetch upstream --prune
@@ -51,11 +51,11 @@ echo "Sync to: $UPSTREAM_COMMIT_MSG"
 在 README.md 中更新“同步来源与版本”（上游 commit 信息）。当前已对齐至：
 
 - 上游分支：`upstream/main`
-- 上游提交：`c4aa8ae`（feat: useTable hooks addcolumn、updatecolumn、togglecolumn support batch operations，基于 tag v3.0.1 的功能增强提交）
+- 上游提交：`f3aaf58`（Merge pull request #318 from kyle-Liuu/fix/dual-menu-collapsed-height，包含 tag v3.0.2 及其后的查询参数与双列菜单修复）
 
 同时保持 README 中的 commitId 与本步骤记录的值一致（短/长哈希任选其一，但需前后统一）。
 
-版本号同步（仅显示用途）：`.env` 中的 `VITE_VERSION` 建议与上游发行保持一致（当前为 3.0.1），不影响功能行为。
+版本号同步（仅显示用途）：`.env` 中的 `VITE_VERSION` 建议与上游发行保持一致（当前为 3.0.2），不影响功能行为。
 
 ## 3. 审阅上游变更
 
@@ -171,6 +171,7 @@ git diff --name-status HEAD..upstream/main -- vite.config.ts eslint.config.mjs .
   - 工具链：尽量合并
   - 组件/交互：尽量合并, 如与契约有冲突，尝试同步后修改调用方调用方式来适应新的组件/契约
   - 样式/动效：纯 UI 修复默认可合并，不在本文档逐项记录。
+  - v3.0.2 后续修复：`useTable.replaceSearchParams` 可用于表单查询时整体替换条件，调用方仍直接传递本地后端字段；双列菜单折叠态固定右侧宽度并让滚动区脱离文档流，避免撑高页面。
 
 - HTTP 层
   - 保留 `src/api/auth.ts` 的接口路径（`/system/user/*`）与返回字段契约。

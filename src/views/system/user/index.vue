@@ -5,7 +5,7 @@
       v-model="searchState"
       :items="searchItems"
       @reset="resetSearch"
-      @search="searchData"
+      @search="handleSearch"
     />
 
     <ElCard shadow="never" class="art-table-card">
@@ -171,8 +171,8 @@
     core: {
       apiFn: getUserList,
       apiParams: {
-        page: 1,
-        pageSize: 10,
+        current: 1,
+        size: 10,
         name: '',
         account: '',
         username: '',
@@ -279,12 +279,18 @@
     columnChecks,
     pagination: paginationState,
     searchParams: searchState,
-    getData: searchData,
+    replaceSearchParams,
+    getData: getDataByPage,
     resetSearchParams: resetSearch,
     handleSizeChange: onPageSizeChange,
     handleCurrentChange: onCurrentPageChange,
     refreshAll
   } = tableApi as any
+
+  const handleSearch = async (params: Record<string, any>) => {
+    replaceSearchParams(params)
+    await getDataByPage()
+  }
 
   // 添加部门列表和角色列表的响应式数据
   const departmentList = ref<any[]>([])
