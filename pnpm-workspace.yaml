@@ -1,0 +1,10 @@
+overrides:
+  stylelint-config-recommended-scss>stylelint-scss: 6.13.0
+  stylelint-config-recommended-vue>stylelint-config-recommended: 17.0.0
+
+allowBuilds:
+  '@parcel/watcher': true
+  core-js: false
+  es5-ext: false
+  esbuild: true
+  vue-demi: true
