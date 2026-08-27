@@ -79,8 +79,8 @@ pnpm build
 
 - 上游项目：Daymychen/art-design-pro
 - 同步分支：upstream/main
-- 同步提交：d224dd4504e23cdf230b242a7f78eb089efdbee5（fix: bug fixes, form and routing experience improvements，包含 v3.0.2 的问题修复与体验优化）
-- 同步时间：2026-03-16（本次同步目标：菜单滚动、表单清洗、路由恢复、富文本与指令类型优化）
+- 同步提交：f3aaf58eec1a0e988f162352c33862327a484f95（Merge pull request #318 from kyle-Liuu/fix/dual-menu-collapsed-height，包含 v3.0.2 及其后续修复）
+- 同步时间：2026-08-27（本次增量：查询参数替换、分页参数适配与双列菜单折叠高度修复）
 
 ## 项目定制
 

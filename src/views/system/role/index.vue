@@ -5,7 +5,7 @@
       v-model="searchParams"
       :items="searchItems"
       @reset="resetSearchParams"
-      @search="getDataByPage"
+      @search="handleSearch"
     />
 
     <ElCard shadow="never" class="art-table-card">
@@ -132,6 +132,7 @@
     loading,
     pagination,
     searchParams,
+    replaceSearchParams,
     getData: getDataByPage,
     resetSearchParams,
     handleSizeChange,
@@ -141,8 +142,8 @@
     core: {
       apiFn: getRoleList,
       apiParams: {
-        page: 1,
-        pageSize: 10,
+        current: 1,
+        size: 10,
         name: '',
         status: undefined
       },
@@ -199,6 +200,11 @@
       onError: (error) => ElMessage.error(error.message)
     }
   })
+
+  const handleSearch = async (params: Record<string, any>) => {
+    replaceSearchParams(params)
+    await getDataByPage()
+  }
 
   // 注意：操作按钮已直接渲染为三个按钮，无需“更多”下拉
 
